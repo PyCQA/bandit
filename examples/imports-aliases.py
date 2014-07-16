@@ -4,6 +4,7 @@ import hashlib as hh
 import hashlib as hhh
 import hashlib as hhhh
 from pickle import loads as lp
+import pickle as p
 
 pop('gcc --version', shell=True)
 

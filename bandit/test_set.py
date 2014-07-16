@@ -7,12 +7,13 @@ class BanditTestSet():
     tests = OrderedDict()
 
     #stubbed test
-    def _test_import_name_match(node, name):
-        self.logger.debug('_test_import_name_match executed with name : %s' % name)
-        warn_on_import = ['pickle', 'subprocess', 'Crypto']
-        for mod in warn_on_import:
-            if name.startswith(mod):
-                return('INFO', "Consider possible security implications associated with '%s' module" % mod)
+    def _test_import_name_match(self, context):
+        info_on_import = ['pickle', 'subprocess', 'Crypto']
+        for module in info_on_import:
+            if context['module'] == module:
+                return('INFO',
+                       "Consider possible security implications"
+                       " associated with '%s' module" % module)
 
 
     def __init__(self, logger):
@@ -22,8 +23,14 @@ class BanditTestSet():
     def load_tests(self):
         #each test should have a name, target node/s, and function...
         #for now, stub in some tests
-        self.tests['import_name_match'] = {'targets': ['', ''], 'function': self._test_import_name_match}
+        self.tests['import_name_match'] = {'targets': ['Import','ImportFrom'], 'function': self._test_import_name_match}
 
-    def get_tests(self):
-        return tests
+    def get_tests(self, nodetype):
+        self.logger.debug('get_tests called with nodetype: %s' % nodetype)
+        scoped_tests = {}
+        for test in self.tests:
+            if nodetype in self.tests[test]['targets']:
+                scoped_tests[test] = self.tests[test]
+        self.logger.debug('get_tests returning scoped_tests : %s' % scoped_tests)
+        return scoped_tests
 

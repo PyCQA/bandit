@@ -20,12 +20,14 @@ class BanditTester():
         res = ''
         return res
 
-    def run_tests(node):
-        for test in testset.get_tests():
-            #check that test is valid for a node of this type
-            print(ast.dump(node))
+    def run_tests(self, context, nodetype):
+        tests = self.testset.get_tests(nodetype)
+        for test in tests:
             #execute test with the relevant details to the current node
-            test.run(file_detail, name, call, imports, aliases)
+            result = tests[test]['function'](context)
+            if result != None:
+                self.results.add(context, result)
+
 
     def test_call(self, call, name=None):
         self.logger.debug("test_call (%s) executed with Call object: %s" % (name, ast.dump(call)))
@@ -45,21 +47,14 @@ class BanditTester():
                 if name != None and name.startswith('%s.' % alias):
                     name = "%s.%s" % (aliases[alias], name[len(alias) + 1:])
 
-        self.test_call_bad_names(file_detail, name, call, imports, aliases,
-                                 self.results)
-        self.test_call_subprocess_popen(file_detail, name, call, imports,
-                                        aliases, self.results)
-        self.test_call_no_cert_validation(file_detail, name, call, imports,
-                                          aliases, self.results)
-        self.test_call_bad_permissions(file_detail, name, call, imports,
-                                       aliases, self.results)
-
-    def test_import_name(self, file_detail, name):
-        self.logger.debug('test_import_name executed with name : %s' % name) 
-        warn_on_import = ['pickle', 'subprocess', 'crypto']
-        for mod in warn_on_import:
-            if name.startswith(mod):
-                self.results.add(file_detail, 'INFO', "Consider possible security implications associated with '%s' module" % mod)
+        #self.test_call_bad_names(file_detail, name, call, imports, aliases,
+        #                         self.results)
+        #self.test_call_subprocess_popen(file_detail, name, call, imports,
+        #                                aliases, self.results)
+        #self.test_call_no_cert_validation(file_detail, name, call, imports,
+        #                                  aliases, self.results)
+        #self.test_call_bad_permissions(file_detail, name, call, imports,
+        #                               aliases, self.results)
 
     # Define actual tests here.  These should be extracted and used as plug-ins.
     def test_call_bad_names(self, file_detail, name, call, imports, aliases,

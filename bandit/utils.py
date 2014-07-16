@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import symtable
-import ast
+import ast, _ast
 
 """Various helper functions."""
 
@@ -19,6 +19,16 @@ def ast_args_to_str(args):
         res = '\n\tArgument/s:\n\t\t%s' % '\n\t\t'.join([ast.dump(arg) for arg in args])
         res = ''
         return res
+
+def get_call_name(node):
+    if type(node.func) == _ast.Name:
+        return(deepgetattr(node, 'func.id'))
+    elif type(node.func) == _ast.Attribute:
+        prefix = ""
+        if type(node.func.value) == _ast.Name:
+            prefix = deepgetattr(node, 'func.value.id') + "."
+        return("%s%s" % (prefix, deepgetattr(node, 'func.attr')))
+
 
 def deepgetattr(obj, attr):
     """Recurses through an attribute chain to get the ultimate value."""

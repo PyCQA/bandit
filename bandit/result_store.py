@@ -16,8 +16,9 @@ class BanditResultStore():
         self.count = 0
         self.logger = logger
 
-    def add(self, file_detail, issue_type, issue_text):
-        filename, lineno = file_detail
+    def add(self, context, issue):
+        filename, lineno = context['filename'], context['lineno']
+        (issue_type, issue_text) = issue
         if filename in self.resstore:
             self.resstore[filename].append((lineno, issue_type, issue_text))
         else:
