@@ -14,5 +14,5 @@ http://greentreesnakes.readthedocs.org/en/latest/
 Usage
 -----
 Example usage across a code tree:
-find ~/openstack-repo/keystone -name '*.py' | xargs ./main.py
+    find ~/openstack-repo/keystone -name '*.py' | xargs ./main.py
 
