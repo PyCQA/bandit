@@ -1,0 +1,19 @@
+possible tests:
+ - Popen shell=True
+ - import of possibly-dangerous imports
+ - bad file perms (os.chmod https://docs.python.org/2/library/os.html#os.chmod)
+ - taint checking / lack of input validation (object returned by requests.get()/.post() has headers, content, text, json attributes)
+
+ - hardcoded passwords
+ - logging sensitive information
+ - sql commands into sql alchemy
+ - poor crypto primitives
+ - temp file creation
+ - wildcard injection
+ - port binding 0.0.0.0
+ - TLS requests w/out cert checks
+ - SSLv2 forced
+ - eval/exec functions
+ - sudo calls
+ - de-serializing (pickle?  yaml?  json?)
+
