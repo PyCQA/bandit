@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import symtable
+import ast
 
 """Various helper functions."""
 
@@ -13,6 +14,11 @@ color = {
     'WARN': '\033[93m',
     'ERROR': '\033[91m',
 }
+
+def ast_args_to_str(args):
+        res = '\n\tArgument/s:\n\t\t%s' % '\n\t\t'.join([ast.dump(arg) for arg in args])
+        res = ''
+        return res
 
 def deepgetattr(obj, attr):
     """Recurses through an attribute chain to get the ultimate value."""
