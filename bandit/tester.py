@@ -8,9 +8,10 @@ class BanditTester():
 
     results = None
 
-    def __init__(self, logger, results):
+    def __init__(self, logger, results, testset):
         self.logger = logger
         self.results = results
+        self.testset = testset
         self.last_result = None
 
     # This should be a utility call available to tests
@@ -18,6 +19,13 @@ class BanditTester():
         res = '\n\tArgument/s:\n\t\t%s' % '\n\t\t'.join([ast.dump(arg) for arg in args])
         res = ''
         return res
+
+    def run_tests(node):
+        for test in testset.get_tests():
+            #check that test is valid for a node of this type
+            print(ast.dump(node))
+            #execute test with the relevant details to the current node
+            test.run(file_detail, name, call, imports, aliases)
 
     def test_call(self, call, name=None):
         self.logger.debug("test_call (%s) executed with Call object: %s" % (name, ast.dump(call)))

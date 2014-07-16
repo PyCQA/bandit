@@ -4,6 +4,7 @@ import sys, logging
 import ast
 from bandit import result_store as b_result_store
 from bandit import node_visitor as b_node_visitor
+from bandit import test_set as b_test_set
 from bandit import meta_ast as b_meta_ast
 
 class BanditManager():
@@ -15,6 +16,7 @@ class BanditManager():
         self.logger = self._init_logger(debug)
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
         self.b_rs = b_result_store.BanditResultStore(self.logger)
+        self.b_ts = b_test_set.BanditTestSet(self.logger)
 
     def get_logger(self):
         return self.logger
@@ -40,7 +42,7 @@ class BanditManager():
                 try:
                     with open(fname, 'rU') as fdata:
                         try:
-                            self._execute_ast_visitor(fname, fdata, self.b_ma, self.b_rs)
+                            self._execute_ast_visitor(fname, fdata, self.b_ma, self.b_rs, self.b_ts)
                         except KeyboardInterrupt as e:
                             sys.exit(2)
                 except IOError as e:
@@ -55,9 +57,9 @@ class BanditManager():
                 self.logger.debug("exiting")
                 sys.exit(1)
 
-    def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs):
+    def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
         if fdata != None:
-            res = b_node_visitor.BanditNodeVisitor(fname, self.logger, b_ma, b_rs)
+            res = b_node_visitor.BanditNodeVisitor(fname, self.logger, b_ma, b_rs, b_ts)
             res.visit(ast.parse("".join(fdata.readlines())))
 
     def _init_logger(self, debug=False):

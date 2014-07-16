@@ -15,16 +15,18 @@ class BanditNodeVisitor(ast.NodeVisitor):
     logger = None
     results = None
     tester = None
+    testset = None
     fname = None
     depth = 0
 
-    def __init__(self, fname, logger, metaast, results):
+    def __init__(self, fname, logger, metaast, results, testset):
         self.seen = 0
         self.fname = fname
         self.logger = logger
         self.metaast = metaast
         self.results = results
-        self.tester = b_tester.BanditTester(self.logger, self.results)
+        self.testset = testset
+        self.tester = b_tester.BanditTester(self.logger, self.results, self.testset)
 
     def _get_Call_name(self, node):
         if type(node.func) == _ast.Name:
@@ -86,5 +88,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.depth += 1
         super(BanditNodeVisitor, self).visit(node)
         self.depth -= 1
+        #run tests for this node - should probably pass more than just the node
+        self.testset.run_tests(node)
         self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
 
