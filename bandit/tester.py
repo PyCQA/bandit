@@ -14,12 +14,6 @@ class BanditTester():
         self.testset = testset
         self.last_result = None
 
-    # This should be a utility call available to tests
-    def _ast_args_to_str(self, args):
-        res = '\n\tArgument/s:\n\t\t%s' % '\n\t\t'.join([ast.dump(arg) for arg in args])
-        res = ''
-        return res
-
     def run_tests(self, context, nodetype):
         tests = self.testset.get_tests(nodetype)
         for test in tests:
