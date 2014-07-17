@@ -20,14 +20,21 @@ def ast_args_to_str(args):
         res = ''
         return res
 
-def get_call_name(node):
+def get_call_name(node, aliases):
     if type(node.func) == _ast.Name:
+        if deepgetattr(node, 'func.id') in aliases:
+            return aliases[deepgetattr(node, 'func.id')]
         return(deepgetattr(node, 'func.id'))
     elif type(node.func) == _ast.Attribute:
         prefix = ""
         if type(node.func.value) == _ast.Name:
-            prefix = deepgetattr(node, 'func.value.id') + "."
+            if deepgetattr(node, 'func.value.id') in aliases:
+                prefix = aliases[deepgetattr(node, 'func.value.id')] + "."
+            else:
+                prefix = deepgetattr(node, 'func.value.id') + "."
         return("%s%s" % (prefix, deepgetattr(node, 'func.attr')))
+    else:
+        return ""
 
 
 def deepgetattr(obj, attr):
