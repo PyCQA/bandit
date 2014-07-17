@@ -31,6 +31,10 @@ if __name__ == '__main__':
         default=1, help='results level filter'
     )
     parser.add_argument(
+        '-o', '--output', dest='output_file', action='store',
+        default=None, help='write report to filename'
+    )
+    parser.add_argument(
         '-d', '--debug', dest='debug', action='store_true',
         help='turn on debug mode'
     )
@@ -42,4 +46,4 @@ if __name__ == '__main__':
     b_mgr.run_scope(args.files)
     if args.debug:
         b_mgr.output_metaast()
-    b_mgr.output_results(args.context_lines, args.level - 1)
+    b_mgr.output_results(args.context_lines, args.level - 1, args.output_file)

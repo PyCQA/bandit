@@ -5,6 +5,7 @@
 from collections import OrderedDict
 import linecache
 from sys import stdout
+from datetime import datetime
 
 import utils
 
@@ -31,10 +32,20 @@ class BanditResultStore():
             self.resstore[filename] = [(lineno, issue_type, issue_text), ]
         self.count += 1
 
-    def report(self, scope, lines=0, level=1, is_tty=stdout.isatty()):
+    def report(self, scope, lines=0, level=1, output_filename=None):
+        is_tty = False if output_filename is not None else stdout.isatty()
+
         if level >= len(utils.sev):
             level = len(utils.sev) - 1
         tmpstr = ""
+        if is_tty:
+            tmpstr += "%sRun started:%s\n\t%s\n" % (
+                utils.color['HEADER'],
+                utils.color['DEFAULT'],
+                datetime.utcnow()
+            )
+        else:
+            tmpstr += "Run started:\n\t%s\n" % datetime.utcnow()
         if self.count > 0:
             if is_tty:
                 tmpstr += "%sFiles tested (%s):%s\n\t" % (
@@ -86,6 +97,12 @@ class BanditResultStore():
                                 tmpstr += "\t%3d  %s" % (
                                     i, linecache.getline(filename, i)
                                 )
-            print(tmpstr)
+            if output_filename is not None:
+                with open(output_filename, 'w') as fout:
+                    fout.write(tmpstr)
+                print("Output written to file: %s" % output_filename)
+            else:
+                print(tmpstr)
+
         else:
             self.logger.error("no results - %s files scanned" % self.count)

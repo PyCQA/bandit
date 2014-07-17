@@ -26,8 +26,11 @@ class BanditManager():
     def get_resultstore(self):
         return self.b_rs
 
-    def output_results(self, lines, level):
-        self.b_rs.report(scope=self.scope, lines=lines, level=level)
+    def output_results(self, lines, level, output_filename):
+        self.b_rs.report(
+            scope=self.scope, lines=lines, level=level,
+            output_filename=output_filename
+        )
 
     def output_metaast(self):
         self.b_ma.report()
