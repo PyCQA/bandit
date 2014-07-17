@@ -73,7 +73,7 @@ class BanditResultStore():
                     utils.color['HEADER'], utils.color['DEFAULT']
                 )
             else:
-                tmpstr += "Test results:\n"
+                tmpstr += "\nTest results:\n"
 
             for filename, issues in self.resstore.items():
                 for lineno, issue_type, issue_text in issues:
