@@ -69,17 +69,18 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Import(self, node):
+        self.context['lineno'] = node.lineno
         self.logger.debug("visit_Import called (%s)" % ast.dump(node))
         for nodename in node.names:
             if nodename.asname:
                 self.context['import_aliases'][nodename.asname] = nodename.name
             self.context['imports'].add(nodename.name)
             self.context['module'] = nodename.name
-        self.context['lineno'] = node.lineno
         self.tester.run_tests(self.context, 'Import')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_ImportFrom(self, node):
+        self.context['lineno'] = node.lineno
         module = node.module
         for nodename in node.names:
             if nodename.asname:
@@ -87,7 +88,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
             self.context['imports'].add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name
-        self.context['lineno'] = node.lineno
         self.tester.run_tests(self.context, 'ImportFrom')
         super(BanditNodeVisitor, self).generic_visit(node)
 
