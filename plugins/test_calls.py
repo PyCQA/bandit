@@ -89,7 +89,9 @@ def call_wildcard_injection(context):
                     if hasattr(context['call'].args[0], 's'):
                         call_argument = context['call'].args[0].s
                     elif hasattr(context['call'].args[0], 'elts'):
-                        call_argument = ' '.join([n.s for n in context['call'].args[0].elts])
+                        call_argument = ' '.join(
+                            [n.s for n in context['call'].args[0].elts]
+                        )
                 if call_argument is not None:
                     for vulnerable_func in vulnerable_funcs:
                         if (
