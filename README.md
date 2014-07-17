@@ -20,7 +20,8 @@ Example usage across a code tree:
 Usage:
 
     $ ./main.py -h
-    usage: main.py [-h] [-C CONTEXT_LINES] [-t TEST_CONFIG] [-l] [-d]
+    usage: main.py [-h] [-C CONTEXT_LINES] [-t TEST_CONFIG] [-l] [-o OUTPUT_FILE]
+                   [-d]
                    file [file ...]
 
     Bandit - a Python source code analyzer.
@@ -35,5 +36,6 @@ Usage:
       -t TEST_CONFIG, --testconfig TEST_CONFIG
                             test config file (default: bandit.ini)
       -l, --level           results level filter
+      -o OUTPUT_FILE, --output OUTPUT_FILE
+                            write report to filename
       -d, --debug           turn on debug mode
-
