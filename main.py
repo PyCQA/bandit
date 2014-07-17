@@ -28,6 +28,6 @@ if __name__=='__main__':
 
     b_mgr = b_manager.BanditManager(args.test_config, args.debug)
     b_mgr.run_scope(args.files)
-    if debug:
+    if args.debug:
         b_mgr.output_metaast()
     b_mgr.output_results(args.context_lines, args.level - 1)

@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
 import symtable
-import ast, _ast
+import ast
+import _ast
 
 """Various helper functions."""
 
-sev = [ 'INFO', 'WARN', 'ERROR' ]
+sev = ['INFO', 'WARN', 'ERROR']
 
 color = {
     'DEFAULT': '\033[0m',
@@ -15,10 +16,13 @@ color = {
     'ERROR': '\033[91m',
 }
 
+
 def ast_args_to_str(args):
-        res = '\n\tArgument/s:\n\t\t%s' % '\n\t\t'.join([ast.dump(arg) for arg in args])
+        res = '\n\tArgument/s:\n\t\t%s' % \
+              '\n\t\t'.join([ast.dump(arg) for arg in args])
         res = ''
         return res
+
 
 def get_call_name(node, aliases):
     if type(node.func) == _ast.Name:
@@ -43,6 +47,7 @@ def deepgetattr(obj, attr):
         obj = getattr(obj, key)
     return obj
 
+
 def describe_symbol(sym):
     assert type(sym) == symtable.Symbol
     print("Symbol:", sym.get_name())
@@ -53,6 +58,7 @@ def describe_symbol(sym):
             'free', 'assigned', 'namespace']:
         if getattr(sym, 'is_' + prop)():
             print('    is', prop)
+
 
 def mid_range(mid, count):
     if count == 1:
@@ -68,4 +74,3 @@ def mid_range(mid, count):
         stop = stop + (start * -1) + 1
         start = 1
     return range(start, stop)
-
