@@ -12,11 +12,11 @@ class BanditManager():
     scope = []
     progress = 50
 
-    def __init__(self, debug=False):
+    def __init__(self, test_config, debug=False):
         self.logger = self._init_logger(debug)
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
         self.b_rs = b_result_store.BanditResultStore(self.logger)
-        self.b_ts = b_test_set.BanditTestSet(self.logger)
+        self.b_ts = b_test_set.BanditTestSet(self.logger, test_config)
 
     def get_logger(self):
         return self.logger

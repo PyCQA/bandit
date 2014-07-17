@@ -20,17 +20,20 @@ Example usage across a code tree:
 Usage:
 
     $ ./main.py -h
-    usage: main.py [-h] [-C CONTEXT] [-l] [-d] file [file ...]
-    
+    usage: main.py [-h] [-C CONTEXT_LINES] [-t TEST_CONFIG] [-l] [-d]
+                   file [file ...]
+
     Bandit - a Python source code analyzer.
-    
+
     positional arguments:
       file                  source file/s to be tested
-    
+
     optional arguments:
       -h, --help            show this help message and exit
-      -C CONTEXT, --context CONTEXT
+      -C CONTEXT_LINES, --context CONTEXT_LINES
                             number of context lines to print
+      -t TEST_CONFIG, --testconfig TEST_CONFIG
+                            test config file (default: bandit.ini)
       -l, --level           results level filter
       -d, --debug           turn on debug mode
-    
+
