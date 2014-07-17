@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 import sys
-import ast, _ast
+import ast
+import _ast
 import copy
 from bandit import tester as b_tester
 from bandit import utils as b_utils
+
 
 class BanditNodeVisitor(ast.NodeVisitor):
 
@@ -35,7 +37,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context_template['imports'] = self.imports
         self.import_aliases = {}
         self.context_template['import_aliases'] = self.import_aliases
-        self.tester = b_tester.BanditTester(self.logger, self.results, self.testset)
+        self.tester = b_tester.BanditTester(
+            self.logger, self.results, self.testset
+        )
 
     def visit_Call(self, node):
         self.context['lineno'] = node.lineno
@@ -62,7 +66,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         # done with nested
         if (self.calldone):
             self.logger.debug("PARSED COMPLETE qualname: %s" % self.qualname)
-            self.logger.debug("\tBASENODE: %s" % ast.dump(self.context['call']))
+            self.logger.debug(
+                "\tBASENODE: %s" % ast.dump(self.context['call'])
+            )
             self.qualname = ""
             self.calldone = False
         self.tester.run_tests(self.context, 'Call')
@@ -86,7 +92,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
             return self.visit_Import(node)
         for nodename in node.names:
             if nodename.asname:
-                self.context['import_aliases'][nodename.asname] = module + "." + nodename.name
+                self.context['import_aliases'][nodename.asname] = (
+                    module + "." + nodename.name
+                )
             self.context['imports'].add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name
@@ -100,9 +108,10 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['node'] = node
         self.context['filename'] = self.fname
         self.seen += 1
-        self.logger.debug("entering: %s %s [%s]" % (hex(id(node)), type(node), self.depth))
+        self.logger.debug("entering: %s %s [%s]" % (
+            hex(id(node)), type(node), self.depth)
+        )
         self.depth += 1
         super(BanditNodeVisitor, self).visit(node)
         self.depth -= 1
         self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
-

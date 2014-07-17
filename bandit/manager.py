@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-import sys, logging
+import sys
+import logging
 import ast
 from bandit import result_store as b_result_store
 from bandit import node_visitor as b_node_visitor
 from bandit import test_set as b_test_set
 from bandit import meta_ast as b_meta_ast
+
 
 class BanditManager():
 
@@ -44,7 +46,10 @@ class BanditManager():
                 try:
                     with open(fname, 'rU') as fdata:
                         try:
-                            self._execute_ast_visitor(fname, fdata, self.b_ma, self.b_rs, self.b_ts)
+                            self._execute_ast_visitor(
+                                fname, fdata, self.b_ma,
+                                self.b_rs, self.b_ts
+                            )
                         except KeyboardInterrupt as e:
                             sys.exit(2)
                 except IOError as e:
@@ -55,14 +60,18 @@ class BanditManager():
         else:
             self.logger.info("no filename/s provided, working from stdin")
             try:
-                self._execute_ast_visitor('STDIN', sys.stdin, self.b_ma, self.b_rs)
+                self._execute_ast_visitor(
+                    'STDIN', sys.stdin, self.b_ma, self.b_rs
+                )
             except KeyboardInterrupt:
                 self.logger.debug("exiting")
                 sys.exit(1)
 
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
-        if fdata != None:
-            res = b_node_visitor.BanditNodeVisitor(fname, self.logger, b_ma, b_rs, b_ts)
+        if fdata is not None:
+            res = b_node_visitor.BanditNodeVisitor(
+                fname, self.logger, b_ma, b_rs, b_ts
+            )
             try:
                 res.visit(ast.parse("".join(fdata.readlines())))
             except SyntaxError as e:
@@ -80,4 +89,3 @@ class BanditManager():
         logger.addHandler(handler)
         logger.debug("logging initialized")
         return logger
-

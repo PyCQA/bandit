@@ -4,6 +4,7 @@ import sys
 from collections import OrderedDict
 import ConfigParser
 
+
 class BanditTestSet():
 
     tests = OrderedDict()
@@ -13,25 +14,27 @@ class BanditTestSet():
         self.load_tests(test_config)
 
     def load_tests(self, test_config):
-        #each test should be keyed with name and have targets and function...
         config = ConfigParser.RawConfigParser()
         config.read(test_config)
         self.tests = OrderedDict()
-        directory = 'plugins' #TODO - parametize this at runtime
+        directory = 'plugins'  # TODO - parametize this at runtime
         for target in config.sections():
             for (test_name_func, test_name_mod) in config.items(target):
                 if test_name_func not in self.tests:
-                    self.tests[test_name_func] = {'targets':[]}
+                    self.tests[test_name_func] = {'targets': []}
                     test_mod = None
                     try:
-                        test_mod = __import__('%s.%s' % (directory, test_name_mod),
-                                              fromlist=[directory,])
+                        test_mod = __import__(
+                            '%s.%s' % (directory, test_name_mod),
+                            fromlist=[directory, ]
+                        )
                     except ImportError as e:
-                        self.logger.error("could not import test module '%s.%s'" %
-                                          (directory, test_name_mod))
+                        self.logger.error(
+                            "could not import test module '%s.%s'" %
+                            (directory, test_name_mod)
+                        )
                         self.logger.error("\tdetail: '%s'" % (str(e)))
                         del(self.tests[test_name_func])
-                        #continue
                         sys.exit(2)
                     else:
                         try:
@@ -42,7 +45,6 @@ class BanditTestSet():
                                               (test_name_func, directory,
                                                test_name_mod))
                             del(self.tests[test_name_func])
-                            #continue
                             sys.exit(2)
                         else:
                             self.tests[test_name_func]['function'] = test_func
