@@ -33,12 +33,14 @@ class BanditManager():
     def run_scope(self, scope):
         if scope:
             self.scope = scope
-            sys.stdout.write("%s [" % len(scope))
+            if len(scope) > self.progress:
+                sys.stdout.write("%s [" % len(scope))
             for i, fname in enumerate(scope):
                 self.logger.debug("working on file : %s" % fname)
-                if i % self.progress == 0:
-                    sys.stdout.write("%s.. " % i)
-                    sys.stdout.flush()
+                if len(scope) > self.progress:
+                    if i % self.progress == 0:
+                        sys.stdout.write("%s.. " % i)
+                        sys.stdout.flush()
                 try:
                     with open(fname, 'rU') as fdata:
                         try:
@@ -47,8 +49,9 @@ class BanditManager():
                             sys.exit(2)
                 except IOError as e:
                     self.b_rs.skip(fname, e.strerror)
-            sys.stdout.write("]\n")
-            sys.stdout.flush()
+            if len(scope) > self.progress:
+                sys.stdout.write("]\n")
+                sys.stdout.flush()
         else:
             self.logger.info("no filename/s provided, working from stdin")
             try:
