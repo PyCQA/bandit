@@ -81,9 +81,6 @@ def call_wildcard_injection(context):
     system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
 
-    print("\n\n%s" % context['filename'])
-    print(ast.dump(context['call']))
-
     for system_call in system_calls:
         if system_call in context['qualname']:
             if(hasattr(context['call'], 'args')):
