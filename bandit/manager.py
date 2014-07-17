@@ -60,7 +60,11 @@ class BanditManager():
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
         if fdata != None:
             res = b_node_visitor.BanditNodeVisitor(fname, self.logger, b_ma, b_rs, b_ts)
-            res.visit(ast.parse("".join(fdata.readlines())))
+            try:
+                res.visit(ast.parse("".join(fdata.readlines())))
+            except SyntaxError as e:
+                self.logger.error("syntax error while parsing AST from file: %s" % fname)
+                sys.exit(2)
 
     def _init_logger(self, debug=False):
         log_level = logging.INFO

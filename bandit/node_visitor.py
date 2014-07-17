@@ -82,6 +82,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
     def visit_ImportFrom(self, node):
         self.context['lineno'] = node.lineno
         module = node.module
+        if module is None:
+            return self.visit_Import(node)
         for nodename in node.names:
             if nodename.asname:
                 self.context['import_aliases'][nodename.asname] = module + "." + nodename.name
