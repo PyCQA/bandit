@@ -12,7 +12,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
     import_aliases = {}
     qualname = ""
     calldone = False
-    callbasenode = None
     logger = None
     results = None
     tester = None
@@ -21,7 +20,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
     depth = 0
 
     context = None
-    context_template = {'node': None, 'filename': None, 'lineno': None, 'name': None, 'qualname': None, 'module': None, 'imports': None, 'import_aliases': None}
+    context_template = {'node': None, 'filename': None, 'lineno': None,
+                        'name': None, 'qualname': None, 'module': None,
+                        'imports': None, 'import_aliases': None, 'call': None}
 
     def __init__(self, fname, logger, metaast, results, testset):
         self.seen = 0
@@ -37,29 +38,31 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.tester = b_tester.BanditTester(self.logger, self.results, self.testset)
 
     def visit_Call(self, node):
-        self.tester.test_call(node, name=self.qualname)
+        self.context['lineno'] = node.lineno
         if self.qualname == "":
-            self.callbasenode = node
-            self.qualname = b_utils.get_call_name(node)
-        #nested calls
+            self.qualname = b_utils.get_call_name(
+                node, self.import_aliases)
+        self.context['call'] = node
+
+        # nested calls
         if type(node.func) == _ast.Attribute:
             if type(node.func.value) == _ast.Call:
-                self.qualname = ".".join([b_utils.get_call_name(node.func.value), self.qualname])
+                self.qualname = ".".join([b_utils.get_call_name(
+                    node.func.value, self.import_aliases), self.qualname])
             else:
                 self.calldone = True
         else:
             self.calldone = True
 
-        self.context['qualname'] = self.qualname
-        self.context['name'] = self.qualname.split('.')[-1]
+        # fill in our context
+        if self.qualname is not None:
+            self.context['qualname'] = self.qualname
+            self.context['name'] = self.qualname.split('.')[-1]
 
-        #done with nested
+        # done with nested
         if (self.calldone):
             self.logger.debug("PARSED COMPLETE qualname: %s" % self.qualname)
-            self.logger.debug("\tBASENODE: %s" % ast.dump(self.callbasenode))
-            file_detail = (self.fname, node.lineno)
-            #store details on this obj
-            self.tester.test_call_with_name(file_detail, self.qualname, self.callbasenode, self.imports, self.import_aliases)
+            self.logger.debug("\tBASENODE: %s" % ast.dump(self.context['call']))
             self.qualname = ""
             self.calldone = False
         self.tester.run_tests(self.context, 'Call')
