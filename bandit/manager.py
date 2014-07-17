@@ -47,7 +47,7 @@ class BanditManager():
                             sys.exit(2)
                 except IOError as e:
                     self.logger.error("%s" % e.strerror)
-                    b_rs.skip(fname, e.strerror)
+                    self.b_rs.skip(fname, e.strerror)
             sys.stdout.write("]\n")
             sys.stdout.flush()
         else:
