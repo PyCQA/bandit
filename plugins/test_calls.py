@@ -72,3 +72,16 @@ def call_bad_permissions(context):
                            '%s on file (%s).' %
                            (oct(args[1].n), filename))
 
+def call_wildcard_injection(context):
+    system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
+    vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
+    
+    for system_call in system_calls:
+        if system_call in context['qualname']:
+            if(hasattr(context['call'], 'args') and 
+                    len(context['call'].args)==1 and
+                    hasattr(context['call'].args[0], 's')):
+                call_argument = context['call'].args[0].s
+                for vulnerable_func in vulnerable_funcs:
+                    if vulnerable_func in call_argument and '*' in call_argument:
+                        return('ERROR', 'Possible wildcard injection in call: %s' % context['qualname'])
