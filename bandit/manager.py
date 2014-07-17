@@ -47,6 +47,7 @@ class BanditManager():
                             sys.exit(2)
                 except IOError as e:
                     self.logger.error("%s" % e.strerror)
+                    b_rs.skip(fname, e.strerror)
             sys.stdout.write("]\n")
             sys.stdout.flush()
         else:
@@ -63,8 +64,7 @@ class BanditManager():
             try:
                 res.visit(ast.parse("".join(fdata.readlines())))
             except SyntaxError as e:
-                self.logger.error("syntax error while parsing AST from file: %s" % fname)
-                sys.exit(2)
+                b_rs.skip(fname, "syntax error while parsing AST from file")
 
     def _init_logger(self, debug=False):
         log_level = logging.INFO
