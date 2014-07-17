@@ -3,6 +3,7 @@
 ##
 
 from bandit import utils
+import ast
 import _ast
 import stat
 
@@ -80,21 +81,28 @@ def call_wildcard_injection(context):
     system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
 
+    print("\n\n%s" % context['filename'])
+    print(ast.dump(context['call']))
+
     for system_call in system_calls:
         if system_call in context['qualname']:
-            if(hasattr(context['call'], 'args') and
-                    len(context['call'].args) == 1 and
-                    hasattr(context['call'].args[0], 's')):
-                call_argument = context['call'].args[0].s
-                for vulnerable_func in vulnerable_funcs:
-                    if (
-                        vulnerable_func in call_argument
-                        and '*' in call_argument
-                    ):
+            if(hasattr(context['call'], 'args')):
+                call_argument = None
+                if len(context['call'].args) == 1:
+                    if hasattr(context['call'].args[0], 's'):
+                        call_argument = context['call'].args[0].s
+                    elif hasattr(context['call'].args[0], 'elts'):
+                        call_argument = ' '.join([n.s for n in context['call'].args[0].elts])
+                if call_argument is not None:
+                    for vulnerable_func in vulnerable_funcs:
+                        if (
+                            vulnerable_func in call_argument
+                            and '*' in call_argument
+                        ):
 
-                        return(
-                            'ERROR',
-                            'Possible wildcard injection in call: %s' % (
-                                context['qualname']
+                            return(
+                                'ERROR',
+                                'Possible wildcard injection in call: %s' % (
+                                    context['qualname']
+                                )
                             )
-                        )
