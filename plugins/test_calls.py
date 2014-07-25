@@ -21,21 +21,31 @@ from bandit import utils
 import ast
 import _ast
 import stat
+import re
 
 
 def call_bad_names(context):
+    # TODO - move this out into configuration 
     bad_name_sets = [
-        (['pickle.loads', 'pickle.dumps', ],
+        (['pickle\.((loads)|(dumps))', ],
          'Pickle library appears to be in use, possible security issue.'),
-        (['hashlib.md5', ],
+        (['hashlib\.md5', ],
          'Use of insecure MD5 hash function.'),
-        (['subprocess.Popen', ],
+        (['subprocess\.Popen', ],
          'Use of possibly-insecure system call function '
          '(subprocess.Popen).'),
-        (['subprocess.call', ],
+        (['subprocess\.call', ],
          'Use of possibly-insecure system call function '
          '(subprocess.call).'),
-        (['tempfile.mktemp', 'mktemp'],
+        (['os.((exec)|(spawn))((l)|(le)|(lp)|(lpe)|(v)|(ve)|(vp)|(vpe))',],
+         'Use of possibly-insecure system call function '
+         '(os.exec* or os.spawn*).'),
+        (['os.popen((2)|(3)|(4))*', 'popen'],
+         'Use of insecure / deprecated system call function '
+         '(os.popen).'),
+        (['os.startfile', 'startfile'],
+         'Use of insecure system function (os.startfile).'),
+        (['tempfile\.mktemp', 'mktemp'],
          'Use of insecure and deprecated function (mktemp).'),
         (['eval', ],
          'Use of possibly-insecure function - consider using the safer '
@@ -44,9 +54,9 @@ def call_bad_names(context):
 
     # test for 'bad' names defined above
     for bad_name_set in bad_name_sets:
-        for bad_name in bad_name_set[0]:
-            # if name.startswith(bad_name) or name.endswith(bad_name):
-            if context['qualname'] == bad_name:
+        for bad_name_regex in bad_name_set[0]:
+            # various tests we could do here, re.match works for now
+            if re.match(bad_name_regex, context['qualname']):
                 return(bandit.WARN, "%s  %s" %
                        (bad_name_set[1],
                         utils.ast_args_to_str(context['call'].args)))
