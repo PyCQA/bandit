@@ -13,9 +13,15 @@ http://greentreesnakes.readthedocs.org/en/latest/
 
 Usage
 -----
-Example usage across a code tree:
+Example usage across a code tree, showing one line of context for each issue:
 
     find ~/openstack-repo/keystone -name '*.py' | xargs ./main.py -C 1
+
+
+Example usage across the examples/ directory, showing three lines of context and only reporting on the high-severity issues:
+
+    ./main.py examples/*.py -C 3 -lll
+
 
 Usage:
 
