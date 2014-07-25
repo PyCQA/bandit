@@ -62,35 +62,37 @@ class BanditResultStore():
             )
         else:
             tmpstr += "Run started:\n\t%s\n" % datetime.utcnow()
-        if self.count > 0:
-            if is_tty:
-                tmpstr += "%sFiles tested (%s):%s\n\t" % (
-                    utils.color['HEADER'], len(scope),
-                    utils.color['DEFAULT']
-                )
-            else:
-                tmpstr += "Files tested (%s):\n\t" % (len(scope))
+        if is_tty:
+            tmpstr += "%sFiles in scope (%s):%s\n\t" % (
+                utils.color['HEADER'], len(scope),
+                utils.color['DEFAULT']
+            )
+        else:
+            tmpstr += "Files in scope (%s):\n\t" % (len(scope))
 
-            tmpstr += "%s\n" % "\n\t".join(scope)
+        tmpstr += "%s\n" % "\n\t".join(scope)
 
-            if is_tty:
-                tmpstr += "%sFiles skipped (%s):%s" % (
-                    utils.color['HEADER'], len(self.skipped),
-                    utils.color['DEFAULT']
-                )
-            else:
-                tmpstr += "Files skipped (%s):" % len(self.skipped)
+        if is_tty:
+            tmpstr += "%sFiles skipped (%s):%s" % (
+                utils.color['HEADER'], len(self.skipped),
+                utils.color['DEFAULT']
+            )
+        else:
+            tmpstr += "Files skipped (%s):" % len(self.skipped)
 
-            for (fname, reason) in self.skipped:
-                tmpstr += "\n\t%s (%s)" % (fname, reason)
+        for (fname, reason) in self.skipped:
+            tmpstr += "\n\t%s (%s)" % (fname, reason)
 
-            if is_tty:
-                tmpstr += "\n%sTest results:%s\n" % (
-                    utils.color['HEADER'], utils.color['DEFAULT']
-                )
-            else:
-                tmpstr += "\nTest results:\n"
+        if is_tty:
+            tmpstr += "\n%sTest results:%s\n" % (
+                utils.color['HEADER'], utils.color['DEFAULT']
+            )
+        else:
+            tmpstr += "\nTest results:\n"
 
+        if self.count == 0:
+            tmpstr += "\tNo issues identified.\n"
+        else:
             for filename, issues in self.resstore.items():
                 for lineno, issue_type, issue_text in issues:
                     if constants.SEVERITY.index(issue_type) >= level:
@@ -113,12 +115,10 @@ class BanditResultStore():
                                 tmpstr += "\t%3d  %s" % (
                                     i, linecache.getline(filename, i)
                                 )
-            if output_filename is not None:
-                with open(output_filename, 'w') as fout:
-                    fout.write(tmpstr)
-                print("Output written to file: %s" % output_filename)
-            else:
-                print(tmpstr)
-
+        if output_filename is not None:
+            with open(output_filename, 'w') as fout:
+                fout.write(tmpstr)
+            print("Output written to file: %s" % output_filename)
         else:
-            self.logger.error("no results - %s files scanned" % self.count)
+            print(tmpstr)
+
