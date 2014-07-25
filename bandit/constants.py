@@ -14,11 +14,10 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import manager
-import meta_ast
-import node_visitor
-import result_store
-import test_set
-import tester
-import utils
-from constants import *
+
+# list severities in ascending order
+SEVERITY = ['INFO', 'WARN', 'ERROR']
+
+# add each severity to globals, to allow direct access in module name space
+for sev in SEVERITY:
+    globals()[sev] = sev

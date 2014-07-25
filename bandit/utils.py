@@ -21,8 +21,6 @@ import _ast
 
 """Various helper functions."""
 
-sev = ['INFO', 'WARN', 'ERROR']
-
 color = {
     'DEFAULT': '\033[0m',
     'HEADER': '\033[95m',

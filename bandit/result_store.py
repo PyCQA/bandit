@@ -23,6 +23,7 @@ from sys import stdout
 from datetime import datetime
 
 import utils
+import constants
 
 
 class BanditResultStore():
@@ -50,8 +51,8 @@ class BanditResultStore():
     def report(self, scope, lines=0, level=1, output_filename=None):
         is_tty = False if output_filename is not None else stdout.isatty()
 
-        if level >= len(utils.sev):
-            level = len(utils.sev) - 1
+        if level >= len(constants.SEVERITY):
+            level = len(constants.SEVERITY) - 1
         tmpstr = ""
         if is_tty:
             tmpstr += "%sRun started:%s\n\t%s\n" % (
@@ -92,7 +93,7 @@ class BanditResultStore():
 
             for filename, issues in self.resstore.items():
                 for lineno, issue_type, issue_text in issues:
-                    if utils.sev.index(issue_type) >= level:
+                    if constants.SEVERITY.index(issue_type) >= level:
                         if is_tty:
                             tmpstr += "%s>> %s\n - %s::%s%s\n" % (
                                 utils.color.get(
