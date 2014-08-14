@@ -4,7 +4,7 @@ Framework:
  - Consider additional helper functions that could make writing tests simpler
 
 Possible Tests:
- - Taint checking / lack of input validation (object returned by requests.get()/.post() has headers, content, text, json attributes)
+ - XSS exposure (e.g. usage of mark_safe())
  - Hardcoded passwords
  - Logging sensitive information
  - SQL commands into SQL Alchemy
@@ -13,4 +13,5 @@ Possible Tests:
  - SSLv2 forced
  - Sudo calls
  - De-serializing (Pickle?  YAML?  JSON?)
+ - Taint checking / lack of input validation (object returned by requests.get()/.post() has headers, content, text, json attributes)
 
