@@ -25,7 +25,7 @@ import re
 
 
 def call_bad_names(context):
-    # TODO - move this out into configuration 
+    # TODO - move this out into configuration
     bad_name_sets = [
         (['pickle\.((loads)|(dumps))', ],
          'Pickle library appears to be in use, possible security issue.'),
@@ -37,7 +37,7 @@ def call_bad_names(context):
         (['subprocess\.call', ],
          'Use of possibly-insecure system call function '
          '(subprocess.call).'),
-        (['os.((exec)|(spawn))((l)|(le)|(lp)|(lpe)|(v)|(ve)|(vp)|(vpe))',],
+        (['os.((exec)|(spawn))((l)|(le)|(lp)|(lpe)|(v)|(ve)|(vp)|(vpe))', ],
          'Use of possibly-insecure system call function '
          '(os.exec* or os.spawn*).'),
         (['os.popen((2)|(3)|(4))*', 'popen'],

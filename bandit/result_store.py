@@ -125,4 +125,3 @@ class BanditResultStore():
             print("Output written to file: %s" % output_filename)
         else:
             print(tmpstr)
-
