@@ -116,6 +116,12 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.tester.run_tests(self.context, 'ImportFrom')
         super(BanditNodeVisitor, self).generic_visit(node)
 
+    def visit_Str(self, node):
+        self.context['lineno'] = node.lineno
+        self.context['str'] = node.s
+        self.tester.run_tests(self.context, 'Str')
+        super(BanditNodeVisitor, self).generic_visit(node)
+
     def visit(self, node):
         self.logger.debug(ast.dump(node))
         self.metaast.add_node(node, '', self.depth)
