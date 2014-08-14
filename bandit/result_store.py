@@ -21,6 +21,7 @@ from collections import OrderedDict
 import linecache
 from sys import stdout
 from datetime import datetime
+import re
 
 import utils
 import constants
@@ -95,6 +96,9 @@ class BanditResultStore():
         else:
             for filename, issues in self.resstore.items():
                 for lineno, issue_type, issue_text in issues:
+                    issue_line = linecache.getline(filename, lineno)
+                    if re.search(constants.SKIP_RE, issue_line):
+                        continue
                     if constants.SEVERITY.index(issue_type) >= level:
                         if is_tty:
                             tmpstr += "%s>> %s\n - %s::%s%s\n" % (

@@ -14,6 +14,11 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+# flag/s used to mark lines where identified issues should not be reported
+SKIP_FLAGS = ['nosec', ]
+
+# build skip flag re
+SKIP_RE = '#\s*(({0}))$'.format(')|('.join(SKIP_FLAGS))
 
 # list severities in ascending order
 SEVERITY = ['INFO', 'WARN', 'ERROR']
