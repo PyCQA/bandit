@@ -52,11 +52,11 @@ Usage:
 
 
 
-Vulnerabilty Tests
+Vulnerability Tests
 ------------------
 Vulnerability tests are currently defined in files in the plugins/ directory.
 
-Tests are associated with AST node types based on Bandit configuaration file
+Tests are associated with AST node types based on Bandit configuration file
 (bandit.ini), and loaded at run time.
 
 Tests are executed by the BanditNodeVisitor object as it visits each node in
@@ -85,6 +85,9 @@ To write a test:
    that it detects the vulnerability.  Consider variations on how this
    vulnerability might present itself and extend the example file and the test
    function accordingly.
+
+The BanditNodeVisitor object provides a 'context' object that the test
+function can refer to as part of the testing being performed.
 
 
 References
