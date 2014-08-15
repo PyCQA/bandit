@@ -100,7 +100,10 @@ To write a test:
    function accordingly.
 
 The BanditNodeVisitor object provides a 'context' object that the test
-function can refer to as part of the testing being performed.
+function can refer to as part of the testing being performed.  Tests should
+most likely examine the AST node directly, accessible through context['node'].
+
+See links in the 'References' section for documentation of each AST node type.
 
 
 References
