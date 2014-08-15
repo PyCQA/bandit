@@ -52,6 +52,19 @@ Usage:
 
 
 
+Exclusions
+----------
+In the event that a line of code triggers a Bandit issue, but that the line
+has been reviewed and the issue is a false positive or acceptable for some
+other reason, the line can be marked with a '# nosec' and any results
+associated with it will not be reported.
+
+For example, although this line may cause Bandit to report a potential
+security issue, it will not be reported:
+
+    self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
+
+
 Vulnerability Tests
 ------------------
 Vulnerability tests are currently defined in files in the plugins/ directory.
