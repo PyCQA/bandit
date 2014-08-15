@@ -3,13 +3,14 @@ Framework:
  - Build out support for additional AST node types
  - Consider additional helper functions that could make writing tests simpler
 
-Possible Tests:
- - XSS exposure (e.g. usage of mark_safe())
+Existing tests:
+ - Review for accuracy or possible improvements.
+
+New tests:
  - Hardcoded passwords
  - Logging sensitive information
  - SQL commands into SQL Alchemy
  - Weak crypto primitives
- - Port binding 0.0.0.0
  - SSLv2 forced
  - Sudo calls
  - De-serializing (Pickle?  YAML?  JSON?)
