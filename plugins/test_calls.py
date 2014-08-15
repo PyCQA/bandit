@@ -73,6 +73,21 @@ def call_subprocess_popen(context):
                                utils.ast_args_to_str(context['call'].args))
 
 
+def call_shell_true(context):
+    # Alerts on any function call that includes a shell=True parameter
+    # (multiple 'helpers' with varying names have been identified across
+    # various OpenStack projects).
+    if context['qualname'] != 'subprocess.Popen':
+        if hasattr(context['call'], 'keywords'):
+            for k in context['call'].keywords:
+                if k.arg == 'shell' and isinstance(k.value, _ast.Name):
+                    if k.value.id == 'True':
+                        return(bandit.WARN, 'Function call with shell=True '
+                               'parameter identified, possible security '
+                               'issue.  %s'
+                                % utils.ast_args_to_str(context['call'].args))
+
+
 def call_no_cert_validation(context):
     if 'requests' in context['qualname'] and ('get' in context['name'] or
                                               'post' in context['name']):
