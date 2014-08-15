@@ -50,6 +50,9 @@ def call_bad_names(context):
         (['eval', ],
          'Use of possibly-insecure function - consider using the safer '
          'ast.literal_eval().'),
+        (['mark_safe', ],
+         'Use of mark_safe() may expose cross-site scripting vulnerabilities '
+         'and should be reviewed.'),
     ]
 
     # test for 'bad' names defined above
