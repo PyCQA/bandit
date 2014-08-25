@@ -66,7 +66,9 @@ def call_bad_names(context):
 
 
 def call_subprocess_popen(context):
-    if context['qualname'] == 'subprocess.Popen':
+    if (context['qualname'] == 'subprocess.Popen' or
+            context['qualname'] == 'utils.execute' or
+            context['qualname'] == 'utils.execute_with_timeout'):
         if hasattr(context['call'], 'keywords'):
             for k in context['call'].keywords:
                 if k.arg == 'shell' and isinstance(k.value, _ast.Name):
