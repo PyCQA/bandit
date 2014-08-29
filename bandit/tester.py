@@ -16,7 +16,7 @@
 
 
 import utils
-
+import bandit.context as b_context
 
 class BanditTester():
 
@@ -28,10 +28,11 @@ class BanditTester():
         self.testset = testset
         self.last_result = None
 
-    def run_tests(self, context, nodetype):
+    def run_tests(self, raw_context, nodetype):
         tests = self.testset.get_tests(nodetype)
         for test in tests:
-            # execute test with the relevant details to the current node
+            # execute test with the an instance of the context class
+            context = b_context.Context(raw_context)
             result = tests[test]['function'](context)
             if result is not None:
-                self.results.add(context, result)
+                self.results.add(raw_context, result)

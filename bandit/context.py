@@ -15,7 +15,6 @@
 #    under the License.
 
 import _ast
-import re
 from bandit import utils
 
 class Context():
@@ -31,6 +30,16 @@ class Context():
             self._context = dict()
 
     @property
+    def call_args_count(self):
+        '''
+        :return: The number of args a function call has
+        '''
+        if hasattr(self._context['call'], 'args'):
+            return len(self._context['call'].args)
+        else:
+            return None
+
+    @property
     def call_args_string(self):
         '''
         :return: Returns a string representation of the call arguments
@@ -41,15 +50,7 @@ class Context():
             return ''
 
     @property
-    def call_keywords(self):
-        if('call' in self._context and
-               hasattr(self._context['call'],'keywords')):
-            return self._context['call'].keywords
-        else:
-            return None
-
-    @property
-    def function_name(self):
+    def call_function_name(self):
         '''
         :return: The name (not FQ) of a function call
         '''
@@ -59,17 +60,7 @@ class Context():
             return None
 
     @property
-    def num_of_call_args(self):
-        '''
-        :return: The number of args a function call has
-        '''
-        if hasattr(self._context['call'], 'args'):
-            return len(self._context['call'].args)
-        else:
-            return None
-
-    @property
-    def qual_function_name(self):
+    def call_function_name_qual(self):
         '''
         :return: The FQ name of a function call
         '''
@@ -79,7 +70,21 @@ class Context():
             return None
 
     @property
-    def string(self):
+    def call_keywords(self):
+        '''
+        :return: A dictionary of keyword parameters for a call
+        '''
+        if('call' in self._context and
+               hasattr(self._context['call'],'keywords')):
+            return_dict = {}
+            for li in self._context['call'].keywords:
+                return_dict[li.arg] = self._get_literal_value(li.value)
+            return return_dict
+        else:
+            return None
+
+    @property
+    def string_val(self):
         '''
         :return: String value of a standalone string
         '''
@@ -146,12 +151,12 @@ class Context():
         :param argument_name: A string - name of the argument to look for
         :return: String value of the argument if found, None otherwise
         """
-        for k in self.call_keywords:
-            if k.arg == argument_name and isinstance(k.value, _ast.Name):
-                return k.value.id
-        return None
+        if self.call_keywords is not None and argument_name in self.call_keywords:
+            return self.call_keywords[argument_name]
+        else:
+            return None
 
-    def get_call_argument_at_position(self, position_num):
+    def get_call_arg_at_position(self, position_num):
         """
         Returns the positional argument at the specified position (if it exists)
         :param position_num: The index of the argument to return the value for

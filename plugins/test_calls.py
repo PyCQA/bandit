@@ -23,8 +23,7 @@ import stat
 import re
 
 
-def call_bad_names(cur_context):
-    context = b_context.Context(cur_context)
+def call_bad_names(context):
     # TODO - move this out into configuration
     bad_name_sets = [
         (['pickle\.((loads)|(dumps))', ],
@@ -59,17 +58,16 @@ def call_bad_names(cur_context):
     for bad_name_set in bad_name_sets:
         for bad_name_regex in bad_name_set[0]:
             # various tests we could do here, re.match works for now
-            if re.match(bad_name_regex, context.qual_function_name):
+            if re.match(bad_name_regex, context.call_function_name_qual):
                 return(bandit.WARN, "%s  %s" %
                        (bad_name_set[1],
                         context.call_args_string))
 
 
-def call_subprocess_popen(cur_context):
-    context = b_context.Context(cur_context)
-    if (context.qual_function_name == 'subprocess.Popen' or
-            context.qual_function_name == 'utils.execute' or
-            context.qual_function_name == 'utils.execute_with_timeout'):
+def call_subprocess_popen(context):
+    if (context.call_function_name_qual == 'subprocess.Popen' or
+            context.call_function_name_qual == 'utils.execute' or
+            context.call_function_name_qual == 'utils.execute_with_timeout'):
         if context.check_call_arg_value('shell') == 'True':
 
             return(bandit.ERROR, 'Popen call with shell=True '
@@ -78,12 +76,11 @@ def call_subprocess_popen(cur_context):
 
 
 
-def call_shell_true(cur_context):
+def call_shell_true(context):
     # Alerts on any function call that includes a shell=True parameter
     # (multiple 'helpers' with varying names have been identified across
     # various OpenStack projects).
-    context = b_context.Context(cur_context)
-    if context.qual_function_name != 'subprocess.Popen':
+    if context.call_function_name_qual != 'subprocess.Popen':
         if context.check_call_arg_value('shell') == 'True':
 
             return(bandit.WARN, 'Function call with shell=True '
@@ -91,10 +88,10 @@ def call_shell_true(cur_context):
                    context.call_args_string)
 
 
-def call_no_cert_validation(cur_context):
-    context = b_context.Context(cur_context)
-    if('requests' in context.qual_function_name and
-            ('get' in context.function_name or 'post' in context.function_name)):
+def call_no_cert_validation(context):
+    if('requests' in context.call_function_name_qual and
+            ('get' in context.call_function_name or
+                    'post' in context.call_function_name)):
 
         if context.check_call_arg_value('verify') == 'False':
 
@@ -103,14 +100,13 @@ def call_no_cert_validation(cur_context):
                    context.call_args_string)
 
 
-def call_bad_permissions(cur_context):
-    context = b_context.Context(cur_context)
-    if 'chmod' in context.function_name:
-        if context.num_of_call_args == 2:
-            mode = context.get_call_argument_at_position(1)
+def call_bad_permissions(context):
+    if 'chmod' in context.call_function_name:
+        if context.call_args_count == 2:
+            mode = context.get_call_arg_at_position(1)
 
             if mode is not None and (mode & stat.S_IWOTH or mode & stat.S_IXGRP):
-                filename = context.get_call_argument_at_position(0)
+                filename = context.get_call_arg_at_position(0)
                 if filename is None:
                     filename = 'NOT PARSED'
 
@@ -118,16 +114,14 @@ def call_bad_permissions(cur_context):
                        'file (%s).' % (mode, filename))
 
 
-def call_wildcard_injection(cur_context):
-    context = b_context.Context(cur_context)
-
+def call_wildcard_injection(context):
     system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
 
     for system_call in system_calls:
-        if system_call in context.qual_function_name:
-            if context.num_of_call_args == 1:
-                call_argument = context.get_call_argument_at_position(0)
+        if system_call in context.call_function_name_qual:
+            if context.call_args_count == 1:
+                call_argument = context.get_call_arg_at_position(0)
                 argument_string = ''
                 if isinstance(call_argument, list):
                     for li in call_argument:
@@ -143,5 +137,5 @@ def call_wildcard_injection(cur_context):
                         ):
 
                             return(bandit.ERROR, 'Possible wildcard injection '
-                                   'in call: %s' % context.qual_function_name)
+                                   'in call: %s' % context.call_function_name_qual)
 
