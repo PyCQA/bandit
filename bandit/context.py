@@ -84,6 +84,16 @@ class Context():
             return None
 
     @property
+    def node(self):
+        '''
+        :return: The raw AST node associated with the context
+        '''
+        if 'node' in self._context:
+            return self._context['node']
+        else:
+            return None
+
+    @property
     def string_val(self):
         '''
         :return: String value of a standalone string
