@@ -18,14 +18,13 @@
 
 import bandit
 from bandit import utils
-import ast
-import _ast
-import re
-
+import bandit.context as b_context
 
 # Str nodes are pretty simple - likely only basic string-matching tests
 # will be defined here
 
-def str_hardcoded_bind_all_interfaces(context):
-    if context['str'] == '0.0.0.0':
+def str_hardcoded_bind_all_interfaces(cur_context):
+    context = b_context.Context(cur_context)
+
+    if context.string == '0.0.0.0':
         return(bandit.WARN, 'Possible binding to all interfaces')

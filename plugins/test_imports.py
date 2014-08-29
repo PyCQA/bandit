@@ -17,18 +17,20 @@
 """Defines a set of tests targeting Import and ImportFrom nodes in the AST."""
 
 import bandit
+import bandit.context as b_context
 
-
-def import_name_match(context):
+def import_name_match(cur_context):
+    context = b_context.Context(cur_context)
     info_on_import = ['pickle', 'subprocess', 'Crypto']
     for module in info_on_import:
-        if context['module'] == module:
+        if context.is_module_imported(module):
             return(bandit.INFO,
                    "Consider possible security implications"
                    " associated with '%s' module" % module)
 
 
-def import_name_telnetlib(context):
-    if context['module'] == 'telnetlib':
+def import_name_telnetlib(cur_context):
+    context = b_context.Context(cur_context)
+    if context.is_module_imported('telnetlib'):
         return(bandit.ERROR, "Telnet is considered insecure. Use SSH or some"
                " other encrypted protocol.")

@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import context
 import manager
 import meta_ast
 import node_visitor
