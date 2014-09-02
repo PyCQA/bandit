@@ -17,12 +17,12 @@
 """Defines a set of tests targeting Str nodes in the AST."""
 
 import bandit
-from bandit import utils
-import bandit.context as b_context
+from bandit.test_selector import *
 
 # Str nodes are pretty simple - likely only basic string-matching tests
 # will be defined here
 
+@checks_strings
 def str_hardcoded_bind_all_interfaces(context):
     if context.string_val == '0.0.0.0':
-        return(bandit.WARN, 'Possible binding to all interfaces')
+        return bandit.WARN, 'Possible binding to all interfaces'
