@@ -18,8 +18,7 @@
 
 import bandit
 from bandit import utils
-import ast
-import _ast
+import bandit.context as b_context
 import stat
 import re
 
@@ -59,67 +58,60 @@ def call_bad_names(context):
     for bad_name_set in bad_name_sets:
         for bad_name_regex in bad_name_set[0]:
             # various tests we could do here, re.match works for now
-            if re.match(bad_name_regex, context['qualname']):
+            if re.match(bad_name_regex, context.call_function_name_qual):
                 return(bandit.WARN, "%s  %s" %
                        (bad_name_set[1],
-                        utils.ast_args_to_str(context['call'].args)))
+                        context.call_args_string))
 
 
 def call_subprocess_popen(context):
-    if (context['qualname'] == 'subprocess.Popen' or
-            context['qualname'] == 'utils.execute' or
-            context['qualname'] == 'utils.execute_with_timeout'):
-        if hasattr(context['call'], 'keywords'):
-            for k in context['call'].keywords:
-                if k.arg == 'shell' and isinstance(k.value, _ast.Name):
-                    if k.value.id == 'True':
-                        return(bandit.ERROR, 'Popen call with shell=True '
-                               'identified, security issue.  %s' %
-                               utils.ast_args_to_str(context['call'].args))
+    if (context.call_function_name_qual == 'subprocess.Popen' or
+            context.call_function_name_qual == 'utils.execute' or
+            context.call_function_name_qual == 'utils.execute_with_timeout'):
+        if context.check_call_arg_value('shell') == 'True':
+
+            return(bandit.ERROR, 'Popen call with shell=True '
+                   'identified, security issue.  %s' %
+                   context.call_args_string)
+
 
 
 def call_shell_true(context):
     # Alerts on any function call that includes a shell=True parameter
     # (multiple 'helpers' with varying names have been identified across
     # various OpenStack projects).
-    if context['qualname'] != 'subprocess.Popen':
-        if hasattr(context['call'], 'keywords'):
-            for k in context['call'].keywords:
-                if k.arg == 'shell' and isinstance(k.value, _ast.Name):
-                    if k.value.id == 'True':
-                        return(bandit.WARN, 'Function call with shell=True '
-                               'parameter identified, possible security '
-                               'issue.  %s'
-                                % utils.ast_args_to_str(context['call'].args))
+    if context.call_function_name_qual != 'subprocess.Popen':
+        if context.check_call_arg_value('shell') == 'True':
+
+            return(bandit.WARN, 'Function call with shell=True '
+                   'parameter identified, possible security issue.  %s' %
+                   context.call_args_string)
 
 
 def call_no_cert_validation(context):
-    if 'requests' in context['qualname'] and ('get' in context['name'] or
-                                              'post' in context['name']):
-        if hasattr(context['call'], 'keywords'):
-            for k in context['call'].keywords:
-                if k.arg == 'verify' and isinstance(k.value, _ast.Name):
-                    if k.value.id == 'False':
-                        return(bandit.ERROR,
-                               'Requests call with verify=False '
-                               'disabling SSL certificate checks, '
-                               'security issue.   %s' %
-                               utils.ast_args_to_str(context['call'].args))
+    if('requests' in context.call_function_name_qual and
+            ('get' in context.call_function_name or
+                    'post' in context.call_function_name)):
+
+        if context.check_call_arg_value('verify') == 'False':
+
+            return(bandit.ERROR, 'Requests call with verify=False '
+                   'disabling SSL certificate checks, security issue.   %s' %
+                   context.call_args_string)
 
 
 def call_bad_permissions(context):
-    if 'chmod' in context['name']:
-        if (hasattr(context['call'], 'args')):
-            args = context['call'].args
-            if len(args) == 2 and isinstance(args[1],  _ast.Num):
-                if ((args[1].n & stat.S_IWOTH) or
-                   (args[1].n & stat.S_IXGRP)):
-                    filename = args[0].s if hasattr(args[0], 's') \
-                        else 'NOT PARSED'
-                    return(bandit.ERROR,
-                           'Chmod setting a permissive mask '
-                           '%s on file (%s).' %
-                           (oct(args[1].n), filename))
+    if 'chmod' in context.call_function_name:
+        if context.call_args_count == 2:
+            mode = context.get_call_arg_at_position(1)
+
+            if mode is not None and (mode & stat.S_IWOTH or mode & stat.S_IXGRP):
+                filename = context.get_call_arg_at_position(0)
+                if filename is None:
+                    filename = 'NOT PARSED'
+
+                return(bandit.ERROR, 'Chmod setting a permissive mask %s on '
+                       'file (%s).' % (mode, filename))
 
 
 def call_wildcard_injection(context):
@@ -127,32 +119,23 @@ def call_wildcard_injection(context):
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
 
     for system_call in system_calls:
-        if system_call in context['qualname']:
-            if(hasattr(context['call'], 'args')):
-                call_argument = None
-                if len(context['call'].args) == 1:
-                    if hasattr(context['call'].args[0], 's'):
-                        call_argument = context['call'].args[0].s
-                    elif hasattr(context['call'].args[0], 'elts'):
-                        for n in context['call'].args[0].elts:
-                            # We may encounter something other than a
-                            # string argument.  We should just skip
-                            # those elements.
-                            if hasattr(n, 's'):
-                                if call_argument is None:
-                                    call_argument = n.s
-                                else:
-                                    call_argument += ' %s' % n.s
-                if call_argument is not None:
+        if system_call in context.call_function_name_qual:
+            if context.call_args_count == 1:
+                call_argument = context.get_call_arg_at_position(0)
+                argument_string = ''
+                if isinstance(call_argument, list):
+                    for li in call_argument:
+                        argument_string = argument_string + ' %s' % li
+                elif isinstance(call_argument, str):
+                    argument_string = call_argument
+
+                if argument_string != '':
                     for vulnerable_func in vulnerable_funcs:
-                        if (
-                            vulnerable_func in call_argument
-                            and '*' in call_argument
+                        if(
+                                vulnerable_func in argument_string and
+                                '*' in argument_string
                         ):
 
-                            return(
-                                bandit.ERROR,
-                                'Possible wildcard injection in call: %s' % (
-                                    context['qualname']
-                                )
-                            )
+                            return(bandit.ERROR, 'Possible wildcard injection '
+                                   'in call: %s' % context.call_function_name_qual)
+
