@@ -86,7 +86,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
             )
             self.qualname = ""
             self.calldone = False
-        self.tester.run_tests(self.context, 'Call')
+        self.tester.run_tests(self.context, 'functions')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Import(self, node):
@@ -97,7 +97,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
                 self.context['import_aliases'][nodename.asname] = nodename.name
             self.context['imports'].add(nodename.name)
             self.context['module'] = nodename.name
-        self.tester.run_tests(self.context, 'Import')
+        self.tester.run_tests(self.context, 'imports')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_ImportFrom(self, node):
@@ -113,13 +113,13 @@ class BanditNodeVisitor(ast.NodeVisitor):
             self.context['imports'].add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name
-        self.tester.run_tests(self.context, 'ImportFrom')
+        self.tester.run_tests(self.context, 'imports')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Str(self, node):
         self.context['lineno'] = node.lineno
         self.context['str'] = node.s
-        self.tester.run_tests(self.context, 'Str')
+        self.tester.run_tests(self.context, 'strings')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit(self, node):

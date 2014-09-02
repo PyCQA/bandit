@@ -17,12 +17,12 @@
 """Defines a set of tests targeting Call nodes in the AST."""
 
 import bandit
-from bandit import utils
-import bandit.context as b_context
 import stat
 import re
+from bandit.test_selector import *
 
 
+@checks_functions
 def call_bad_names(context):
     # TODO - move this out into configuration
     bad_name_sets = [
@@ -64,6 +64,7 @@ def call_bad_names(context):
                         context.call_args_string))
 
 
+@checks_functions
 def call_subprocess_popen(context):
     if (context.call_function_name_qual == 'subprocess.Popen' or
             context.call_function_name_qual == 'utils.execute' or
@@ -76,6 +77,7 @@ def call_subprocess_popen(context):
 
 
 
+@checks_functions
 def call_shell_true(context):
     # Alerts on any function call that includes a shell=True parameter
     # (multiple 'helpers' with varying names have been identified across
@@ -88,6 +90,7 @@ def call_shell_true(context):
                    context.call_args_string)
 
 
+@checks_functions
 def call_no_cert_validation(context):
     if('requests' in context.call_function_name_qual and
             ('get' in context.call_function_name or
@@ -100,6 +103,7 @@ def call_no_cert_validation(context):
                    context.call_args_string)
 
 
+@checks_functions
 def call_bad_permissions(context):
     if 'chmod' in context.call_function_name:
         if context.call_args_count == 2:
@@ -111,9 +115,10 @@ def call_bad_permissions(context):
                     filename = 'NOT PARSED'
 
                 return(bandit.ERROR, 'Chmod setting a permissive mask %s on '
-                       'file (%s).' % (mode, filename))
+                       'file (%s).' % (oct(mode), filename))
 
 
+@checks_functions
 def call_wildcard_injection(context):
     system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']

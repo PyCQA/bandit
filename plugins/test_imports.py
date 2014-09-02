@@ -17,7 +17,9 @@
 """Defines a set of tests targeting Import and ImportFrom nodes in the AST."""
 
 import bandit
+from bandit.test_selector import *
 
+@checks_imports
 def import_name_match(context):
     info_on_import = ['pickle', 'subprocess', 'Crypto']
     for module in info_on_import:
@@ -27,6 +29,7 @@ def import_name_match(context):
                    " associated with '%s' module" % module)
 
 
+@checks_imports
 def import_name_telnetlib(context):
     if context.is_module_imported('telnetlib'):
         return(bandit.ERROR, "Telnet is considered insecure. Use SSH or some"
