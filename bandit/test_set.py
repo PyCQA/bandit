@@ -17,7 +17,10 @@
 
 import sys
 from collections import OrderedDict
-import ConfigParser
+import glob
+from inspect import getmembers, isfunction
+import importlib
+
 
 
 class BanditTestSet():
@@ -26,51 +29,88 @@ class BanditTestSet():
 
     def __init__(self, logger, test_config):
         self.logger = logger
-        self.load_tests(test_config)
+        self.load_tests()
 
-    def load_tests(self, test_config):
-        config = ConfigParser.RawConfigParser()
-        config.read(test_config)
-        self.tests = OrderedDict()
+    def _get_decorators_list(self):
+        '''
+        Returns a list of decorator function names so that they can be ignored
+        when discovering test function names.
+        '''
+
+        # we need to know the name of the decorators so that we can automatically
+        # ignore them when discovering functions
+        decorator_source_file = "bandit.test_selector"
+        module = importlib.import_module(decorator_source_file)
+
+        return_list = []
+        decorators = [o for o in getmembers(module) if isfunction(o[1])]
+        for d in decorators:
+            return_list.append(d[0])
+        return return_list
+
+    def load_tests(self):
+        '''
+        Loads all tests from the plugins directory and puts them into the tests
+        dictionary.
+        '''
+
+        # tests are a dictionary of functions, grouped by check type
+        # where the key is the function name, and the value is the
+        # function itself.
+        #  eg.   tests[check_type][function_name] = function
+        self.tests = dict()
+
         directory = 'plugins'  # TODO - parametize this at runtime
-        for target in config.sections():
-            for (test_name_func, test_name_mod) in config.items(target):
-                if test_name_func not in self.tests:
-                    self.tests[test_name_func] = {'targets': []}
-                    test_mod = None
-                    try:
-                        test_mod = __import__(
-                            '%s.%s' % (directory, test_name_mod),
-                            fromlist=[directory, ]
-                        )
-                    except ImportError as e:
-                        self.logger.error(
-                            "could not import test module '%s.%s'" %
-                            (directory, test_name_mod)
-                        )
-                        self.logger.error("\tdetail: '%s'" % (str(e)))
-                        del(self.tests[test_name_func])
-                        sys.exit(2)
-                    else:
+
+        decorators = self._get_decorators_list()
+        # try to import each python file in the plugins directory
+        for file in glob.glob1(directory, '*.py'):
+            module_name = file.split('.')[0]
+
+            # try to import the module by name
+            try:
+                module = importlib.import_module(directory + '.' + module_name)
+
+            # if it fails, die
+            except ImportError as e:
+                self.logger.error("could not import test module '%s.%s'" %
+                                  (directory, module_name))
+                self.logger.error("\tdetail: '%s'" % (str(e)))
+                sys.exit(2)
+
+            # otherwise we want to obtain a list of all functions in the module
+            # and add them to our dictionary of tests
+            else:
+                functions_list = [o for o in getmembers(module) if isfunction(o[1])]
+                for cur_func in functions_list:
+
+                    # for every function in the module, add it to the dictionary
+                    # unless it's one of our decorators, in which case ignore it
+                    function_name = cur_func[0]
+                    if function_name not in decorators:
                         try:
-                            test_func = getattr(test_mod, test_name_func)
+                            function = getattr(module, function_name)
                         except AttributeError as e:
-                            self.logger.error("could not locate test function"
-                                              " '%s' in module '%s.%s'" %
-                                              (test_name_func, directory,
-                                               test_name_mod))
-                            del(self.tests[test_name_func])
+                            self.logger.error("could not locate test function "
+                                    " '%s' in module '%s.%s" %
+                                    (function_name, directory, module_name))
                             sys.exit(2)
                         else:
-                            self.tests[test_name_func]['function'] = test_func
-                self.tests[test_name_func]['targets'].append(target)
+                            for check in function._checks:
+                                # if this check type hasn't been encountered yet,
+                                # initialize to empty dictionary
+                                if check not in self.tests:
+                                    self.tests[check] = {}
+                                self.tests[check][function_name] = function
 
-    def get_tests(self, nodetype):
-        self.logger.debug('get_tests called with nodetype: %s' % nodetype)
-        scoped_tests = {}
-        for test in self.tests:
-            if nodetype in self.tests[test]['targets']:
-                scoped_tests[test] = self.tests[test]
+    def get_tests(self, checktype):
+        '''
+        Returns all tests that are of type checktype
+        :param checktype: The type of test to filter on
+        :return: A dictionary of tests which are of the specified type
+        '''
+        self.logger.debug('get_tests called with check type: %s' % checktype)
+        scoped_tests = self.tests[checktype]
         self.logger.debug('get_tests returning scoped_tests : %s' %
                           scoped_tests)
         return scoped_tests

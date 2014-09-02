@@ -28,11 +28,18 @@ class BanditTester():
         self.testset = testset
         self.last_result = None
 
-    def run_tests(self, raw_context, nodetype):
-        tests = self.testset.get_tests(nodetype)
+    def run_tests(self, raw_context, checktype):
+        '''
+        Runs all tests for a certain type of check, for example 'functions',
+        store results in results.
+        :param raw_context: Raw context dictionary
+        :param checktype: The type of checks to run
+        :return: none
+        '''
+        tests = self.testset.get_tests(checktype)
         for test in tests:
             # execute test with the an instance of the context class
             context = b_context.Context(raw_context)
-            result = tests[test]['function'](context)
+            result = tests[test](context)
             if result is not None:
                 self.results.add(raw_context, result)
