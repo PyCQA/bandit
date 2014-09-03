@@ -1,0 +1,6 @@
+profiles:
+    ShellInjection:
+        include:
+            - call_subprocess_popen
+            - call_shell_true
+        exclude:

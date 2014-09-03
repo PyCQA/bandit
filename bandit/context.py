@@ -17,6 +17,7 @@
 import _ast
 from bandit import utils
 
+
 class Context():
     def __init__(self, context_object=None):
         '''
