@@ -18,6 +18,7 @@
 import sys
 import logging
 import ast
+from bandit import config as b_config
 from bandit import result_store as b_result_store
 from bandit import node_visitor as b_node_visitor
 from bandit import test_set as b_test_set
@@ -29,11 +30,24 @@ class BanditManager():
     scope = []
     progress = 50
 
-    def __init__(self, test_config, debug=False):
+    def __init__(self, config_file, debug=False, profile_name=None):
         self.logger = self._init_logger(debug)
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
         self.b_rs = b_result_store.BanditResultStore(self.logger)
-        self.b_ts = b_test_set.BanditTestSet(self.logger, test_config)
+        self.b_conf = b_config.BanditConfig(self.logger, config_file)
+
+        # if the profile name was specified, try to find it in the config
+        if profile_name:
+            if profile_name in self.b_conf.config['profiles']:
+                profile = self.b_conf.config['profiles'][profile_name]
+            else:
+                self.logger.error('unable to find profile (%s) in config file: '
+                                  '%s' % (profile_name, config_file))
+                sys.exit(2)
+        else:
+            profile = None
+
+        self.b_ts = b_test_set.BanditTestSet(self.logger, profile=profile)
 
     def get_logger(self):
         return self.logger

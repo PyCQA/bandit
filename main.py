@@ -20,7 +20,7 @@ import sys
 import argparse
 from bandit import manager as b_manager
 
-default_test_config = 'bandit.ini'
+default_test_config = 'bandit.yaml'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -36,11 +36,16 @@ if __name__ == '__main__':
         help='number of context lines to print'
     )
     parser.add_argument(
-        '-t', '--testconfig', dest='test_config',
+        '-f', '--configfile', dest='config_file',
         action='store', default=default_test_config, type=str,
         help='test config file (default: %s)' % (
             default_test_config
         )
+    )
+    parser.add_argument(
+        '-p', '--profile', dest='profile',
+        action='store', default=None, type=str,
+        help='test set profile in config to use'
     )
     parser.add_argument(
         '-l', '--level', dest='level', action='count',
@@ -58,7 +63,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    b_mgr = b_manager.BanditManager(args.test_config, args.debug)
+    b_mgr = b_manager.BanditManager(args.config_file, args.debug,
+                                    profile_name=args.profile)
     b_mgr.run_scope(args.files)
     if args.debug:
         b_mgr.output_metaast()

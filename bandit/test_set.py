@@ -15,6 +15,7 @@
 #    under the License.
 
 
+import copy
 import sys
 from collections import OrderedDict
 import glob
@@ -22,14 +23,78 @@ from inspect import getmembers, isfunction
 import importlib
 
 
-
 class BanditTestSet():
 
     tests = OrderedDict()
 
-    def __init__(self, logger, test_config):
+    def __init__(self, logger, profile=None):
         self.logger = logger
-        self.load_tests()
+        filter_list = self._filter_list_from_config(profile=profile)
+        self.load_tests(filter=filter_list)
+
+    def _filter_list_from_config(self, profile=None):
+        # will create an (include,exclude) list tuple from a specified name config
+        # section
+
+        # if a profile isn't set, there is nothing to do here
+        if not profile:
+            return_tuple = ([],[])
+            return return_tuple
+
+        # an empty include list means that all are included
+        include_list = []
+        # profile needs to be a dict, include needs to be an element in profile,
+        # include needs to be a list, and 'all' is not in include
+        if(isinstance(profile, dict) and 'include' in profile and
+                isinstance(profile['include'], list) and
+                not 'all' in profile['include']):
+            # there is a list of specific includes, add them to the include list
+            for inc in profile['include']:
+                include_list.append(inc)
+
+        # an empty exclude list means that none are excluded, an exclude list with
+        # 'all' means that all are excluded.  Specifically named excludes are
+        # subtracted from the include list.
+        exclude_list = []
+        if(isinstance(profile, dict) and 'exclude' in profile and
+                isinstance(profile['exclude'], list)):
+            # it's a list, exclude specific tests
+            for exc in profile['exclude']:
+                exclude_list.append(exc)
+
+        return_tuple = (include_list, exclude_list)
+        return return_tuple
+
+    def _filter_tests(self, filter):
+        '''
+        Filters the test set according to the filter tuple which contains
+        include and exclude lists.
+        :param filter: Include, exclude lists tuple
+        :return: -
+        '''
+        include_list = filter[0]
+        exclude_list = filter[1]
+
+        # copy of tests dictionary for removing tests from
+        temp_dict = copy.deepcopy(self.tests)
+
+        # if the include list is empty, we don't have to do anything, if it
+        # isn't, we need to remove all tests except the ones in the list
+        if include_list:
+            for check_type in self.tests:
+                for test_name in self.tests[check_type]:
+                    if test_name not in include_list:
+                        del temp_dict[check_type][test_name]
+
+        # remove the items specified in exclude list
+        if exclude_list:
+            for check_type in self.tests:
+                for test_name in self.tests[check_type]:
+                    if test_name in exclude_list:
+                        del temp_dict[check_type][test_name]
+
+        # copy tests back over from temp copy
+        self.tests = copy.deepcopy(temp_dict)
 
     def _get_decorators_list(self):
         '''
@@ -48,7 +113,7 @@ class BanditTestSet():
             return_list.append(d[0])
         return return_list
 
-    def load_tests(self):
+    def load_tests(self, filter=None):
         '''
         Loads all tests from the plugins directory and puts them into the tests
         dictionary.
@@ -102,6 +167,8 @@ class BanditTestSet():
                                 if check not in self.tests:
                                     self.tests[check] = {}
                                 self.tests[check][function_name] = function
+
+        self._filter_tests(filter)
 
     def get_tests(self, checktype):
         '''

@@ -43,8 +43,10 @@ Usage:
       -h, --help            show this help message and exit
       -C CONTEXT_LINES, --context CONTEXT_LINES
                             number of context lines to print
-      -t TEST_CONFIG, --testconfig TEST_CONFIG
-                            test config file (default: bandit.ini)
+      -f CONFIG_FILE, --configfile TEST_CONFIG
+                            test config file (default: bandit.yaml)
+      -p PROFILE_NAME, --profile PROFILE_NAME
+                            run using specified test profile
       -l, --level           results level filter
       -o OUTPUT_FILE, --output OUTPUT_FILE
                             write report to filename
