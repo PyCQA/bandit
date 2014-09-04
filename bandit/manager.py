@@ -24,17 +24,31 @@ from bandit import node_visitor as b_node_visitor
 from bandit import test_set as b_test_set
 from bandit import meta_ast as b_meta_ast
 
-
 class BanditManager():
 
     scope = []
     progress = 50
 
     def __init__(self, config_file, debug=False, profile_name=None):
+        '''
+        Get logger, config, AST handler, and result store ready
+        :param config_file: A file to read config from
+        :param debug: Whether to show debug messsages or not
+        :param profile_name: Optional name of profile to use (from cmd line)
+        :return:
+        '''
         self.logger = self._init_logger(debug)
+        self.b_conf = b_config.BanditConfig(self.logger, config_file)
+
+        # if the log format string was set in the options, reinitialize
+        if self.b_conf.get_option('log_format'):
+            # have to clear old handler
+            self.logger.handlers = []
+            log_format=self.b_conf.get_option('log_format')
+            self.logger = self._init_logger(debug, log_format=log_format)
+
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
         self.b_rs = b_result_store.BanditResultStore(self.logger)
-        self.b_conf = b_config.BanditConfig(self.logger, config_file)
 
         # if the profile name was specified, try to find it in the config
         if profile_name:
@@ -49,35 +63,65 @@ class BanditManager():
 
         self.b_ts = b_test_set.BanditTestSet(self.logger, profile=profile)
 
+        # if show_progress_every config has been set, use it, otherwise default
+        if self.b_conf.get_option('show_progress_every'):
+            self.progress = self.b_conf.get_option('show_progress_every')
+
+        # set other options from config
+
+
+    @property
     def get_logger(self):
         return self.logger
 
+    @property
     def get_resultstore(self):
         return self.b_rs
 
     def output_results(self, lines, level, output_filename):
+        '''
+        Outputs results from the result store
+        :param lines: How many surrounding lines to show per result
+        :param level: Which levels to show (info, warning, error)
+        :param output_filename: File to store results
+        :return: -
+        '''
         self.b_rs.report(
             scope=self.scope, lines=lines, level=level,
             output_filename=output_filename
         )
 
     def output_metaast(self):
+        '''
+        Outputs all the nodes from the Meta AST
+        '''
         self.b_ma.report()
 
     def run_scope(self, scope):
+        '''
+        Runs through all files in the scope
+        :param scope: A set of all files to inspect
+        :return: -
+        '''
         if scope:
             self.scope = scope
+
+            # if there are a decent amount of files to look at, display progress
             if len(scope) > self.progress:
                 sys.stdout.write("%s [" % len(scope))
+
             for i, fname in enumerate(scope):
                 self.logger.debug("working on file : %s" % fname)
+
                 if len(scope) > self.progress:
+                    # is it time to update the progress indicator?
                     if i % self.progress == 0:
                         sys.stdout.write("%s.. " % i)
                         sys.stdout.flush()
                 try:
                     with open(fname, 'rU') as fdata:
                         try:
+                            # parse the current file
                             self._execute_ast_visitor(
                                 fname, fdata, self.b_ma,
                                 self.b_rs, self.b_ts
@@ -86,9 +130,11 @@ class BanditManager():
                             sys.exit(2)
                 except IOError as e:
                     self.b_rs.skip(fname, e.strerror)
+
             if len(scope) > self.progress:
                 sys.stdout.write("]\n")
                 sys.stdout.flush()
+
         else:
             self.logger.info("no filename/s provided, working from stdin")
             try:
@@ -100,6 +146,15 @@ class BanditManager():
                 sys.exit(1)
 
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
+        '''
+        Execute AST parse on each file
+        :param fname: The name of the file being parsed
+        :param fdata: The file data of the file being parsed
+        :param b_ma: The class Meta AST instance
+        :param b_rs: The class result store instance
+        :param b_ts: The class test set instance
+        :return:
+        '''
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
                 fname, self.logger, b_ma, b_rs, b_ts
@@ -109,15 +164,26 @@ class BanditManager():
             except SyntaxError as e:
                 b_rs.skip(fname, "syntax error while parsing AST from file")
 
-    def _init_logger(self, debug=False):
+    def _init_logger(self, debug=False, log_format=None):
+        '''
+        Initialize the logger
+        :param debug: Whether to enable debug mode
+        :return: An instantiated logging instance
+        '''
         log_level = logging.INFO
         if debug:
             log_level = logging.DEBUG
-        log_format = '[%(module)s]\t%(levelname)s\t%(message)s'
+
+        if not log_format:
+            # default log format
+            log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
+        else:
+            log_format_string = log_format
+
         logger = logging.getLogger()
         logger.setLevel(log_level)
         handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter(log_format))
+        handler.setFormatter(logging.Formatter(log_format_string))
         logger.addHandler(handler)
         logger.debug("logging initialized")
         return logger

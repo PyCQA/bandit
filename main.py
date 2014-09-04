@@ -15,8 +15,6 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-
-import sys
 import argparse
 from bandit import manager as b_manager
 
@@ -45,7 +43,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-p', '--profile', dest='profile',
         action='store', default=None, type=str,
-        help='test set profile in config to use'
+        help='test set profile in config to use (default none)'
     )
     parser.add_argument(
         '-l', '--level', dest='level', action='count',
@@ -69,3 +67,4 @@ if __name__ == '__main__':
     if args.debug:
         b_mgr.output_metaast()
     b_mgr.output_results(args.context_lines, args.level - 1, args.output_file)
+
