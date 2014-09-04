@@ -21,6 +21,7 @@ import yaml
 class BanditConfig():
 
     _config = dict()
+    _logger = None
 
     def __init__(self, logger, config_file):
         '''
@@ -30,6 +31,9 @@ class BanditConfig():
         :param config_file: The Bandit yaml config file
         :return: -
         '''
+
+        self._logger = logger
+
         try:
             f = open(config_file, 'r')
         except IOError:
@@ -38,6 +42,22 @@ class BanditConfig():
         else:
             # yaml parser does its own exception handling
             self._config = yaml.load(f)
+
+    def get_option(self, option_string):
+        option_levels = option_string.split('.')
+        cur_item = self._config
+        for level in option_levels:
+            if level in cur_item:
+                try:
+                    cur_item = cur_item[level]
+                except Exception:
+                    self._logger.error("error while accessing config property: %s" %
+                                 option_string)
+                    return None
+            else:
+                return None
+
+        return cur_item
 
     @property
     def config(self):

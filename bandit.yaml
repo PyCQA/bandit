@@ -1,3 +1,9 @@
+# optional: after how many files to update progress
+show_progress_every: 100
+
+# optional: log format string
+log_format: "[%(module)s]\t%(levelname)s\t%(message)s"
+
 profiles:
     ShellInjection:
         include:
