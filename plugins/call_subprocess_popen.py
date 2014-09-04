@@ -14,23 +14,16 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""Defines a set of tests targeting Import and ImportFrom nodes in the AST."""
-
 import bandit
 from bandit.test_selector import *
 
-@checks_imports
-def import_name_match(context):
-    info_on_import = ['pickle', 'subprocess', 'Crypto']
-    for module in info_on_import:
-        if context.is_module_imported(module):
-            return(bandit.INFO,
-                   "Consider possible security implications"
-                   " associated with '%s' module" % module)
+@checks_functions
+def call_subprocess_popen(context):
+    if (context.call_function_name_qual == 'subprocess.Popen' or
+            context.call_function_name_qual == 'utils.execute' or
+            context.call_function_name_qual == 'utils.execute_with_timeout'):
+        if context.check_call_arg_value('shell') == 'True':
 
-
-@checks_imports
-def import_name_telnetlib(context):
-    if context.is_module_imported('telnetlib'):
-        return(bandit.ERROR, "Telnet is considered insecure. Use SSH or some"
-               " other encrypted protocol.")
+            return(bandit.ERROR, 'Popen call with shell=True '
+                   'identified, security issue.  %s' %
+                   context.call_args_string)
