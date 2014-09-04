@@ -14,13 +14,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-"""Defines a set of tests targeting Str nodes in the AST."""
-
 import bandit
 from bandit.test_selector import *
-
-# Str nodes are pretty simple - likely only basic string-matching tests
-# will be defined here
 
 @checks_strings
 def str_hardcoded_bind_all_interfaces(context):
