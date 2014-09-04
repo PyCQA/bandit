@@ -129,7 +129,7 @@ class Context():
         elif isinstance(literal, _ast.Tuple):
             return_tuple = tuple()
             for ti in literal.elts:
-                return_tuple = return_tuple + self._get_literal_value(ti)
+                return_tuple = return_tuple + (self._get_literal_value(ti),)
             return return_tuple
 
         elif isinstance(literal, _ast.Set):
