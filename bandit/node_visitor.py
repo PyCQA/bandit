@@ -57,6 +57,12 @@ class BanditNodeVisitor(ast.NodeVisitor):
         )
 
     def visit_Call(self, node):
+        '''
+        Visitor for AST Call nodes: add relevant information about the node to
+        the context for use in tests which inspect function calls.
+        :param node: The node that is being inspected
+        :return: -
+        '''
         self.context['lineno'] = node.lineno
         if self.qualname == "":
             self.qualname = b_utils.get_call_name(
@@ -90,6 +96,12 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Import(self, node):
+        '''
+        Visitor for AST Import nodes: add relevant information about the node to
+        the context for use in tests which inspect imports.
+        :param node: The node that is being inspected
+        :return: -
+        '''
         self.context['lineno'] = node.lineno
         self.logger.debug("visit_Import called (%s)" % ast.dump(node))
         for nodename in node.names:
@@ -101,6 +113,12 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_ImportFrom(self, node):
+        '''
+        Visitor for AST Import nodes: add relevant information about the node to
+        the context for use in tests which inspect imports.
+        :param node: The node that is being inspected
+        :return: -
+        '''
         self.context['lineno'] = node.lineno
         module = node.module
         if module is None:
@@ -117,12 +135,23 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Str(self, node):
+        '''
+        Visitor for AST String nodes: add relevant information about the node to
+        the context for use in tests which inspect strings.
+        :param node: The node that is being inspected
+        :return: -
+        '''
         self.context['lineno'] = node.lineno
         self.context['str'] = node.s
         self.tester.run_tests(self.context, 'strings')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit(self, node):
+        '''
+        Generic visitor, add the node to the node collection, and log it
+        :param node: The node that is being inspected
+        :return: -
+        '''
         self.logger.debug(ast.dump(node))
         self.metaast.add_node(node, '', self.depth)
         self.context = copy.copy(self.context_template)

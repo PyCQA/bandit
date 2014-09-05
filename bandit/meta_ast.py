@@ -26,6 +26,13 @@ class BanditMetaAst():
         self.logger = logger
 
     def add_node(self, node, parent_id, depth):
+        '''
+        Add a node to the AST node collection
+        :param node: The AST node to add
+        :param parent_id: The ID of the node's parent
+        :param depth: The depth of the node
+        :return: -
+        '''
         node_id = hex(id(node))
         self.logger.debug('adding node : %s [%s]' % (node_id, depth))
         self.nodes[node_id] = {
@@ -33,6 +40,10 @@ class BanditMetaAst():
         }
 
     def report(self):
+        '''
+        Dumps (prints) a listing of all of the nodes for debugging purposes
+        :return: -
+        '''
         tmpstr = ""
         for k, v in self.nodes.items():
             tmpstr += "Node: %s\n" % k

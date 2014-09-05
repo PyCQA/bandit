@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import constants
 import sys
 import yaml
 
@@ -22,6 +23,7 @@ class BanditConfig():
 
     _config = dict()
     _logger = None
+    _settings = dict()
 
     def __init__(self, logger, config_file):
         '''
@@ -43,7 +45,17 @@ class BanditConfig():
             # yaml parser does its own exception handling
             self._config = yaml.load(f)
 
+        self._init_settings()
+
     def get_option(self, option_string):
+        '''
+        Returns the option from the config specified by the option_string.
+        '.' can be used to denote levels, for example to retrieve the options
+        from the 'a' profile you can use 'profiles.a'
+        :param option_string: The string specifying the option to retrieve
+        :return: The object specified by the option_string, or None if it can't
+        be found.
+        '''
         option_levels = option_string.split('.')
         cur_item = self._config
         for level in option_levels:
@@ -59,6 +71,12 @@ class BanditConfig():
 
         return cur_item
 
+    def get_setting(self, setting_name):
+        if setting_name in self._settings:
+            return self._settings[setting_name]
+        else:
+            return None
+
     @property
     def config(self):
         '''
@@ -66,3 +84,71 @@ class BanditConfig():
         :return: Config dictionary
         '''
         return self._config
+
+    def _init_settings(self):
+        '''
+        This function calls a set of other functions (one per setting) to build
+        out the _settings dictionary.  Each other function will set values from
+        the config (if set), otherwise use defaults (from constants if possible).
+        :return: -
+        '''
+        self._init_progress_increment()
+        self._init_output_colors()
+        self._init_plugins_dir()
+        self._init_plugin_name_pattern()
+
+    def _init_progress_increment(self):
+        '''
+        sets settings['progress'] from default or config file
+        '''
+        progress = constants.progress_increment
+        if self.get_option('show_progress_every'):
+            progress = self.get_option('show_progress_every')
+        self._settings['progress'] = progress
+
+    def _init_output_colors(self):
+        '''
+        sets settings['color_xxx'] where xxx is DEFAULT, HEADER, INFO, WARN, ERROR
+        '''
+        colors = ['HEADER', 'DEFAULT', 'INFO', 'WARN', 'ERROR']
+        color_settings = dict()
+
+        for color in colors:
+            # grab the default color from constant
+            color_settings[color] = constants.color[color]
+
+            # check if the option has been set in config file
+            options_string = 'output_colors.' + color
+            if self.get_option(options_string):
+                color_string = self.get_option(options_string)
+                # some manipulation is needed because escape string doesn't
+                # come back from yaml correctly
+                if color_string.find('['):
+                    right_half = color_string[color_string.find('['):]
+                    left_half = '\033'
+                    color_settings[color] = left_half + right_half
+
+            # update the settings dict with the color value
+            settings_string = 'color_' + color
+            self._settings[settings_string] = color_settings[color]
+
+    def _init_plugins_dir(self):
+        '''
+        sets settings['plugins_dir'] from default or config file
+        '''
+        plugins_dir = constants.plugins_dir
+        if self.get_option('plugins_dir'):
+            plugins_dir = self.get_option('plugins_dir')
+        self._settings['plugins_dir'] = plugins_dir
+
+    def _init_plugin_name_pattern(self):
+        '''
+        sets settings['plugin_name_pattern'] from default or config file
+        '''
+        plugin_name_pattern = constants.plugin_name_pattern
+        if self.get_option('plugin_name_pattern'):
+            plugin_name_pattern = self.get_option('plugin_name_pattern')
+        self._settings['plugin_name_pattern'] = plugin_name_pattern
+
+
+

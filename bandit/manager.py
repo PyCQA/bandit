@@ -27,7 +27,6 @@ from bandit import meta_ast as b_meta_ast
 class BanditManager():
 
     scope = []
-    progress = 50
 
     def __init__(self, config_file, debug=False, profile_name=None):
         '''
@@ -47,8 +46,10 @@ class BanditManager():
             log_format=self.b_conf.get_option('log_format')
             self.logger = self._init_logger(debug, log_format=log_format)
 
+
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
-        self.b_rs = b_result_store.BanditResultStore(self.logger)
+        self.b_rs = b_result_store.BanditResultStore(self.logger, self.b_conf)
+
 
         # if the profile name was specified, try to find it in the config
         if profile_name:
@@ -61,13 +62,11 @@ class BanditManager():
         else:
             profile = None
 
-        self.b_ts = b_test_set.BanditTestSet(self.logger, profile=profile)
+        self.b_ts = b_test_set.BanditTestSet(self.logger, config= self.b_conf,
+                                             profile=profile)
 
-        # if show_progress_every config has been set, use it, otherwise default
-        if self.b_conf.get_option('show_progress_every'):
-            self.progress = self.b_conf.get_option('show_progress_every')
-
-        # set other options from config
+        # set the increment of after how many files to show progress
+        self.progress = self.b_conf.get_setting('progress')
 
 
     @property

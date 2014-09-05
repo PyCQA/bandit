@@ -14,6 +14,24 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+# default output text colors
+color = {
+    'DEFAULT': '\033[0m',
+    'HEADER': '\033[95m',
+    'INFO': '\033[94m',
+    'WARN': '\033[93m',
+    'ERROR': '\033[91m',
+}
+
+# default plugin name pattern
+plugin_name_pattern = '*.py'
+
+# default progress increment
+progress_increment = 50
+
+# default plugins dir
+plugins_dir = 'plugins'
+
 # flag/s used to mark lines where identified issues should not be reported
 SKIP_FLAGS = ['nosec', ]
 
