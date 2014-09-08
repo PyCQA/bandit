@@ -1,5 +1,4 @@
 Framework:
- - Rework configuration (JSON, perhaps) to support global and per-check scope
  - Build out support for additional AST node types
  - Consider additional helper functions that could make writing tests simpler
 
@@ -14,5 +13,5 @@ New tests:
  - SSLv2 forced
  - Sudo calls
  - De-serializing (Pickle?  YAML?  JSON?)
- - Taint checking / lack of input validation (object returned by requests.get()/.post() has headers, content, text, json attributes)
+ - Taint checking / lack of input validation (e.g. object returned by requests.get()/.post() has headers, content, text, json attributes) - this will likely get complicated
 
