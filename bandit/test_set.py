@@ -163,12 +163,13 @@ class BanditTestSet():
                                     (function_name, directory, module_name))
                             sys.exit(2)
                         else:
-                            for check in function._checks:
-                                # if this check type hasn't been encountered yet,
-                                # initialize to empty dictionary
-                                if check not in self.tests:
-                                    self.tests[check] = {}
-                                self.tests[check][function_name] = function
+                            if hasattr(function, '_checks'):
+                                for check in function._checks:
+                                    # if this check type hasn't been encountered yet,
+                                    # initialize to empty dictionary
+                                    if check not in self.tests:
+                                        self.tests[check] = {}
+                                    self.tests[check][function_name] = function
 
         self._filter_tests(filter)
 

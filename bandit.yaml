@@ -24,3 +24,38 @@ profiles:
             - call_subprocess_popen
             - call_shell_true
         exclude:
+
+
+call_bad_names:
+    bad_name_sets:
+        - pickle:
+            qualname: pickle.loads, pickle.dumps
+            message: "Pickle library appears to be in use, possible security issue."
+        - md5:
+            qualname: hashlib.md5
+            message: "Use of insecure MD5 hash function."
+        - subprocess_popen:
+            qualname: subprocess.Popen
+            message: "Use of possibly insecure system call function (subprocess.Popen)."
+        - subprocess_call:
+            qualname: subprocess.call
+            message: "Use of possibly insecure system call function (subprocess.call)."
+        - os_exec:
+            qualname: os.exec, os.spawn
+            params: l, le, lp, lpe, v, ve, vp, vpe
+            message: "Use of possibly insecure system call function (os.exec or os.spawn)."
+        - os_popen:
+            qualname: os.popen
+            message: "Use of insecure / deprecated system call function (os.popen)."
+        - os_startfile_q:
+            qualname: os.startfile
+            message: "Use of insecure system function (os.startfile)."
+        - mktemp_q:
+            qualname: tempfile.mktemp
+            message: "Use of insecure and deprecated function (mktemp)."
+        - eval:
+            name: eval
+            message: "Use of possibly insecure function - consider using safer ast.literal_eval."
+        - mark_safe:
+            name: mark_safe
+            message: "Use of mark_safe() may expose cross-site scripting vulnerabilities and should be reviewed."

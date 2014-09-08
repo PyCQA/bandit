@@ -19,7 +19,7 @@ def checks_functions(func):
     Use of this delegate before a test function indicates that it should be
     called any time a function call is encountered.
     '''
-    if not (hasattr(func, "_checks") and isinstance(func._checks, list)):
+    if not hasattr(func, "_checks"):
         func._checks = []
     func._checks.append("functions")
     return func
@@ -29,7 +29,7 @@ def checks_imports(func):
     Use of this delegate before a test function indicates that it should be
     called any time an import is encountered.
     '''
-    if not (hasattr(func, "_checks") and isinstance(func._checks, list)):
+    if not hasattr(func, "_checks"):
         func._checks = []
     func._checks.append("imports")
     return func
@@ -39,9 +39,16 @@ def checks_strings(func):
     Use of this delegate before a test function indicates that it should be
     called any time a string value is encountered.
     '''
-    if not (hasattr(func, "_checks") and isinstance(func._checks, list)):
+    if not hasattr(func, "_checks"):
         func._checks = []
     func._checks.append("strings")
     return func
 
-
+def takes_config(func):
+    '''
+    Use of this delegate before a test function indicates that it should be
+    passed data from the config file
+    '''
+    if not hasattr(func, "_takes_config"):
+        func._takes_config = True
+    return func

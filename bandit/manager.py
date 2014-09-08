@@ -62,7 +62,7 @@ class BanditManager():
         else:
             profile = None
 
-        self.b_ts = b_test_set.BanditTestSet(self.logger, config= self.b_conf,
+        self.b_ts = b_test_set.BanditTestSet(self.logger, config=self.b_conf,
                                              profile=profile)
 
         # set the increment of after how many files to show progress
@@ -156,7 +156,7 @@ class BanditManager():
         '''
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
-                fname, self.logger, b_ma, b_rs, b_ts
+                fname, self.logger, self.b_conf, b_ma, b_rs, b_ts
             )
             try:
                 res.visit(ast.parse("".join(fdata.readlines())))

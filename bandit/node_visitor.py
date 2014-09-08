@@ -27,8 +27,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
     imports = set()
     import_aliases = {}
-    qualname = ""
-    calldone = False
     logger = None
     results = None
     tester = None
@@ -41,10 +39,11 @@ class BanditNodeVisitor(ast.NodeVisitor):
                         'name': None, 'qualname': None, 'module': None,
                         'imports': None, 'import_aliases': None, 'call': None}
 
-    def __init__(self, fname, logger, metaast, results, testset):
+    def __init__(self, fname, logger, config, metaast, results, testset):
         self.seen = 0
         self.fname = fname
         self.logger = logger
+        self.config = config
         self.metaast = metaast
         self.results = results
         self.testset = testset
@@ -53,7 +52,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.import_aliases = {}
         self.context_template['import_aliases'] = self.import_aliases
         self.tester = b_tester.BanditTester(
-            self.logger, self.results, self.testset
+            self.logger, self.config, self.results, self.testset
         )
 
     def visit_Call(self, node):
@@ -63,35 +62,20 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
+
+        # NOTE: We won't get here from any of the Python built in functions
+
         self.context['lineno'] = node.lineno
-        if self.qualname == "":
-            self.qualname = b_utils.get_call_name(
-                node, self.import_aliases)
         self.context['call'] = node
 
-        # nested calls
-        if type(node.func) == _ast.Attribute:
-            if type(node.func.value) == _ast.Call:
-                self.qualname = ".".join([b_utils.get_call_name(
-                    node.func.value, self.import_aliases), self.qualname])
-            else:
-                self.calldone = True
-        else:
-            self.calldone = True
+        self.logger.debug("visit_Call called (%s)" % ast.dump(node))
 
-        # fill in our context
-        if self.qualname is not None:
-            self.context['qualname'] = self.qualname
-            self.context['name'] = self.qualname.split('.')[-1]
+        qualname = b_utils.get_call_name(node, self.import_aliases)
+        name = qualname.split('.')[-1]
 
-        # done with nested
-        if (self.calldone):
-            self.logger.debug("PARSED COMPLETE qualname: %s" % self.qualname)
-            self.logger.debug(
-                "\tBASENODE: %s" % ast.dump(self.context['call'])
-            )
-            self.qualname = ""
-            self.calldone = False
+        self.context['qualname'] = qualname
+        self.context['name'] = name
+
         self.tester.run_tests(self.context, 'functions')
         super(BanditNodeVisitor, self).generic_visit(node)
 
@@ -102,6 +86,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
+
         self.context['lineno'] = node.lineno
         self.logger.debug("visit_Import called (%s)" % ast.dump(node))
         for nodename in node.names:
@@ -119,10 +104,14 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
+
         self.context['lineno'] = node.lineno
+        self.logger.debug("visit_ImportFrom called (%s)" % ast.dump(node))
+
         module = node.module
         if module is None:
             return self.visit_Import(node)
+
         for nodename in node.names:
             if nodename.asname:
                 self.context['import_aliases'][nodename.asname] = (
@@ -143,6 +132,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         '''
         self.context['lineno'] = node.lineno
         self.context['str'] = node.s
+        self.logger.debug("visit_Str called (%s)" % ast.dump(node))
+
         self.tester.run_tests(self.context, 'strings')
         super(BanditNodeVisitor, self).generic_visit(node)
 
@@ -154,9 +145,11 @@ class BanditNodeVisitor(ast.NodeVisitor):
         '''
         self.logger.debug(ast.dump(node))
         self.metaast.add_node(node, '', self.depth)
+
         self.context = copy.copy(self.context_template)
         self.context['node'] = node
         self.context['filename'] = self.fname
+
         self.seen += 1
         self.logger.debug("entering: %s %s [%s]" % (
             hex(id(node)), type(node), self.depth)
