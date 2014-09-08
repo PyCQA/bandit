@@ -71,8 +71,10 @@ Vulnerability Tests
 ------------------
 Vulnerability tests are currently defined in files in the plugins/ directory.
 
-Tests are associated with AST node types based on Bandit configuration file
-(bandit.ini), and loaded at run time.
+Tests are written in Python and are autodiscovered from the plugins directory.
+Each test can examine one or more type of Python statements.  Tests are marked
+with the types of Python statements they examine (for example: function call,
+string, import, etc).
 
 Tests are executed by the BanditNodeVisitor object as it visits each node in
 the AST.  
@@ -86,26 +88,21 @@ Writing Tests
 To write a test:
  - Identify a vulnerability to build a test for, and create a new file in
    examples/ that contains one or more cases of that vulnerability.
- - Consider the vulnerability you're testing for, and identify the AST node
-   type that might best be used to detect that vulnerability.
- - Check that the Bandit framework already has a node visitor defined for that
-   node type.  Look at bandit/node\_visitor.py and check that a
-   visit\_[typename] function is defined.
- - Add a new function to the relevant plugins/test\_\*.py file, that conducts
-   the relevant test and returns an appropriate result.  Review existing tests
-   for examples of what this looks like.
- - Modify bandit.ini to include the new function in tests targeting the node
-   type in question.
+ - Consider the vulnerability you're testing for, mark the function with one
+   or more of the appropriate decorators (currently the following exist):
+      - @checks_functions
+	  - @checks_imports
+	  - @checks_strings
+ - Create a new Python source file to contain your test, you can reference
+   existing tests for examples.
+ - The function that you create should take a parameter "context" which is
+   an instance of the context class you can query for information about the
+   current element being examined.  You can also get the raw AST node for
+   more advanced use cases.  Please see the context.py file for more.
  - Execute Bandit against the test file you defined in examples/ and ensure
    that it detects the vulnerability.  Consider variations on how this
    vulnerability might present itself and extend the example file and the test
    function accordingly.
-
-The BanditNodeVisitor object provides a 'context' object that the test
-function can refer to as part of the testing being performed.  Tests should
-most likely examine the AST node directly, accessible through context['node'].
-
-See links in the 'References' section for documentation of each AST node type.
 
 
 References
