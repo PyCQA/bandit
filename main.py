@@ -29,12 +29,12 @@ if __name__ == '__main__':
         help='source file/s to be tested'
     )
     parser.add_argument(
-        '-C', '--context', dest='context_lines',
+        '-n', '--number', dest='context_lines',
         action='store', default=0, type=int,
         help='number of context lines to print'
     )
     parser.add_argument(
-        '-f', '--configfile', dest='config_file',
+        '-c', '--configfile', dest='config_file',
         action='store', default=default_test_config, type=str,
         help='test config file (default: %s)' % (
             default_test_config
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-p', '--profile', dest='profile',
         action='store', default=None, type=str,
-        help='test set profile in config to use (default none)'
+        help='test set profile in config to use (defaults to all tests)'
     )
     parser.add_argument(
         '-l', '--level', dest='level', action='count',
