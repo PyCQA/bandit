@@ -19,20 +19,21 @@ Usage
 -----
 Example usage across a code tree, showing one line of context for each issue:
 
-    find ~/openstack-repo/keystone -name '*.py' | xargs ./main.py -C 1
+    find ~/openstack-repo/keystone -name '*.py' | xargs ./main.py -n 1
 
 
 Example usage across the examples/ directory, showing three lines of context
 and only reporting on the high-severity issues:
 
-    ./main.py examples/*.py -C 3 -lll
+    ./main.py examples/*.py -n 3 -lll
 
 
 Usage:
 
     $ ./main.py -h
-    usage: main.py [-h] [-C CONTEXT_LINES] [-t TEST_CONFIG] [-l] [-o OUTPUT_FILE]
-                   [-d] file [file ...]
+    usage: main.py [-h] [-n CONTEXT_LINES] [-c CONFIG_FILE] [-p PROFILE] [-l]
+                   [-o OUTPUT_FILE] [-d]
+                   file [file ...]
 
     Bandit - a Python source code analyzer.
 
@@ -41,17 +42,27 @@ Usage:
 
     optional arguments:
       -h, --help            show this help message and exit
-      -C CONTEXT_LINES, --context CONTEXT_LINES
+      -n CONTEXT_LINES, --number CONTEXT_LINES
                             number of context lines to print
-      -f CONFIG_FILE, --configfile TEST_CONFIG
+      -c CONFIG_FILE, --configfile CONFIG_FILE
                             test config file (default: bandit.yaml)
-      -p PROFILE_NAME, --profile PROFILE_NAME
-                            run using specified test profile
+      -p PROFILE, --profile PROFILE
+                            test set profile in config to use (defaults to all
+                            tests)
       -l, --level           results level filter
       -o OUTPUT_FILE, --output OUTPUT_FILE
                             write report to filename
       -d, --debug           turn on debug mode
 
+
+Configuration
+-------------
+The default configuration file is bandit.yaml.  This specifies a number of
+global options, and allows the creation of separate test profiles to include
+or exclude specific tests when Bandit is run.
+
+Additional configuration files can be created and passed to Bandit as a
+command line argument.
 
 
 Exclusions
@@ -68,7 +79,7 @@ security issue, it will not be reported:
 
 
 Vulnerability Tests
-------------------
+-------------------
 Vulnerability tests are currently defined in files in the plugins/ directory.
 
 Tests are written in Python and are autodiscovered from the plugins directory.
@@ -99,6 +110,7 @@ To write a test:
    an instance of the context class you can query for information about the
    current element being examined.  You can also get the raw AST node for
    more advanced use cases.  Please see the context.py file for more.
+ - Extend your Bandit configuration file as needed to support your new test.
  - Execute Bandit against the test file you defined in examples/ and ensure
    that it detects the vulnerability.  Consider variations on how this
    vulnerability might present itself and extend the example file and the test
