@@ -24,7 +24,8 @@ def call_bad_permissions(context):
         if context.call_args_count == 2:
             mode = context.get_call_arg_at_position(1)
 
-            if mode is not None and (mode & stat.S_IWOTH or mode & stat.S_IXGRP):
+            if(mode is not None and type(mode) == int and
+                   (mode & stat.S_IWOTH or mode & stat.S_IXGRP)):
                 filename = context.get_call_arg_at_position(0)
                 if filename is None:
                     filename = 'NOT PARSED'
