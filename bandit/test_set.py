@@ -34,26 +34,26 @@ class BanditTestSet():
         self.load_tests(filter=filter_list)
 
     def _filter_list_from_config(self, profile=None):
-        # will create an (include,exclude) list tuple from a specified name config
-        # section
+        # will create an (include,exclude) list tuple from a specified name
+        # config section
 
         # if a profile isn't set, there is nothing to do here
         if not profile:
-            return_tuple = ([],[])
+            return_tuple = ([], [])
             return return_tuple
 
         # an empty include list means that all are included
         include_list = []
-        # profile needs to be a dict, include needs to be an element in profile,
-        # include needs to be a list, and 'all' is not in include
+        # profile needs to be a dict, include needs to be an element in
+        # profile, include needs to be a list, and 'all' is not in include
         if(isinstance(profile, dict) and 'include' in profile and
                 isinstance(profile['include'], list) and
-                not 'all' in profile['include']):
-            # there is a list of specific includes, add them to the include list
+                'all' not in profile['include']):
+            # there is a list of specific includes, add to the include list
             for inc in profile['include']:
                 include_list.append(inc)
 
-        # an empty exclude list means that none are excluded, an exclude list with
+        # an empty exclude list means none are excluded, an exclude list with
         # 'all' means that all are excluded.  Specifically named excludes are
         # subtracted from the include list.
         exclude_list = []
@@ -103,7 +103,7 @@ class BanditTestSet():
         when discovering test function names.
         '''
 
-        # we need to know the name of the decorators so that we can automatically
+        # we need to know the name of the decorators so we can automatically
         # ignore them when discovering functions
         decorator_source_file = "bandit.test_selector"
         module = importlib.import_module(decorator_source_file)
@@ -148,25 +148,29 @@ class BanditTestSet():
             # otherwise we want to obtain a list of all functions in the module
             # and add them to our dictionary of tests
             else:
-                functions_list = [o for o in getmembers(module) if isfunction(o[1])]
+                functions_list = [
+                    o for o in getmembers(module) if isfunction(o[1])
+                ]
                 for cur_func in functions_list:
 
-                    # for every function in the module, add it to the dictionary
-                    # unless it's one of our decorators, in which case ignore it
+                    # for every function in the module, add to the dictionary
+                    # unless it's one of our decorators, then ignore it
                     function_name = cur_func[0]
                     if function_name not in decorators:
                         try:
                             function = getattr(module, function_name)
                         except AttributeError as e:
-                            self.logger.error("could not locate test function "
-                                    " '%s' in module '%s.%s" %
-                                    (function_name, directory, module_name))
+                            self.logger.error(
+                                "could not locate test function '%s' in "
+                                "module '%s.%s'" %
+                                (function_name, directory, module_name)
+                            )
                             sys.exit(2)
                         else:
                             if hasattr(function, '_checks'):
                                 for check in function._checks:
-                                    # if this check type hasn't been encountered yet,
-                                    # initialize to empty dictionary
+                                    # if check type hasn't been encountered
+                                    # yet, initialize to empty dictionary
                                     if check not in self.tests:
                                         self.tests[check] = {}
                                     self.tests[check][function_name] = function

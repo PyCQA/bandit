@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_functions
 def call_shell_true(context):
     # Alerts on any function call that includes a shell=True parameter

@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_imports
 def import_name_telnetlib(context):
     if context.is_module_imported('telnetlib'):

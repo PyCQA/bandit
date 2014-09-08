@@ -24,6 +24,7 @@ from bandit import node_visitor as b_node_visitor
 from bandit import test_set as b_test_set
 from bandit import meta_ast as b_meta_ast
 
+
 class BanditManager():
 
     scope = []
@@ -43,21 +44,21 @@ class BanditManager():
         if self.b_conf.get_option('log_format'):
             # have to clear old handler
             self.logger.handlers = []
-            log_format=self.b_conf.get_option('log_format')
+            log_format = self.b_conf.get_option('log_format')
             self.logger = self._init_logger(debug, log_format=log_format)
-
 
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
         self.b_rs = b_result_store.BanditResultStore(self.logger, self.b_conf)
-
 
         # if the profile name was specified, try to find it in the config
         if profile_name:
             if profile_name in self.b_conf.config['profiles']:
                 profile = self.b_conf.config['profiles'][profile_name]
             else:
-                self.logger.error('unable to find profile (%s) in config file: '
-                                  '%s' % (profile_name, config_file))
+                self.logger.error(
+                    'unable to find profile (%s) in config file: '
+                    '%s' % (profile_name, config_file)
+                )
                 sys.exit(2)
         else:
             profile = None
@@ -67,7 +68,6 @@ class BanditManager():
 
         # set the increment of after how many files to show progress
         self.progress = self.b_conf.get_setting('progress')
-
 
     @property
     def get_logger(self):
@@ -105,7 +105,7 @@ class BanditManager():
         if scope:
             self.scope = scope
 
-            # if there are a decent amount of files to look at, display progress
+            # display progress, if number of files warrants it
             if len(scope) > self.progress:
                 sys.stdout.write("%s [" % len(scope))
 

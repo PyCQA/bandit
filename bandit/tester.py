@@ -18,6 +18,7 @@
 import utils
 import bandit.context as b_context
 
+
 class BanditTester():
 
     results = None
@@ -42,7 +43,7 @@ class BanditTester():
             # execute test with the an instance of the context class
             context = b_context.Context(raw_context)
             if(hasattr(tests[test], '_takes_config') and
-                    tests[test]._takes_config == True):
+                    tests[test]._takes_config is True):
                 # TODO: Possibly allow overide from profile
                 test_config = self.config.get_option(test)
                 result = tests[test](context, test_config)

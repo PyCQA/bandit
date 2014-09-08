@@ -18,6 +18,7 @@ import bandit
 import re
 from bandit.test_selector import *
 
+
 @takes_config
 @checks_functions
 def call_bad_names(context, config):

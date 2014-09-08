@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_strings
 def str_hardcoded_bind_all_interfaces(context):
     if context.string_val == '0.0.0.0':

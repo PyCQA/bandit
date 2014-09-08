@@ -17,11 +17,14 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_functions
 def call_no_cert_validation(context):
-    if('requests' in context.call_function_name_qual and
-            ('get' in context.call_function_name or
-                    'post' in context.call_function_name)):
+    if (
+        'requests' in context.call_function_name_qual and (
+            'get' in context.call_function_name or
+            'post' in context.call_function_name)
+    ):
 
         if context.check_call_arg_value('verify') == 'False':
 

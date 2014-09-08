@@ -63,8 +63,10 @@ class BanditConfig():
                 try:
                     cur_item = cur_item[level]
                 except Exception:
-                    self._logger.error("error while accessing config property: %s" %
-                                 option_string)
+                    self._logger.error(
+                        "error while accessing config property: %s" %
+                        option_string
+                    )
                     return None
             else:
                 return None
@@ -89,7 +91,8 @@ class BanditConfig():
         '''
         This function calls a set of other functions (one per setting) to build
         out the _settings dictionary.  Each other function will set values from
-        the config (if set), otherwise use defaults (from constants if possible).
+        the config (if set), otherwise use defaults (from constants if
+        possible).
         :return: -
         '''
         self._init_progress_increment()
@@ -108,7 +111,8 @@ class BanditConfig():
 
     def _init_output_colors(self):
         '''
-        sets settings['color_xxx'] where xxx is DEFAULT, HEADER, INFO, WARN, ERROR
+        sets settings['color_xxx'] where xxx is DEFAULT, HEADER, INFO, WARN,
+        ERROR
         '''
         colors = ['HEADER', 'DEFAULT', 'INFO', 'WARN', 'ERROR']
         color_settings = dict()
@@ -149,6 +153,3 @@ class BanditConfig():
         if self.get_option('plugin_name_pattern'):
             plugin_name_pattern = self.get_option('plugin_name_pattern')
         self._settings['plugin_name_pattern'] = plugin_name_pattern
-
-
-

@@ -67,7 +67,7 @@ class BanditResultStore():
         '''
         Prints the contents of the result store
         :param scope: Which files were inspected
-        :param lines: No. of lines surrounding the issue line to display (optional)
+        :param lines: # of lines around the issue line to display (optional)
         :param level: What level of severity to display (optional)
         :param output_filename: File to output the results (optional)
         :return: -

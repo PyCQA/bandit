@@ -81,7 +81,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
     def visit_Import(self, node):
         '''
-        Visitor for AST Import nodes: add relevant information about the node to
+        Visitor for AST Import nodes: add relevant information about node to
         the context for use in tests which inspect imports.
         :param node: The node that is being inspected
         :return: -
@@ -99,7 +99,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
     def visit_ImportFrom(self, node):
         '''
-        Visitor for AST Import nodes: add relevant information about the node to
+        Visitor for AST Import nodes: add relevant information about node to
         the context for use in tests which inspect imports.
         :param node: The node that is being inspected
         :return: -
@@ -125,7 +125,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
     def visit_Str(self, node):
         '''
-        Visitor for AST String nodes: add relevant information about the node to
+        Visitor for AST String nodes: add relevant information about node to
         the context for use in tests which inspect strings.
         :param node: The node that is being inspected
         :return: -

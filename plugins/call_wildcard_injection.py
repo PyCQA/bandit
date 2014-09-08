@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_functions
 def call_wildcard_injection(context):
     system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
@@ -41,4 +42,5 @@ def call_wildcard_injection(context):
                         ):
 
                             return(bandit.ERROR, 'Possible wildcard injection '
-                                   'in call: %s' % context.call_function_name_qual)
+                                   'in call: %s' %
+                                   context.call_function_name_qual)

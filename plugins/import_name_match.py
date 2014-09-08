@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_imports
 def import_name_match(context):
     info_on_import = ['pickle', 'subprocess', 'Crypto']

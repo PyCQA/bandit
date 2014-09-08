@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_functions
 def call_subprocess_popen(context):
     if (context.call_function_name_qual == 'subprocess.Popen' or

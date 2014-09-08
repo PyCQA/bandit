@@ -14,6 +14,7 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+
 def checks_functions(func):
     '''
     Use of this delegate before a test function indicates that it should be
@@ -23,6 +24,7 @@ def checks_functions(func):
         func._checks = []
     func._checks.append("functions")
     return func
+
 
 def checks_imports(func):
     '''
@@ -34,6 +36,7 @@ def checks_imports(func):
     func._checks.append("imports")
     return func
 
+
 def checks_strings(func):
     '''
     Use of this delegate before a test function indicates that it should be
@@ -43,6 +46,7 @@ def checks_strings(func):
         func._checks = []
     func._checks.append("strings")
     return func
+
 
 def takes_config(func):
     '''

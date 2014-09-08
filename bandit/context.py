@@ -75,8 +75,10 @@ class Context():
         '''
         :return: A dictionary of keyword parameters for a call
         '''
-        if('call' in self._context and
-               hasattr(self._context['call'],'keywords')):
+        if (
+            'call' in self._context and
+            hasattr(self._context['call'], 'keywords')
+        ):
             return_dict = {}
             for li in self._context['call'].keywords:
                 return_dict[li.arg] = self._get_literal_value(li.value)
@@ -162,20 +164,27 @@ class Context():
         :param argument_name: A string - name of the argument to look for
         :return: String value of the argument if found, None otherwise
         """
-        if self.call_keywords is not None and argument_name in self.call_keywords:
+        if (
+            self.call_keywords is not None and
+            argument_name in self.call_keywords
+        ):
             return self.call_keywords[argument_name]
         else:
             return None
 
     def get_call_arg_at_position(self, position_num):
         """
-        Returns the positional argument at the specified position (if it exists)
+        Returns positional argument at the specified position (if it exists)
         :param position_num: The index of the argument to return the value for
-        :return: The value of the argument at the specified position if it exists
+        :return: Value of the argument at the specified position if it exists
         """
-        if(hasattr(self._context['call'], 'args') and
-                   position_num < len(self._context['call'].args)):
-            return self._get_literal_value(self._context['call'].args[position_num])
+        if (
+            hasattr(self._context['call'], 'args') and
+            position_num < len(self._context['call'].args)
+        ):
+            return self._get_literal_value(
+                self._context['call'].args[position_num]
+            )
         else:
             return None
 
