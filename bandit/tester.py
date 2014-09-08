@@ -22,8 +22,9 @@ class BanditTester():
 
     results = None
 
-    def __init__(self, logger, results, testset):
+    def __init__(self, logger, config, results, testset):
         self.logger = logger
+        self.config = config
         self.results = results
         self.testset = testset
         self.last_result = None
@@ -40,6 +41,12 @@ class BanditTester():
         for test in tests:
             # execute test with the an instance of the context class
             context = b_context.Context(raw_context)
-            result = tests[test](context)
+            if(hasattr(tests[test], '_takes_config') and
+                    tests[test]._takes_config == True):
+                # TODO: Possibly allow overide from profile
+                test_config = self.config.get_option(test)
+                result = tests[test](context, test_config)
+            else:
+                result = tests[test](context)
             if result is not None:
                 self.results.add(raw_context, result)

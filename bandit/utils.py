@@ -21,15 +21,6 @@ import _ast
 
 """Various helper functions."""
 
-color = {
-    'DEFAULT': '\033[0m',
-    'HEADER': '\033[95m',
-    'INFO': '\033[94m',
-    'WARN': '\033[93m',
-    'ERROR': '\033[91m',
-}
-
-
 def ast_args_to_str(args):
         res = '\n\tArgument/s:\n\t\t%s' % \
               '\n\t\t'.join([ast.dump(arg) for arg in args])

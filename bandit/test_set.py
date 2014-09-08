@@ -27,8 +27,9 @@ class BanditTestSet():
 
     tests = OrderedDict()
 
-    def __init__(self, logger, profile=None):
+    def __init__(self, logger, config, profile=None):
         self.logger = logger
+        self.config = config
         filter_list = self._filter_list_from_config(profile=profile)
         self.load_tests(filter=filter_list)
 
@@ -125,11 +126,12 @@ class BanditTestSet():
         #  eg.   tests[check_type][function_name] = function
         self.tests = dict()
 
-        directory = 'plugins'  # TODO - parametize this at runtime
+        directory = self.config.get_setting('plugins_dir')
+        plugin_name_pattern = self.config.get_setting('plugin_name_pattern')
 
         decorators = self._get_decorators_list()
         # try to import each python file in the plugins directory
-        for file in glob.glob1(directory, '*.py'):
+        for file in glob.glob1(directory, plugin_name_pattern):
             module_name = file.split('.')[0]
 
             # try to import the module by name
@@ -161,12 +163,13 @@ class BanditTestSet():
                                     (function_name, directory, module_name))
                             sys.exit(2)
                         else:
-                            for check in function._checks:
-                                # if this check type hasn't been encountered yet,
-                                # initialize to empty dictionary
-                                if check not in self.tests:
-                                    self.tests[check] = {}
-                                self.tests[check][function_name] = function
+                            if hasattr(function, '_checks'):
+                                for check in function._checks:
+                                    # if this check type hasn't been encountered yet,
+                                    # initialize to empty dictionary
+                                    if check not in self.tests:
+                                        self.tests[check] = {}
+                                    self.tests[check][function_name] = function
 
         self._filter_tests(filter)
 

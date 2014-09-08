@@ -32,17 +32,31 @@ class BanditResultStore():
     count = 0
     skipped = None
 
-    def __init__(self, logger):
+    def __init__(self, logger, config):
         self.count = 0
         self.skipped = []
         self.logger = logger
+        self.config = config
 
     def skip(self, filename, reason):
+        '''
+        Indicates that the specified file was skipped and why
+        :param filename: The file that was skipped
+        :param reason: Why the file was skipped
+        :return: -
+        '''
         self.skipped.append((filename, reason))
 
     def add(self, context, issue):
+        '''
+        Adds a result, with the context and the issue that was found
+        :param context: Context of the node
+        :param issue: Which issue was found
+        :return: -
+        '''
         filename, lineno = context['filename'], context['lineno']
         (issue_type, issue_text) = issue
+
         if filename in self.resstore:
             self.resstore[filename].append((lineno, issue_type, issue_text))
         else:
@@ -50,33 +64,57 @@ class BanditResultStore():
         self.count += 1
 
     def report(self, scope, lines=0, level=1, output_filename=None):
+        '''
+        Prints the contents of the result store
+        :param scope: Which files were inspected
+        :param lines: No. of lines surrounding the issue line to display (optional)
+        :param level: What level of severity to display (optional)
+        :param output_filename: File to output the results (optional)
+        :return: -
+        '''
+
+        # display output using colors if not writing to a file
         is_tty = False if output_filename is not None else stdout.isatty()
 
         if level >= len(constants.SEVERITY):
             level = len(constants.SEVERITY) - 1
+
         tmpstr = ""
+
+        # get text colors from settings
+        color = dict()
+        color['HEADER'] = self.config.get_setting('color_HEADER')
+        color['DEFAULT'] = self.config.get_setting('color_DEFAULT')
+        color['INFO'] = self.config.get_setting('color_INFO')
+        color['WARN'] = self.config.get_setting('color_WARN')
+        color['ERROR'] = self.config.get_setting('color_ERROR')
+
+        # print header
         if is_tty:
             tmpstr += "%sRun started:%s\n\t%s\n" % (
-                utils.color['HEADER'],
-                utils.color['DEFAULT'],
+                color['HEADER'],
+                color['DEFAULT'],
                 datetime.utcnow()
             )
         else:
             tmpstr += "Run started:\n\t%s\n" % datetime.utcnow()
+
+        # print which files were inspected
         if is_tty:
             tmpstr += "%sFiles in scope (%s):%s\n\t" % (
-                utils.color['HEADER'], len(scope),
-                utils.color['DEFAULT']
+                color['HEADER'], len(scope),
+                color['DEFAULT']
             )
         else:
             tmpstr += "Files in scope (%s):\n\t" % (len(scope))
 
         tmpstr += "%s\n" % "\n\t".join(scope)
 
+        # print which files were skipped and why
         if is_tty:
             tmpstr += "%sFiles skipped (%s):%s" % (
-                utils.color['HEADER'], len(self.skipped),
-                utils.color['DEFAULT']
+                color['HEADER'], len(self.skipped),
+                color['DEFAULT']
             )
         else:
             tmpstr += "Files skipped (%s):" % len(self.skipped)
@@ -84,9 +122,10 @@ class BanditResultStore():
         for (fname, reason) in self.skipped:
             tmpstr += "\n\t%s (%s)" % (fname, reason)
 
+        # print the results
         if is_tty:
             tmpstr += "\n%sTest results:%s\n" % (
-                utils.color['HEADER'], utils.color['DEFAULT']
+                color['HEADER'], color['DEFAULT']
             )
         else:
             tmpstr += "\nTest results:\n"
@@ -97,16 +136,18 @@ class BanditResultStore():
             for filename, issues in self.resstore.items():
                 for lineno, issue_type, issue_text in issues:
                     issue_line = linecache.getline(filename, lineno)
+                    # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
+                    # if the result isn't filtered out by severity
                     if constants.SEVERITY.index(issue_type) >= level:
                         if is_tty:
                             tmpstr += "%s>> %s\n - %s::%s%s\n" % (
-                                utils.color.get(
-                                    issue_type, utils.color['DEFAULT']
+                                color.get(
+                                    issue_type, color['DEFAULT']
                                 ),
                                 issue_text, filename, lineno,
-                                utils.color['DEFAULT']
+                                color['DEFAULT']
                             )
                         else:
                             tmpstr += ">> %s\n - %s::%s\n" % (
@@ -119,9 +160,11 @@ class BanditResultStore():
                                 tmpstr += "\t%3d  %s" % (
                                     i, linecache.getline(filename, i)
                                 )
+        # output to a file,
         if output_filename is not None:
             with open(output_filename, 'w') as fout:
                 fout.write(tmpstr)
             print("Output written to file: %s" % output_filename)
+        # or print the results on screen
         else:
             print(tmpstr)
