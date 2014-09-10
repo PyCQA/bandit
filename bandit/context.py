@@ -188,9 +188,9 @@ class Context():
         else:
             return None
 
-    def is_module_imported(self, module):
+    def is_module_being_imported(self, module):
         '''
-        Check for the import of a module
+        Check for the specified module is currently being imported
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
@@ -198,3 +198,27 @@ class Context():
             return True
         else:
             return False
+
+    def is_module_imported_exact(self, module):
+        '''
+        Check if a specified module has been imported; only exact matches.
+        :param module: The module name to look for
+        :return: True if the module is found, False otherwise
+        '''
+        if 'imports' in self._context and module in self._context['imports']:
+            return True
+        else:
+            return False
+
+    def is_module_imported_like(self, module):
+        '''
+        Check if a specified module has been imported; specified module exists
+        as part of any import statement.
+        :param module: The module name to look for
+        :return: True if the module is found, False otherwise
+        '''
+        if 'imports' in self._context:
+            for imp in self._context['imports']:
+                if module in imp:
+                    return True
+        return False

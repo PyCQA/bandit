@@ -20,6 +20,6 @@ from bandit.test_selector import *
 
 @checks_imports
 def import_name_telnetlib(context):
-    if context.is_module_imported('telnetlib'):
+    if context.is_module_being_imported('telnetlib'):
         return(bandit.ERROR, "Telnet is considered insecure. Use SSH or some"
                " other encrypted protocol.")
