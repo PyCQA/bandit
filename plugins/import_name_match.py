@@ -22,7 +22,7 @@ from bandit.test_selector import *
 def import_name_match(context):
     info_on_import = ['pickle', 'subprocess', 'Crypto']
     for module in info_on_import:
-        if context.is_module_imported(module):
+        if context.is_module_being_imported(module):
             return(bandit.INFO,
                    "Consider possible security implications"
                    " associated with '%s' module" % module)
