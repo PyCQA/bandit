@@ -25,6 +25,10 @@ profiles:
             - call_shell_true
         exclude:
 
+    SqlInjection:
+        include:
+            - str_sql_expression
+
 
 call_bad_names:
     bad_name_sets:
