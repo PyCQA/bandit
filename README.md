@@ -28,6 +28,12 @@ and only reporting on the high-severity issues:
     ./main.py examples/*.py -n 3 -lll
 
 
+Example usage across the examples/ directory, showing one line of context and
+running only tests in the ShellInjection profile:
+
+    ./main.py examples/*.py -n 1 -p ShellInjection
+
+
 Usage:
 
     $ ./main.py -h
@@ -80,7 +86,7 @@ security issue, it will not be reported:
 
 Vulnerability Tests
 -------------------
-Vulnerability tests are currently defined in files in the plugins/ directory.
+Vulnerability tests or 'plugins' are defined in files in the plugins directory.
 
 Tests are written in Python and are autodiscovered from the plugins directory.
 Each test can examine one or more type of Python statements.  Tests are marked
@@ -100,7 +106,7 @@ To write a test:
  - Identify a vulnerability to build a test for, and create a new file in
    examples/ that contains one or more cases of that vulnerability.
  - Consider the vulnerability you're testing for, mark the function with one
-   or more of the appropriate decorators (currently the following exist):
+   or more of the appropriate decorators:
       - @checks_functions
 	  - @checks_imports
 	  - @checks_strings
