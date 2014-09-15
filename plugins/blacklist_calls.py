@@ -15,17 +15,16 @@
 #    under the License.
 
 import bandit
-import re
 from bandit.test_selector import *
 
 
 @takes_config
 @checks_functions
-def call_bad_names(context, config):
-    if 'bad_name_sets' in config:
+def blacklist_functions(context, config):
+    if config is not None and 'bad_name_sets' in config:
         sets = config['bad_name_sets']
     else:
-        sets = None
+        sets = []
 
     checks = []
 

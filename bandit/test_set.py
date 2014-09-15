@@ -173,7 +173,14 @@ class BanditTestSet():
                                     # yet, initialize to empty dictionary
                                     if check not in self.tests:
                                         self.tests[check] = {}
-                                    self.tests[check][function_name] = function
+                                    # if there is a test name collision, bail
+                                    if function_name in self.tests[check]:
+                                        self.logger.error("Duplicate function "
+                                                          "definition %s in %s",
+                                                          function_name, file)
+                                        sys.exit(2)
+                                    else:
+                                        self.tests[check][function_name] = function
 
         self._filter_tests(filter)
 

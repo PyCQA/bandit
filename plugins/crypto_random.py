@@ -17,9 +17,8 @@
 import bandit
 from bandit.test_selector import *
 
-
 @checks_functions
-def call_random(context):
+def random_lib_calls(context):
     # Alerts on any usage of any random library function
 
     # check type just to be safe
@@ -29,3 +28,11 @@ def call_random(context):
         if len(qualname_list) >= 2 and qualname_list[-2] == 'random':
             return(bandit.INFO, 'Use of random is not suitable for security/'
                    'cryptographic purposes.')
+
+@checks_imports
+def random_lib_imports(context):
+    # Alerts on importing the 'random' library
+
+    if context.is_module_being_imported('random'):
+        return(bandit.INFO, 'Random library should not be used for any '
+               'security or cryptographic purposes')

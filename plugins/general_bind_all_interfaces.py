@@ -18,16 +18,7 @@ import bandit
 from bandit.test_selector import *
 
 
-@checks_functions
-def call_no_cert_validation(context):
-    if (
-        'requests' in context.call_function_name_qual and (
-            'get' in context.call_function_name or
-            'post' in context.call_function_name)
-    ):
-
-        if context.check_call_arg_value('verify') == 'False':
-
-            return(bandit.ERROR, 'Requests call with verify=False '
-                   'disabling SSL certificate checks, security issue.   %s' %
-                   context.call_args_string)
+@checks_strings
+def hardcoded_bind_all_interfaces(context):
+    if context.string_val == '0.0.0.0':
+        return bandit.WARN, 'Possible binding to all interfaces'
