@@ -123,7 +123,7 @@ class BanditTestSet():
         # tests are a dictionary of functions, grouped by check type
         # where the key is the function name, and the value is the
         # function itself.
-        #  eg.   tests[check_type][function_name] = function
+        #  eg.   tests[check_type][fn_name] = function
         self.tests = dict()
 
         directory = self.config.get_setting('plugins_dir')
@@ -155,15 +155,15 @@ class BanditTestSet():
 
                     # for every function in the module, add to the dictionary
                     # unless it's one of our decorators, then ignore it
-                    function_name = cur_func[0]
-                    if function_name not in decorators:
+                    fn_name = cur_func[0]
+                    if fn_name not in decorators:
                         try:
-                            function = getattr(module, function_name)
+                            function = getattr(module, fn_name)
                         except AttributeError as e:
                             self.logger.error(
                                 "could not locate test function '%s' in "
                                 "module '%s.%s'" %
-                                (function_name, directory, module_name)
+                                (fn_name, directory, module_name)
                             )
                             sys.exit(2)
                         else:
@@ -174,13 +174,14 @@ class BanditTestSet():
                                     if check not in self.tests:
                                         self.tests[check] = {}
                                     # if there is a test name collision, bail
-                                    if function_name in self.tests[check]:
-                                        self.logger.error("Duplicate function "
-                                                          "definition %s in %s",
-                                                          function_name, file)
+                                    if fn_name in self.tests[check]:
+                                        self.logger.error(
+                                            "Duplicate function definition "
+                                            "%s in %s", fn_name, file
+                                        )
                                         sys.exit(2)
                                     else:
-                                        self.tests[check][function_name] = function
+                                        self.tests[check][fn_name] = function
 
         self._filter_tests(filter)
 

@@ -17,6 +17,7 @@
 import bandit
 from bandit.test_selector import *
 
+
 @checks_functions
 def random_lib_calls(context):
     # Alerts on any usage of any random library function
@@ -28,6 +29,7 @@ def random_lib_calls(context):
         if len(qualname_list) >= 2 and qualname_list[-2] == 'random':
             return(bandit.INFO, 'Use of random is not suitable for security/'
                    'cryptographic purposes.')
+
 
 @checks_imports
 def random_lib_imports(context):

@@ -59,18 +59,17 @@ def blacklist_imports(context, config):
                     return level, "%s" % message
 
 
-
 def _get_tuple_for_item(blacklist_object):
     # default values
     imports = None
     message = ""
     level = 'WARN'
 
-    # if the item we got passed isn't a dictionary, do nothing with this object;
-    # if the item we got passed doesn't have an import field, or the import item
+    # if the item we got passed isn't a dictionary, do nothing with the object;
+    # if the item we got passed doesn't have an import field, or the import
     # isn't a string, we can't do anything with this.  Return None
     if(not isinstance(blacklist_object, dict)
-            or not 'import' in blacklist_object
+            or 'import' not in blacklist_object
             or not type(blacklist_object['import']) == str):
         return None
 

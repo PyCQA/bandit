@@ -29,6 +29,7 @@ def subprocess_popen_with_shell_equals_true(context):
                    'identified, security issue.  %s' %
                    context.call_args_string)
 
+
 @checks_functions
 def any_other_function_with_shell_equals_true(context):
     # Alerts on any function call that includes a shell=True parameter
