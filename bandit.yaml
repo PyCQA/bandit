@@ -30,7 +30,7 @@ profiles:
             - str_sql_expression
 
 
-call_bad_names:
+blacklist_functions:
     bad_name_sets:
         - pickle:
             qualname: pickle.loads, pickle.dumps
@@ -63,3 +63,14 @@ call_bad_names:
         - mark_safe:
             name: mark_safe
             message: "Use of mark_safe() may expose cross-site scripting vulnerabilities and should be reviewed."
+
+blacklist_imports:
+    bad_import_sets:
+        - telnet:
+            import: telnetlib
+            level: ERROR
+            message: "Telnet is considered insecure. Use SSH or some other encrypted protocol."
+        - info_libs:
+            import: pickle, subprocess, Crypto
+            level: INFO
+            message: "Consider possible security implications associated with {module} module."

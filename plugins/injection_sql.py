@@ -19,7 +19,7 @@ from bandit.test_selector import *
 
 
 @checks_strings
-def str_sql_expression(context):
+def hardcoded_sql_expressions(context):
     test_str = context.string_val.lower()
     if (
         (test_str.startswith('select ') and ' from ' in test_str) or
@@ -32,6 +32,7 @@ def str_sql_expression(context):
         if not context.is_module_imported_like("sqlalchemy"):
             return(bandit.WARN, 'Possible SQL injection vector through '
                    'string-based query construction, without SQLALCHEMY use')
+
         # otherwise, if sqlalchemy is being used, mark it as INFO
         else:
             return(bandit.INFO, 'Possible SQL injection vector through'

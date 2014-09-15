@@ -15,23 +15,19 @@
 #    under the License.
 
 import bandit
-import stat
 from bandit.test_selector import *
 
 
 @checks_functions
-def call_bad_permissions(context):
-    if 'chmod' in context.call_function_name:
-        if context.call_args_count == 2:
-            mode = context.get_call_arg_at_position(1)
+def request_with_no_cert_validation(context):
+    if (
+        'requests' in context.call_function_name_qual and (
+            'get' in context.call_function_name or
+            'post' in context.call_function_name)
+    ):
 
-            if (
-                mode is not None and type(mode) == int and
-                (mode & stat.S_IWOTH or mode & stat.S_IXGRP)
-            ):
-                filename = context.get_call_arg_at_position(0)
-                if filename is None:
-                    filename = 'NOT PARSED'
+        if context.check_call_arg_value('verify') == 'False':
 
-                return(bandit.ERROR, 'Chmod setting a permissive mask %s on '
-                       'file (%s).' % (oct(mode), filename))
+            return(bandit.ERROR, 'Requests call with verify=False '
+                   'disabling SSL certificate checks, security issue.   %s' %
+                   context.call_args_string)

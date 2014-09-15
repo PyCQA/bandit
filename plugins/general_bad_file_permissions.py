@@ -15,11 +15,23 @@
 #    under the License.
 
 import bandit
+import stat
 from bandit.test_selector import *
 
 
-@checks_imports
-def import_name_telnetlib(context):
-    if context.is_module_being_imported('telnetlib'):
-        return(bandit.ERROR, "Telnet is considered insecure. Use SSH or some"
-               " other encrypted protocol.")
+@checks_functions
+def set_bad_file_permissions(context):
+    if 'chmod' in context.call_function_name:
+        if context.call_args_count == 2:
+            mode = context.get_call_arg_at_position(1)
+
+            if (
+                mode is not None and type(mode) == int and
+                (mode & stat.S_IWOTH or mode & stat.S_IXGRP)
+            ):
+                filename = context.get_call_arg_at_position(0)
+                if filename is None:
+                    filename = 'NOT PARSED'
+
+                return(bandit.ERROR, 'Chmod setting a permissive mask %s on '
+                       'file (%s).' % (oct(mode), filename))
