@@ -20,7 +20,12 @@ from bandit.test_selector import *
 
 @checks_functions
 def call_random(context):
-    # Alerts on any usage of the random.random() function
-    if context.call_function_name_qual == 'random.random':
-        return(bandit.INFO, 'Use of random is not suitable for security/'
-               'cryptographic purposes.')
+    # Alerts on any usage of any random library function
+
+    # check type just to be safe
+    if type(context.call_function_name_qual) == str:
+        qualname_list = context.call_function_name_qual.split('.')
+        # if the library is random
+        if len(qualname_list) >= 2 and qualname_list[-2] == 'random':
+            return(bandit.INFO, 'Use of random is not suitable for security/'
+                   'cryptographic purposes.')
