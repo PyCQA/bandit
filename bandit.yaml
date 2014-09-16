@@ -74,3 +74,6 @@ blacklist_imports:
             import: pickle, subprocess, Crypto
             level: INFO
             message: "Consider possible security implications associated with {module} module."
+
+hardcoded_password:
+    word_list: "wordlist/default-passwords"
