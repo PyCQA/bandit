@@ -32,11 +32,12 @@ class BanditResultStore():
     count = 0
     skipped = None
 
-    def __init__(self, logger, config):
+    def __init__(self, logger, config, agg_type):
         self.count = 0
         self.skipped = []
         self.logger = logger
         self.config = config
+        self.agg_type = agg_type
 
     def skip(self, filename, reason):
         '''
@@ -47,20 +48,31 @@ class BanditResultStore():
         '''
         self.skipped.append((filename, reason))
 
-    def add(self, context, issue):
+    def add(self, context, test, issue):
         '''
         Adds a result, with the context and the issue that was found
         :param context: Context of the node
+        :param test: The type (function name) of the test
         :param issue: Which issue was found
         :return: -
         '''
         filename, lineno = context['filename'], context['lineno']
         (issue_type, issue_text) = issue
 
-        if filename in self.resstore:
-            self.resstore[filename].append((lineno, issue_type, issue_text))
+        if self.agg_type == 'vuln':
+            if test in self.resstore:
+                self.resstore[test].append((filename, lineno, issue_type,
+                                            issue_text))
+            else:
+                self.resstore[test] = [(filename, lineno, issue_type,
+                                        issue_text)]
         else:
-            self.resstore[filename] = [(lineno, issue_type, issue_text), ]
+            if filename in self.resstore:
+                self.resstore[filename].append((lineno, test, issue_type,
+                                                issue_text))
+            else:
+                self.resstore[filename] = [(lineno, test, issue_type,
+                                            issue_text), ]
         self.count += 1
 
     def report(self, scope, lines=0, level=1, output_filename=None):
@@ -132,9 +144,38 @@ class BanditResultStore():
 
         if self.count == 0:
             tmpstr += "\tNo issues identified.\n"
+        # if aggregating by vulnerability type
+        elif self.agg_type == 'vuln':
+            for test, issues in self.resstore.items():
+                for filename, lineno, issue_type, issue_text in issues:
+                    issue_line = linecache.getline(filename, lineno)
+                    # if the line doesn't have one of the skip tags, keep going
+                    if re.search(constants.SKIP_RE, issue_line):
+                        continue
+                    # if the result in't filtered out by severity
+                    if constants.SEVERITY.index(issue_type) >= level:
+                        if is_tty:
+                            tmpstr += "%s>> %s\n - %s::%s%s\n" % (
+                                color.get(issue_type, color['DEFAULT']),
+                                issue_text, filename, lineno,
+                                color['DEFAULT']
+                            )
+                        else:
+                            tmpstr += ">> %s\n - %s::%s\n" % (
+                                issue_text, filename, lineno
+                            )
+
+                        for i in utils.mid_range(lineno, lines):
+                            line = linecache.getline(filename, i)
+                            # linecache returns '' if line does not exist
+                            if line != '':
+                                tmpstr += "\t%3d  %s" % (
+                                    i, linecache.getline(filename, i)
+                                )
+        # otherwise, aggregating by filename
         else:
             for filename, issues in self.resstore.items():
-                for lineno, issue_type, issue_text in issues:
+                for lineno, test, issue_type, issue_text in issues:
                     issue_line = linecache.getline(filename, lineno)
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):

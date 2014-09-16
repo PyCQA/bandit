@@ -15,7 +15,6 @@
 #    under the License.
 
 
-import utils
 import bandit.context as b_context
 
 
@@ -44,10 +43,10 @@ class BanditTester():
             context = b_context.Context(raw_context)
             if(hasattr(tests[test], '_takes_config') and
                     tests[test]._takes_config is True):
-                # TODO: Possibly allow overide from profile
+                # TODO: Possibly allow override from profile
                 test_config = self.config.get_option(test)
                 result = tests[test](context, test_config)
             else:
                 result = tests[test](context)
             if result is not None:
-                self.results.add(raw_context, result)
+                self.results.add(raw_context, test, result)

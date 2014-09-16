@@ -29,7 +29,7 @@ class BanditManager():
 
     scope = []
 
-    def __init__(self, config_file, debug=False, profile_name=None):
+    def __init__(self, config_file, agg_type, debug=False, profile_name=None):
         '''
         Get logger, config, AST handler, and result store ready
         :param config_file: A file to read config from
@@ -48,7 +48,8 @@ class BanditManager():
             self.logger = self._init_logger(debug, log_format=log_format)
 
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
-        self.b_rs = b_result_store.BanditResultStore(self.logger, self.b_conf)
+        self.b_rs = b_result_store.BanditResultStore(self.logger, self.b_conf,
+                                                     agg_type)
 
         # if the profile name was specified, try to find it in the config
         if profile_name:

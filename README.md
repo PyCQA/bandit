@@ -48,6 +48,9 @@ Usage:
 
     optional arguments:
       -h, --help            show this help message and exit
+      -a AGG_TYPE, --aggregate AGG_TYPE
+                            group results by (vuln)erability type or (file) it
+                            occurs in
       -n CONTEXT_LINES, --number CONTEXT_LINES
                             number of context lines to print
       -c CONFIG_FILE, --configfile CONFIG_FILE
