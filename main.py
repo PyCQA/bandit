@@ -29,6 +29,11 @@ if __name__ == '__main__':
         help='source file/s to be tested'
     )
     parser.add_argument(
+        '-a', '--aggregate', dest='agg_type',
+        action='store', default='file', type=str,
+        help='group results by (vuln)erability type or (file) it occurs in'
+    )
+    parser.add_argument(
         '-n', '--number', dest='context_lines',
         action='store', default=0, type=int,
         help='number of context lines to print'
@@ -61,8 +66,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    b_mgr = b_manager.BanditManager(args.config_file, args.debug,
-                                    profile_name=args.profile)
+    b_mgr = b_manager.BanditManager(args.config_file, args.agg_type,
+                                    args.debug, profile_name=args.profile)
     b_mgr.run_scope(args.files)
     if args.debug:
         b_mgr.output_metaast()
