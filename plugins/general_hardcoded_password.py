@@ -42,5 +42,5 @@ def hardcoded_password(context, config):
 
     # for every password in the list, check against the current string
     for word in word_list:
-        if context.string_val == word:
+        if context.string_val and context.string_val == word:
             return bandit.WARN, "Possible hardcoded password '(%s)'" % word
