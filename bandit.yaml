@@ -21,13 +21,13 @@ plugin_name_pattern: '*.py'
 profiles:
     ShellInjection:
         include:
-            - call_subprocess_popen
-            - call_shell_true
+            - subprocess_popen_with_shell_equals_true
+            - any_other_function_with_shell_equals_true
         exclude:
 
     SqlInjection:
         include:
-            - str_sql_expression
+            - hardcoded_sql_expressions
 
 
 blacklist_functions:
