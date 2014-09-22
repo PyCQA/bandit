@@ -77,3 +77,14 @@ blacklist_imports:
 
 hardcoded_password:
     word_list: "wordlist/default-passwords"
+
+ssl_with_bad_version:
+    bad_protocol_versions:
+        - 'PROTOCOL_SSLv2'
+        - 'PROTOCOL_SSLv23'
+        - 'SSLv2_METHOD'
+        - 'SSLv23_METHOD'
+        - 'PROTOCOL_SSLv3'  # strict option
+        - 'PROTOCOL_TLSv1'  # strict option
+        - 'SSLv3_METHOD'    # strict option
+        - 'TLSv1_METHOD'    # strict option
