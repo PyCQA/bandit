@@ -19,7 +19,8 @@ from bandit.test_selector import *
 
 
 @takes_config
-@checks_strings
+# tmcpeak - temporarily commenting this test out, it's broken
+#@checks_strings
 def hardcoded_password(context, config):
     word_list_file = ""
 
