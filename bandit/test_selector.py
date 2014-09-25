@@ -48,6 +48,17 @@ def checks_strings(func):
     return func
 
 
+def checks_exec(func):
+    '''
+    Use of this delegate before a test function indicates that it should be
+    called any time the 'exec' statement is encountered.
+    '''
+    if not hasattr(func, "_checks"):
+        func._checks = []
+    func._checks.append("exec")
+    return func
+
+
 def takes_config(*args):
     '''
     Use of this delegate before a test function indicates that it should be
