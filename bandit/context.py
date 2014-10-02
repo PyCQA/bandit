@@ -31,6 +31,19 @@ class Context():
             self._context = dict()
 
     @property
+    def call_args(self):
+        '''
+        :return: A list of function args
+        '''
+        args = []
+        for arg in self._context['call'].args:
+            if hasattr(arg, 'attr'):
+                args.append(arg.attr)
+            else:
+                args.append(self._get_literal_value(arg))
+        return args
+
+    @property
     def call_args_count(self):
         '''
         :return: The number of args a function call has
