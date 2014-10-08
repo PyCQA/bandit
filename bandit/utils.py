@@ -25,7 +25,6 @@ import _ast
 def ast_args_to_str(args):
         res = '\n\tArgument/s:\n\t\t%s' % \
               '\n\t\t'.join([ast.dump(arg) for arg in args])
-        res = ''
         return res
 
 
