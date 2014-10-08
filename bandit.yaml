@@ -63,6 +63,9 @@ blacklist_functions:
         - mark_safe:
             name: mark_safe
             message: "Use of mark_safe() may expose cross-site scripting vulnerabilities and should be reviewed."
+        - httpsconnection:
+            qualname: httplib.HTTPSConnection
+            message: "Use of HTTPSConnection does not provide security, see https://wiki.openstack.org/wiki/OSSN/OSSN-0033"
 
 blacklist_imports:
     bad_import_sets:
