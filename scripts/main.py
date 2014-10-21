@@ -1,5 +1,6 @@
+#!/usr/bin/env python
 # -*- coding:utf-8 -*-
-#
+
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,14 +15,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from core import config
-from core import context
-from core import manager
-from core import meta_ast
-from core import node_visitor
-from core import result_store
-from core import test_set
-from core import tester
-from core import utils
-from core.constants import *
-from core.test_selector import *
+
+from bandit import bandit
+
+if __name__ == '__main__':
+    bandit.main()

@@ -1,0 +1,8 @@
+coverage>=3.6
+discover
+fixtures>=0.3.14
+hacking>=0.9.2,<0.10
+python-subunit>=0.0.18
+testrepository>=0.0.18
+testscenarios>=0.4
+testtools>=0.9.34

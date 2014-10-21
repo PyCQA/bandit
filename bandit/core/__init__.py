@@ -14,14 +14,14 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from core import config
-from core import context
-from core import manager
-from core import meta_ast
-from core import node_visitor
-from core import result_store
-from core import test_set
-from core import tester
-from core import utils
-from core.constants import *
-from core.test_selector import *
+import config
+import context
+import manager
+import meta_ast
+import node_visitor
+import result_store
+import test_set
+import tester
+import utils
+from constants import *
+from test_selector import *

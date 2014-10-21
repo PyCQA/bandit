@@ -14,6 +14,9 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os
+from distutils.sysconfig import get_python_lib
+
 # default output text colors
 color = {
     'DEFAULT': '\033[0m',
@@ -30,7 +33,7 @@ plugin_name_pattern = '*.py'
 progress_increment = 50
 
 # default plugins dir
-plugins_dir = 'plugins'
+plugins_dir = os.path.join(get_python_lib(), 'bandit', 'plugins')
 
 # flag/s used to mark lines where identified issues should not be reported
 SKIP_FLAGS = ['nosec', ]

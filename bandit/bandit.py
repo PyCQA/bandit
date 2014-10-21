@@ -16,11 +16,11 @@
 #    under the License.
 
 import argparse
-from bandit import manager as b_manager
+from core import manager as b_manager
 
 default_test_config = 'bandit.yaml'
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
         description='Bandit - a Python source code analyzer.'
     )
@@ -72,3 +72,6 @@ if __name__ == '__main__':
     if args.debug:
         b_mgr.output_metaast()
     b_mgr.output_results(args.context_lines, args.level - 1, args.output_file)
+
+if __name__ == '__main__':
+    main()

@@ -15,7 +15,7 @@
 #    under the License.
 
 import _ast
-from bandit import utils
+import utils
 
 
 class Context():

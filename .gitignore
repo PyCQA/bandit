@@ -1,2 +1,7 @@
 *.pyc
 .DS_Store
+*.egg
+*.egg-info
+.tox
+.testrepository
+build/*

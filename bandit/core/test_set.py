@@ -16,6 +16,7 @@
 
 
 import copy
+import os
 import sys
 from collections import OrderedDict
 import glob
@@ -105,7 +106,7 @@ class BanditTestSet():
 
         # we need to know the name of the decorators so we can automatically
         # ignore them when discovering functions
-        decorator_source_file = "bandit.test_selector"
+        decorator_source_file = "bandit.core.test_selector"
         module = importlib.import_module(decorator_source_file)
 
         return_list = []
@@ -131,12 +132,16 @@ class BanditTestSet():
 
         decorators = self._get_decorators_list()
         # try to import each python file in the plugins directory
+        sys.path.append(os.path.dirname(directory))
         for file in glob.glob1(directory, plugin_name_pattern):
-            module_name = file.split('.')[0]
+            module_name = os.path.basename(file).split('.')[0]
 
             # try to import the module by name
             try:
-                module = importlib.import_module(directory + '.' + module_name)
+                outer = os.path.basename(os.path.normpath(directory))
+                self.logger.debug("importing test: {0}".format(
+                                  outer + '.' + module_name))
+                module = importlib.import_module(outer + '.' + module_name)
 
             # if it fails, die
             except ImportError as e:
@@ -191,8 +196,10 @@ class BanditTestSet():
         :param checktype: The type of test to filter on
         :return: A dictionary of tests which are of the specified type
         '''
+        scoped_tests = {}
         self.logger.debug('get_tests called with check type: %s' % checktype)
-        scoped_tests = self.tests[checktype]
+        if checktype in self.tests:
+            scoped_tests = self.tests[checktype]
         self.logger.debug('get_tests returning scoped_tests : %s' %
                           scoped_tests)
         return scoped_tests

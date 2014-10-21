@@ -15,7 +15,7 @@
 #    under the License.
 
 
-import bandit.context as b_context
+import context as b_context
 
 
 class BanditTester():
