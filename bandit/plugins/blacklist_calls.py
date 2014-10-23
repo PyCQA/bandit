@@ -2,17 +2,17 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
 import bandit
 from bandit.test_selector import *
@@ -60,7 +60,7 @@ def blacklist_functions(context, config):
         if does_match and check[4]:
             matched_p = False
             for p in check[4]:
-                for arg_num in range(0, context.call_args_count-1):
+                for arg_num in range(0, context.call_args_count - 1):
                     if p == context.get_call_arg_at_position(arg_num):
                         matched_p = True
             if not matched_p:

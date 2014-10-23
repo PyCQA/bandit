@@ -2,21 +2,22 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
 
 def checks_functions(func):
-    '''
+    '''Test function checks function calls
+
     Use of this delegate before a test function indicates that it should be
     called any time a function call is encountered.
     '''
@@ -27,7 +28,8 @@ def checks_functions(func):
 
 
 def checks_imports(func):
-    '''
+    '''Test function checks imports
+
     Use of this delegate before a test function indicates that it should be
     called any time an import is encountered.
     '''
@@ -38,7 +40,8 @@ def checks_imports(func):
 
 
 def checks_strings(func):
-    '''
+    '''Test function checks strings
+
     Use of this delegate before a test function indicates that it should be
     called any time a string value is encountered.
     '''
@@ -49,7 +52,8 @@ def checks_strings(func):
 
 
 def checks_exec(func):
-    '''
+    '''Test function checks exec nodes
+
     Use of this delegate before a test function indicates that it should be
     called any time the 'exec' statement is encountered.
     '''
@@ -60,12 +64,14 @@ def checks_exec(func):
 
 
 def takes_config(*args):
-    '''
+    '''Test function takes config
+
     Use of this delegate before a test function indicates that it should be
     passed data from the config file. Passing a name parameter allows
     aliasing tests and thus sharing config options.
     '''
     name = ""
+
     def _takes_config(func):
         if not hasattr(func, "_takes_config"):
             func._takes_config = name
@@ -76,4 +82,4 @@ def takes_config(*args):
         return _takes_config(args[0])
     else:
         name = args[0]
-        return  _takes_config
+        return _takes_config

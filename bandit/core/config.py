@@ -2,20 +2,21 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+import sys
 
 import constants
-import sys
 import yaml
 
 
@@ -26,9 +27,9 @@ class BanditConfig():
     _settings = dict()
 
     def __init__(self, logger, config_file):
-        '''
-        Attempt to initialize a config dictionary from a yaml file, error out
-        if this fails for any reason.
+        '''Attempt to initialize a config dictionary from a yaml file.
+
+        Error out if loading the yaml file fails for any reason.
         :param logger: Logger to be used in the case of errors
         :param config_file: The Bandit yaml config file
         :return: -
@@ -48,8 +49,8 @@ class BanditConfig():
         self._init_settings()
 
     def get_option(self, option_string):
-        '''
-        Returns the option from the config specified by the option_string.
+        '''Returns the option from the config specified by the option_string.
+
         '.' can be used to denote levels, for example to retrieve the options
         from the 'a' profile you can use 'profiles.a'
         :param option_string: The string specifying the option to retrieve
@@ -81,14 +82,15 @@ class BanditConfig():
 
     @property
     def config(self):
-        '''
-        Property to return the config dictionary
+        '''Property to return the config dictionary
+
         :return: Config dictionary
         '''
         return self._config
 
     def _init_settings(self):
-        '''
+        '''This function calls a set of other functions (one per setting)
+
         This function calls a set of other functions (one per setting) to build
         out the _settings dictionary.  Each other function will set values from
         the config (if set), otherwise use defaults (from constants if
@@ -101,16 +103,15 @@ class BanditConfig():
         self._init_plugin_name_pattern()
 
     def _init_progress_increment(self):
-        '''
-        sets settings['progress'] from default or config file
-        '''
+        '''Sets settings['progress'] from default or config file.'''
         progress = constants.progress_increment
         if self.get_option('show_progress_every'):
             progress = self.get_option('show_progress_every')
         self._settings['progress'] = progress
 
     def _init_output_colors(self):
-        '''
+        '''Sets the settings colors
+
         sets settings['color_xxx'] where xxx is DEFAULT, HEADER, INFO, WARN,
         ERROR
         '''
@@ -137,18 +138,14 @@ class BanditConfig():
             self._settings[settings_string] = color_settings[color]
 
     def _init_plugins_dir(self):
-        '''
-        sets settings['plugins_dir'] from default or config file
-        '''
+        '''Sets settings['plugins_dir'] from default or config file.'''
         plugins_dir = constants.plugins_dir
         if self.get_option('plugins_dir'):
             plugins_dir = self.get_option('plugins_dir')
         self._settings['plugins_dir'] = plugins_dir
 
     def _init_plugin_name_pattern(self):
-        '''
-        sets settings['plugin_name_pattern'] from default or config file
-        '''
+        '''Sets settings['plugin_name_pattern'] from default or config file.'''
         plugin_name_pattern = constants.plugin_name_pattern
         if self.get_option('plugin_name_pattern'):
             plugin_name_pattern = self.get_option('plugin_name_pattern')

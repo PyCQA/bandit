@@ -2,23 +2,21 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
-
-import sys
 import ast
-import _ast
 import copy
+
 import tester as b_tester
 import utils as b_utils
 
@@ -56,8 +54,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         )
 
     def visit_Call(self, node):
-        '''
-        Visitor for AST Call nodes: add relevant information about the node to
+        '''Visitor for AST Call nodes
+
+        add relevant information about the node to
         the context for use in tests which inspect function calls.
         :param node: The node that is being inspected
         :return: -
@@ -83,8 +82,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Import(self, node):
-        '''
-        Visitor for AST Import nodes: add relevant information about node to
+        '''Visitor for AST Import nodes
+
+        add relevant information about node to
         the context for use in tests which inspect imports.
         :param node: The node that is being inspected
         :return: -
@@ -101,8 +101,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_ImportFrom(self, node):
-        '''
-        Visitor for AST Import nodes: add relevant information about node to
+        '''Visitor for AST Import nodes
+
+        add relevant information about node to
         the context for use in tests which inspect imports.
         :param node: The node that is being inspected
         :return: -
@@ -127,8 +128,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Str(self, node):
-        '''
-        Visitor for AST String nodes: add relevant information about node to
+        '''Visitor for AST String nodes
+
+        add relevant information about node to
         the context for use in tests which inspect strings.
         :param node: The node that is being inspected
         :return: -
@@ -149,8 +151,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit(self, node):
-        '''
-        Generic visitor, add the node to the node collection, and log it
+        '''Generic visitor
+
+        add the node to the node collection, and log it
         :param node: The node that is being inspected
         :return: -
         '''

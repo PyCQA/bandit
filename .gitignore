@@ -5,3 +5,5 @@
 .tox
 .testrepository
 build/*
+cover/*
+.cover

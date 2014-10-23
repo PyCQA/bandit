@@ -2,26 +2,27 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
 import _ast
+
 import utils
 
 
 class Context():
     def __init__(self, context_object=None):
-        '''
-        Initialize the class with a context, empty dict otherwise
+        '''Initialize the class with a context, empty dict otherwise
+
         :param context_object: The context object to create class from
         :return: -
         '''
@@ -32,7 +33,8 @@ class Context():
 
     @property
     def call_args(self):
-        '''
+        '''Get a list of function args
+
         :return: A list of function args
         '''
         args = []
@@ -45,7 +47,8 @@ class Context():
 
     @property
     def call_args_count(self):
-        '''
+        '''Get the number of args a function call has
+
         :return: The number of args a function call has
         '''
         if hasattr(self._context['call'], 'args'):
@@ -55,7 +58,8 @@ class Context():
 
     @property
     def call_args_string(self):
-        '''
+        '''Get a string representation of the call arguments
+
         :return: Returns a string representation of the call arguments
         '''
         if 'call' in self._context and hasattr(self._context, 'args'):
@@ -65,7 +69,8 @@ class Context():
 
     @property
     def call_function_name(self):
-        '''
+        '''Get the name (not FQ) of a function call
+
         :return: The name (not FQ) of a function call
         '''
         if 'name' in self._context:
@@ -75,7 +80,8 @@ class Context():
 
     @property
     def call_function_name_qual(self):
-        '''
+        '''Get the FQ name of a function call
+
         :return: The FQ name of a function call
         '''
         if 'qualname' in self._context:
@@ -85,7 +91,8 @@ class Context():
 
     @property
     def call_keywords(self):
-        '''
+        '''Get a dictionary of keyword parameters
+
         :return: A dictionary of keyword parameters for a call as strings
         '''
         if (
@@ -104,7 +111,8 @@ class Context():
 
     @property
     def node(self):
-        '''
+        '''Get the raw AST node associated with the context
+
         :return: The raw AST node associated with the context
         '''
         if 'node' in self._context:
@@ -114,7 +122,8 @@ class Context():
 
     @property
     def string_val(self):
-        '''
+        '''Get a string value of a standalone string
+
         :return: String value of a standalone string
         '''
         if 'str' in self._context:
@@ -123,8 +132,8 @@ class Context():
             return None
 
     def _get_literal_value(self, literal):
-        '''
-        Utility function to turn AST literals into native Python types
+        '''Utility function to turn AST literals into native Python types
+
         :param literal: The AST literal to convert
         :return: The value of the AST literal
         '''
@@ -174,12 +183,12 @@ class Context():
             return None
 
     def check_call_arg_value(self, argument_name):
-        """
-        Checks for a value of a named argument in a function call.  Returns
-        none if the specified argument is not found.
+        '''Checks for a value of a named argument in a function call.
+
+        Returns none if the specified argument is not found.
         :param argument_name: A string - name of the argument to look for
         :return: String literal of the argument if found, None otherwise
-        """
+        '''
         kwd_values = self.call_keywords
         if (
             kwd_values is not None and
@@ -190,11 +199,11 @@ class Context():
             return None
 
     def get_call_arg_at_position(self, position_num):
-        """
-        Returns positional argument at the specified position (if it exists)
+        '''Returns positional argument at the specified position (if it exists)
+
         :param position_num: The index of the argument to return the value for
         :return: Value of the argument at the specified position if it exists
-        """
+        '''
         if (
             hasattr(self._context['call'], 'args') and
             position_num < len(self._context['call'].args)
@@ -206,8 +215,8 @@ class Context():
             return None
 
     def is_module_being_imported(self, module):
-        '''
-        Check for the specified module is currently being imported
+        '''Check for the specified module is currently being imported
+
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
@@ -217,8 +226,8 @@ class Context():
             return False
 
     def is_module_imported_exact(self, module):
-        '''
-        Check if a specified module has been imported; only exact matches.
+        '''Check if a specified module has been imported; only exact matches.
+
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
@@ -228,7 +237,8 @@ class Context():
             return False
 
     def is_module_imported_like(self, module):
-        '''
+        '''Check if a specified module has been imported
+
         Check if a specified module has been imported; specified module exists
         as part of any import statement.
         :param module: The module name to look for

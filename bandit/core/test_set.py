@@ -2,26 +2,27 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
 
+from collections import OrderedDict
 import copy
+import glob
+import importlib
+from inspect import getmembers
+from inspect import isfunction
 import os
 import sys
-from collections import OrderedDict
-import glob
-from inspect import getmembers, isfunction
-import importlib
 
 
 class BanditTestSet():
@@ -68,7 +69,8 @@ class BanditTestSet():
         return return_tuple
 
     def _filter_tests(self, filter):
-        '''
+        '''Filters the test set according to the filter tuple
+
         Filters the test set according to the filter tuple which contains
         include and exclude lists.
         :param filter: Include, exclude lists tuple
@@ -99,9 +101,10 @@ class BanditTestSet():
         self.tests = copy.deepcopy(temp_dict)
 
     def _get_decorators_list(self):
-        '''
-        Returns a list of decorator function names so that they can be ignored
-        when discovering test function names.
+        '''Returns a list of decorator function names
+
+        Returns a list of decorator function names so that they can be
+        ignored when discovering test function names.
         '''
 
         # we need to know the name of the decorators so we can automatically
@@ -116,10 +119,7 @@ class BanditTestSet():
         return return_list
 
     def load_tests(self, filter=None):
-        '''
-        Loads all tests from the plugins directory and puts them into the tests
-        dictionary.
-        '''
+        '''Loads all tests in the plugins directory into testsdictionary.'''
 
         # tests are a dictionary of functions, grouped by check type
         # where the key is the function name, and the value is the
@@ -191,8 +191,8 @@ class BanditTestSet():
         self._filter_tests(filter)
 
     def get_tests(self, checktype):
-        '''
-        Returns all tests that are of type checktype
+        '''Returns all tests that are of type checktype
+
         :param checktype: The type of test to filter on
         :return: A dictionary of tests which are of the specified type
         '''

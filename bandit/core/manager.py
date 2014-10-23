@@ -2,27 +2,27 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
 #
-#         http://www.apache.org/licenses/LICENSE-2.0
+#      http://www.apache.org/licenses/LICENSE-2.0
 #
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
-
-import sys
-import logging
 import ast
+import logging
+import sys
+
 import config as b_config
-import result_store as b_result_store
-import node_visitor as b_node_visitor
-import test_set as b_test_set
 import meta_ast as b_meta_ast
+import node_visitor as b_node_visitor
+import result_store as b_result_store
+import test_set as b_test_set
 
 
 class BanditManager():
@@ -30,8 +30,8 @@ class BanditManager():
     scope = []
 
     def __init__(self, config_file, agg_type, debug=False, profile_name=None):
-        '''
-        Get logger, config, AST handler, and result store ready
+        '''Get logger, config, AST handler, and result store ready
+
         :param config_file: A file to read config from
         :param debug: Whether to show debug messsages or not
         :param profile_name: Optional name of profile to use (from cmd line)
@@ -79,8 +79,8 @@ class BanditManager():
         return self.b_rs
 
     def output_results(self, lines, level, output_filename):
-        '''
-        Outputs results from the result store
+        '''Outputs results from the result store
+
         :param lines: How many surrounding lines to show per result
         :param level: Which levels to show (info, warning, error)
         :param output_filename: File to store results
@@ -92,14 +92,12 @@ class BanditManager():
         )
 
     def output_metaast(self):
-        '''
-        Outputs all the nodes from the Meta AST
-        '''
+        '''Outputs all the nodes from the Meta AST.'''
         self.b_ma.report()
 
     def run_scope(self, scope):
-        '''
-        Runs through all files in the scope
+        '''Runs through all files in the scope
+
         :param scope: A set of all files to inspect
         :return: -
         '''
@@ -146,8 +144,8 @@ class BanditManager():
                 sys.exit(1)
 
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
-        '''
-        Execute AST parse on each file
+        '''Execute AST parse on each file
+
         :param fname: The name of the file being parsed
         :param fdata: The file data of the file being parsed
         :param b_ma: The class Meta AST instance
@@ -161,12 +159,12 @@ class BanditManager():
             )
             try:
                 res.visit(ast.parse("".join(fdata.readlines())))
-            except SyntaxError as e:
+            except SyntaxError:
                 b_rs.skip(fname, "syntax error while parsing AST from file")
 
     def _init_logger(self, debug=False, log_format=None):
-        '''
-        Initialize the logger
+        '''Initialize the logger
+
         :param debug: Whether to enable debug mode
         :return: An instantiated logging instance
         '''
