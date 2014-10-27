@@ -17,7 +17,7 @@
 import stat
 
 import bandit
-from bandit.test_selector import *
+from bandit.core.test_selector import *
 
 
 @checks_functions

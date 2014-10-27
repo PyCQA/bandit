@@ -15,7 +15,7 @@
 # under the License.
 
 import bandit
-from bandit.test_selector import *
+from bandit.core.test_selector import *
 
 
 def get_bad_proto_versions(config):
