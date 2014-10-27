@@ -44,6 +44,7 @@ SKIP_RE = '#\s*(({0}))$'.format(')|('.join(SKIP_FLAGS))
 
 # list severities in ascending order
 SEVERITY = ['INFO', 'WARN', 'ERROR']
+SEVERITY_VALUES = {'INFO': 1, 'WARN': 5, 'ERROR': 10}
 
 # add each severity to globals, to allow direct access in module name space
 for sev in SEVERITY:
