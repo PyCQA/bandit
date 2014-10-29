@@ -69,6 +69,7 @@ class BanditManager():
 
         # set the increment of after how many files to show progress
         self.progress = self.b_conf.get_setting('progress')
+        self.scores = []
 
     @property
     def get_logger(self):
@@ -87,8 +88,8 @@ class BanditManager():
         :return: -
         '''
         self.b_rs.report(
-            scope=self.scope, lines=lines, level=level,
-            output_filename=output_filename
+            scope=self.scope, scores=self.scores, lines=lines,
+            level=level, output_filename=output_filename
         )
 
     def output_metaast(self):
@@ -120,10 +121,11 @@ class BanditManager():
                     with open(fname, 'rU') as fdata:
                         try:
                             # parse the current file
-                            self._execute_ast_visitor(
+                            score = self._execute_ast_visitor(
                                 fname, fdata, self.b_ma,
                                 self.b_rs, self.b_ts
                             )
+                            self.scores.append(score)
                         except KeyboardInterrupt as e:
                             sys.exit(2)
                 except IOError as e:
@@ -136,9 +138,10 @@ class BanditManager():
         else:
             self.logger.info("no filename/s provided, working from stdin")
             try:
-                self._execute_ast_visitor(
+                score = self._execute_ast_visitor(
                     'STDIN', sys.stdin, self.b_ma, self.b_rs
                 )
+                self.scores.append(score)
             except KeyboardInterrupt:
                 self.logger.debug("exiting")
                 sys.exit(1)
@@ -151,16 +154,18 @@ class BanditManager():
         :param b_ma: The class Meta AST instance
         :param b_rs: The class result store instance
         :param b_ts: The class test set instance
-        :return:
+        :return: The accumulated test score
         '''
+        score = 0
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
                 fname, self.logger, self.b_conf, b_ma, b_rs, b_ts
             )
             try:
-                res.visit(ast.parse("".join(fdata.readlines())))
+                score = res.visit(ast.parse("".join(fdata.readlines())))
             except SyntaxError:
                 b_rs.skip(fname, "syntax error while parsing AST from file")
+        return score
 
     def _init_logger(self, debug=False, log_format=None):
         '''Initialize the logger

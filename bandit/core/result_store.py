@@ -75,10 +75,11 @@ class BanditResultStore():
                                             issue_text), ]
         self.count += 1
 
-    def report(self, scope, lines=0, level=1, output_filename=None):
+    def report(self, scope, scores, lines=0, level=1, output_filename=None):
         '''Prints the contents of the result store
 
         :param scope: Which files were inspected
+        :param scores: The scores awarded to each file in the scope
         :param lines: # of lines around the issue line to display (optional)
         :param level: What level of severity to display (optional)
         :param output_filename: File to output the results (optional)
@@ -113,14 +114,15 @@ class BanditResultStore():
 
         # print which files were inspected
         if is_tty:
-            tmpstr += "%sFiles in scope (%s):%s\n\t" % (
+            tmpstr += "%sFiles in scope (%s):%s\n" % (
                 color['HEADER'], len(scope),
                 color['DEFAULT']
             )
         else:
-            tmpstr += "Files in scope (%s):\n\t" % (len(scope))
+            tmpstr += "Files in scope (%s):\n" % (len(scope))
 
-        tmpstr += "%s\n" % "\n\t".join(scope)
+        for item in zip(scope, scores):
+            tmpstr += "\t%s (score: %i)\n" % item
 
         # print which files were skipped and why
         if is_tty:
