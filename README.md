@@ -15,31 +15,45 @@ against those nodes.  At the completion of testing, a report is generated that
 lists security issues identified within the target source code.
 
 
+Installation
+------------
+Bandit is distributed as an installable package.  To clone and install in a
+Python virtual environment:
+
+    $ git clone https://git.openstack.org/stackforge/bandit.git
+    $ cd bandit
+    $ virtualenv venv
+    $ source venv/bin/activate
+    $ python setup.py install
+
+To test the new installation:
+
+    $ pip install tox
+    $ tox -epy27
+
+
 Usage
 -----
 Example usage across a code tree, showing one line of context for each issue:
 
-    find ~/openstack-repo/keystone -name '*.py' | xargs ./main.py -n 1
-
+    $ find ~/openstack-repo/keystone -name '*.py' | xargs bandit -n 1
 
 Example usage across the examples/ directory, showing three lines of context
 and only reporting on the high-severity issues:
 
-    ./main.py examples/*.py -n 3 -lll
-
+    $ bandit examples/*.py -n 3 -lll
 
 Example usage across the examples/ directory, showing one line of context and
 running only tests in the ShellInjection profile:
 
-    ./main.py examples/*.py -n 1 -p ShellInjection
-
+    $ bandit examples/*.py -n 1 -p ShellInjection
 
 Usage:
 
-    $ ./main.py -h
-    usage: main.py [-h] [-n CONTEXT_LINES] [-c CONFIG_FILE] [-p PROFILE] [-l]
-                   [-o OUTPUT_FILE] [-d]
-                   file [file ...]
+    $ bandit -h
+    usage: bandit [-h] [-a AGG_TYPE] [-n CONTEXT_LINES] [-c CONFIG_FILE]
+                  [-p PROFILE] [-l] [-o OUTPUT_FILE] [-d]
+                  file [file ...]
 
     Bandit - a Python source code analyzer.
 
@@ -129,12 +143,14 @@ To write a test:
 References
 ==========
 
+Bandit wiki: https://wiki.openstack.org/wiki/Security/Projects/Bandit
+
 Python AST module documentation: https://docs.python.org/2/library/ast.html
 
 Green Tree Snakes - the missing Python AST docs:
 http://greentreesnakes.readthedocs.org/en/latest/
 
-Of specific node, the various types of AST nodes that Bandit currently covers
+Documentation of the various types of AST nodes that Bandit currently covers
 or could be extended to cover:
 http://greentreesnakes.readthedocs.org/en/latest/nodes.html
 
