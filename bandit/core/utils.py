@@ -52,13 +52,15 @@ def get_func_name(node):
 
 def get_qual_attr(node, aliases):
     prefix = ""
-    if type(node.value) == _ast.Name:
+    if type(node) == _ast.Attribute:
         val = deepgetattr(node, 'value.id')
         if val in aliases:
             prefix = aliases[val]
         else:
             prefix = deepgetattr(node, 'value.id')
-    return("%s.%s" % (prefix, node.attr))
+        return("%s.%s" % (prefix, node.attr))
+    else:
+        return ""  # TODO(tkelsey): process other node types
 
 
 def deepgetattr(obj, attr):
