@@ -46,6 +46,21 @@ def get_call_name(node, aliases):
         return ""
 
 
+def get_func_name(node):
+    return node.name  # TODO(tkelsey): get that qualname using enclosing scope
+
+
+def get_qual_attr(node, aliases):
+    prefix = ""
+    if type(node.value) == _ast.Name:
+        val = deepgetattr(node, 'value.id')
+        if val in aliases:
+            prefix = aliases[val]
+        else:
+            prefix = deepgetattr(node, 'value.id')
+    return("%s.%s" % (prefix, node.attr))
+
+
 def deepgetattr(obj, attr):
     """Recurses through an attribute chain to get the ultimate value."""
     for key in attr.split('.'):

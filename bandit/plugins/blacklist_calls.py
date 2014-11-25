@@ -19,7 +19,7 @@ from bandit.core.test_selector import *
 
 
 @takes_config
-@checks_functions
+@checks_calls
 def blacklist_functions(context, config):
     if config is not None and 'bad_name_sets' in config:
         sets = config['bad_name_sets']

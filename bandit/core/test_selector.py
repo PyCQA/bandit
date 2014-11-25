@@ -16,6 +16,18 @@
 
 
 def checks_functions(func):
+    '''Test function checks function definitions
+
+    Use of this delegate before a test function indicates that it should be
+    called any time a function definition is encountered.
+    '''
+    if not hasattr(func, "_checks"):
+        func._checks = []
+    func._checks.append("functions")
+    return func
+
+
+def checks_calls(func):
     '''Test function checks function calls
 
     Use of this delegate before a test function indicates that it should be
@@ -23,7 +35,7 @@ def checks_functions(func):
     '''
     if not hasattr(func, "_checks"):
         func._checks = []
-    func._checks.append("functions")
+    func._checks.append("calls")
     return func
 
 

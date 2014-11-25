@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_selector import *
 
 
-@checks_functions
+@checks_calls
 def linux_commands_wildcard_injection(context):
     system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']

@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_selector import *
 
 
-@checks_functions
+@checks_calls
 def random_lib_calls(context):
     # Alerts on any usage of any random library function
 

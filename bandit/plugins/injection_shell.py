@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_selector import *
 
 
-@checks_functions
+@checks_calls
 def subprocess_popen_with_shell_equals_true(context):
     if (context.call_function_name_qual == 'subprocess.Popen' or
             context.call_function_name_qual == 'utils.execute' or
@@ -30,7 +30,7 @@ def subprocess_popen_with_shell_equals_true(context):
                    context.call_args_string)
 
 
-@checks_functions
+@checks_calls
 def any_other_function_with_shell_equals_true(context):
     # Alerts on any function call that includes a shell=True parameter
     # (multiple 'helpers' with varying names have been identified across

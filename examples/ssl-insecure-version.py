@@ -23,3 +23,19 @@ herp_derp(method=SSL.SSLv3_METHOD)
 herp_derp(method=SSL.TLSv1_METHOD)
 
 ssl.wrap_socket()
+
+def open_ssl_socket(version=ssl.PROTOCOL_SSLv2):
+    pass
+
+def open_ssl_socket(version=ssl.PROTOCOL_SSLv23):
+    pass
+
+def open_ssl_socket(version=SSL.SSLv2_METHOD):
+    pass
+
+def open_ssl_socket(version=SSL.SSLv23_METHOD):
+    pass
+
+# this one will pass ok
+def open_ssl_socket(version=SSL.TLSv1_1_METHOD):
+    pass

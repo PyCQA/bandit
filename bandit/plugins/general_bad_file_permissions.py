@@ -20,7 +20,7 @@ import bandit
 from bandit.core.test_selector import *
 
 
-@checks_functions
+@checks_calls
 def set_bad_file_permissions(context):
     if 'chmod' in context.call_function_name:
         if context.call_args_count == 2:

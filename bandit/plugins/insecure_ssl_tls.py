@@ -23,7 +23,7 @@ def get_bad_proto_versions(config):
 
 
 @takes_config
-@checks_functions
+@checks_calls
 def ssl_with_bad_version(context, config):
     bad_ssl_versions = get_bad_proto_versions(config)
     if (context.call_function_name_qual == 'ssl.wrap_socket'):
@@ -49,7 +49,20 @@ def ssl_with_bad_version(context, config):
                    context.call_args_string)
 
 
+@takes_config("ssl_with_bad_version")
 @checks_functions
+def ssl_with_bad_defaults(context, config):
+    bad_ssl_versions = get_bad_proto_versions(config)
+    for default in context.function_def_defaults_qual:
+        val = default.split(".")[-1]
+        if val in bad_ssl_versions:
+            return(bandit.WARN, 'function definition identified with insecure'
+                   ' SSL/TLS protocol version by default, possible security'
+                   ' issue.  %s' %
+                   context.call_args_string)
+
+
+@checks_calls
 def ssl_with_no_version(context):
     if (context.call_function_name_qual == 'ssl.wrap_socket'):
         if context.check_call_arg_value('ssl_version') is None:
