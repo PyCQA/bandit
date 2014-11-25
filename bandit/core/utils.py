@@ -53,11 +53,17 @@ def get_func_name(node):
 def get_qual_attr(node, aliases):
     prefix = ""
     if type(node) == _ast.Attribute:
-        val = deepgetattr(node, 'value.id')
-        if val in aliases:
-            prefix = aliases[val]
-        else:
-            prefix = deepgetattr(node, 'value.id')
+        try:
+            val = deepgetattr(node, 'value.id')
+            if val in aliases:
+                prefix = aliases[val]
+            else:
+                prefix = deepgetattr(node, 'value.id')
+        except Exception:
+            # NOTE(tkelsey): degrade gracefully when we cant get the fully
+            # qualified name for an attr, just return its base name.
+            pass
+
         return("%s.%s" % (prefix, node.attr))
     else:
         return ""  # TODO(tkelsey): process other node types
