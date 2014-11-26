@@ -42,7 +42,7 @@ def blacklist_import_func(context, config):
             # item 0=import, 1=message, 2=level
             if check[0]:
                 for im in check[0]:
-                    if im == context.call_args[0]:
+                    if len(context.call_args) and im == context.call_args[0]:
                         return _get_result(check, im)
 
 
