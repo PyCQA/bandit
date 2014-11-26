@@ -38,7 +38,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
                         'imports': None, 'import_aliases': None, 'call': None,
                         'function': None}
 
-    def __init__(self, fname, logger, config, metaast, results, testset):
+    def __init__(self, fname, logger, config, metaast, results, testset,
+                 debug):
+        self.debug = debug
         self.seen = 0
         self.score = 0
         self.fname = fname
@@ -52,7 +54,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.import_aliases = {}
         self.context_template['import_aliases'] = self.import_aliases
         self.tester = b_tester.BanditTester(
-            self.logger, self.config, self.results, self.testset
+            self.logger, self.config, self.results, self.testset, self.debug
         )
 
     def visit_FunctionDef(self, node):

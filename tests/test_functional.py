@@ -73,11 +73,10 @@ class FunctionalTests(unittest.TestCase):
         self.b_mgr.run_scope([path])
         self.assertEqual(self.b_mgr.scores[0], 20)
 
-# NOTE(tkelsey): disabled until test works again
-#    def test_hardcoded_passwords(self):
-#        path = os.path.join(os.getcwd(), 'examples', 'hardcoded-passwords.py')
-#        self.b_mgr.run_scope([path])
-#        self.assertEqual(self.b_mgr.scores[0], 0)  # seems broken.
+    def test_hardcoded_passwords(self):
+        path = os.path.join(os.getcwd(), 'examples', 'hardcoded-passwords.py')
+        self.b_mgr.run_scope([path])
+        self.assertEqual(self.b_mgr.scores[0], 0)  # seems broken.
 
     def test_hardcoded_tmp(self):
         path = os.path.join(os.getcwd(), 'examples', 'hardcoded-tmp.py')

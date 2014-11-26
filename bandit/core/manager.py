@@ -37,6 +37,7 @@ class BanditManager():
         :param profile_name: Optional name of profile to use (from cmd line)
         :return:
         '''
+        self.debug = debug
         self.logger = self._init_logger(debug)
         self.b_conf = b_config.BanditConfig(self.logger, config_file)
 
@@ -159,7 +160,7 @@ class BanditManager():
         score = 0
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
-                fname, self.logger, self.b_conf, b_ma, b_rs, b_ts
+                fname, self.logger, self.b_conf, b_ma, b_rs, b_ts, self.debug
             )
             try:
                 score = res.visit(ast.parse("".join(fdata.readlines())))
