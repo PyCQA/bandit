@@ -14,10 +14,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-
 import _ast
 import ast
+import logging
+import os.path
 import symtable
+import sys
 
 
 """Various helper functions."""
@@ -102,3 +104,82 @@ def mid_range(mid, count):
         stop = stop + (start * -1) + 1
         start = 1
     return range(start, stop)
+
+
+class InvalidModulePath(Exception):
+    pass
+
+
+def get_module_qualname_from_path(path):
+    '''Get the module's qualified name by analysis of the path.
+
+    Resolve the absolute pathname and eliminate symlinks. This could result in
+    an incorrect name if symlinks are used to restructure the python lib
+    directory.
+
+    Starting from the right-most directory component look for __init__.py in
+    the directory component. If it exists then the directory name is part of
+    the module name. Move left to the subsequent directory components until a
+    directory is found without __init__.py.
+
+    :param: Path to module file. Relative paths will be resolved relative to
+            current working directory.
+    :return: fully qualified module name
+    '''
+
+    abspath = os.path.abspath(path)
+    (head, tail) = os.path.split(path)
+    if head == '' or tail == '':
+        raise InvalidModulePath('Invalid python file path: "%s"'
+                                ' Missing path or file name' % (path))
+
+    found_syspath = False
+    for syspath in sys.path:
+        if abspath.startswith(os.path.abspath(syspath)):
+            found_syspath = True
+            break
+    if not found_syspath:
+        log = logging.getLogger()
+        log.warn('Module (%s) is not installed in python sys.path. '
+                 'Names defined in this module may not be fully qualified.',
+                 path)
+
+    qname = [os.path.splitext(tail)[0]]
+    while head != '/':
+        if os.path.isfile(os.path.join(head, '__init__.py')):
+            (head, tail) = os.path.split(head)
+            qname.insert(0, tail)
+        else:
+            break
+
+    qualname = '.'.join(qname)
+    return qualname
+
+
+def namespace_path_join(base, name):
+    '''Extend the current namespace path with an additional name
+
+    Take a namespace path (i.e., package.module.class) and extends it
+    with an additional name (i.e., package.module.class.subclass).
+    This is similar to how os.path.join works.
+
+    :param base: (String) The base namespace path.
+    :param name: (String) The new name to append to the base path.
+    :returns: (String) A new namespace path resulting from combination of
+              base and name.
+    '''
+    return '%s.%s' % (base, name)
+
+
+def namespace_path_split(path):
+    '''Split the namespace path into a pair (head, tail).
+
+    Tail will be the last namespace path component and head will
+    be everything leading up to that in the path. This is similar to
+    os.path.split.
+
+    :param path: (String) A namespace path.
+    :returns: (String, String) A tuple where the first component is the base
+              path and the second is the last path component.
+    '''
+    return tuple(path.rsplit('.', 1))

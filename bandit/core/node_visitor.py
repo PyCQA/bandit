@@ -57,11 +57,28 @@ class BanditNodeVisitor(ast.NodeVisitor):
             self.logger, self.config, self.results, self.testset, self.debug
         )
 
+        self.namespace = b_utils.get_module_qualname_from_path(fname)
+        self.logger.debug('Module qualified name: {}'.format(self.namespace))
+
+    def visit_ClassDef(self, node):
+        '''Visitor for AST ClassDef node
+
+        Add class name to current namespace for all descendants.
+        :param node: Node being inspected
+        :return: -
+        '''
+
+        # For all child nodes, add this class name to current namespace
+        self.namespace = b_utils.namespace_path_join(self.namespace, node.name)
+        super(BanditNodeVisitor, self).generic_visit(node)
+        self.namespace = b_utils.namespace_path_split(self.namespace)[0]
+
     def visit_FunctionDef(self, node):
         '''Visitor for AST FunctionDef nodes
 
         add relevant information about the node to
         the context for use in tests which inspect function definitions.
+        Add the function name to the current namespace for all descendants.
         :param node: The node that is being inspected
         :return: -
         '''
@@ -71,14 +88,18 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
         self.logger.debug("visit_FunctionDef called (%s)" % ast.dump(node))
 
-        qualname = b_utils.get_func_name(node)
+        qualname = self.namespace + '.' + b_utils.get_func_name(node)
         name = qualname.split('.')[-1]
 
         self.context['qualname'] = qualname
         self.context['name'] = name
 
+        # For all child nodes and any tests run, add this function name to
+        # current namespace
+        self.namespace = b_utils.namespace_path_join(self.namespace, name)
         self.score += self.tester.run_tests(self.context, 'functions')
         super(BanditNodeVisitor, self).generic_visit(node)
+        self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
     def visit_Call(self, node):
         '''Visitor for AST Call nodes
