@@ -215,6 +215,11 @@ class FunctionalTests(unittest.TestCase):
         self.b_mgr.run_scope([path])
         self.assertEqual(self.b_mgr.scores[0], 16)
 
+    def test_urlopen(self):
+        path = os.path.join(os.getcwd(), 'examples', 'urlopen.py')
+        self.b_mgr.run_scope([path])
+        self.assertEqual(self.b_mgr.scores[0], 30)
+
     def test_utils_shell(self):
         path = os.path.join(os.getcwd(), 'examples', 'utils-shell.py')
         self.b_mgr.run_scope([path])

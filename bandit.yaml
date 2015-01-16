@@ -69,6 +69,9 @@ blacklist_functions:
         - yaml_load:
             qualname: yaml.load
             message: "Use of unsafe yaml load. Allows instantiation of arbitrary objects. Consider yaml.safe_load()."
+        - urllib_urlopen:
+            qualname: urllib.urlopen, urllib.urlretrieve, urllib.URLopener, urllib.FancyURLopener, urllib2.urlopen, urllib2.Request
+            message: "Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected."
 
 blacklist_imports:
     bad_import_sets:
