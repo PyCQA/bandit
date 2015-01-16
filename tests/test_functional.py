@@ -224,3 +224,8 @@ class FunctionalTests(unittest.TestCase):
         path = os.path.join(os.getcwd(), 'examples', 'wildcard-injection.py')
         self.b_mgr.run_scope([path])
         self.assertEqual(self.b_mgr.scores[0], 81)
+
+    def test_yaml(self):
+        path = os.path.join(os.getcwd(), 'examples', 'yaml_load.py')
+        self.b_mgr.run_scope([path])
+        self.assertEqual(self.b_mgr.scores[0], 5)
