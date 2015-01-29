@@ -139,10 +139,20 @@ class BanditNodeVisitor(ast.NodeVisitor):
             return self.visit_Import(node)
 
         for nodename in node.names:
+            # TODO(ljfisher) Names in import_aliases could be overridden
+            #      by local definitions. If this occurs bandit will see the
+            #      name in import_aliases instead of the local definition.
+            #      We need better tracking of names.
             if nodename.asname:
                 self.context['import_aliases'][nodename.asname] = (
                     module + "." + nodename.name
                 )
+            else:
+                # Even if import is not aliased we need an entry that maps
+                # name to module.name.  For example, with 'from a import b'
+                # b should be aliased to the qualified name a.b
+                self.context['import_aliases'][nodename.name] = (module + '.' +
+                                                                 nodename.name)
             self.context['imports'].add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name

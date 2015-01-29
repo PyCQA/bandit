@@ -116,7 +116,7 @@ class FunctionalTests(unittest.TestCase):
     def test_mktemp(self):
         path = os.path.join(os.getcwd(), 'examples', 'mktemp.py')
         self.b_mgr.run_scope([path])
-        self.assertEqual(self.b_mgr.scores[0], 15)
+        self.assertEqual(self.b_mgr.scores[0], 20)
 
     def test_nonesense(self):
         path = os.path.join(os.getcwd(), 'examples', 'nonesense.py')
@@ -136,7 +136,7 @@ class FunctionalTests(unittest.TestCase):
     def test_os_popen(self):
         path = os.path.join(os.getcwd(), 'examples', 'os-popen.py')
         self.b_mgr.run_scope([path])
-        self.assertEqual(self.b_mgr.scores[0], 15)
+        self.assertEqual(self.b_mgr.scores[0], 20)
 
     def test_os_spawn(self):
         path = os.path.join(os.getcwd(), 'examples', 'os-spawn.py')
