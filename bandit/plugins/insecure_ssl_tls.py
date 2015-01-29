@@ -32,7 +32,7 @@ def ssl_with_bad_version(context, config):
             return(bandit.ERROR, 'ssl.wrap_socket call with insecure SSL/TLS'
                    ' protocol version identified, security issue.  %s' %
                    context.call_args_string)
-    elif (context.call_function_name_qual == 'SSL.Context'):
+    elif (context.call_function_name_qual == 'pyOpenSSL.SSL.Context'):
         if context.check_call_arg_value('method') in bad_ssl_versions:
 
             return(bandit.ERROR, 'SSL.Context call with insecure SSL/TLS'
@@ -40,7 +40,7 @@ def ssl_with_bad_version(context, config):
                    context.call_args_string)
 
     elif (context.call_function_name_qual != 'ssl.wrap_socket' and
-          context.call_function_name_qual != 'SSL.Context'):
+          context.call_function_name_qual != 'pyOpenSSL.SSL.Context'):
         if (context.check_call_arg_value('method') in bad_ssl_versions or
            context.check_call_arg_value('ssl_version') in bad_ssl_versions):
 
