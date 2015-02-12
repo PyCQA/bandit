@@ -190,7 +190,7 @@ class FunctionalTests(unittest.TestCase):
     def test_ssl_insecure_version(self):
         path = os.path.join(os.getcwd(), 'examples', 'ssl-insecure-version.py')
         self.b_mgr.run_scope([path])
-        self.assertEqual(self.b_mgr.scores[0], 141)
+        self.assertEqual(self.b_mgr.scores[0], 121)
 
     def test_subprocess_call_linebreaks(self):
         path = os.path.join(os.getcwd(), 'examples',

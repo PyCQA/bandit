@@ -90,7 +90,6 @@ hardcoded_password:
 ssl_with_bad_version:
     bad_protocol_versions:
         - 'PROTOCOL_SSLv2'
-        - 'PROTOCOL_SSLv23'
         - 'SSLv2_METHOD'
         - 'SSLv23_METHOD'
         - 'PROTOCOL_SSLv3'  # strict option

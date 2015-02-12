@@ -2,12 +2,10 @@ import ssl
 from pyOpenSSL import SSL
 
 ssl.wrap_socket(ssl_version=ssl.PROTOCOL_SSLv2)
-ssl.wrap_socket(ssl_version=ssl.PROTOCOL_SSLv23)
 SSL.Context(method=SSL.SSLv2_METHOD)
 SSL.Context(method=SSL.SSLv23_METHOD)
 
 herp_derp(ssl_version=ssl.PROTOCOL_SSLv2)
-herp_derp(ssl_version=ssl.PROTOCOL_SSLv23)
 herp_derp(method=SSL.SSLv2_METHOD)
 herp_derp(method=SSL.SSLv23_METHOD)
 
@@ -25,9 +23,6 @@ herp_derp(method=SSL.TLSv1_METHOD)
 ssl.wrap_socket()
 
 def open_ssl_socket(version=ssl.PROTOCOL_SSLv2):
-    pass
-
-def open_ssl_socket(version=ssl.PROTOCOL_SSLv23):
     pass
 
 def open_ssl_socket(version=SSL.SSLv2_METHOD):
