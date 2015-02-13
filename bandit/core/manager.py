@@ -56,6 +56,10 @@ class BanditManager():
         if profile_name:
             if profile_name in self.b_conf.config['profiles']:
                 profile = self.b_conf.config['profiles'][profile_name]
+                self.logger.debug(
+                    "read in profile '%s': %s",
+                    profile_name, profile
+                )
             else:
                 self.logger.error(
                     'unable to find profile (%s) in config file: '

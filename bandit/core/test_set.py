@@ -65,6 +65,10 @@ class BanditTestSet():
             for exc in profile['exclude']:
                 exclude_list.append(exc)
 
+        self.logger.debug(
+            "_filter_list_from_config completed - include: %s, exclude %s",
+            include_list, exclude_list
+        )
         return_tuple = (include_list, exclude_list)
         return return_tuple
 
@@ -99,6 +103,9 @@ class BanditTestSet():
 
         # copy tests back over from temp copy
         self.tests = copy.deepcopy(temp_dict)
+        self.logger.debug('obtained filtered set of tests:')
+        for k in self.tests:
+            self.logger.debug('\t%s : %s', k, self.tests[k])
 
     def _get_decorators_list(self):
         '''Returns a list of decorator function names
@@ -139,13 +146,13 @@ class BanditTestSet():
             # try to import the module by name
             try:
                 outer = os.path.basename(os.path.normpath(directory))
-                self.logger.debug("importing test: {0}".format(
+                self.logger.debug("importing plugin module: {0}".format(
                                   outer + '.' + module_name))
                 module = importlib.import_module(outer + '.' + module_name)
 
             # if it fails, die
             except ImportError as e:
-                self.logger.error("could not import test module '%s.%s'" %
+                self.logger.error("could not import plugin module '%s.%s'" %
                                   (directory, module_name))
                 self.logger.error("\tdetail: '%s'" % (str(e)))
                 sys.exit(2)
