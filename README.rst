@@ -18,7 +18,7 @@ lists security issues identified within the target source code.
 Installation
 ------------
 Bandit is distributed as an installable package.  To clone and install in a
-Python virtual environment:
+Python virtual environment::
 
     $ git clone https://git.openstack.org/stackforge/bandit.git
     $ cd bandit
@@ -26,7 +26,7 @@ Python virtual environment:
     $ source venv/bin/activate
     $ python setup.py install
 
-To test the new installation:
+To test the new installation::
 
     $ pip install tox
     $ tox -epy27
@@ -34,21 +34,21 @@ To test the new installation:
 
 Usage
 -----
-Example usage across a code tree, showing one line of context for each issue:
+Example usage across a code tree, showing one line of context for each issue::
 
     $ find ~/openstack-repo/keystone -name '*.py' | xargs bandit -n 1
 
 Example usage across the examples/ directory, showing three lines of context
-and only reporting on the high-severity issues:
+and only reporting on the high-severity issues::
 
     $ bandit examples/*.py -n 3 -lll
 
 Example usage across the examples/ directory, showing one line of context and
-running only tests in the ShellInjection profile:
+running only tests in the ShellInjection profile::
 
     $ bandit examples/*.py -n 1 -p ShellInjection
 
-Usage:
+Usage::
 
     $ bandit -h
     usage: bandit [-h] [-a AGG_TYPE] [-n CONTEXT_LINES] [-c CONFIG_FILE]
@@ -96,7 +96,7 @@ other reason, the line can be marked with a '# nosec' and any results
 associated with it will not be reported.
 
 For example, although this line may cause Bandit to report a potential
-security issue, it will not be reported:
+security issue, it will not be reported::
 
     self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
 
@@ -111,7 +111,7 @@ with the types of Python statements they examine (for example: function call,
 string, import, etc).
 
 Tests are executed by the BanditNodeVisitor object as it visits each node in
-the AST.  
+the AST.
 
 Test results are maintained in the BanditResultStore and aggregated for output
 at the completion of a test run.
