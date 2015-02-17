@@ -31,6 +31,23 @@ class Context():
         else:
             self._context = dict()
 
+    def __repr__(self):
+        '''Generate representation of object for printing / interactive use
+
+        Most likely only interested in non-default properties, so we return
+        the string version of _context.
+
+        Example string returned:
+        <Context {'node': <_ast.Call object at 0x110252510>, 'function': None,
+        'name': 'socket', 'imports': set(['socket']), 'module': None,
+        'filename': 'examples/binding.py',
+        'call': <_ast.Call object at 0x110252510>, 'lineno': 3,
+        'import_aliases': {}, 'qualname': 'socket.socket'}>
+
+        :return: A string representation of the object
+        '''
+        return "<Context %s>" % self._context
+
     @property
     def call_args(self):
         '''Get a list of function args
