@@ -84,6 +84,14 @@ class BanditManager():
     def get_resultstore(self):
         return self.b_rs
 
+    @property
+    def results_count(self):
+        '''Return the count of results
+
+        :return: Number of results in the set
+        '''
+        return self.b_rs.count
+
     def output_results(self, lines, level, output_filename):
         '''Outputs results from the result store
 
@@ -149,7 +157,7 @@ class BanditManager():
                 self.scores.append(score)
             except KeyboardInterrupt:
                 self.logger.debug("exiting")
-                sys.exit(1)
+                sys.exit(2)
 
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
         '''Execute AST parse on each file

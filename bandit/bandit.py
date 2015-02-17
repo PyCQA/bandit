@@ -15,6 +15,7 @@
 # under the License.
 
 import argparse
+import sys
 
 from core import manager as b_manager
 
@@ -74,6 +75,12 @@ def main():
     if args.debug:
         b_mgr.output_metaast()
     b_mgr.output_results(args.context_lines, args.level - 1, args.output_file)
+
+    # return an exit code of 1 if there are results, 0 otherwise
+    if b_mgr.results_count > 0:
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 if __name__ == '__main__':
     main()
