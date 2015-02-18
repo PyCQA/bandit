@@ -16,10 +16,8 @@
 
 import _ast
 import ast
-import logging
 import os.path
 import symtable
-import sys
 
 
 """Various helper functions."""
@@ -127,22 +125,10 @@ def get_module_qualname_from_path(path):
     :return: fully qualified module name
     '''
 
-    abspath = os.path.abspath(path)
     (head, tail) = os.path.split(path)
     if head == '' or tail == '':
         raise InvalidModulePath('Invalid python file path: "%s"'
                                 ' Missing path or file name' % (path))
-
-    found_syspath = False
-    for syspath in sys.path:
-        if abspath.startswith(os.path.abspath(syspath)):
-            found_syspath = True
-            break
-    if not found_syspath:
-        log = logging.getLogger()
-        log.warn('Module (%s) is not installed in python sys.path. '
-                 'Names defined in this module may not be fully qualified.',
-                 path)
 
     qname = [os.path.splitext(tail)[0]]
     while head != '/':
