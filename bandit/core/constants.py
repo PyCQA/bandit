@@ -14,6 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from collections import namedtuple
 from distutils.sysconfig import get_python_lib
 import os
 
@@ -49,3 +50,11 @@ SEVERITY_VALUES = {'INFO': 1, 'WARN': 5, 'ERROR': 10}
 # add each severity to globals, to allow direct access in module name space
 for sev in SEVERITY:
     globals()[sev] = sev
+
+# severity level constants for assignment to individual plugins
+severity_namedtuple = namedtuple('SeverityLevel', 'HIGH MEDIUM LOW')
+SEVERITY_LEVEL = severity_namedtuple(HIGH=10, MEDIUM=5, LOW=0)
+
+# confidence level constants for return from individual plugins
+confidence_namedtuple = namedtuple('ConfidenceLevel', 'HIGH MEDIUM LOW')
+CONFIDENCE_LEVEL = confidence_namedtuple(HIGH=10, MEDIUM=5, LOW=0)
