@@ -115,49 +115,37 @@ class BanditManager():
         :param scope: A set of all files to inspect
         :return: -
         '''
-        if scope:
-            self.scope = scope
+        self.scope = scope
 
-            # display progress, if number of files warrants it
-            if len(scope) > self.progress:
-                sys.stdout.write("%s [" % len(scope))
+        # display progress, if number of files warrants it
+        if len(scope) > self.progress:
+            sys.stdout.write("%s [" % len(scope))
 
-            for i, fname in enumerate(scope):
-                self.logger.debug("working on file : %s" % fname)
-
-                if len(scope) > self.progress:
-                    # is it time to update the progress indicator?
-                    if i % self.progress == 0:
-                        sys.stdout.write("%s.. " % i)
-                        sys.stdout.flush()
-                try:
-                    with open(fname, 'rU') as fdata:
-                        try:
-                            # parse the current file
-                            score = self._execute_ast_visitor(
-                                fname, fdata, self.b_ma,
-                                self.b_rs, self.b_ts
-                            )
-                            self.scores.append(score)
-                        except KeyboardInterrupt as e:
-                            sys.exit(2)
-                except IOError as e:
-                    self.b_rs.skip(fname, e.strerror)
+        for i, fname in enumerate(scope):
+            self.logger.debug("working on file : %s" % fname)
 
             if len(scope) > self.progress:
-                sys.stdout.write("]\n")
-                sys.stdout.flush()
-
-        else:
-            self.logger.info("no filename/s provided, working from stdin")
+                # is it time to update the progress indicator?
+                if i % self.progress == 0:
+                    sys.stdout.write("%s.. " % i)
+                    sys.stdout.flush()
             try:
-                score = self._execute_ast_visitor(
-                    'STDIN', sys.stdin, self.b_ma, self.b_rs
-                )
-                self.scores.append(score)
-            except KeyboardInterrupt:
-                self.logger.debug("exiting")
-                sys.exit(2)
+                with open(fname, 'rU') as fdata:
+                    try:
+                        # parse the current file
+                        score = self._execute_ast_visitor(
+                            fname, fdata, self.b_ma,
+                            self.b_rs, self.b_ts
+                        )
+                        self.scores.append(score)
+                    except KeyboardInterrupt as e:
+                        sys.exit(2)
+            except IOError as e:
+                self.b_rs.skip(fname, e.strerror)
+
+        if len(scope) > self.progress:
+            sys.stdout.write("]\n")
+            sys.stdout.flush()
 
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
         '''Execute AST parse on each file
