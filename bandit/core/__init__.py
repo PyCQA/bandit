@@ -24,4 +24,4 @@ import test_set  # noqa
 import tester  # noqa
 import utils  # noqa
 from constants import *  # noqa
-from test_selector import *  # noqa
+from test_properties import *  # noqa

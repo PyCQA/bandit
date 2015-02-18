@@ -16,7 +16,7 @@
 
 
 import bandit
-from bandit.core.test_selector import *
+from bandit.core.test_properties import *
 
 
 @takes_config

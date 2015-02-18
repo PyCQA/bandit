@@ -116,7 +116,7 @@ class BanditTestSet():
 
         # we need to know the name of the decorators so we can automatically
         # ignore them when discovering functions
-        decorator_source_file = "bandit.core.test_selector"
+        decorator_source_file = "bandit.core.test_properties"
         module = importlib.import_module(decorator_source_file)
 
         return_list = []
