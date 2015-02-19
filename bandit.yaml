@@ -29,6 +29,9 @@ profiles:
         include:
             - hardcoded_sql_expressions
 
+    RunAsRoot:
+        include:
+            - execute_with_run_as_root_equals_true
 
 blacklist_functions:
     bad_name_sets:
