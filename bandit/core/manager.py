@@ -92,17 +92,20 @@ class BanditManager():
         '''
         return self.b_rs.count
 
-    def output_results(self, lines, level, output_filename):
+    def output_results(self, lines, level, output_filename, output_format):
         '''Outputs results from the result store
 
         :param lines: How many surrounding lines to show per result
         :param level: Which levels to show (info, warning, error)
         :param output_filename: File to store results
+        :param output_format: output format, either 'json' or 'txt'
         :return: -
         '''
+
         self.b_rs.report(
             scope=self.scope, scores=self.scores, lines=lines,
-            level=level, output_filename=output_filename
+            level=level, output_filename=output_filename,
+            output_format=output_format
         )
 
     def output_metaast(self):
