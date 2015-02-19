@@ -14,57 +14,71 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import ast
+import logging
 
 import constants
 
-
-def severity(func, severity):
-    '''Decorator function to set 'severity' attribute.'''
-    if severity not in constants.SEVERITY_LEVEL._fields:
-        raise TypeError("severity error: %s is not one of %s." % (severity,
-                        ",".join(constants.SEVERITY_LEVEL._fields)))
-    func._severity = severity
-    return func
+logger = logging.getLogger()
 
 
-def confidence(func, conf):
-    '''Decorator function to set 'confidence' attribute.'''
-    if conf not in constants.CONFIDENCE_LEVEL:
-        raise TypeError("Confidence error: %s is not one of %s." % (conf,
-                        ",".join(constants.CONFIDENCE_LEVEL)))
-    func._conf = conf
-    return func
+def severity(sev):
+    '''Decorator function to set 'severity' property.'''
+    def wrapper(func):
+        if sev not in constants.SEVERITY_LEVEL._fields:
+            raise TypeError("Severity error: %s is not one of %s." % (sev,
+                            ",".join(constants.SEVERITY_LEVEL._fields)))
+        func._severity = sev
+        return func
+    return wrapper
 
 
-def category(func, category):
+def category(new_category):
     '''Decorator function to set 'category'.'''
-    func._category = category
-    return func
+    def wrapper(func):
+        func._category = new_category
+        return func
+    return wrapper
 
 
-def title(func, title):
-    '''Decorator function to set 'title' attribute.'''
-    func._title = title
-    return func
+def title(new_title):
+    '''Decorator function to set 'title' property.'''
+    def wrapper(func):
+        func._title = new_title
+        return func
+    return wrapper
 
 
-def uuid(func, uuid):
-    '''Decorator function to set 'uuid' attribute.'''
-    func._uuid = uuid
-    return func
+def uuid(new_uuid):
+    '''Decorator function to set 'uuid' property.'''
+    def wrapper(func):
+        func._uuid = uuid
+        return func
+    return wrapper
 
 
-def checks(func, *args):
+def checks(*args):
     '''Decorator function to set checks to be run.'''
-    if not hasattr(func, "_checks"):
-        func._checks = []
-    for a in args:
-        holder = getattr(ast, a)
-        if holder and issubclass(holder, ast.stmt):
-            func._checks.append(a)
-        else:
-            raise TypeError("Error: %s is not a valid node type in AST" % a)
-    return func
+    def wrapper(func):
+        if not hasattr(func, "_checks"):
+            func._checks = []
+        for a in args:
+            try:
+                holder = getattr(ast, a)
+            except AttributeError:
+                raise TypeError(
+                    "Error: %s is not a valid node type in AST" % a
+                )
+            else:
+                if holder and issubclass(holder, ast.AST):
+                    func._checks.append(a)
+                else:
+                    raise TypeError(
+                        "Error: %s is not a valid node type in AST" % a
+                    )
+        logger.debug('checks_decorator function executed')
+        logger.debug('  func._checks: %s', func._checks)
+        return func
+    return wrapper
 
 
 def checks_functions(func):

@@ -20,7 +20,7 @@ from bandit.core.test_properties import *
 
 
 @takes_config
-@checks_imports
+@checks('Import', 'ImportFrom')
 def blacklist_imports(context, config):
     checks = _load_checks(config)
 
@@ -34,7 +34,7 @@ def blacklist_imports(context, config):
 
 
 @takes_config('blacklist_imports')
-@checks_calls
+@checks('Call')
 def blacklist_import_func(context, config):
     checks = _load_checks(config)
     if context.call_function_name_qual == '__import__':

@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_properties import *
 
 
-@checks_strings
+@checks('Str')
 def hardcoded_bind_all_interfaces(context):
     if context.string_val == '0.0.0.0':
         return bandit.WARN, 'Possible binding to all interfaces'

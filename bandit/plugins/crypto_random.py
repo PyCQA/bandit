@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_properties import *
 
 
-@checks_calls
+@checks('Call')
 def random_lib_calls(context):
     # Alerts on any usage of any random library function
 
@@ -31,7 +31,7 @@ def random_lib_calls(context):
                    'cryptographic purposes.')
 
 
-@checks_imports
+@checks('Import', 'ImportFrom')
 def random_lib_imports(context):
     # Alerts on importing the 'random' library
 

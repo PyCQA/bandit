@@ -20,7 +20,7 @@ from bandit.core.test_properties import *
 
 @takes_config
 # tmcpeak - temporarily commenting this test out, it's broken
-# @checks_strings
+# @checks('Str')
 def hardcoded_password(context, config):
     word_list_file = ""
 

@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_properties import *
 
 
-@checks_strings
+@checks('Str')
 def hardcoded_sql_expressions(context):
     test_str = context.string_val.lower()
     if (

@@ -123,6 +123,7 @@ class BanditTestSet():
         decorators = [o for o in getmembers(module) if isfunction(o[1])]
         for d in decorators:
             return_list.append(d[0])
+        self.logger.debug('_get_decorators_list returning: %s', return_list)
         return return_list
 
     def load_tests(self, filter=None):
@@ -164,7 +165,6 @@ class BanditTestSet():
                     o for o in getmembers(module) if isfunction(o[1])
                 ]
                 for cur_func in functions_list:
-
                     # for every function in the module, add to the dictionary
                     # unless it's one of our decorators, then ignore it
                     fn_name = cur_func[0]
@@ -194,7 +194,10 @@ class BanditTestSet():
                                         sys.exit(2)
                                     else:
                                         self.tests[check][fn_name] = function
-
+                                        self.logger.debug(
+                                            'added function %s targetting %s',
+                                            fn_name, check
+                                        )
         self._filter_tests(filter)
 
     def get_tests(self, checktype):
