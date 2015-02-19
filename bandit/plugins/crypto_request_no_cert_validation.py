@@ -18,7 +18,7 @@ import bandit
 from bandit.core.test_properties import *
 
 
-@checks_calls
+@checks('Call')
 def request_with_no_cert_validation(context):
     if (
         'requests' in context.call_function_name_qual and (

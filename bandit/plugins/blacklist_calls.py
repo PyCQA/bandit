@@ -19,7 +19,7 @@ from bandit.core.test_properties import *
 
 
 @takes_config
-@checks_calls
+@checks('Call')
 def blacklist_functions(context, config):
     if config is not None and 'bad_name_sets' in config:
         sets = config['bad_name_sets']

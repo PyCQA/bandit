@@ -18,6 +18,6 @@ import bandit
 from bandit.core.test_properties import *
 
 
-@checks_exec
+@checks('Exec')
 def exec_used(context):
     return (bandit.ERROR, "Use of exec detected.")

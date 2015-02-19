@@ -23,7 +23,7 @@ def get_bad_proto_versions(config):
 
 
 @takes_config
-@checks_calls
+@checks('Call')
 def ssl_with_bad_version(context, config):
     bad_ssl_versions = get_bad_proto_versions(config)
     if (context.call_function_name_qual == 'ssl.wrap_socket'):
@@ -50,7 +50,7 @@ def ssl_with_bad_version(context, config):
 
 
 @takes_config("ssl_with_bad_version")
-@checks_functions
+@checks('FunctionDef')
 def ssl_with_bad_defaults(context, config):
     bad_ssl_versions = get_bad_proto_versions(config)
     for default in context.function_def_defaults_qual:
@@ -62,7 +62,7 @@ def ssl_with_bad_defaults(context, config):
                    context.call_args_string)
 
 
-@checks_calls
+@checks('Call')
 def ssl_with_no_version(context):
     if (context.call_function_name_qual == 'ssl.wrap_socket'):
         if context.check_call_arg_value('ssl_version') is None:
