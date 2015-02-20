@@ -20,6 +20,8 @@ from bandit.core.test_properties import *
 def execute_with_run_as_root_equals_true(context):
 
     function_names = [
+        'cinder.utils.execute',
+        'neutron.agent.linux.utils.execute',
         'nova.utils.execute',
         'nova.utils.trycmd',
     ]

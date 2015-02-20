@@ -76,7 +76,7 @@ class FunctionalTests(unittest.TestCase):
     def test_exec_as_root(self):
         path = os.path.join(os.getcwd(), 'examples', 'exec-as-root.py')
         self.b_mgr.run_scope([path])
-        self.assertEqual(self.b_mgr.scores[0], 2)
+        self.assertEqual(self.b_mgr.scores[0], 4)
 
     def test_hardcoded_passwords(self):
         path = os.path.join(os.getcwd(), 'examples', 'hardcoded-passwords.py')
