@@ -17,6 +17,7 @@
 import os
 
 import unittest
+import inspect
 
 from bandit.core import manager as b_manager
 from bandit.core import test_set as b_test_set
@@ -239,3 +240,9 @@ class FunctionalTests(unittest.TestCase):
         path = os.path.join(os.getcwd(), 'examples', 'yaml_load.py')
         self.b_mgr.run_scope([path])
         self.assertEqual(self.b_mgr.scores[0], 5)
+
+    def test_jinja2_templating(self):
+        path = os.path.join(os.getcwd(), 'examples', 'jinja2_templating.py')
+        self.b_mgr.run_scope([path])
+        self.assertEqual(self.b_mgr.results_count, 4)
+        self.assertEqual(self.b_mgr.scores[0], 22)
