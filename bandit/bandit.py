@@ -28,8 +28,12 @@ def main():
         description='Bandit - a Python source code analyzer.'
     )
     parser.add_argument(
-        'files', metavar='file', type=str, nargs='+',
-        help='source file/s to be tested'
+        'targets', metavar='targets', type=str, nargs='+',
+        help='source file(s) or directory(s) to be tested'
+    )
+    parser.add_argument(
+        '-r', '--recursive', dest='recursive',
+        action='store_true', help='process files in subdirectories'
     )
     parser.add_argument(
         '-a', '--aggregate', dest='agg_type',
@@ -76,7 +80,8 @@ def main():
 
     b_mgr = b_manager.BanditManager(args.config_file, args.agg_type,
                                     args.debug, profile_name=args.profile)
-    b_mgr.run_scope(args.files)
+    b_mgr.discover_files(args.targets, args.recursive)
+    b_mgr.run_tests()
     if args.debug:
         b_mgr.output_metaast()
     b_mgr.output_results(args.context_lines, args.level - 1, args.output_file,

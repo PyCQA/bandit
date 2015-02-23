@@ -15,7 +15,9 @@
 # under the License.
 
 import ast
+import fnmatch
 import logging
+import os
 import sys
 
 import config as b_config
@@ -40,6 +42,8 @@ class BanditManager():
         self.debug = debug
         self.logger = self._init_logger(debug)
         self.b_conf = b_config.BanditConfig(self.logger, config_file)
+        self.files_list = []
+        self.excluded_files = []
 
         # if the log format string was set in the options, reinitialize
         if self.b_conf.get_option('log_format'):
@@ -103,7 +107,8 @@ class BanditManager():
         '''
 
         self.b_rs.report(
-            scope=self.scope, scores=self.scores, lines=lines,
+            self.files_list, self.scores,
+            excluded_files=self.excluded_files, lines=lines,
             level=level, output_filename=output_filename,
             output_format=output_format
         )
@@ -112,25 +117,64 @@ class BanditManager():
         '''Outputs all the nodes from the Meta AST.'''
         self.b_ma.report()
 
-    def run_scope(self, scope):
+    def discover_files(self, targets, recursive=False):
+        '''Add tests directly and from a directory to the test set
+
+        :param scope: The command line list of files and directories
+        :param recursive: True/False - whether to add all files from dirs
+        :return:
+        '''
+        # We'll mantain a list of files which are added, and ones which have
+        # been explicitly excluded
+        files_list = set()
+        excluded_files = set()
+
+        excluded_path_strings = self.b_conf.get_option('exclude_dirs') or []
+        included_globs = self.b_conf.get_option('include') or '*.py'
+
+        # build list of files we will analyze
+        for fname in targets:
+            # if this is a directory and recursive is set, find all files
+            if os.path.isdir(fname):
+                if recursive:
+                    new_files, newly_excluded = _get_files_from_dir(
+                        fname,
+                        included_globs=included_globs,
+                        excluded_path_strings=excluded_path_strings
+                    )
+                    files_list.update(new_files)
+                    excluded_files.update(newly_excluded)
+                else:
+                    self.logger.warn("Skipping directory (%s), use -r flag to "
+                                     "scan contents" % fname)
+
+            else:
+                if _is_file_included(fname, included_globs,
+                                     excluded_path_strings,
+                                     enforce_glob=False):
+                    files_list.add(fname)
+                else:
+                    excluded_files.add(fname)
+
+        self.files_list = sorted(files_list)
+        self.excluded_files = sorted(excluded_files)
+
+    def run_tests(self):
         '''Runs through all files in the scope
 
-        :param scope: A set of all files to inspect
         :return: -
         '''
-        self.scope = scope
-
         # display progress, if number of files warrants it
-        if len(scope) > self.progress:
-            sys.stdout.write("%s [" % len(scope))
+        if len(self.files_list) > self.progress:
+            sys.stdout.write("%s [" % len(self.files_list))
 
-        for i, fname in enumerate(scope):
+        for count, fname in enumerate(self.files_list):
             self.logger.debug("working on file : %s" % fname)
 
-            if len(scope) > self.progress:
+            if len(self.files_list) > self.progress:
                 # is it time to update the progress indicator?
-                if i % self.progress == 0:
-                    sys.stdout.write("%s.. " % i)
+                if count % self.progress == 0:
+                    sys.stdout.write("%s.. " % count)
                     sys.stdout.flush()
             try:
                 with open(fname, 'rU') as fdata:
@@ -146,7 +190,7 @@ class BanditManager():
             except IOError as e:
                 self.b_rs.skip(fname, e.strerror)
 
-        if len(scope) > self.progress:
+        if len(self.files_list) > self.progress:
             sys.stdout.write("]\n")
             sys.stdout.flush()
 
@@ -194,3 +238,56 @@ class BanditManager():
         logger.addHandler(handler)
         logger.debug("logging initialized")
         return logger
+
+
+def _get_files_from_dir(files_dir, included_globs='*.py',
+                        excluded_path_strings=None):
+    if not excluded_path_strings:
+        excluded_path_strings = []
+
+    files_list = set()
+    excluded_files = set()
+
+    for root, subdirs, files in os.walk(files_dir):
+        for filename in files:
+            path = os.path.join(root, filename)
+            if _is_file_included(path, included_globs, excluded_path_strings):
+                files_list.add(path)
+            else:
+                excluded_files.add(path)
+
+    return files_list, excluded_files
+
+
+def _is_file_included(path, included_globs, excluded_path_strings,
+                      enforce_glob=True):
+    '''Determine if a file should be included based on filename
+
+    This utility function determines if a file should be included based
+    on the file name, a list of parsed extensions, excluded paths, and a flag
+    specifying whether extensions should be enforced.
+
+    :param path: Full path of file to check
+    :param parsed_extensions: List of parsed extensions
+    :param excluded_paths: List of paths from which we should not include files
+    :param do_enforce_extensions: Can set to false to bypass extension check
+    :return: Boolean indicating whether a file should be included
+    '''
+    return_value = False
+
+    # if this is matches a glob of files we look at, and it isn't in an
+    # excluded path
+    if _matches_glob_list(path, included_globs) or not enforce_glob:
+        if not any(x in path for x in excluded_path_strings):
+            return_value = True
+
+    return return_value
+
+
+def _matches_glob_list(filename, glob_list):
+    return_value = False
+    for glob in glob_list:
+        if fnmatch.fnmatch(filename, glob):
+            return_value = True
+            break
+    return return_value

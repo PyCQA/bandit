@@ -18,6 +18,15 @@ plugin_name_pattern: '*.py'
 # optional: log format string
 #log_format: "[%(module)s]\t%(levelname)s\t%(message)s"
 
+# globs of files which should be analyzed
+include:
+    - '*.py'
+    - '*.pyw'
+
+# a list of strings, which if found in the path will cause files to be excluded
+# for example /tests/ - to remove all all files in tests directory
+exclude_dirs:
+
 profiles:
     ShellInjection:
         include:

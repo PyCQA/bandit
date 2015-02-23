@@ -196,7 +196,8 @@ class BanditResultStore():
         return json.dumps(machine_output, sort_keys=True,
                           indent=2, separators=(',', ': '))
 
-    def report_txt(self, scope, scores, lines=0, level=1):
+    def report_txt(self, files_list, scores, excluded_files, lines=0,
+                   level=1):
         '''Returns TXT string of results
 
         :param scope: Which files were inspected
@@ -215,9 +216,14 @@ class BanditResultStore():
         tmpstr_list.append("Run started:\n\t%s\n" % datetime.utcnow())
 
         # print which files were inspected
-        tmpstr_list.append("Files in scope (%s):\n" % (len(scope)))
-        for item in zip(scope, scores):
+        tmpstr_list.append("Files in scope (%s):\n" % (len(files_list)))
+        for item in zip(files_list, scores):
             tmpstr_list.append("\t%s (score: %i)\n" % item)
+
+        # print which files were excluded
+        tmpstr_list.append("Files excluded (%s):\n" % (len(excluded_files)))
+        for item in excluded_files:
+            tmpstr_list.append("\n\t%s" % item)
 
         # print which files were skipped and why
         tmpstr_list.append("Files skipped (%s):" % len(self.skipped))
@@ -271,7 +277,8 @@ class BanditResultStore():
                                 ))
         return "".join(tmpstr_list)
 
-    def report_tty(self, scope, scores, lines=0, level=1):
+    def report_tty(self, files_list, scores, excluded_files, lines=0,
+                   level=1):
         '''Prints the contents of the result store
 
         :param scope: Which files were inspected
@@ -303,22 +310,28 @@ class BanditResultStore():
         ))
 
         # print which files were inspected
-        tmpstr_list.append("%sFiles in scope (%s):%s\n" % (
-            color['HEADER'], len(scope),
+        tmpstr_list.append("\n%sFiles in scope (%s):%s\n" % (
+            color['HEADER'], len(files_list),
             color['DEFAULT']
         ))
 
-        for item in zip(scope, scores):
+        for item in zip(files_list, scores):
             tmpstr_list.append("\t%s (score: %i)\n" % item)
 
+        # print which files were excluded and why
+        tmpstr_list.append("\n%sFiles excluded (%s):%s\n" % (color['HEADER'],
+                           len(excluded_files), color['DEFAULT']))
+        for fname in excluded_files:
+            tmpstr_list.append("\t%s\n" % fname)
+
         # print which files were skipped and why
-        tmpstr_list.append("%sFiles skipped (%s):%s" % (
+        tmpstr_list.append("\n%sFiles skipped (%s):%s\n" % (
             color['HEADER'], len(self.skipped),
             color['DEFAULT']
         ))
 
         for (fname, reason) in self.skipped:
-            tmpstr_list.append("\n\t%s (%s)" % (fname, reason))
+            tmpstr_list.append("\t%s (%s)\n" % (fname, reason))
 
         # print the results
         tmpstr_list.append("\n%sTest results:%s\n" % (
@@ -376,8 +389,8 @@ class BanditResultStore():
                                 ))
         return ''.join(tmpstr_list)
 
-    def report(self, scope, scores, lines=0, level=1, output_filename=None,
-               output_format=None):
+    def report(self, files_list, scores, excluded_files=None, lines=0, level=1,
+               output_filename=None, output_format=None):
         '''Prints the contents of the result store
 
         :param scope: Which files were inspected
@@ -389,10 +402,15 @@ class BanditResultStore():
         :return: -
         '''
 
-        scores_dict = dict(zip(scope, scores))
+        if not excluded_files:
+            excluded_files = []
+
+        scores_dict = dict(zip(files_list, scores))
 
         if output_filename is None and output_format == 'txt':
-            print self.report_tty(scope, scores, lines, level)  # noqa
+            print self.report_tty(files_list, scores,
+                                  excluded_files=excluded_files, lines=lines,
+                                  level=level)  # noqa
             return
 
         if output_filename is None and output_format == 'json':
@@ -400,7 +418,9 @@ class BanditResultStore():
             return
 
         if output_format == 'txt':
-            outer = self.report_txt(scope, scores, lines, level)
+            outer = self.report_txt(files_list, scores,
+                                    excluded_files=excluded_files, lines=lines,
+                                    level=level)
             with open(output_filename, 'w') as fout:
                 fout.write(outer)
             print("TXT output written to file: %s" % output_filename)
