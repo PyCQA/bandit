@@ -38,10 +38,6 @@ profiles:
         include:
             - hardcoded_sql_expressions
 
-    RunAsRoot:
-        include:
-            - execute_with_run_as_root_equals_true
-
 blacklist_functions:
     bad_name_sets:
         - pickle:
@@ -113,3 +109,11 @@ password_config_option_not_marked_secret:
     function_names:
         - oslo.config.cfg.StrOpt
         - oslo_config.cfg.StrOpt
+
+execute_with_run_as_root_equals_true:
+    function_names:
+        - ceilometer.utils.execute
+        - cinder.utils.execute
+        - neutron.agent.linux.utils.execute
+        - nova.utils.execute
+        - nova.utils.trycmd

@@ -84,7 +84,8 @@ class FunctionalTests(unittest.TestCase):
         path = os.path.join(os.getcwd(), 'examples', 'exec-as-root.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(4, self.b_mgr.scores[0])
+        expected = 5 * C.SEVERITY_VALUES['INFO']
+        self.assertEqual(expected, self.b_mgr.scores[0])
 
     def test_hardcoded_passwords(self):
         path = os.path.join(os.getcwd(), 'examples', 'hardcoded-passwords.py')

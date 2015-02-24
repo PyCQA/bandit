@@ -16,17 +16,11 @@ import bandit
 from bandit.core.test_properties import *
 
 
+@takes_config
 @checks('Call')
-def execute_with_run_as_root_equals_true(context):
+def execute_with_run_as_root_equals_true(context, config):
 
-    function_names = [
-        'cinder.utils.execute',
-        'neutron.agent.linux.utils.execute',
-        'nova.utils.execute',
-        'nova.utils.trycmd',
-    ]
-
-    if (context.call_function_name_qual in function_names):
+    if (context.call_function_name_qual in config['function_names']):
         if context.check_call_arg_value('run_as_root') == 'True':
 
             return(bandit.INFO, 'execute with run_as_root=True '
