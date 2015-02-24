@@ -4,6 +4,7 @@ venv*
 .DS_Store
 *.egg
 *.egg-info
+.eggs/
 .tox
 .testrepository
 build/*

@@ -28,6 +28,11 @@ include:
 exclude_dirs:
 
 profiles:
+    XSS:
+        include:
+            - jinja2_autoescape_false
+            - use_of_mako_templates
+
     ShellInjection:
         include:
             - subprocess_popen_with_shell_equals_true

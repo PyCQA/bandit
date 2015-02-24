@@ -218,3 +218,6 @@ class FunctionalTests(unittest.TestCase):
     def test_secret_config_option(self):
         '''Test for `secret=True` in Oslo's config.'''
         self.check_example('secret-config-option.py', info=1, warn=2)
+
+    def test_mako_templating(self):
+        self.check_example('mako_templating.py', warn=3)

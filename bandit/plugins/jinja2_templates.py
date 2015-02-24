@@ -21,7 +21,7 @@ from bandit.core.test_properties import *
 
 
 @checks('Call')
-def autoescape_false(context):
+def jinja2_autoescape_false(context):
     # check type just to be safe
     if type(context.call_function_name_qual) == str:
         qualname_list = context.call_function_name_qual.split('.')
