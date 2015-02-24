@@ -88,20 +88,29 @@ def describe_symbol(sym):
             print('    is', prop)
 
 
-def mid_range(mid, count):
-    if count == 1:
-        return range(mid, mid + 1)
-    diff = count / 2
-    if count % 2 == 0:
-        start = mid - diff
-        stop = mid + diff
+def lines_with_context(line_range_list, context, max_line_no):
+    worker = sorted(line_range_list)
+
+    # create list and add lines list is on
+    complete = set(worker)
+
+    # add lines before warning
+    if (worker[0] - context) <= 0:
+        for l in range(1, worker[0]):
+            complete.add(l)
     else:
-        start = mid - diff
-        stop = mid + diff + 1
-    if start < 1:
-        stop = stop + (start * -1) + 1
-        start = 1
-    return range(start, stop)
+        for l in range(worker[0] - context, worker[0]):
+            complete.add(l)
+
+    # add lines after warning (+1 because of range behavior)
+    if (worker[-1] + context) > max_line_no:
+        for l in range(worker[-1], max_line_no + 1):
+            complete.add(l)
+    else:
+        for l in range(worker[-1], worker[-1] + context + 1):
+            complete.add(l)
+
+    return sorted(list(complete))
 
 
 class InvalidModulePath(Exception):
