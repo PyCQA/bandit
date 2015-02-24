@@ -29,12 +29,24 @@ def autoescape_false(context):
         if 'jinja2' in qualname_list and func == 'Environment':
             for node in ast.walk(context.node):
                 if isinstance(node, ast.keyword):
+                    # definite autoescape = False
                     if (getattr(node, 'arg', None) == 'autoescape' and
-                       getattr(node.value, 'id', None) == 'False'):
+                            getattr(node.value, 'id', None) == 'False'):
                         return(bandit.ERROR, 'Using jinja2 templates with'
-                               ' autocomplete=False is dangerous and can'
-                               ' lead to XSS')
+                               ' autoescape=False is dangerous and can'
+                               ' lead to XSS. Use autoescape=True to mitigate'
+                               ' XSS vulnerabilities')
+                    # found autoescape
                     if getattr(node, 'arg', None) == 'autoescape':
-                        return(bandit.INFO, 'Using jinja2 templates with'
-                               ' autocomplete=False is dangerous and can'
-                               ' lead to XSS')
+                        if(getattr(node.value, 'id', None) == 'True'):
+                            return
+                        else:
+                            return(bandit.WARN, 'Using jinja2 templates with'
+                                   ' autoescape=False is dangerous and can'
+                                   ' lead to XSS. Ensure autoescape=True to'
+                                   ' mitigate XSS vulnerabilities.')
+            # We haven't found a keyword named autoescape, indicating default
+            # behavior
+            return(bandit.ERROR, 'By default, jinja2 sets autoescape'
+                   ' to False. Consider using autoescape=True to'
+                   ' mitigate XSS vulnerabilities.')
