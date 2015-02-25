@@ -58,3 +58,11 @@ SEVERITY_LEVEL = severity_namedtuple(HIGH=10, MEDIUM=5, LOW=0)
 # confidence level constants for return from individual plugins
 confidence_namedtuple = namedtuple('ConfidenceLevel', 'HIGH MEDIUM LOW')
 CONFIDENCE_LEVEL = confidence_namedtuple(HIGH=10, MEDIUM=5, LOW=0)
+
+# A list of values Python considers to be False.
+# These can be useful in tests to check if a value is True or False.
+# We don't handle the case of user-defined classes being false.
+# These are only useful when we have a constant in code. If we
+# have a variable we cannot determine if False.
+# See https://docs.python.org/2/library/stdtypes.html#truth-value-testing
+FALSE_VALUES = (None, False, 0, 0L, 0.0, 0j, '', (), [], {})
