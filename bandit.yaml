@@ -108,3 +108,8 @@ ssl_with_bad_version:
         - 'PROTOCOL_TLSv1'  # strict option
         - 'SSLv3_METHOD'    # strict option
         - 'TLSv1_METHOD'    # strict option
+
+password_config_option_not_marked_secret:
+    function_names:
+        - oslo.config.cfg.StrOpt
+        - oslo_config.cfg.StrOpt

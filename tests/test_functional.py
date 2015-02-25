@@ -19,6 +19,7 @@ import os
 import unittest
 import inspect
 
+from bandit.core import constants as C
 from bandit.core import manager as b_manager
 from bandit.core import test_set as b_test_set
 
@@ -284,3 +285,10 @@ class FunctionalTests(unittest.TestCase):
         self.b_mgr.run_tests()
         self.assertEqual(4, self.b_mgr.results_count)
         self.assertEqual(35, self.b_mgr.scores[0])
+
+    def test_secret_config_option(self):
+        path = os.path.join(os.getcwd(), 'examples', 'secret-config-option.py')
+        self.b_mgr.discover_files([path], True)
+        self.b_mgr.run_tests()
+        expected = 2 * C.SEVERITY_VALUES['WARN'] + C.SEVERITY_VALUES['INFO']
+        self.assertEqual(expected, self.b_mgr.scores[0])
