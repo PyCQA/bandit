@@ -53,234 +53,234 @@ class FunctionalTests(unittest.TestCase):
         path = os.path.join(os.getcwd(), 'examples', 'binding.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 5)
+        self.assertEqual(5, self.b_mgr.scores[0])
 
     def test_call_tests(self):
         path = os.path.join(os.getcwd(), 'examples', 'call-tests.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 6)
+        self.assertEqual(6, self.b_mgr.scores[0])
 
     def test_crypto_md5(self):
         path = os.path.join(os.getcwd(), 'examples', 'crypto-md5.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 25)
+        self.assertEqual(25, self.b_mgr.scores[0])
 
     def test_eval(self):
         path = os.path.join(os.getcwd(), 'examples', 'eval.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 15)
+        self.assertEqual(15, self.b_mgr.scores[0])
 
     def test_exec(self):
         path = os.path.join(os.getcwd(), 'examples', 'exec.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 20)
+        self.assertEqual(20, self.b_mgr.scores[0])
 
     def test_exec_as_root(self):
         path = os.path.join(os.getcwd(), 'examples', 'exec-as-root.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 4)
+        self.assertEqual(4, self.b_mgr.scores[0])
 
     def test_hardcoded_passwords(self):
         path = os.path.join(os.getcwd(), 'examples', 'hardcoded-passwords.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 0)  # seems broken.
+        self.assertEqual(0, self.b_mgr.scores[0])  # seems broken.
 
     def test_hardcoded_tmp(self):
         path = os.path.join(os.getcwd(), 'examples', 'hardcoded-tmp.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 5)
+        self.assertEqual(5, self.b_mgr.scores[0])
 
     def test_httplib_https(self):
         path = os.path.join(os.getcwd(), 'examples', 'httplib_https.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 5)
+        self.assertEqual(5, self.b_mgr.scores[0])
 
     def test_imports_aliases(self):
         path = os.path.join(os.getcwd(), 'examples', 'imports-aliases.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 43)
+        self.assertEqual(43, self.b_mgr.scores[0])
 
     def test_imports_from(self):
         path = os.path.join(os.getcwd(), 'examples', 'imports-from.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 3)
+        self.assertEqual(3, self.b_mgr.scores[0])
 
     def test_imports_function(self):
         path = os.path.join(os.getcwd(), 'examples', 'imports-function.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 2)
+        self.assertEqual(2, self.b_mgr.scores[0])
 
     def test_imports_telnetlib(self):
         path = os.path.join(os.getcwd(), 'examples', 'imports-telnetlib.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 10)
+        self.assertEqual(10, self.b_mgr.scores[0])
 
     def test_imports(self):
         path = os.path.join(os.getcwd(), 'examples', 'imports.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 2)
+        self.assertEqual(2, self.b_mgr.scores[0])
 
     def test_mktemp(self):
         path = os.path.join(os.getcwd(), 'examples', 'mktemp.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 20)
+        self.assertEqual(20, self.b_mgr.scores[0])
 
     def test_nonesense(self):
         path = os.path.join(os.getcwd(), 'examples', 'nonesense.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(len(self.b_mgr.scores), 0)
+        self.assertEqual(0, len(self.b_mgr.scores))
 
     def test_okay(self):
         path = os.path.join(os.getcwd(), 'examples', 'okay.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 0)
+        self.assertEqual(0, self.b_mgr.scores[0])
 
     def test_os_exec(self):
         path = os.path.join(os.getcwd(), 'examples', 'os-exec.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 0)  # seems broken.
+        self.assertEqual(0, self.b_mgr.scores[0])  # seems broken.
 
     def test_os_popen(self):
         path = os.path.join(os.getcwd(), 'examples', 'os-popen.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 20)
+        self.assertEqual(20, self.b_mgr.scores[0])
 
     def test_os_spawn(self):
         path = os.path.join(os.getcwd(), 'examples', 'os-spawn.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 0)  # seems broken.
+        self.assertEqual(0, self.b_mgr.scores[0])  # seems broken.
 
     def test_os_startfile(self):
         path = os.path.join(os.getcwd(), 'examples', 'os-startfile.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 15)
+        self.assertEqual(15, self.b_mgr.scores[0])
 
     def test_pickle(self):
         path = os.path.join(os.getcwd(), 'examples', 'pickle.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 11)
+        self.assertEqual(11, self.b_mgr.scores[0])
 
     def test_random(self):
         path = os.path.join(os.getcwd(), 'examples', 'random.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 3)
+        self.assertEqual(3, self.b_mgr.scores[0])
 
     def test_requests_ssl_verify_disabled_aliases(self):
         path = os.path.join(os.getcwd(), 'examples',
             'requests-ssl-verify-disabled-aliases.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 20)
+        self.assertEqual(20, self.b_mgr.scores[0])
 
     def test_requests_ssl_verify_disabled(self):
         path = os.path.join(os.getcwd(), 'examples',
             'requests-ssl-verify-disabled.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 20)
+        self.assertEqual(20, self.b_mgr.scores[0])
 
     def test_skip(self):
         path = os.path.join(os.getcwd(), 'examples', 'skip.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 35)
+        self.assertEqual(35, self.b_mgr.scores[0])
 
     def test_sql_statements_with_sqlalchemy(self):
         path = os.path.join(os.getcwd(), 'examples',
             'sql_statements_with_sqlalchemy.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 4)
+        self.assertEqual(4, self.b_mgr.scores[0])
 
     def test_sql_statements_without_sql_alchemy(self):
         path = os.path.join(os.getcwd(), 'examples',
             'sql_statements_without_sql_alchemy.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 20)
+        self.assertEqual(20, self.b_mgr.scores[0])
 
     def test_ssl_insecure_version(self):
         path = os.path.join(os.getcwd(), 'examples', 'ssl-insecure-version.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 121)
+        self.assertEqual(121, self.b_mgr.scores[0])
 
     def test_subprocess_call_linebreaks(self):
         path = os.path.join(os.getcwd(), 'examples',
             'subprocess-call-linebreaks.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 6)
+        self.assertEqual(6, self.b_mgr.scores[0])
 
     def test_subprocess_call(self):
         path = os.path.join(os.getcwd(), 'examples', 'subprocess-call.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 6)
+        self.assertEqual(6, self.b_mgr.scores[0])
 
     def test_subprocess_popen_shell(self):
         path = os.path.join(os.getcwd(), 'examples',
             'subprocess-popen-shell.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 21)
+        self.assertEqual(21, self.b_mgr.scores[0])
 
     def test_subprocess_popen_shell2(self):
         path = os.path.join(os.getcwd(), 'examples',
             'subprocess-popen-shell2.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 16)
+        self.assertEqual(16, self.b_mgr.scores[0])
 
     def test_urlopen(self):
         path = os.path.join(os.getcwd(), 'examples', 'urlopen.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 30)
+        self.assertEqual(30, self.b_mgr.scores[0])
 
     def test_utils_shell(self):
         path = os.path.join(os.getcwd(), 'examples', 'utils-shell.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 60)
+        self.assertEqual(60, self.b_mgr.scores[0])
 
     def test_wildcard_injection(self):
         path = os.path.join(os.getcwd(), 'examples', 'wildcard-injection.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 81)
+        self.assertEqual(81, self.b_mgr.scores[0])
 
     def test_yaml(self):
         path = os.path.join(os.getcwd(), 'examples', 'yaml_load.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.scores[0], 5)
+        self.assertEqual(5, self.b_mgr.scores[0])
 
     def test_jinja2_templating(self):
         path = os.path.join(os.getcwd(), 'examples', 'jinja2_templating.py')
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(self.b_mgr.results_count, 4)
-        self.assertEqual(self.b_mgr.scores[0], 35)
+        self.assertEqual(4, self.b_mgr.results_count)
+        self.assertEqual(35, self.b_mgr.scores[0])

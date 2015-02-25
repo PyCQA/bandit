@@ -104,7 +104,7 @@ class UtilTests(unittest.TestCase):
 
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.tempdir, 'good', 'a', 'b', 'c', 'test_typical.py'))
-        self.assertEqual(name, 'good.a.b.c.test_typical')
+        self.assertEqual('good.a.b.c.test_typical', name)
 
     def test_get_module_qualname_from_path_abs_missingmid(self):
         '''Test get_module_qualname_from_path with missing module
@@ -113,7 +113,7 @@ class UtilTests(unittest.TestCase):
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.tempdir, 'missingmid', 'a', 'b', 'c',
             'test_missingmid.py'))
-        self.assertEqual(name, 'b.c.test_missingmid')
+        self.assertEqual('b.c.test_missingmid', name)
 
     def test_get_module_qualname_from_path_abs_missingend(self):
         '''Test get_module_qualname_from_path with no __init__.py
@@ -122,21 +122,21 @@ class UtilTests(unittest.TestCase):
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.tempdir, 'missingend', 'a', 'b', 'c',
             'test_missingend.py'))
-        self.assertEqual(name, 'test_missingend')
+        self.assertEqual('test_missingend', name)
 
     def test_get_module_qualname_from_path_abs_syms(self):
         '''Test get_module_qualname_from_path with symlink in path'''
 
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.tempdir, 'syms', 'a', 'bsym', 'c', 'test_typical.py'))
-        self.assertEqual(name, 'syms.a.bsym.c.test_typical')
+        self.assertEqual('syms.a.bsym.c.test_typical', name)
 
     def test_get_module_qualname_from_path_rel_typical(self):
         '''Test get_module_qualname_from_path with typical relative paths'''
 
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.reltempdir, 'good', 'a', 'b', 'c', 'test_typical.py'))
-        self.assertEqual(name, 'good.a.b.c.test_typical')
+        self.assertEqual('good.a.b.c.test_typical', name)
 
     def test_get_module_qualname_from_path_rel_missingmid(self):
         '''Test get_module_qualname_from_path with module __init__.py
@@ -145,7 +145,7 @@ class UtilTests(unittest.TestCase):
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.reltempdir, 'missingmid', 'a', 'b', 'c',
             'test_missingmid.py'))
-        self.assertEqual(name, 'b.c.test_missingmid')
+        self.assertEqual('b.c.test_missingmid', name)
 
     def test_get_module_qualname_from_path_rel_missingend(self):
         '''Test get_module_qualname_from_path with __init__.py missing from
@@ -154,20 +154,20 @@ class UtilTests(unittest.TestCase):
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.reltempdir, 'missingend', 'a', 'b', 'c',
             'test_missingend.py'))
-        self.assertEqual(name, 'test_missingend')
+        self.assertEqual('test_missingend', name)
 
     def test_get_module_qualname_from_path_rel_syms(self):
         '''Test get_module_qualname_from_path with symbolic relative paths'''
 
         name = b_utils.get_module_qualname_from_path(os.path.join(
             self.reltempdir, 'syms', 'a', 'bsym', 'c', 'test_typical.py'))
-        self.assertEqual(name, 'syms.a.bsym.c.test_typical')
+        self.assertEqual('syms.a.bsym.c.test_typical', name)
 
     def test_get_module_qualname_from_path_sys(self):
         '''Test get_module_qualname_from_path with system module paths'''
 
         name = b_utils.get_module_qualname_from_path(os.__file__)
-        self.assertEqual(name, 'os')
+        self.assertEqual('os', name)
 
         # This will fail because of magic for os.path. Not sure how to fix.
         # name = b_utils.get_module_qualname_from_path(os.path.__file__)
@@ -177,7 +177,7 @@ class UtilTests(unittest.TestCase):
         '''Test get_module_qualname_from_path with invalid path '''
 
         name = b_utils.get_module_qualname_from_path('/a/b/c/d/e.py')
-        self.assertEqual(name, 'e')
+        self.assertEqual('e', name)
 
     def test_get_module_qualname_from_path_dir(self):
         '''Test get_module_qualname_from_path with dir path '''
@@ -187,9 +187,9 @@ class UtilTests(unittest.TestCase):
 
     def test_namespace_path_join(self):
         p = b_utils.namespace_path_join('base1.base2', 'name')
-        self.assertEqual(p, 'base1.base2.name')
+        self.assertEqual('base1.base2.name', p)
 
     def test_namespace_path_split(self):
         (head, tail) = b_utils.namespace_path_split('base1.base2.name')
-        self.assertEqual(head, 'base1.base2')
-        self.assertEqual(tail, 'name')
+        self.assertEqual('base1.base2', head)
+        self.assertEqual('name', tail)
