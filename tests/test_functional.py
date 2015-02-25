@@ -283,4 +283,4 @@ class FunctionalTests(unittest.TestCase):
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
         self.assertEqual(self.b_mgr.results_count, 4)
-        self.assertEqual(self.b_mgr.scores[0], 22)
+        self.assertEqual(self.b_mgr.scores[0], 35)
