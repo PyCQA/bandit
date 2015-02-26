@@ -83,7 +83,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = node.lineno
+        self.context['lineno'] = self.linenumber_range(node)
         self.context['function'] = node
 
         self.logger.debug("visit_FunctionDef called (%s)" % ast.dump(node))
@@ -110,7 +110,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = node.lineno
+        self.context['lineno'] = self.linenumber_range(node)
         self.context['call'] = node
 
         self.logger.debug("visit_Call called (%s)" % ast.dump(node))
@@ -133,7 +133,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = node.lineno
+        self.context['lineno'] = self.linenumber_range(node)
         self.logger.debug("visit_Import called (%s)" % ast.dump(node))
         for nodename in node.names:
             if nodename.asname:
@@ -152,7 +152,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = node.lineno
+        self.context['lineno'] = self.linenumber_range(node)
         self.logger.debug("visit_ImportFrom called (%s)" % ast.dump(node))
 
         module = node.module
@@ -188,7 +188,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
-        self.context['lineno'] = node.lineno
+        self.context['lineno'] = self.linenumber_range(node)
         self.context['str'] = node.s
         self.logger.debug("visit_Str called (%s)" % ast.dump(node))
 
@@ -196,7 +196,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Exec(self, node):
-        self.context['lineno'] = node.lineno
+        self.context['lineno'] = self.linenumber_range(node)
         self.context['str'] = 'exec'
 
         self.logger.debug("visit_Exec called (%s)" % ast.dump(node))
@@ -226,3 +226,10 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.depth -= 1
         self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
         return self.score
+
+    def linenumber_range(self, node):
+        lines = set()
+        for n in ast.walk(node):
+            if hasattr(n, 'lineno'):
+                lines.add(n.lineno)
+        return sorted(lines)

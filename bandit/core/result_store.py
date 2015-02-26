@@ -131,15 +131,13 @@ class BanditResultStore():
                 filename = item[0]
                 filelist = item[1]
                 for x in filelist:
-                    line_num = str(x[0])
+                    line_nums = x[0]
                     error_label = str(x[1]).strip()
                     error_type = str(x[2]).strip()
                     reason = str(x[3]).strip()
-                    code = ""
-                    for i in utils.mid_range(int(line_num), lines):
-                        code += linecache.getline(filename, i)
+                    code = self.get_code(filename, line_nums)
                     holder = dict({"filename": filename,
-                                   "line_num": line_num,
+                                   "line_numbers": line_nums,
                                    "error_label": error_label,
                                    "error_type": error_type,
                                    "code": code,
@@ -172,14 +170,12 @@ class BanditResultStore():
                 filelist = item[1]
                 for x in filelist:
                     filename = str(x[0])
-                    line_num = str(x[1])
+                    line_nums = x[1]
                     error_type = str(x[2]).strip()
                     reason = str(x[3]).strip()
-                    code = ""
-                    for i in utils.mid_range(int(line_num), lines):
-                        code += linecache.getline(filename, i)
+                    code = self.get_code(filename, line_nums)
                     holder = dict({"filename": filename,
-                                   "line_num": line_num,
+                                   "line_num": line_nums,
                                    "error_label": vuln_label.strip(),
                                    "error_type": error_type,
                                    "code": code,
@@ -238,43 +234,43 @@ class BanditResultStore():
         elif self.agg_type == 'vuln':
             for test, issues in self.resstore.items():
                 for filename, lineno, issue_type, issue_text in issues:
-                    issue_line = linecache.getline(filename, lineno)
+                    max_lines = self.file_length(filename)
+                    issue_line = self.get_code(filename, lineno)
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result in't filtered out by severity
                     if constants.SEVERITY.index(issue_type) >= level:
-                        tmpstr_list.append(">> %s\n - %s::%s\n" % (
+                        tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
                             issue_text, filename, lineno
                         ))
 
-                        for i in utils.mid_range(lineno, lines):
-                            line = linecache.getline(filename, i)
-                            # linecache returns '' if line does not exist
-                            if line != '':
-                                tmpstr_list.append("\t%3d  %s" % (
-                                    i, linecache.getline(filename, i)
-                                ))
+                        tmpstr_list.append(self.get_code(filename,
+                                           utils.lines_with_context(lineno,
+                                                                    lines,
+                                                                    max_lines),
+                                           True))
+
         # otherwise, aggregating by filename
         else:
             for filename, issues in self.resstore.items():
                 for lineno, test, issue_type, issue_text in issues:
-                    issue_line = linecache.getline(filename, lineno)
+                    max_lines = self.file_length(filename)
+                    issue_line = self.get_code(filename, lineno)
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result isn't filtered out by severity
                     if constants.SEVERITY.index(issue_type) >= level:
-                        tmpstr_list.append(">> %s\n - %s::%s\n" % (
+                        tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
                             issue_text, filename, lineno
                         ))
-                        for i in utils.mid_range(lineno, lines):
-                            line = linecache.getline(filename, i)
-                            # linecache returns '' if line does not exist
-                            if line != '':
-                                tmpstr_list.append("\t%3d  %s" % (
-                                    i, linecache.getline(filename, i)
-                                ))
+
+                        tmpstr_list.append(self.get_code(filename,
+                                           utils.lines_with_context(lineno,
+                                                                    lines,
+                                                                    max_lines),
+                                           True))
         return "".join(tmpstr_list)
 
     def report_tty(self, files_list, scores, excluded_files, lines=0,
@@ -344,49 +340,51 @@ class BanditResultStore():
         elif self.agg_type == 'vuln':
             for test, issues in self.resstore.items():
                 for filename, lineno, issue_type, issue_text in issues:
-                    issue_line = linecache.getline(filename, lineno)
+                    max_lines = self.file_length(filename)
+                    issue_line = self.get_code(filename, lineno)
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result in't filtered out by severity
                     if constants.SEVERITY.index(issue_type) >= level:
-                        tmpstr_list.append("%s>> %s\n - %s::%s%s\n" % (
+                        tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
                             color.get(issue_type, color['DEFAULT']),
                             issue_text, filename, lineno,
                             color['DEFAULT']
                         ))
 
-                        for i in utils.mid_range(lineno, lines):
-                            line = linecache.getline(filename, i)
-                            # linecache returns '' if line does not exist
-                            if line != '':
-                                tmpstr_list.append("\t%3d  %s" % (
-                                    i, linecache.getline(filename, i)
-                                ))
+                        tmpstr_list.append(self.get_code(
+                                           filename,
+                                           utils.lines_with_context(lineno,
+                                                                    lines,
+                                                                    max_lines),
+                                           True))
+
         # otherwise, aggregating by filename
         else:
             for filename, issues in self.resstore.items():
                 for lineno, test, issue_type, issue_text in issues:
-                    issue_line = linecache.getline(filename, lineno)
+                    max_lines = self.file_length(filename)
+                    issue_line = self.get_code(filename, lineno)
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result isn't filtered out by severity
                     if constants.SEVERITY.index(issue_type) >= level:
-                        tmpstr_list.append("%s>> %s\n - %s::%s%s\n" % (
+                        tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
                             color.get(
                                 issue_type, color['DEFAULT']
                             ),
                             issue_text, filename, lineno,
                             color['DEFAULT']
                         ))
-                        for i in utils.mid_range(lineno, lines):
-                            line = linecache.getline(filename, i)
-                            # linecache returns '' if line does not exist
-                            if line != '':
-                                tmpstr_list.append("\t%3d  %s" % (
-                                    i, linecache.getline(filename, i)
-                                ))
+
+                        tmpstr_list.append(self.get_code(
+                                           filename,
+                                           utils.lines_with_context(lineno,
+                                                                    lines,
+                                                                    max_lines),
+                                           True))
         return ''.join(tmpstr_list)
 
     def report(self, files_list, scores, excluded_files=None, lines=0, level=1,
@@ -431,3 +429,25 @@ class BanditResultStore():
                 fout.write(outer)
             print("JSON output written to file: %s" % output_filename)
             return
+
+    def get_code(self, filename, line_list, tabbed=False):
+        '''Gets lines of code from a file
+
+        :param filename: Filename of file with code in it
+        :param line_list: A list of integers corresponding to line numbers
+        :return: string of code
+        '''
+        issue_line = []
+        prepend = ""
+        for l in line_list:
+            if l:
+                if tabbed:
+                    prepend = "%s\t" % l
+                issue_line.append(prepend + linecache.getline(filename, l))
+        return ''.join(issue_line)
+
+    def file_length(self, filename):
+        with open(filename) as f:
+            for line, l in enumerate(f):
+                pass
+        return line + 1
