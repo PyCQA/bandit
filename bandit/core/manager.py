@@ -285,9 +285,7 @@ def _is_file_included(path, included_globs, excluded_path_strings,
 
 
 def _matches_glob_list(filename, glob_list):
-    return_value = False
     for glob in glob_list:
         if fnmatch.fnmatch(filename, glob):
-            return_value = True
-            break
-    return return_value
+            return True
+    return False
