@@ -149,6 +149,17 @@ class Context():
             return None
 
     @property
+    def statement(self):
+        '''Get the raw AST for the current statement
+
+        :return: The raw AST for the current statement
+        '''
+        if 'statement' in self._context:
+            return self._context['statement']
+        else:
+            return None
+
+    @property
     def function_def_defaults_qual(self):
         '''Get a list of fully qualified default values in a function def
 
@@ -212,21 +223,46 @@ class Context():
         else:
             return None
 
-    def check_call_arg_value(self, argument_name):
+    def check_call_arg_value(self, argument_name, argument_values=None):
         '''Checks for a value of a named argument in a function call.
 
         Returns none if the specified argument is not found.
         :param argument_name: A string - name of the argument to look for
-        :return: String literal of the argument if found, None otherwise
+        :param argument_values: the value, or list of values to test against
+        :return: Boolean True if argument found and matched, False if
+        found and not matched, None if argument not found at all
         '''
         kwd_values = self.call_keywords
-        if (
-            kwd_values is not None and
-            argument_name in kwd_values
-        ):
-            return kwd_values[argument_name]
+        if (kwd_values is not None and
+                argument_name in kwd_values):
+            if not isinstance(argument_values, list):
+                # if passed a single value, or a tuple, convert to a list
+                argument_values = list((argument_values,))
+            for val in argument_values:
+                if kwd_values[argument_name] == val:
+                    # if matched, fix up the context lineno for reporting
+                    self.set_lineno_for_call_arg(argument_name)
+                    return True
+            return False
         else:
+            # argument name not found, return None to allow testing for this
+            # eventuality
             return None
+
+    def set_lineno_for_call_arg(self, argument_name):
+        '''Updates the line number for a specific named argument
+
+        If a call is split over multiple lines, when a keyword arg is found
+        the issue will be reported with the line number of the start of the
+        call. This function updates the line number in the current context
+        copy to match the actual line where the match occurs.
+        :call_node: the call to find the argument in
+        :param argument_name: A string - name of the argument to look for
+        :return: Integer - the line number of the found argument
+        '''
+        for key in self.node.keywords:
+            if key.arg is argument_name:
+                self._context['lineno'] = key.value.lineno
 
     def get_call_arg_at_position(self, position_num):
         '''Returns positional argument at the specified position (if it exists)

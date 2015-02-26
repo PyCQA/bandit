@@ -21,7 +21,7 @@ from bandit.core.test_properties import *
 def execute_with_run_as_root_equals_true(context, config):
 
     if (context.call_function_name_qual in config['function_names']):
-        if context.check_call_arg_value('run_as_root') == 'True':
+        if context.check_call_arg_value('run_as_root', 'True'):
 
             return(bandit.INFO, 'execute with run_as_root=True '
                    'identified, possible security issue.  %s' %

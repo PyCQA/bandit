@@ -21,6 +21,107 @@ import tester as b_tester
 import utils as b_utils
 
 
+class StatementBuffer():
+    '''Buffer for code statements
+
+    Creates a buffer to store a code file as individual statements
+    for AST processing
+    '''
+    def __init__(self):
+        self._buffer = []
+
+    def load_buffer(self, fdata):
+        '''Buffer initialization
+
+        Read the file as lines, so we can store the length of the file
+        so we don't lose multi-line statements at the bottom of the target
+        file
+        :param fdata: The code to be parsed into the buffer
+        '''
+        self._buffer = []
+        lines = fdata.readlines()
+        self.file_len = len(lines)
+        f_ast = ast.parse("".join(lines))
+        # We need to expand body blocks within compound statements
+        # into our statement buffer so each gets processed in
+        # isolation
+        tmp_buf = f_ast.body
+        while len(tmp_buf):
+            # For each statement, if it is one of the special statement
+            # types which contain a body, we first update the tmp_buf
+            # adding the internal body statements to the beginning of
+            # the temporary buffer, then clear the body of the special
+            # statement before adding it to the primary buffer
+            stmt = tmp_buf.pop(0)
+            if (isinstance(stmt, ast.ClassDef)
+                    or isinstance(stmt, ast.FunctionDef)
+                    or isinstance(stmt, ast.With)
+                    or isinstance(stmt, ast.Module)
+                    or isinstance(stmt, ast.Interactive)):
+                stmt.body.extend(tmp_buf)
+                tmp_buf = stmt.body
+                stmt.body = []
+            elif (isinstance(stmt, ast.For)
+                    or isinstance(stmt, ast.While)
+                    or isinstance(stmt, ast.If)):
+                stmt.body.extend(stmt.orelse)
+                stmt.body.extend(tmp_buf)
+                tmp_buf = stmt.body
+                stmt.body = []
+                stmt.orelse = []
+            elif (isinstance(stmt, ast.TryExcept)):
+                for handler in stmt.handlers:
+                    stmt.body.extend(handler.body)
+                stmt.body.extend(stmt.orelse)
+                stmt.body.extend(tmp_buf)
+                tmp_buf = stmt.body
+                stmt.body = []
+                stmt.orelse = []
+                stmt.handlers = []
+            elif (isinstance(stmt, ast.TryFinally)):
+                stmt.body.extend(stmt.finalbody)
+                stmt.body.extend(tmp_buf)
+                tmp_buf = stmt.body
+                stmt.body = []
+                stmt.finalbody = []
+
+            # once we are sure it's either a single statement or that
+            # any content in a compound statement body has been removed
+            # we can add it to our primary buffer. The compound body
+            # must be removed so the ast isn't walked multiple times
+            # and isn't included in line-by-line output
+            self._buffer.append(stmt)
+
+    def get_next(self):
+        '''Statment Retrieval
+
+        Grab the next statement in the buffer for detailed processing
+        :return statement: the next statement to be processed, or None
+        '''
+        if len(self._buffer):
+            # Update the context, and shift the next statement off the array
+            statement = {}
+            statement['node'] = self._buffer.pop(0)
+            statement['linerange'] = self.linenumber_range(statement['node'])
+
+            return statement
+        return None
+
+    def linenumber_range(self, node):
+        '''Get set of line numbers for statement
+
+        Walks the given statement node, and creates a set
+        of line numbers covered by the code
+        :param node: The statment line numbers are required for
+        :return lines: A set of line numbers
+        '''
+        lines = set()
+        for n in ast.walk(node):
+            if hasattr(n, 'lineno'):
+                lines.add(n.lineno)
+        return sorted(lines)
+
+
 class BanditNodeVisitor(ast.NodeVisitor):
 
     imports = set()
@@ -33,10 +134,10 @@ class BanditNodeVisitor(ast.NodeVisitor):
     depth = 0
 
     context = None
-    context_template = {'node': None, 'filename': None, 'lineno': None,
+    context_template = {'node': None, 'filename': None, 'statement': None,
                         'name': None, 'qualname': None, 'module': None,
                         'imports': None, 'import_aliases': None, 'call': None,
-                        'function': None}
+                        'function': None, 'lineno': None}
 
     def __init__(self, fname, logger, config, metaast, results, testset,
                  debug):
@@ -59,6 +160,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
         self.namespace = b_utils.get_module_qualname_from_path(fname)
         self.logger.debug('Module qualified name: {}'.format(self.namespace))
+        self.stmt_buffer = StatementBuffer()
+        self.statement = {}
 
     def visit_ClassDef(self, node):
         '''Visitor for AST ClassDef node
@@ -67,6 +170,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: Node being inspected
         :return: -
         '''
+
+        self.context['lineno'] = node.lineno
 
         # For all child nodes, add this class name to current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, node.name)
@@ -83,8 +188,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = self.linenumber_range(node)
         self.context['function'] = node
+        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_FunctionDef called (%s)" % ast.dump(node))
 
@@ -110,8 +215,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = self.linenumber_range(node)
         self.context['call'] = node
+        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_Call called (%s)" % ast.dump(node))
 
@@ -133,7 +238,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = self.linenumber_range(node)
+        self.context['lineno'] = node.lineno
+
         self.logger.debug("visit_Import called (%s)" % ast.dump(node))
         for nodename in node.names:
             if nodename.asname:
@@ -152,7 +258,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = self.linenumber_range(node)
+        self.context['lineno'] = node.lineno
+
         self.logger.debug("visit_ImportFrom called (%s)" % ast.dump(node))
 
         module = node.module
@@ -188,16 +295,16 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
-        self.context['lineno'] = self.linenumber_range(node)
         self.context['str'] = node.s
+        self.context['lineno'] = node.lineno
         self.logger.debug("visit_Str called (%s)" % ast.dump(node))
 
         self.score += self.tester.run_tests(self.context, 'Str')
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Exec(self, node):
-        self.context['lineno'] = self.linenumber_range(node)
         self.context['str'] = 'exec'
+        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_Exec called (%s)" % ast.dump(node))
         self.score += self.tester.run_tests(self.context, 'Exec')
@@ -214,6 +321,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.metaast.add_node(node, '', self.depth)
 
         self.context = copy.copy(self.context_template)
+        self.context['statement'] = self.statement
         self.context['node'] = node
         self.context['filename'] = self.fname
 
@@ -227,9 +335,21 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
         return self.score
 
-    def linenumber_range(self, node):
-        lines = set()
-        for n in ast.walk(node):
-            if hasattr(n, 'lineno'):
-                lines.add(n.lineno)
-        return sorted(lines)
+    def process(self, fdata):
+        '''Main process loop
+
+        Iniitalizes the statement buffer, iterates over each statement
+        in the buffer testing each AST in turn
+        :param fdata: the open filehandle for the code to be processed
+        :return score: the aggregated score for the current file
+        '''
+        self.stmt_buffer.load_buffer(fdata)
+        self.statement = self.stmt_buffer.get_next()
+        while self.statement is not None:
+            self.logger.debug('New statement loaded')
+            self.logger.debug('s_node: %s' % ast.dump(self.statement['node']))
+            self.logger.debug('s_lineno: %s' % self.statement['linerange'])
+
+            self.visit(self.statement['node'])
+            self.statement = self.stmt_buffer.get_next()
+        return self.score

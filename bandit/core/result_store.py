@@ -65,25 +65,37 @@ class BanditResultStore():
         :param issue: Which issue was found
         :return: -
         '''
-        filename, lineno = context['filename'], context['lineno']
+        filename = context['filename']
+        lineno = context['lineno']
+        linerange = context['statement']['linerange']
         (issue_type, issue_text) = issue
 
-        # XXX(fletcher): tuple usage is fragile because ordering changes on
-        # agg_type; ordering is important for reporting
         if self.agg_type == 'vuln':
             if test in self.resstore:
-                self.resstore[test].append((filename, lineno, issue_type,
-                                            issue_text))
+                self.resstore[test].append({'fname': filename,
+                                            'line': lineno,
+                                            'linerange': linerange,
+                                            'issue_type': issue_type,
+                                            'issue_text': issue_text})
             else:
-                self.resstore[test] = [(filename, lineno, issue_type,
-                                        issue_text)]
+                self.resstore[test] = [{'fname': filename,
+                                        'lineno': lineno,
+                                        'linerange': linerange,
+                                        'issue_type': issue_type,
+                                        'issue_text': issue_text}]
         else:
             if filename in self.resstore:
-                self.resstore[filename].append((lineno, test, issue_type,
-                                                issue_text))
+                self.resstore[filename].append({'lineno': lineno,
+                                                'linerange': linerange,
+                                                'test': test,
+                                                'issue_type': issue_type,
+                                                'issue_text': issue_text})
             else:
-                self.resstore[filename] = [(lineno, test, issue_type,
-                                            issue_text), ]
+                self.resstore[filename] = [{'lineno': lineno,
+                                            'linerange': linerange,
+                                            'test': test,
+                                            'issue_type': issue_type,
+                                            'issue_text': issue_text}]
         self.count += 1
 
     def report_json(self, output_filename, stats=None, lines=1):
@@ -106,76 +118,38 @@ class BanditResultStore():
 
         # array indeces are determined by order of tuples defined in add()
         if self.agg_type == 'file':
-            """
-            XXX(fletcher): We currently pass around tuples, whose order change
-            depending on agg_type, which leads to confusing code like what's
-            below.
-
-            In this context an item in resstore looks like:
-            ('examples/imports-telnetlib.py', [(1, 'blacklist_imports',
-            'ERROR','Telnet...other encrypted protocol.')])
-
-            So the list/tuple associated with the file
-            'examples/imports-telnetlib.py' looks like:
-            (1, 'blacklist_imports', 'ERROR', 'Telnet...other encrypted
-            protocol.')
-
-            This means:
-                line number = [0] = 1
-                error label = [1] = 'blacklist_imports'
-                error type = [2] 'ERROR'
-                reason = [3] = 'Telnet...other encrypted protocol.'
-
-            """
             for item in self.resstore.items():
                 filename = item[0]
                 filelist = item[1]
                 for x in filelist:
-                    line_nums = x[0]
-                    error_label = str(x[1]).strip()
-                    error_type = str(x[2]).strip()
-                    reason = str(x[3]).strip()
-                    code = self.get_code(filename, line_nums)
+                    line_range = x['linerange']
+                    line_num = x['lineno']
+                    error_label = str(x['test']).strip()
+                    error_type = str(x['issue_type']).strip()
+                    reason = str(x['issue_text']).strip()
+                    code = self.get_code(filename, line_range, True)
                     holder = dict({"filename": filename,
-                                   "line_numbers": line_nums,
+                                   "line_num": line_num,
+                                   "line_range": line_range,
                                    "error_label": error_label,
                                    "error_type": error_type,
                                    "code": code,
                                    "reason": reason})
                     collector.append(holder)
         else:
-            """
-            XXX(fletcher): We currently pass around tuples, whose order change
-            depending on agg_type, which leads to confusing code like what's
-            below.
-
-            In this context an item in resstore looks like:
-            ('random_lib_imports', [('examples/random.py', 1, 'INFO', 'Random
-            library should...cryptographic purposes')])
-
-            So the list/tuple associated with error label 'random_lib_imports'
-            looks like:
-            ('examples/random.py', 1, 'INFO', 'Random library
-            should...cryptographic purposes')
-
-            This means:
-                filename = [0] = 'examples/random.py'
-                line number = [1] = 1
-                error type = [2] = 'INFO'
-                reason = [3] = 'Random library should...cryptographic purposes'
-
-            """
             for item in self.resstore.items():
                 vuln_label = item[0]
                 filelist = item[1]
                 for x in filelist:
-                    filename = str(x[0])
-                    line_nums = x[1]
-                    error_type = str(x[2]).strip()
-                    reason = str(x[3]).strip()
-                    code = self.get_code(filename, line_nums)
+                    filename = str(x['fname'])
+                    line_range = x['linerange']
+                    line_num = x['lineno']
+                    error_type = str(x['issue_type']).strip()
+                    reason = str(x['issue_text']).strip()
+                    code = self.get_code(filename, line_range, True)
                     holder = dict({"filename": filename,
-                                   "line_num": line_nums,
+                                   "line_num": line_num,
+                                   "line_range": line_range,
                                    "error_label": vuln_label.strip(),
                                    "error_type": error_type,
                                    "code": code,
@@ -233,44 +207,52 @@ class BanditResultStore():
         # if aggregating by vulnerability type
         elif self.agg_type == 'vuln':
             for test, issues in self.resstore.items():
-                for filename, lineno, issue_type, issue_text in issues:
-                    max_lines = self.file_length(filename)
-                    issue_line = self.get_code(filename, lineno)
+                for issue in issues:
+                    max_lines = self.file_length(issue['fname'])
+                    issue_line = self.get_code(issue['fname'],
+                                               issue['linerange'])
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result in't filtered out by severity
-                    if constants.SEVERITY.index(issue_type) >= level:
+                    if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
-                            issue_text, filename, lineno
+                            issue['issue_text'],
+                            issue['fname'],
+                            issue['lineno']
                         ))
 
-                        tmpstr_list.append(self.get_code(filename,
-                                           utils.lines_with_context(lineno,
-                                                                    lines,
-                                                                    max_lines),
-                                           True))
+                        tmpstr_list.append(
+                            self.get_code(
+                                issue['fname'],
+                                utils.lines_with_context(issue['linerange'],
+                                                         lines,
+                                                         max_lines),
+                                True))
 
         # otherwise, aggregating by filename
         else:
             for filename, issues in self.resstore.items():
                 for lineno, test, issue_type, issue_text in issues:
                     max_lines = self.file_length(filename)
-                    issue_line = self.get_code(filename, lineno)
+                    issue_line = self.get_code(filename,
+                                               issue['linerange'])
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result isn't filtered out by severity
-                    if constants.SEVERITY.index(issue_type) >= level:
+                    if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
-                            issue_text, filename, lineno
+                            issue['issue_text'], filename, issue['lineno']
                         ))
 
-                        tmpstr_list.append(self.get_code(filename,
-                                           utils.lines_with_context(lineno,
-                                                                    lines,
-                                                                    max_lines),
-                                           True))
+                        tmpstr_list.append(
+                            self.get_code(
+                                filename,
+                                utils.lines_with_context(issue['linerange'],
+                                                         lines,
+                                                         max_lines),
+                                True))
         return "".join(tmpstr_list)
 
     def report_tty(self, files_list, scores, excluded_files, lines=0,
@@ -339,52 +321,57 @@ class BanditResultStore():
         # if aggregating by vulnerability type
         elif self.agg_type == 'vuln':
             for test, issues in self.resstore.items():
-                for filename, lineno, issue_type, issue_text in issues:
-                    max_lines = self.file_length(filename)
-                    issue_line = self.get_code(filename, lineno)
+                for issue in issues:
+                    max_lines = self.file_length(issue['fname'])
+                    issue_line = self.get_code(issue['fname'],
+                                               issue['linerange'])
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result in't filtered out by severity
-                    if constants.SEVERITY.index(issue_type) >= level:
+                    if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
-                            color.get(issue_type, color['DEFAULT']),
-                            issue_text, filename, lineno,
+                            color.get(issue['issue_type'], color['DEFAULT']),
+                            issue['issue_text'],
+                            issue['fname'],
+                            issue['lineno'],
                             color['DEFAULT']
                         ))
 
-                        tmpstr_list.append(self.get_code(
-                                           filename,
-                                           utils.lines_with_context(lineno,
-                                                                    lines,
-                                                                    max_lines),
-                                           True))
+                        tmpstr_list.append(
+                            self.get_code(
+                                issue['fname'],
+                                utils.lines_with_context(issue['linerange'],
+                                                         lines,
+                                                         max_lines),
+                                True))
 
         # otherwise, aggregating by filename
         else:
             for filename, issues in self.resstore.items():
-                for lineno, test, issue_type, issue_text in issues:
+                for issue in issues:
                     max_lines = self.file_length(filename)
-                    issue_line = self.get_code(filename, lineno)
+                    issue_line = self.get_code(filename, issue['linerange'])
                     # if the line doesn't have one of the skip tags, keep going
                     if re.search(constants.SKIP_RE, issue_line):
                         continue
                     # if the result isn't filtered out by severity
-                    if constants.SEVERITY.index(issue_type) >= level:
+                    if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
                             color.get(
-                                issue_type, color['DEFAULT']
+                                issue['issue_type'], color['DEFAULT']
                             ),
-                            issue_text, filename, lineno,
+                            issue['issue_text'], filename, issue['lineno'],
                             color['DEFAULT']
                         ))
 
-                        tmpstr_list.append(self.get_code(
-                                           filename,
-                                           utils.lines_with_context(lineno,
-                                                                    lines,
-                                                                    max_lines),
-                                           True))
+                        tmpstr_list.append(
+                            self.get_code(
+                                filename,
+                                utils.lines_with_context(issue['linerange'],
+                                                         lines,
+                                                         max_lines),
+                                True))
         return ''.join(tmpstr_list)
 
     def report(self, files_list, scores, excluded_files=None, lines=0, level=1,

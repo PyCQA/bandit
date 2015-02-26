@@ -18,9 +18,46 @@ import bandit
 from bandit.core.test_properties import *
 
 
+def _ast_build_string(data):
+    # used to return a string representation of AST data
+
+    if isinstance(data, ast.Str):
+        # Already a string, just return the value
+        return data.s
+
+    if isinstance(data, ast.BinOp):
+        # need to build the string from a binary operation
+        return _ast_binop_stringify(data)
+
+    if isinstance(data, ast.Name):
+        # a variable, stringify the variable name
+        return "[[" + data.id + "]]"
+
+    return "XXX"  # placeholder for unaccounted for values
+
+
+def _ast_binop_stringify(data):
+    # used to recursively build a string from a binary operation
+    left = data.left
+    right = data.right
+
+    return _ast_build_string(left) + _ast_build_string(right)
+
+
 @checks('Str')
 def hardcoded_sql_expressions(context):
-    test_str = context.string_val.lower()
+    statement = context.statement['node']
+    if isinstance(statement, ast.Assign):
+        test_str = _ast_build_string(statement.value).lower()
+
+    elif isinstance(statement, ast.Expr):
+        test_str = ""
+        if isinstance(statement.value, ast.Call):
+            for arg in statement.value.args:
+                test_str += _ast_build_string(arg).lower() + " "
+    else:
+        test_str = context.string_val.lower()
+
     if (
         (test_str.startswith('select ') and ' from ' in test_str) or
         test_str.startswith('insert into') or

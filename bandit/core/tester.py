@@ -17,6 +17,7 @@
 
 import context as b_context
 from constants import *  # noqa
+import copy
 
 
 class BanditTester():
@@ -45,9 +46,10 @@ class BanditTester():
         score = 0
         tests = self.testset.get_tests(checktype)
         for name, test in tests.iteritems():
+            # execute test with the an instance of the context class
+            temp_context = copy.copy(raw_context)
+            context = b_context.Context(temp_context)
             try:
-                # execute test with the an instance of the context class
-                context = b_context.Context(raw_context)
                 if hasattr(test, '_takes_config'):
                     # TODO(??): Possibly allow override from profile
                     test_config = self.config.get_option(test._takes_config)
@@ -55,7 +57,7 @@ class BanditTester():
                 else:
                     result = test(context)
                 if result is not None:
-                    self.results.add(raw_context, name, result)
+                    self.results.add(temp_context, name, result)
                     score += SEVERITY_VALUES[result[0]]
             except Exception as e:
                 self.report_error(name, context, e)
