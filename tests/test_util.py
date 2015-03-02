@@ -15,6 +15,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import ast
 import os
 import shutil
 import tempfile
@@ -193,3 +194,30 @@ class UtilTests(unittest.TestCase):
         (head, tail) = b_utils.namespace_path_split('base1.base2.name')
         self.assertEqual('base1.base2', head)
         self.assertEqual('name', tail)
+
+    def test_get_call_name1(self):
+        '''Gets a qualified call name'''
+        tree = ast.parse('a.b.c.d(x,y)').body[0].value
+        name = b_utils.get_call_name(tree, {})
+        self.assertEqual('a.b.c.d', name)
+
+    def test_get_call_name2(self):
+        '''Gets qualified call name and resolves aliases'''
+        tree = ast.parse('a.b.c.d(x,y)').body[0].value
+
+        name = b_utils.get_call_name(tree, {'a': 'alias.x.y'})
+        self.assertEqual('alias.x.y.b.c.d', name)
+
+        name = b_utils.get_call_name(tree, {'a.b': 'alias.x.y'})
+        self.assertEqual('alias.x.y.c.d', name)
+
+        name = b_utils.get_call_name(tree, {'a.b.c.d': 'alias.x.y'})
+        self.assertEqual('alias.x.y', name)
+
+    def test_get_call_name3(self):
+        '''Getting name for a complex call'''
+        tree = ast.parse('a.list[0](x,y)').body[0].value
+        name = b_utils._get_attr_qual_name(tree, {})
+        self.assertEqual('', name)
+        # TODO(ljfisher) At best we might be able to get:
+        # self.assertEqual(name, 'a.list[0]')
