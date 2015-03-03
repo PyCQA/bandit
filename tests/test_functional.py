@@ -50,246 +50,171 @@ class FunctionalTests(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_binding(self):
-        path = os.path.join(os.getcwd(), 'examples', 'binding.py')
+    def check_example(self, example_script, info=0, warn=0, error=0):
+        '''A helper method to test the scores for example scripts.
+
+        :param example_script: Filename of an example script to test
+        :param info: The expected number of INFO-level issues to find
+        :param warn: The expected number of WARN-level issues to find
+        :param error: The expected number of ERROR-level issues to find
+        '''
+        path = os.path.join(os.getcwd(), 'examples', example_script)
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        self.assertEqual(5, self.b_mgr.scores[0])
+        expected = (info * C.SEVERITY_VALUES['INFO'] +
+                    warn * C.SEVERITY_VALUES['WARN'] +
+                    error * C.SEVERITY_VALUES['ERROR'])
+        self.assertEqual(expected, self.b_mgr.scores[0])
+
+    def test_binding(self):
+        '''Test the bind-to-0.0.0.0 example.'''
+        self.check_example('binding.py', warn=1)
 
     def test_call_tests(self):
-        path = os.path.join(os.getcwd(), 'examples', 'call-tests.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(6, self.b_mgr.scores[0])
+        '''Test the `subprocess.call` example.'''
+        self.check_example('call-tests.py', info=1, warn=1)
 
     def test_crypto_md5(self):
-        path = os.path.join(os.getcwd(), 'examples', 'crypto-md5.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(25, self.b_mgr.scores[0])
+        '''Test the `hashlib.md5` example.'''
+        self.check_example('crypto-md5.py', warn=5)
 
     def test_eval(self):
-        path = os.path.join(os.getcwd(), 'examples', 'eval.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(15, self.b_mgr.scores[0])
+        '''Test the `eval` example.'''
+        self.check_example('eval.py', warn=3)
 
     def test_exec(self):
-        path = os.path.join(os.getcwd(), 'examples', 'exec.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(20, self.b_mgr.scores[0])
+        '''Test the `exec` example.'''
+        self.check_example('exec.py', error=2)
 
     def test_exec_as_root(self):
-        path = os.path.join(os.getcwd(), 'examples', 'exec-as-root.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        expected = 5 * C.SEVERITY_VALUES['INFO']
-        self.assertEqual(expected, self.b_mgr.scores[0])
+        '''Test for the `run_as_root=True` keyword argument.'''
+        self.check_example('exec-as-root.py', info=5)
 
+    @unittest.skip('the password plugin is currently disabled')
     def test_hardcoded_passwords(self):
-        path = os.path.join(os.getcwd(), 'examples', 'hardcoded-passwords.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(0, self.b_mgr.scores[0])  # seems broken.
+        '''Test for hard-coded passwords.'''
+        self.check_example('hardcoded-passswords.py')
 
     def test_hardcoded_tmp(self):
-        path = os.path.join(os.getcwd(), 'examples', 'hardcoded-tmp.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(5, self.b_mgr.scores[0])
+        '''Test for hard-coded /tmp.'''
+        self.check_example('hardcoded-tmp.py', warn=1)
 
     def test_httplib_https(self):
-        path = os.path.join(os.getcwd(), 'examples', 'httplib_https.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(5, self.b_mgr.scores[0])
+        '''Test for `httplib.HTTPSConnection`.'''
+        self.check_example('httplib_https.py', warn=1)
 
     def test_imports_aliases(self):
-        path = os.path.join(os.getcwd(), 'examples', 'imports-aliases.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(43, self.b_mgr.scores[0])
+        '''Test the `import X as Y` syntax.'''
+        self.check_example('imports-aliases.py', info=3, warn=6, error=1)
 
     def test_imports_from(self):
-        path = os.path.join(os.getcwd(), 'examples', 'imports-from.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(3, self.b_mgr.scores[0])
+        '''Test the `from X import Y` syntax.'''
+        self.check_example('imports-from.py', info=3)
 
     def test_imports_function(self):
-        path = os.path.join(os.getcwd(), 'examples', 'imports-function.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(2, self.b_mgr.scores[0])
+        '''Test the `__import__` function.'''
+        self.check_example('imports-function.py', info=2)
 
     def test_imports_telnetlib(self):
-        path = os.path.join(os.getcwd(), 'examples', 'imports-telnetlib.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(10, self.b_mgr.scores[0])
+        '''Test for `import telnetlib`.'''
+        self.check_example('imports-telnetlib.py', error=1)
 
     def test_imports(self):
-        path = os.path.join(os.getcwd(), 'examples', 'imports.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(2, self.b_mgr.scores[0])
+        '''Test for dangerous imports.'''
+        self.check_example('imports.py', info=2)
 
     def test_mktemp(self):
-        path = os.path.join(os.getcwd(), 'examples', 'mktemp.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(20, self.b_mgr.scores[0])
+        '''Test for `tempfile.mktemp`.'''
+        self.check_example('mktemp.py', warn=4)
 
-    def test_nonesense(self):
-        path = os.path.join(os.getcwd(), 'examples', 'nonesense.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(0, len(self.b_mgr.scores))
+    def test_nonsense(self):
+        '''Test that a syntactically invalid module is skipped.'''
+        self.check_example('nonsense.py')
+        self.assertEqual(1, len(self.b_mgr.b_rs.skipped))
 
     def test_okay(self):
-        path = os.path.join(os.getcwd(), 'examples', 'okay.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(0, self.b_mgr.scores[0])
+        '''Test a vulnerability-free file.'''
+        self.check_example('okay.py')
 
+    def test_os_chmod(self):
+        '''Test setting file permissions.'''
+        self.check_example('os-chmod.py', warn=1, error=8)
+
+    @unittest.skip('the `os.exec*` tests are currently broken')
     def test_os_exec(self):
-        path = os.path.join(os.getcwd(), 'examples', 'os-exec.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(0, self.b_mgr.scores[0])  # seems broken.
+        '''Test for `os.exec*`.'''
+        self.check_example('os-exec.py')
 
     def test_os_popen(self):
-        path = os.path.join(os.getcwd(), 'examples', 'os-popen.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(20, self.b_mgr.scores[0])
+        '''Test for `os.popen`.'''
+        self.check_example('os-popen.py', warn=4)
 
+    @unittest.skip('the `os.spawn*` tests are currently broken')
     def test_os_spawn(self):
-        path = os.path.join(os.getcwd(), 'examples', 'os-spawn.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(0, self.b_mgr.scores[0])  # seems broken.
+        '''Test for `os.spawn*`.'''
+        self.check_example('os-spawn.py')
 
     def test_os_startfile(self):
-        path = os.path.join(os.getcwd(), 'examples', 'os-startfile.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(15, self.b_mgr.scores[0])
+        '''Test for `os.startfile`.'''
+        self.check_example('os-startfile.py', warn=3)
 
     def test_pickle(self):
-        path = os.path.join(os.getcwd(), 'examples', 'pickle.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(11, self.b_mgr.scores[0])
+        '''Test for the `pickle` module.'''
+        self.check_example('pickle.py', info=1, warn=2)
 
     def test_random(self):
-        path = os.path.join(os.getcwd(), 'examples', 'random.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(3, self.b_mgr.scores[0])
-
-    def test_requests_ssl_verify_disabled_aliases(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'requests-ssl-verify-disabled-aliases.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(20, self.b_mgr.scores[0])
+        '''Test for the `random` module.'''
+        self.check_example('random.py', info=3)
 
     def test_requests_ssl_verify_disabled(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'requests-ssl-verify-disabled.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(20, self.b_mgr.scores[0])
+        '''Test for the `requests` library skipping verification.'''
+        self.check_example('requests-ssl-verify-disabled.py', error=2)
 
+    @unittest.skip('#nosec lines are scored, but do not appear in the report')
     def test_skip(self):
-        path = os.path.join(os.getcwd(), 'examples', 'skip.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(35, self.b_mgr.scores[0])
+        '''Test `#nosec` and `#noqa` comments.'''
+        self.check_example('skip.py', warn=5)
 
     def test_sql_statements_with_sqlalchemy(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'sql_statements_with_sqlalchemy.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(4, self.b_mgr.scores[0])
+        '''Test for SQL injection through string building.'''
+        self.check_example('sql_statements_with_sqlalchemy.py', info=4)
 
     def test_sql_statements_without_sql_alchemy(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'sql_statements_without_sql_alchemy.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(20, self.b_mgr.scores[0])
+        '''Test for SQL injection without SQLAlchemy.'''
+        self.check_example('sql_statements_without_sql_alchemy.py', warn=4)
 
     def test_ssl_insecure_version(self):
-        path = os.path.join(os.getcwd(), 'examples', 'ssl-insecure-version.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(121, self.b_mgr.scores[0])
-
-    def test_subprocess_call_linebreaks(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'subprocess-call-linebreaks.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(6, self.b_mgr.scores[0])
+        '''Test for insecure SSL protocol versions.'''
+        self.check_example('ssl-insecure-version.py', info=1, warn=10, error=7)
 
     def test_subprocess_call(self):
-        path = os.path.join(os.getcwd(), 'examples', 'subprocess-call.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(6, self.b_mgr.scores[0])
+        '''Test for `subprocess.call`.'''
+        self.check_example('subprocess-call.py', info=1, warn=2)
 
     def test_subprocess_popen_shell(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'subprocess-popen-shell.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(21, self.b_mgr.scores[0])
-
-    def test_subprocess_popen_shell2(self):
-        path = os.path.join(os.getcwd(), 'examples',
-            'subprocess-popen-shell2.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(16, self.b_mgr.scores[0])
+        '''Test for `subprocess.Popen` with `shell=True`.'''
+        self.check_example('subprocess-popen-shell.py', info=2, warn=5, error=2)
 
     def test_urlopen(self):
-        path = os.path.join(os.getcwd(), 'examples', 'urlopen.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(30, self.b_mgr.scores[0])
+        '''Test for dangerous URL opening.'''
+        self.check_example('urlopen.py', warn=6)
 
     def test_utils_shell(self):
-        path = os.path.join(os.getcwd(), 'examples', 'utils-shell.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(60, self.b_mgr.scores[0])
+        '''Test for `utils.execute*` with `shell=True`.'''
+        self.check_example('utils-shell.py', warn=4, error=4)
 
     def test_wildcard_injection(self):
-        path = os.path.join(os.getcwd(), 'examples', 'wildcard-injection.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(81, self.b_mgr.scores[0])
+        '''Test for wildcard injection in shell commands.'''
+        self.check_example('wildcard-injection.py', info=1, warn=4, error=6)
 
     def test_yaml(self):
-        path = os.path.join(os.getcwd(), 'examples', 'yaml_load.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(5, self.b_mgr.scores[0])
+        '''Test for `yaml.load`.'''
+        self.check_example('yaml_load.py', warn=1)
 
     def test_jinja2_templating(self):
-        path = os.path.join(os.getcwd(), 'examples', 'jinja2_templating.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        self.assertEqual(4, self.b_mgr.results_count)
-        self.assertEqual(35, self.b_mgr.scores[0])
+        '''Test jinja templating for potential XSS bugs.'''
+        self.check_example('jinja2_templating.py', warn=1, error=3)
 
     def test_secret_config_option(self):
-        path = os.path.join(os.getcwd(), 'examples', 'secret-config-option.py')
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
-        expected = 2 * C.SEVERITY_VALUES['WARN'] + C.SEVERITY_VALUES['INFO']
-        self.assertEqual(expected, self.b_mgr.scores[0])
+        '''Test for `secret=True` in Oslo's config.'''
+        self.check_example('secret-config-option.py', info=1, warn=2)
