@@ -18,29 +18,28 @@ import bandit
 from bandit.core.test_properties import *
 
 
+@takes_config('shell_injection')
 @checks('Call')
-def linux_commands_wildcard_injection(context):
-    system_calls = ['os.system', 'subprocess.Popen', 'os.popen']
+def linux_commands_wildcard_injection(context, config):
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
+    system_calls = config['subprocess'] + config['shell'] + config['no_shell']
+    if context.call_function_name_qual in system_calls:
+        if context.call_args_count == 1:
+            call_argument = context.get_call_arg_at_position(0)
+            argument_string = ''
+            if isinstance(call_argument, list):
+                for li in call_argument:
+                    argument_string = argument_string + ' %s' % li
+            elif isinstance(call_argument, str):
+                argument_string = call_argument
 
-    for system_call in system_calls:
-        if system_call in context.call_function_name_qual:
-            if context.call_args_count == 1:
-                call_argument = context.get_call_arg_at_position(0)
-                argument_string = ''
-                if isinstance(call_argument, list):
-                    for li in call_argument:
-                        argument_string = argument_string + ' %s' % li
-                elif isinstance(call_argument, str):
-                    argument_string = call_argument
+            if argument_string != '':
+                for vulnerable_func in vulnerable_funcs:
+                    if(
+                            vulnerable_func in argument_string and
+                            '*' in argument_string
+                    ):
 
-                if argument_string != '':
-                    for vulnerable_func in vulnerable_funcs:
-                        if(
-                                vulnerable_func in argument_string and
-                                '*' in argument_string
-                        ):
-
-                            return(bandit.ERROR, 'Possible wildcard injection '
-                                   'in call: %s' %
-                                   context.call_function_name_qual)
+                        return(bandit.ERROR, 'Possible wildcard '
+                               'injection in call: %s' %
+                               context.call_function_name_qual)

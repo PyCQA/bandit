@@ -15,29 +15,47 @@
 # under the License.
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core.test_properties import checks
+from bandit.core.test_properties import takes_config
 
 
+@takes_config('shell_injection')
 @checks('Call')
-def subprocess_popen_with_shell_equals_true(context):
-    if (context.call_function_name_qual == 'subprocess.Popen' or
-            context.call_function_name_qual == 'utils.execute' or
-            context.call_function_name_qual == 'utils.execute_with_timeout'):
+def subprocess_popen_with_shell_equals_true(context, config):
+    if config and context.call_function_name_qual in config['subprocess']:
         if context.check_call_arg_value('shell', 'True'):
-
-            return(bandit.ERROR, 'Popen call with shell=True '
+            return(bandit.ERROR, 'subprocess call with shell=True '
                    'identified, security issue.  %s' %
                    context.call_args_string)
+        else:
+            return (bandit.INFO, 'subprocess call without a subshell.')
 
 
+@takes_config('shell_injection')
 @checks('Call')
-def any_other_function_with_shell_equals_true(context):
-    # Alerts on any function call that includes a shell=True parameter
-    # (multiple 'helpers' with varying names have been identified across
-    # various OpenStack projects).
-    if context.call_function_name_qual != 'subprocess.Popen':
-        if context.check_call_arg_value('shell', 'True'):
+def any_other_function_with_shell_equals_true(context, config):
+    '''Alerts on any function call that includes a shell=True parameter.
 
+    Multiple "helpers" with varying names have been identified across
+    various OpenStack projects.
+    '''
+    if config and context.call_function_name_qual not in config['subprocess']:
+        if context.check_call_arg_value('shell', 'True'):
             return(bandit.WARN, 'Function call with shell=True '
                    'parameter identified, possible security issue.  %s' %
                    context.call_args_string)
+
+
+@takes_config('shell_injection')
+@checks('Call')
+def start_process_with_a_shell(context, config):
+    if config and context.call_function_name_qual in config['shell']:
+        return (bandit.ERROR, 'Starting a process with a shell: '
+                'check for injection.')
+
+
+@takes_config('shell_injection')
+@checks('Call')
+def start_process_with_no_shell(context, config):
+    if config and context.call_function_name_qual in config['no_shell']:
+        return (bandit.INFO, 'Starting a process without a shell.')
