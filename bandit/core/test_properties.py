@@ -75,70 +75,10 @@ def checks(*args):
                     raise TypeError(
                         "Error: %s is not a valid node type in AST" % a
                     )
-        logger.debug('checks_decorator function executed')
+        logger.debug('checks() decorator executed')
         logger.debug('  func._checks: %s', func._checks)
         return func
     return wrapper
-
-
-def checks_functions(func):
-    '''Test function checks function definitions
-
-    Use of this delegate before a test function indicates that it should be
-    called any time a function definition is encountered.
-    '''
-    if not hasattr(func, "_checks"):
-        func._checks = []
-    func._checks.append("functions")
-    return func
-
-
-def checks_calls(func):
-    '''Test function checks function calls
-
-    Use of this delegate before a test function indicates that it should be
-    called any time a function call is encountered.
-    '''
-    if not hasattr(func, "_checks"):
-        func._checks = []
-    func._checks.append("calls")
-    return func
-
-
-def checks_imports(func):
-    '''Test function checks imports
-
-    Use of this delegate before a test function indicates that it should be
-    called any time an import is encountered.
-    '''
-    if not hasattr(func, "_checks"):
-        func._checks = []
-    func._checks.append("imports")
-    return func
-
-
-def checks_strings(func):
-    '''Test function checks strings
-
-    Use of this delegate before a test function indicates that it should be
-    called any time a string value is encountered.
-    '''
-    if not hasattr(func, "_checks"):
-        func._checks = []
-    func._checks.append("strings")
-    return func
-
-
-def checks_exec(func):
-    '''Test function checks exec nodes
-
-    Use of this delegate before a test function indicates that it should be
-    called any time the 'exec' statement is encountered.
-    '''
-    if not hasattr(func, "_checks"):
-        func._checks = []
-    func._checks.append("exec")
-    return func
 
 
 def takes_config(*args):
