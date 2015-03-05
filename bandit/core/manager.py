@@ -14,7 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import ast
 import fnmatch
 import logging
 import os
@@ -210,7 +209,7 @@ class BanditManager():
                 fname, self.logger, self.b_conf, b_ma, b_rs, b_ts, self.debug
             )
             try:
-                score = res.visit(ast.parse("".join(fdata.readlines())))
+                score = res.process(fdata)
             except SyntaxError:
                 b_rs.skip(fname, "syntax error while parsing AST from file")
         return score

@@ -26,7 +26,7 @@ def request_with_no_cert_validation(context):
             'post' in context.call_function_name)
     ):
 
-        if context.check_call_arg_value('verify') == 'False':
+        if context.check_call_arg_value('verify', 'False'):
 
             return(bandit.ERROR, 'Requests call with verify=False '
                    'disabling SSL certificate checks, security issue.   %s' %
