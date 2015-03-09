@@ -19,8 +19,7 @@ from bandit.core.test_properties import *
 
 
 @takes_config
-# tmcpeak - temporarily commenting this test out, it's broken
-# @checks('Str')
+@checks('Str')
 def hardcoded_password(context, config):
     word_list_file = ""
 
@@ -44,4 +43,4 @@ def hardcoded_password(context, config):
     # for every password in the list, check against the current string
     for word in word_list:
         if context.string_val and context.string_val == word:
-            return bandit.WARN, "Possible hardcoded password '(%s)'" % word
+            return bandit.INFO, "Possible hardcoded password '(%s)'" % word

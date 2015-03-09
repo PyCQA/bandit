@@ -299,8 +299,11 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['lineno'] = node.lineno
         self.logger.debug("visit_Str called (%s)" % ast.dump(node))
 
-        self.score += self.tester.run_tests(self.context, 'Str')
-        super(BanditNodeVisitor, self).generic_visit(node)
+        # This check is to make sure we aren't running tests against
+        # docstrings (any statment that is just a string, nothing else)
+        if not isinstance(self.context['statement']['node'], ast.Str):
+            self.score += self.tester.run_tests(self.context, 'Str')
+            super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Exec(self, node):
         self.context['str'] = 'exec'

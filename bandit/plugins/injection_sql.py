@@ -54,7 +54,9 @@ def hardcoded_sql_expressions(context):
         test_str = ""
         if isinstance(statement.value, ast.Call):
             for arg in statement.value.args:
-                test_str += _ast_build_string(arg).lower() + " "
+                temp_str = _ast_build_string(arg).lower()
+                if context.string_val.lower() in temp_str:
+                    test_str = temp_str
     else:
         test_str = context.string_val.lower()
 

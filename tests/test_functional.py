@@ -90,10 +90,9 @@ class FunctionalTests(unittest.TestCase):
         '''Test for the `run_as_root=True` keyword argument.'''
         self.check_example('exec-as-root.py', info=5)
 
-    @unittest.skip('the password plugin is currently disabled')
     def test_hardcoded_passwords(self):
         '''Test for hard-coded passwords.'''
-        self.check_example('hardcoded-passswords.py')
+        self.check_example('hardcoded-passwords.py', info=2)
 
     def test_hardcoded_tmp(self):
         '''Test for hard-coded /tmp.'''
