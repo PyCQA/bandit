@@ -233,7 +233,7 @@ class BanditResultStore():
         # otherwise, aggregating by filename
         else:
             for filename, issues in self.resstore.items():
-                for lineno, test, issue_type, issue_text in issues:
+                for issue in issues:
                     max_lines = self.file_length(filename)
                     issue_line = self.get_code(filename,
                                                issue['linerange'])
