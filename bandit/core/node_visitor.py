@@ -19,6 +19,7 @@ import copy
 
 import tester as b_tester
 import utils as b_utils
+from utils import InvalidModulePath
 
 
 class StatementBuffer():
@@ -158,7 +159,13 @@ class BanditNodeVisitor(ast.NodeVisitor):
             self.logger, self.config, self.results, self.testset, self.debug
         )
 
-        self.namespace = b_utils.get_module_qualname_from_path(fname)
+        # in some cases we can't determine a qualified name
+        try:
+            self.namespace = b_utils.get_module_qualname_from_path(fname)
+        except InvalidModulePath:
+            self.logger.info('Unable to find qualified name for module: {}'
+                             .format(self.fname))
+            self.namespace = ""
         self.logger.debug('Module qualified name: {}'.format(self.namespace))
         self.stmt_buffer = StatementBuffer()
         self.statement = {}
