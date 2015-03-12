@@ -71,18 +71,13 @@ def _get_tuple_for_item(blacklist_object):
     level = 'WARN'
 
     # if the item we got passed isn't a dictionary, do nothing with the object;
-    # if the item we got passed doesn't have an import field, or the import
-    # isn't a string, we can't do anything with this.  Return None
-    if(not isinstance(blacklist_object, dict)
-            or 'import' not in blacklist_object
-            or not type(blacklist_object['import']) == str):
+    # if the item we got passed doesn't have an imports field, we can't do
+    # anything with this.  Return None
+    if (not isinstance(blacklist_object, dict)
+            or 'imports' not in blacklist_object):
         return None
 
-    import_list = blacklist_object['import'].split(',')
-    for i in import_list:
-        if not imports:
-            imports = []
-        imports.append(i.replace(' ', '').strip())
+    imports = blacklist_object['imports']
 
     if 'message' in blacklist_object:
         message = blacklist_object['message']
@@ -94,6 +89,7 @@ def _get_tuple_for_item(blacklist_object):
             level = 'WARN'
         elif blacklist_object['level'] == 'INFO':
             level = 'INFO'
+
     return_tuple = (imports, message, level)
     return return_tuple
 

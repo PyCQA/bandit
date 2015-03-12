@@ -44,7 +44,7 @@ class BanditConfig():
             sys.exit(2)
         else:
             # yaml parser does its own exception handling
-            self._config = yaml.load(f)
+            self._config = yaml.safe_load(f)
 
         self._init_settings()
 

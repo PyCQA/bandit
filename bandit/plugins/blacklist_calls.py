@@ -91,20 +91,10 @@ def _get_tuple_for_item(blacklist_object):
     if not isinstance(blacklist_object, dict):
         return None
 
-    if 'qualname' in blacklist_object:
-        qualname_list = blacklist_object['qualname'].split(',')
-        for q in qualname_list:
-            if not qualnames:
-                qualnames = []
-            qualnames.append(q.replace(' ', '').strip())
-
-    if 'name' in blacklist_object:
-        name_list = blacklist_object['name'].split(',')
-        for n in name_list:
-            if not names:
-                names = []
-            names.append(n.replace(' ', '').strip())
-
+    if 'qualnames' in blacklist_object:
+        qualnames = blacklist_object['qualnames']
+    if 'names' in blacklist_object:
+        names = blacklist_object['names']
     if 'message' in blacklist_object:
         message = blacklist_object['message']
 
@@ -116,12 +106,8 @@ def _get_tuple_for_item(blacklist_object):
         elif blacklist_object['level'] == 'INFO':
             level = 'INFO'
 
-    if 'param' in blacklist_object:
-        param_list = blacklist_object['param'].split(',')
-        for p in param_list:
-            if not params:
-                params = []
-            params.append(p.replace(' ', '').strip())
+    if 'params' in blacklist_object:
+        params = blacklist_object['params']
 
     return_tuple = (qualnames, names, message, level, params)
     return return_tuple

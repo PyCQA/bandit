@@ -37,6 +37,8 @@ profiles:
         include:
             - subprocess_popen_with_shell_equals_true
             - any_other_function_with_shell_equals_true
+            - start_process_with_a_shell
+            - start_process_with_no_shell
         exclude:
 
     SqlInjection:
@@ -46,32 +48,32 @@ profiles:
 blacklist_functions:
     bad_name_sets:
         - pickle:
-            qualname: pickle.loads, pickle.load, pickle.Unpickler,
-                      cPickle.loads, cPickle.load, cPickle.Unpickler
+            qualnames: [pickle.loads, pickle.load, pickle.Unpickler,
+                        cPickle.loads, cPickle.load, cPickle.Unpickler]
             message: "Pickle library appears to be in use, possible security issue."
         - marshal:
-            qualname: marshal.load, marshal.loads
+            qualnames: [marshal.load, marshal.loads]
             message: "Deserialization with the marshal module is possibly dangerous."
         - md5:
-            qualname: hashlib.md5
+            qualnames: [hashlib.md5]
             message: "Use of insecure MD5 hash function."
         - mktemp_q:
-            qualname: tempfile.mktemp
+            qualnames: [tempfile.mktemp]
             message: "Use of insecure and deprecated function (mktemp)."
         - eval:
-            name: eval
+            qualnames: [eval]
             message: "Use of possibly insecure function - consider using safer ast.literal_eval."
         - mark_safe:
-            name: mark_safe
+            names: [mark_safe]
             message: "Use of mark_safe() may expose cross-site scripting vulnerabilities and should be reviewed."
         - httpsconnection:
-            qualname: httplib.HTTPSConnection
+            qualnames: [httplib.HTTPSConnection]
             message: "Use of HTTPSConnection does not provide security, see https://wiki.openstack.org/wiki/OSSN/OSSN-0033"
         - yaml_load:
-            qualname: yaml.load
+            qualnames: [yaml.load]
             message: "Use of unsafe yaml load. Allows instantiation of arbitrary objects. Consider yaml.safe_load()."
         - urllib_urlopen:
-            qualname: urllib.urlopen, urllib.urlretrieve, urllib.URLopener, urllib.FancyURLopener, urllib2.urlopen, urllib2.Request
+            qualnames: [urllib.urlopen, urllib.urlretrieve, urllib.URLopener, urllib.FancyURLopener, urllib2.urlopen, urllib2.Request]
             message: "Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected."
 
 shell_injection:
@@ -91,11 +93,11 @@ shell_injection:
 blacklist_imports:
     bad_import_sets:
         - telnet:
-            import: telnetlib
+            imports: [telnetlib]
             level: ERROR
             message: "Telnet is considered insecure. Use SSH or some other encrypted protocol."
         - info_libs:
-            import: pickle, cPickle, subprocess, Crypto
+            imports: [pickle, cPickle, subprocess, Crypto]
             level: INFO
             message: "Consider possible security implications associated with {module} module."
 
