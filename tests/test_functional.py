@@ -202,7 +202,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
-        self.check_example('wildcard-injection.py', info=5, error=10)
+        self.check_example('wildcard-injection.py', info=6, error=8)
 
     def test_yaml(self):
         '''Test for `yaml.load`.'''

@@ -21,10 +21,14 @@ from bandit.core.test_properties import *
 @takes_config('shell_injection')
 @checks('Call')
 def linux_commands_wildcard_injection(context, config):
+    if not ('shell' in config and 'subprocess' in config):
+        return
+
     vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
-    system_calls = config['subprocess'] + config['shell'] + config['no_shell']
-    if context.call_function_name_qual in system_calls:
-        if context.call_args_count == 1:
+    if context.call_function_name_qual in config['shell'] or (
+            context.call_function_name_qual in config['subprocess'] and
+            context.check_call_arg_value('shell', 'True')):
+        if context.call_args_count >= 1:
             call_argument = context.get_call_arg_at_position(0)
             argument_string = ''
             if isinstance(call_argument, list):
