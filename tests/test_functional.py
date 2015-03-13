@@ -80,7 +80,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_exec(self):
         '''Test the `exec` example.'''
-        self.check_example('exec.py', error=2)
+        self.check_example('exec.py', warn=2)
 
     def test_exec_as_root(self):
         '''Test for the `run_as_root=True` keyword argument.'''
@@ -133,7 +133,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_os_chmod(self):
         '''Test setting file permissions.'''
-        self.check_example('os-chmod.py', warn=1, error=8)
+        self.check_example('os-chmod.py', warn=2, error=9)
 
     def test_os_exec(self):
         '''Test for `os.exec*`.'''
@@ -190,7 +190,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_subprocess_shell(self):
         '''Test for `subprocess.Popen` with `shell=True`.'''
-        self.check_example('subprocess_shell.py', info=7, warn=1, error=5)
+        self.check_example('subprocess_shell.py', info=2, warn=1, error=5)
 
     def test_urlopen(self):
         '''Test for dangerous URL opening.'''
@@ -198,11 +198,11 @@ class FunctionalTests(unittest.TestCase):
 
     def test_utils_shell(self):
         '''Test for `utils.execute*` with `shell=True`.'''
-        self.check_example('utils-shell.py', info=1, error=4)
+        self.check_example('utils-shell.py', info=0, error=4)
 
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
-        self.check_example('wildcard-injection.py', info=6, error=8)
+        self.check_example('wildcard-injection.py', info=2, error=8)
 
     def test_yaml(self):
         '''Test for `yaml.load`.'''

@@ -27,8 +27,6 @@ def subprocess_popen_with_shell_equals_true(context, config):
             return(bandit.ERROR, 'subprocess call with shell=True '
                    'identified, security issue.  %s' %
                    context.call_args_string)
-        else:
-            return (bandit.INFO, 'subprocess call without a subshell.')
 
 
 @takes_config('shell_injection')

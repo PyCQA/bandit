@@ -30,9 +30,15 @@ def set_bad_file_permissions(context):
                 mode is not None and type(mode) == int and
                 (mode & stat.S_IWOTH or mode & stat.S_IXGRP)
             ):
+                # world writable is an ERROR, group executable is a WARN
+                if mode & stat.S_IWOTH:
+                    sev_level = bandit.ERROR
+                else:
+                    sev_level = bandit.WARN
+
                 filename = context.get_call_arg_at_position(0)
                 if filename is None:
                     filename = 'NOT PARSED'
 
-                return(bandit.ERROR, 'Chmod setting a permissive mask %s on '
+                return(sev_level, 'Chmod setting a permissive mask %s on '
                        'file (%s).' % (oct(mode), filename))
