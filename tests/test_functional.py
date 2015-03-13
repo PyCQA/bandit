@@ -190,7 +190,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_subprocess_shell(self):
         '''Test for `subprocess.Popen` with `shell=True`.'''
-        self.check_example('subprocess_shell.py', info=2, warn=1, error=5)
+        self.check_example('subprocess_shell.py', info=7, warn=1, error=5)
 
     def test_urlopen(self):
         '''Test for dangerous URL opening.'''
@@ -198,11 +198,11 @@ class FunctionalTests(unittest.TestCase):
 
     def test_utils_shell(self):
         '''Test for `utils.execute*` with `shell=True`.'''
-        self.check_example('utils-shell.py', info=0, error=4)
+        self.check_example('utils-shell.py', info=1, error=4)
 
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
-        self.check_example('wildcard-injection.py', info=2, error=8)
+        self.check_example('wildcard-injection.py', info=6, error=8)
 
     def test_yaml(self):
         '''Test for `yaml.load`.'''

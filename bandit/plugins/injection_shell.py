@@ -31,6 +31,14 @@ def subprocess_popen_with_shell_equals_true(context, config):
 
 @takes_config('shell_injection')
 @checks('Call')
+def subprocess_without_shell_equals_true(context, config):
+    if config and context.call_function_name_qual in config['subprocess']:
+        if not context.check_call_arg_value('shell', 'True'):
+            return (bandit.INFO, 'subprocess call without a subshell.')
+
+
+@takes_config('shell_injection')
+@checks('Call')
 def any_other_function_with_shell_equals_true(context, config):
     '''Alerts on any function call that includes a shell=True parameter.
 
