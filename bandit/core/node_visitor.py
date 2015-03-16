@@ -17,6 +17,7 @@
 import ast
 import copy
 
+import constants
 import tester as b_tester
 import utils as b_utils
 from utils import InvalidModulePath
@@ -30,6 +31,7 @@ class StatementBuffer():
     '''
     def __init__(self):
         self._buffer = []
+        self.skip_lines = []
 
     def load_buffer(self, fdata):
         '''Buffer initialization
@@ -40,8 +42,18 @@ class StatementBuffer():
         :param fdata: The code to be parsed into the buffer
         '''
         self._buffer = []
+        self.skip_lines = []
         lines = fdata.readlines()
         self.file_len = len(lines)
+
+        for lineno in range(self.file_len):
+            found = False
+            for flag in constants.SKIP_FLAGS:
+                if "#" + flag in lines[lineno].replace(" ", "").lower():
+                    found = True
+            if found:
+                self.skip_lines.append(lineno + 1)
+
         f_ast = ast.parse("".join(lines))
         # We need to expand body blocks within compound statements
         # into our statement buffer so each gets processed in
@@ -122,6 +134,9 @@ class StatementBuffer():
                 lines.add(n.lineno)
         return sorted(lines)
 
+    def get_skip_lines(self):
+        return self.skip_lines
+
 
 class BanditNodeVisitor(ast.NodeVisitor):
 
@@ -138,7 +153,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
     context_template = {'node': None, 'filename': None, 'statement': None,
                         'name': None, 'qualname': None, 'module': None,
                         'imports': None, 'import_aliases': None, 'call': None,
-                        'function': None, 'lineno': None}
+                        'function': None, 'lineno': None, 'skip_lines': None}
 
     def __init__(self, fname, logger, config, metaast, results, testset,
                  debug):
@@ -326,6 +341,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['filename'] = self.fname
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
+        self.context['skip_lines'] = self.stmt_buffer.get_skip_lines()
 
         self.seen += 1
         self.logger.debug("entering: %s %s [%s]" % (

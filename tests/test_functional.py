@@ -171,10 +171,9 @@ class FunctionalTests(unittest.TestCase):
         '''Test for the `requests` library skipping verification.'''
         self.check_example('requests-ssl-verify-disabled.py', error=2)
 
-    @unittest.skip('#nosec lines are scored, but do not appear in the report')
     def test_skip(self):
         '''Test `#nosec` and `#noqa` comments.'''
-        self.check_example('skip.py', warn=5)
+        self.check_example('skip.py', info=5)
 
     def test_sql_statements_with_sqlalchemy(self):
         '''Test for SQL injection through string building.'''

@@ -22,7 +22,6 @@ from datetime import datetime
 import json
 import linecache
 from operator import itemgetter
-import re
 
 import constants
 import utils
@@ -209,11 +208,7 @@ class BanditResultStore():
             for test, issues in self.resstore.items():
                 for issue in issues:
                     max_lines = self.file_length(issue['fname'])
-                    issue_line = self.get_code(issue['fname'],
-                                               issue['linerange'])
-                    # if the line doesn't have one of the skip tags, keep going
-                    if re.search(constants.SKIP_RE, issue_line):
-                        continue
+
                     # if the result in't filtered out by severity
                     if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
@@ -235,11 +230,7 @@ class BanditResultStore():
             for filename, issues in self.resstore.items():
                 for issue in issues:
                     max_lines = self.file_length(filename)
-                    issue_line = self.get_code(filename,
-                                               issue['linerange'])
-                    # if the line doesn't have one of the skip tags, keep going
-                    if re.search(constants.SKIP_RE, issue_line):
-                        continue
+
                     # if the result isn't filtered out by severity
                     if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
@@ -323,11 +314,7 @@ class BanditResultStore():
             for test, issues in self.resstore.items():
                 for issue in issues:
                     max_lines = self.file_length(issue['fname'])
-                    issue_line = self.get_code(issue['fname'],
-                                               issue['linerange'])
-                    # if the line doesn't have one of the skip tags, keep going
-                    if re.search(constants.SKIP_RE, issue_line):
-                        continue
+
                     # if the result in't filtered out by severity
                     if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
@@ -351,10 +338,7 @@ class BanditResultStore():
             for filename, issues in self.resstore.items():
                 for issue in issues:
                     max_lines = self.file_length(filename)
-                    issue_line = self.get_code(filename, issue['linerange'])
-                    # if the line doesn't have one of the skip tags, keep going
-                    if re.search(constants.SKIP_RE, issue_line):
-                        continue
+
                     # if the result isn't filtered out by severity
                     if constants.SEVERITY.index(issue['issue_type']) >= level:
                         tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (

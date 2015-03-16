@@ -44,25 +44,27 @@ class BanditTester():
         '''
 
         score = 0
-        tests = self.testset.get_tests(checktype)
-        for name, test in tests.iteritems():
-            # execute test with the an instance of the context class
-            temp_context = copy.copy(raw_context)
-            context = b_context.Context(temp_context)
-            try:
-                if hasattr(test, '_takes_config'):
-                    # TODO(??): Possibly allow override from profile
-                    test_config = self.config.get_option(test._takes_config)
-                    result = test(context, test_config)
-                else:
-                    result = test(context)
-                if result is not None:
-                    self.results.add(temp_context, name, result)
-                    score += SEVERITY_VALUES[result[0]]
-            except Exception as e:
-                self.report_error(name, context, e)
-                if self.debug:
-                    raise
+        if not raw_context['lineno'] in raw_context['skip_lines']:
+            tests = self.testset.get_tests(checktype)
+            for name, test in tests.iteritems():
+                # execute test with the an instance of the context class
+                temp_context = copy.copy(raw_context)
+                context = b_context.Context(temp_context)
+                try:
+                    if hasattr(test, '_takes_config'):
+                        # TODO(??): Possibly allow override from profile
+                        test_config = self.config.get_option(
+                            test._takes_config)
+                        result = test(context, test_config)
+                    else:
+                        result = test(context)
+                    if result is not None:
+                        self.results.add(temp_context, name, result)
+                        score += SEVERITY_VALUES[result[0]]
+                except Exception as e:
+                    self.report_error(name, context, e)
+                    if self.debug:
+                        raise
         return score
 
     def report_error(self, test, context, error):

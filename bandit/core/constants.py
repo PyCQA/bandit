@@ -40,9 +40,6 @@ plugins_dir = os.path.join(get_python_lib(), 'bandit', 'plugins')
 # flag/s used to mark lines where identified issues should not be reported
 SKIP_FLAGS = ['nosec', ]
 
-# build skip flag re
-SKIP_RE = '#\s*(({0}))$'.format(')|('.join(SKIP_FLAGS))
-
 # list severities in ascending order
 SEVERITY = ['INFO', 'WARN', 'ERROR']
 SEVERITY_VALUES = {'INFO': 1, 'WARN': 5, 'ERROR': 10}
