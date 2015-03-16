@@ -178,8 +178,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = node.lineno
-
         # For all child nodes, add this class name to current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, node.name)
         super(BanditNodeVisitor, self).generic_visit(node)
@@ -196,7 +194,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
         '''
 
         self.context['function'] = node
-        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_FunctionDef called (%s)" % ast.dump(node))
 
@@ -223,7 +220,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
         '''
 
         self.context['call'] = node
-        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_Call called (%s)" % ast.dump(node))
 
@@ -245,8 +241,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.context['lineno'] = node.lineno
-
         self.logger.debug("visit_Import called (%s)" % ast.dump(node))
         for nodename in node.names:
             if nodename.asname:
@@ -264,8 +258,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
-
-        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_ImportFrom called (%s)" % ast.dump(node))
 
@@ -303,7 +295,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
         self.context['str'] = node.s
-        self.context['lineno'] = node.lineno
         self.logger.debug("visit_Str called (%s)" % ast.dump(node))
 
         # This check is to make sure we aren't running tests against
@@ -314,7 +305,6 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
     def visit_Exec(self, node):
         self.context['str'] = 'exec'
-        self.context['lineno'] = node.lineno
 
         self.logger.debug("visit_Exec called (%s)" % ast.dump(node))
         self.score += self.tester.run_tests(self.context, 'Exec')
@@ -334,6 +324,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['statement'] = self.statement
         self.context['node'] = node
         self.context['filename'] = self.fname
+        if hasattr(node, 'lineno'):
+            self.context['lineno'] = node.lineno
 
         self.seen += 1
         self.logger.debug("entering: %s %s [%s]" % (
