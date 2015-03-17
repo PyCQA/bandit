@@ -158,6 +158,21 @@ class BanditManager():
         self.files_list = sorted(files_list)
         self.excluded_files = sorted(excluded_files)
 
+    def check_output_destination(self, output_filename):
+        # case where file already exists
+        if os.path.isfile(output_filename):
+            return 'File already exists'
+        else:
+            # case where specified destination is a directory
+            if os.path.isdir(output_filename):
+                return 'Specified destination is a directory'
+            # case where specified destination is not writable
+            try:
+                open(output_filename, 'w').close()
+            except IOError:
+                return 'Specified destination is not writable'
+        return True
+
     def run_tests(self):
         '''Runs through all files in the scope
 
