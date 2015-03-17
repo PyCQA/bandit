@@ -72,7 +72,7 @@ class BanditResultStore():
         if self.agg_type == 'vuln':
             if test in self.resstore:
                 self.resstore[test].append({'fname': filename,
-                                            'line': lineno,
+                                            'lineno': lineno,
                                             'linerange': linerange,
                                             'issue_type': issue_type,
                                             'issue_text': issue_text})
