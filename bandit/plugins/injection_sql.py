@@ -16,6 +16,7 @@
 
 import bandit
 from bandit.core.test_properties import *
+from bandit.core import utils
 
 
 def _ast_build_string(data):
@@ -23,7 +24,7 @@ def _ast_build_string(data):
 
     if isinstance(data, ast.Str):
         # Already a string, just return the value
-        return data.s
+        return utils.safe_str(data.s)
 
     if isinstance(data, ast.BinOp):
         # need to build the string from a binary operation
@@ -31,7 +32,7 @@ def _ast_build_string(data):
 
     if isinstance(data, ast.Name):
         # a variable, stringify the variable name
-        return "[[" + data.id + "]]"
+        return "[[" + utils.safe_str(data.id) + "]]"
 
     return "XXX"  # placeholder for unaccounted for values
 
@@ -53,9 +54,10 @@ def hardcoded_sql_expressions(context):
     elif isinstance(statement, ast.Expr):
         test_str = ""
         if isinstance(statement.value, ast.Call):
+            ctx_str = context.string_val.lower()
             for arg in statement.value.args:
                 temp_str = _ast_build_string(arg).lower()
-                if context.string_val.lower() in temp_str:
+                if ctx_str in temp_str:
                     test_str = temp_str
     else:
         test_str = context.string_val.lower()
