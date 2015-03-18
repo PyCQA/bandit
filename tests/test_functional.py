@@ -118,6 +118,10 @@ class FunctionalTests(unittest.TestCase):
         '''Test for dangerous imports.'''
         self.check_example('imports.py', info=2)
 
+    def test_multiline_str(self):
+        '''Test docstrings and multi-line strings are handled properly.'''
+        self.check_example('multiline-str.py', warn=2)
+
     def test_mktemp(self):
         '''Test for `tempfile.mktemp`.'''
         self.check_example('mktemp.py', warn=4)

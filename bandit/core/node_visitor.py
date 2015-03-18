@@ -132,7 +132,9 @@ class StatementBuffer():
         for n in ast.walk(node):
             if hasattr(n, 'lineno'):
                 lines.add(n.lineno)
-        return sorted(lines)
+        # we'll return a range here, because in some cases ast.walk skips over
+        # important parts, such as the middle lines in a multi-line string
+        return range(min(lines), max(lines) + 1)
 
     def get_skip_lines(self):
         return self.skip_lines
@@ -313,10 +315,21 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.logger.debug("visit_Str called (%s)" % ast.dump(node))
 
         # This check is to make sure we aren't running tests against
-        # docstrings (any statment that is just a string, nothing else)
-        if not isinstance(self.context['statement']['node'], ast.Str):
+        # docstrings (any statement that is just a string, nothing else)
+        node_object = self.context['statement']['node']
+
+        # docstrings can be represented as standalone ast.Str
+        is_str = isinstance(node_object, ast.Str)
+        # or ast.Expr with a value of type ast.Str
+        if (isinstance(node_object, ast.Expr) and
+                isinstance(node_object.value, ast.Str)):
+            is_standalone_expr = True
+        else:
+            is_standalone_expr = False
+        # if we don't have either one of those, run the test
+        if not (is_str or is_standalone_expr):
             self.update_score(self.tester.run_tests(self.context, 'Str'))
-            super(BanditNodeVisitor, self).generic_visit(node)
+        super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Exec(self, node):
         self.context['str'] = 'exec'
