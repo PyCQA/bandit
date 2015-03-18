@@ -15,6 +15,7 @@
 # under the License.
 
 import argparse
+import logging
 import sys
 
 from core import manager as b_manager
@@ -76,14 +77,30 @@ def main():
     )
     parser.set_defaults(debug=False)
 
+    # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
-
     b_mgr = b_manager.BanditManager(args.config_file, args.agg_type,
                                     args.debug, profile_name=args.profile)
+
+    # we getLogger() here because BanditManager has configured it at this point
+    logger = logging.getLogger()
+    check_dest = b_mgr.check_output_destination(args.output_file)
+    if check_dest is not True:
+        logger.error(
+            'Problem with specified output destination\n\t%s: %s',
+            check_dest, args.output_file
+        )
+        sys.exit(2)
+
+    # initiate file discovery step within Bandit Manager
     b_mgr.discover_files(args.targets, args.recursive)
+
+    # initiate execution of tests within Bandit Manager
     b_mgr.run_tests()
     if args.debug:
         b_mgr.output_metaast()
+
+    # trigger output of results by Bandit Manager
     b_mgr.output_results(args.context_lines, args.level - 1, args.output_file,
                          args.output_format)
 
