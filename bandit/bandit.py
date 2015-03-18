@@ -84,13 +84,16 @@ def main():
 
     # we getLogger() here because BanditManager has configured it at this point
     logger = logging.getLogger()
-    check_dest = b_mgr.check_output_destination(args.output_file)
-    if check_dest is not True:
-        logger.error(
-            'Problem with specified output destination\n\t%s: %s',
-            check_dest, args.output_file
-        )
-        sys.exit(2)
+
+    # check ability to write output file, if requested
+    if args.output_file is not None:
+        check_dest = b_mgr.check_output_destination(args.output_file)
+        if check_dest is not True:
+            logger.error(
+                'Problem with specified output destination\n\t%s: %s',
+                check_dest, args.output_file
+            )
+            sys.exit(2)
 
     # initiate file discovery step within Bandit Manager
     b_mgr.discover_files(args.targets, args.recursive)
