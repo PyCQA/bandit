@@ -14,9 +14,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-
+import constants
 import context as b_context
-from constants import *  # noqa
+
 import copy
 
 
@@ -43,7 +43,8 @@ class BanditTester():
         :return: a score based on the number and type of test results
         '''
 
-        score = 0
+        score = [0] * len(constants.SEVERITY)
+
         if not raw_context['lineno'] in raw_context['skip_lines']:
             tests = self.testset.get_tests(checktype)
             for name, test in tests.iteritems():
@@ -60,7 +61,9 @@ class BanditTester():
                         result = test(context)
                     if result is not None:
                         self.results.add(temp_context, name, result)
-                        score += SEVERITY_VALUES[result[0]]
+                        sev = constants.SEVERITY.index(result[0])
+                        score[sev] += constants.SEVERITY_VALUES[result[0]]
+
                 except Exception as e:
                     self.report_error(name, context, e)
                     if self.debug:

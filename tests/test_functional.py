@@ -61,10 +61,10 @@ class FunctionalTests(unittest.TestCase):
         path = os.path.join(os.getcwd(), 'examples', example_script)
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
-        expected = (info * C.SEVERITY_VALUES['INFO'] +
-                    warn * C.SEVERITY_VALUES['WARN'] +
-                    error * C.SEVERITY_VALUES['ERROR'])
-        self.assertEqual(expected, self.b_mgr.scores[0])
+        expected = sum([info * C.SEVERITY_VALUES['INFO'],
+                        warn * C.SEVERITY_VALUES['WARN'],
+                        error * C.SEVERITY_VALUES['ERROR']])
+        self.assertEqual(expected, sum(self.b_mgr.scores[0]))
 
     def test_binding(self):
         '''Test the bind-to-0.0.0.0 example.'''

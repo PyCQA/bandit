@@ -218,7 +218,7 @@ class BanditManager():
         :param b_ts: The class test set instance
         :return: The accumulated test score
         '''
-        score = 0
+        score = []
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
                 fname, self.logger, self.b_conf, b_ma, b_rs, b_ts, self.debug

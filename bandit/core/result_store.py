@@ -38,6 +38,7 @@ class BanditResultStore():
         self.logger = logger
         self.config = config
         self.agg_type = agg_type
+        self.level = 0
 
     @property
     def count(self):
@@ -97,14 +98,18 @@ class BanditResultStore():
                                             'issue_text': issue_text}]
         self.count += 1
 
-    def report_json(self, output_filename, stats=None, lines=1):
+    def _report_json(self, file_list, scores, excluded_files, lines=1):
         '''Prints/returns warnings in JSON format
 
-        :param output_filename: File to output the results (optional)
-        :param stats: dictionary of stats for each file
-        :param lines: number of lines around code to print
+        :param files_list: Which files were inspected
+        :param scores: The scores awarded to each file in the scope
+        :param excluded_files: Which files were excluded from the scope
+        :param lines: number of lines around the affected code to print
         :return: JSON string
         '''
+
+        stats = dict(zip(file_list, scores))
+
         machine_output = dict({'results': [], 'errors': [], 'stats': []})
         collector = list()
         for (fname, reason) in self.skipped:
@@ -112,8 +117,15 @@ class BanditResultStore():
                                             'reason': reason})
 
         for filer, score in stats.iteritems():
+            totals = {}
+            for i in range(self.level, len(constants.SEVERITY)):
+                severity = constants.SEVERITY[i]
+                sc = score[i] / constants.SEVERITY_VALUES[severity]
+                totals[severity] = sc
+
             machine_output['stats'].append({'filename': filer,
-                                            'score': score})
+                                            'score': self._sum_scores(score),
+                                            'issue totals': totals})
 
         # array indeces are determined by order of tuples defined in add()
         if self.agg_type == 'file':
@@ -121,39 +133,41 @@ class BanditResultStore():
                 filename = item[0]
                 filelist = item[1]
                 for x in filelist:
-                    line_range = x['linerange']
-                    line_num = x['lineno']
-                    error_label = str(x['test']).strip()
-                    error_type = str(x['issue_type']).strip()
-                    reason = str(x['issue_text']).strip()
-                    code = self.get_code(filename, line_range, True)
-                    holder = dict({"filename": filename,
-                                   "line_num": line_num,
-                                   "line_range": line_range,
-                                   "error_label": error_label,
-                                   "error_type": error_type,
-                                   "code": code,
-                                   "reason": reason})
-                    collector.append(holder)
+                    if self._check_severity(x['issue_type']):
+                        line_range = x['linerange']
+                        line_num = x['lineno']
+                        error_label = str(x['test']).strip()
+                        error_type = str(x['issue_type']).strip()
+                        reason = str(x['issue_text']).strip()
+                        code = self._get_code(filename, line_range, True)
+                        holder = dict({"filename": filename,
+                                       "line_num": line_num,
+                                       "line_range": line_range,
+                                       "error_label": error_label,
+                                       "error_type": error_type,
+                                       "code": code,
+                                       "reason": reason})
+                        collector.append(holder)
         else:
             for item in self.resstore.items():
                 vuln_label = item[0]
                 filelist = item[1]
                 for x in filelist:
-                    filename = str(x['fname'])
-                    line_range = x['linerange']
-                    line_num = x['lineno']
-                    error_type = str(x['issue_type']).strip()
-                    reason = str(x['issue_text']).strip()
-                    code = self.get_code(filename, line_range, True)
-                    holder = dict({"filename": filename,
-                                   "line_num": line_num,
-                                   "line_range": line_range,
-                                   "error_label": vuln_label.strip(),
-                                   "error_type": error_type,
-                                   "code": code,
-                                   "reason": reason})
-                    collector.append(holder)
+                    if self._check_severity(x['issue_type']):
+                        filename = str(x['fname'])
+                        line_range = x['linerange']
+                        line_num = x['lineno']
+                        error_type = str(x['issue_type']).strip()
+                        reason = str(x['issue_text']).strip()
+                        code = self._get_code(filename, line_range, True)
+                        holder = dict({"filename": filename,
+                                       "line_num": line_num,
+                                       "line_range": line_range,
+                                       "error_label": vuln_label.strip(),
+                                       "error_type": error_type,
+                                       "code": code,
+                                       "reason": reason})
+                        collector.append(holder)
 
         if self.agg_type == 'vuln':
             machine_output['results'] = sorted(collector,
@@ -165,8 +179,7 @@ class BanditResultStore():
         return json.dumps(machine_output, sort_keys=True,
                           indent=2, separators=(',', ': '))
 
-    def report_txt(self, files_list, scores, excluded_files, lines=0,
-                   level=1):
+    def _report_txt(self, files_list, scores, excluded_files, lines=0):
         '''Returns TXT string of results
 
         :param scope: Which files were inspected
@@ -176,9 +189,6 @@ class BanditResultStore():
         :return: TXT string
         '''
 
-        if level >= len(constants.SEVERITY):
-            level = len(constants.SEVERITY) - 1
-
         tmpstr_list = []
 
         # print header
@@ -186,7 +196,8 @@ class BanditResultStore():
 
         # print which files were inspected
         tmpstr_list.append("Files in scope (%s):\n" % (len(files_list)))
-        for item in zip(files_list, scores):
+
+        for item in zip(files_list, map(self._sum_scores, scores)):
             tmpstr_list.append("\t%s (score: %i)\n" % item)
 
         # print which files were excluded
@@ -207,10 +218,10 @@ class BanditResultStore():
         elif self.agg_type == 'vuln':
             for test, issues in self.resstore.items():
                 for issue in issues:
-                    max_lines = self.file_length(issue['fname'])
+                    max_lines = self._file_length(issue['fname'])
 
                     # if the result in't filtered out by severity
-                    if constants.SEVERITY.index(issue['issue_type']) >= level:
+                    if self._check_severity(issue['issue_type']):
                         tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
                             issue['issue_text'],
                             issue['fname'],
@@ -218,7 +229,7 @@ class BanditResultStore():
                         ))
 
                         tmpstr_list.append(
-                            self.get_code(
+                            self._get_code(
                                 issue['fname'],
                                 utils.lines_with_context(issue['linerange'],
                                                          lines,
@@ -229,16 +240,16 @@ class BanditResultStore():
         else:
             for filename, issues in self.resstore.items():
                 for issue in issues:
-                    max_lines = self.file_length(filename)
+                    max_lines = self._file_length(filename)
 
                     # if the result isn't filtered out by severity
-                    if constants.SEVERITY.index(issue['issue_type']) >= level:
+                    if self._check_severity(issue['issue_type']):
                         tmpstr_list.append("\n>> %s\n - %s::%s\n" % (
                             issue['issue_text'], filename, issue['lineno']
                         ))
 
                         tmpstr_list.append(
-                            self.get_code(
+                            self._get_code(
                                 filename,
                                 utils.lines_with_context(issue['linerange'],
                                                          lines,
@@ -246,8 +257,7 @@ class BanditResultStore():
                                 True))
         return "".join(tmpstr_list)
 
-    def report_tty(self, files_list, scores, excluded_files, lines=0,
-                   level=1):
+    def _report_tty(self, files_list, scores, excluded_files, lines=0):
         '''Prints the contents of the result store
 
         :param scope: Which files were inspected
@@ -256,9 +266,6 @@ class BanditResultStore():
         :param level: What level of severity to display (optional)
         :return: TXT string with appropriate TTY coloring for terminals
         '''
-
-        if level >= len(constants.SEVERITY):
-            level = len(constants.SEVERITY) - 1
 
         tmpstr_list = []
 
@@ -284,7 +291,7 @@ class BanditResultStore():
             color['DEFAULT']
         ))
 
-        for item in zip(files_list, scores):
+        for item in zip(files_list, map(self._sum_scores, scores)):
             tmpstr_list.append("\t%s (score: %i)\n" % item)
 
         # print which files were excluded and why
@@ -313,10 +320,10 @@ class BanditResultStore():
         elif self.agg_type == 'vuln':
             for test, issues in self.resstore.items():
                 for issue in issues:
-                    max_lines = self.file_length(issue['fname'])
+                    max_lines = self._file_length(issue['fname'])
 
                     # if the result in't filtered out by severity
-                    if constants.SEVERITY.index(issue['issue_type']) >= level:
+                    if self._check_severity(issue['issue_type']):
                         tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
                             color.get(issue['issue_type'], color['DEFAULT']),
                             issue['issue_text'],
@@ -326,7 +333,7 @@ class BanditResultStore():
                         ))
 
                         tmpstr_list.append(
-                            self.get_code(
+                            self._get_code(
                                 issue['fname'],
                                 utils.lines_with_context(issue['linerange'],
                                                          lines,
@@ -337,10 +344,10 @@ class BanditResultStore():
         else:
             for filename, issues in self.resstore.items():
                 for issue in issues:
-                    max_lines = self.file_length(filename)
+                    max_lines = self._file_length(filename)
 
                     # if the result isn't filtered out by severity
-                    if constants.SEVERITY.index(issue['issue_type']) >= level:
+                    if self._check_severity(issue['issue_type']):
                         tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
                             color.get(
                                 issue['issue_type'], color['DEFAULT']
@@ -350,7 +357,7 @@ class BanditResultStore():
                         ))
 
                         tmpstr_list.append(
-                            self.get_code(
+                            self._get_code(
                                 filename,
                                 utils.lines_with_context(issue['linerange'],
                                                          lines,
@@ -374,34 +381,41 @@ class BanditResultStore():
         if not excluded_files:
             excluded_files = []
 
-        scores_dict = dict(zip(files_list, scores))
+        if level >= len(constants.SEVERITY):
+            level = len(constants.SEVERITY) - 1
+
+        self.level = level
 
         if output_filename is None and output_format == 'txt':
-            print self.report_tty(files_list, scores,
-                                  excluded_files=excluded_files, lines=lines,
-                                  level=level)  # noqa
+            print (self._report_tty(files_list, scores,
+                                    excluded_files=excluded_files,
+                                    lines=lines))  # noqa
             return
 
         if output_filename is None and output_format == 'json':
-            print self.report_json(output_filename, scores_dict)  # noqa
+            print (self._report_json(files_list, scores,
+                                     excluded_files=excluded_files,
+                                     lines=lines))  # noqa
             return
 
         if output_format == 'txt':
-            outer = self.report_txt(files_list, scores,
-                                    excluded_files=excluded_files, lines=lines,
-                                    level=level)
+            outer = self._report_txt(files_list, scores,
+                                     excluded_files=excluded_files,
+                                     lines=lines)
             with open(output_filename, 'w') as fout:
                 fout.write(outer)
             print("TXT output written to file: %s" % output_filename)
             return
         else:
-            outer = self.report_json(output_filename, scores_dict)
+            outer = self._report_json(files_list, scores,
+                                      excluded_files=excluded_files,
+                                      lines=lines)
             with open(output_filename, 'w') as fout:
                 fout.write(outer)
             print("JSON output written to file: %s" % output_filename)
             return
 
-    def get_code(self, filename, line_list, tabbed=False):
+    def _get_code(self, filename, line_list, tabbed=False):
         '''Gets lines of code from a file
 
         :param filename: Filename of file with code in it
@@ -417,8 +431,27 @@ class BanditResultStore():
                 issue_line.append(prepend + linecache.getline(filename, l))
         return ''.join(issue_line)
 
-    def file_length(self, filename):
+    def _file_length(self, filename):
         with open(filename) as f:
             for line, l in enumerate(f):
                 pass
         return line + 1
+
+    def _sum_scores(self, score_list):
+        '''Get total of all scores
+
+        This just computes the sum of all recorded scores, filtering them
+        on the chosen minimum severity level.
+        :param score_list: the list of scores to total
+        :return: an integer total sum of all scores above the threshold
+        '''
+        return sum(score_list[self.level:])
+
+    def _check_severity(self, severity):
+        '''Check severity level
+
+        returns true if the issue severity is above the threshold.
+        :param severity: the severity of the issue being checked
+        :return: boolean result
+        '''
+        return constants.SEVERITY.index(severity) >= self.level

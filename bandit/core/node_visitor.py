@@ -159,7 +159,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
                  debug):
         self.debug = debug
         self.seen = 0
-        self.score = 0
+        self.score = [0] * len(constants.SEVERITY)
         self.fname = fname
         self.logger = logger
         self.config = config
@@ -221,7 +221,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         # For all child nodes and any tests run, add this function name to
         # current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, name)
-        self.score += self.tester.run_tests(self.context, 'FunctionDef')
+        self.update_score(self.tester.run_tests(self.context, 'FunctionDef'))
         super(BanditNodeVisitor, self).generic_visit(node)
         self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
@@ -244,7 +244,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['qualname'] = qualname
         self.context['name'] = name
 
-        self.score += self.tester.run_tests(self.context, 'Call')
+        self.update_score(self.tester.run_tests(self.context, 'Call'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Import(self, node):
@@ -262,7 +262,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
                 self.context['import_aliases'][nodename.asname] = nodename.name
             self.context['imports'].add(nodename.name)
             self.context['module'] = nodename.name
-        self.score += self.tester.run_tests(self.context, 'Import')
+        self.update_score(self.tester.run_tests(self.context, 'Import'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_ImportFrom(self, node):
@@ -298,7 +298,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
             self.context['imports'].add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name
-        self.score += self.tester.run_tests(self.context, 'ImportFrom')
+        self.update_score(self.tester.run_tests(self.context, 'ImportFrom'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Str(self, node):
@@ -315,14 +315,14 @@ class BanditNodeVisitor(ast.NodeVisitor):
         # This check is to make sure we aren't running tests against
         # docstrings (any statment that is just a string, nothing else)
         if not isinstance(self.context['statement']['node'], ast.Str):
-            self.score += self.tester.run_tests(self.context, 'Str')
+            self.update_score(self.tester.run_tests(self.context, 'Str'))
             super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Exec(self, node):
         self.context['str'] = 'exec'
 
         self.logger.debug("visit_Exec called (%s)" % ast.dump(node))
-        self.score += self.tester.run_tests(self.context, 'Exec')
+        self.update_score(self.tester.run_tests(self.context, 'Exec'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit(self, node):
@@ -352,6 +352,17 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.depth -= 1
         self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
         return self.score
+
+    def update_score(self, score):
+        '''Score updater
+
+        Since we moved from a single score value to a map of scores per
+        severity, this is needed to update the stored list.
+        :param score: The score list to update our scores with
+        '''
+        def add(x, y):
+            return x + y
+        self.score = map(add, self.score, score)
 
     def process(self, fdata):
         '''Main process loop
