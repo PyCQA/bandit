@@ -110,29 +110,71 @@ def describe_symbol(sym):
             print('    is', prop)
 
 
-def lines_with_context(line_range_list, context, max_line_no):
-    worker = sorted(line_range_list)
+def lines_with_context(line_no, line_range, max_lines, file_len):
+    '''Get affected lines, plus context
 
-    # create list and add lines list is on
-    complete = set(worker)
+    This function takes a list of line numbers, adds one line
+    before the specified range, and two lines after, to provide
+    a bit more context. It then limits the number of lines to
+    the specified max_lines value.
+    :param line_no: The line of interest (trigger line)
+    :param line_range: The lines that make up the whole statement
+    :param max_lines: The maximum number of lines to output
+    :return l_range: A list of line numbers to output
+    '''
 
-    # add lines before warning
-    if (worker[0] - context) <= 0:
-        for l in range(1, worker[0]):
-            complete.add(l)
-    else:
-        for l in range(worker[0] - context, worker[0]):
-            complete.add(l)
+    # Catch a 0 or negative max lines, don't display any code
+    if max_lines == 0:
+        return []
 
-    # add lines after warning (+1 because of range behavior)
-    if (worker[-1] + context) > max_line_no:
-        for l in range(worker[-1], max_line_no + 1):
-            complete.add(l)
-    else:
-        for l in range(worker[-1], worker[-1] + context + 1):
-            complete.add(l)
+    l_range = sorted(line_range)
 
-    return sorted(list(complete))
+    # add one line before before and after, to make sure we don't miss
+    # any context.
+    l_range.append(l_range[-1] + 1)
+    l_range.append(l_range[0] - 1)
+
+    l_range = sorted(l_range)
+
+    if max_lines < 0:
+        return l_range
+
+    # limit scope to max_lines
+    if len(l_range) > max_lines:
+        # figure out a sane distribution of scope (extra lines after)
+        after = (max_lines - 1) / 2
+        before = max_lines - (after + 1)
+        target = l_range.index(line_no)
+
+        # skew things if the code is at the start or end of the statement
+
+        if before > target:
+            extra = before - target
+            before = target
+            after += extra
+
+        gap = file_len - (target + 1)
+        if gap < after:
+            extra = after - gap
+            after = gap
+            before += extra
+
+        # find start
+        if before >= target:
+            start = 0
+        else:
+            start = target - before
+
+        # find end
+        if target + after > len(l_range) - 1:
+            end = len(l_range) - 1
+        else:
+            end = target + after
+
+        # slice line array
+        l_range = l_range[start:end + 1]
+
+    return l_range
 
 
 class InvalidModulePath(Exception):

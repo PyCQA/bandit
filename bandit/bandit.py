@@ -43,8 +43,8 @@ def main():
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
-        action='store', default=0, type=int,
-        help='number of context lines to print'
+        action='store', default=-1, type=int,
+        help='max number of code lines to display'
     )
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
