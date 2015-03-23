@@ -148,6 +148,9 @@ class BanditManager():
                                      "scan contents" % fname)
 
             else:
+                # if the user explicitly mentions a file on command line,
+                # we'll scan it, regardless of whether it's in the included
+                # file types list
                 if _is_file_included(fname, included_globs,
                                      excluded_path_strings,
                                      enforce_glob=False):
@@ -182,6 +185,10 @@ class BanditManager():
         if len(self.files_list) > self.progress:
             sys.stdout.write("%s [" % len(self.files_list))
 
+        # if we have problems with a file, we'll remove it from the files_list
+        # and add it to the skipped list instead
+        new_files_list = list(self.files_list)
+
         for count, fname in enumerate(self.files_list):
             self.logger.debug("working on file : %s" % fname)
 
@@ -203,10 +210,14 @@ class BanditManager():
                         sys.exit(2)
             except IOError as e:
                 self.b_rs.skip(fname, e.strerror)
+                new_files_list.remove(fname)
 
         if len(self.files_list) > self.progress:
             sys.stdout.write("]\n")
             sys.stdout.flush()
+
+        # reflect any files which may have been skipped
+        self.files_list = new_files_list
 
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
         '''Execute AST parse on each file
@@ -284,7 +295,7 @@ def _is_file_included(path, included_globs, excluded_path_strings,
     :param path: Full path of file to check
     :param parsed_extensions: List of parsed extensions
     :param excluded_paths: List of paths from which we should not include files
-    :param do_enforce_extensions: Can set to false to bypass extension check
+    :param enforce_glob: Can set to false to bypass extension check
     :return: Boolean indicating whether a file should be included
     '''
     return_value = False
