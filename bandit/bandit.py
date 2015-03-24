@@ -16,10 +16,10 @@
 
 import argparse
 import logging
+import os
 import sys
 
 from core import manager as b_manager
-
 
 default_test_config = 'bandit.yaml'
 
@@ -48,10 +48,9 @@ def main():
     )
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
-        action='store', default=default_test_config, type=str,
-        help='test config file (default: %s)' % (
-            default_test_config
-        )
+        action='store', default=None, type=str,
+        help=('test config file, defaults to /etc/bandit/bandit.yaml, or'
+              './bandit.yaml if not given')
     )
     parser.add_argument(
         '-p', '--profile', dest='profile',
@@ -79,11 +78,33 @@ def main():
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
-    b_mgr = b_manager.BanditManager(args.config_file, args.agg_type,
-                                    args.debug, profile_name=args.profile)
+    config_file = args.config_file
+    if config_file is None:
+        if 'VIRTUAL_ENV' in os.environ:
+            etc_config = '%s/etc/bandit/%s' % (os.environ['VIRTUAL_ENV'],
+                                               default_test_config)
+        else:
+            etc_config = '/etc/bandit/%s' % (default_test_config)
+        home_config = "%s/.config/bandit/%s" % (os.environ['HOME'],
+                                                default_test_config)
+        if os.access(default_test_config, os.R_OK):
+            config_file = default_test_config
+        elif os.access(home_config, os.R_OK):
+            config_file = home_config
+        elif os.access(etc_config, os.R_OK):
+            config_file = etc_config
 
+    if config_file is None:
+        # no logger yet, so using print
+        print ("no config file found, tried ... \n\t%s \n\t%s \n\t%s") % (
+            etc_config, home_config, default_test_config)
+        sys.exit(2)
+
+    b_mgr = b_manager.BanditManager(config_file, args.agg_type,
+                                    args.debug, profile_name=args.profile)
     # we getLogger() here because BanditManager has configured it at this point
     logger = logging.getLogger()
+    logger.info("using config: %s" % config_file)
 
     # check ability to write output file, if requested
     if args.output_file is not None:
