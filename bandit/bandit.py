@@ -79,7 +79,7 @@ def main():
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
     config_file = args.config_file
-    if config_file is None:
+    if not config_file:
         if 'VIRTUAL_ENV' in os.environ:
             etc_config = '%s/etc/bandit/%s' % (os.environ['VIRTUAL_ENV'],
                                                default_test_config)
@@ -94,7 +94,7 @@ def main():
         elif os.access(etc_config, os.R_OK):
             config_file = etc_config
 
-    if config_file is None:
+    if not config_file:
         # no logger yet, so using print
         print ("no config file found, tried ... \n\t%s \n\t%s \n\t%s") % (
             etc_config, home_config, default_test_config)
@@ -104,7 +104,8 @@ def main():
                                     args.debug, profile_name=args.profile)
     # we getLogger() here because BanditManager has configured it at this point
     logger = logging.getLogger()
-    logger.info("using config: %s" % config_file)
+    if args.output_format != "json":
+        logger.info("using config: %s" % config_file)
 
     # check ability to write output file, if requested
     if args.output_file is not None:
