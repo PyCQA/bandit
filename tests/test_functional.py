@@ -50,6 +50,18 @@ class FunctionalTests(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def run_example(self, example_script):
+        '''A helper method to run the specified test
+
+        This method runs the test, which populates the self.b_mgr.scores
+        value. Call this directly if you need to run a test, but do not
+        need to test the resulting scores against specified values.
+        :param example_script: Filename of an example script to test
+        '''
+        path = os.path.join(os.getcwd(), 'examples', example_script)
+        self.b_mgr.discover_files([path], True)
+        self.b_mgr.run_tests()
+
     def check_example(self, example_script, info=0, warn=0, error=0):
         '''A helper method to test the scores for example scripts.
 
@@ -58,9 +70,7 @@ class FunctionalTests(unittest.TestCase):
         :param warn: The expected number of WARN-level issues to find
         :param error: The expected number of ERROR-level issues to find
         '''
-        path = os.path.join(os.getcwd(), 'examples', example_script)
-        self.b_mgr.discover_files([path], True)
-        self.b_mgr.run_tests()
+        self.run_example(example_script)
         expected = sum([info * C.SEVERITY_VALUES['INFO'],
                         warn * C.SEVERITY_VALUES['WARN'],
                         error * C.SEVERITY_VALUES['ERROR']])
@@ -128,7 +138,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_nonsense(self):
         '''Test that a syntactically invalid module is skipped.'''
-        self.check_example('nonsense.py')
+        self.run_example('nonsense.py')
         self.assertEqual(1, len(self.b_mgr.b_rs.skipped))
 
     def test_okay(self):

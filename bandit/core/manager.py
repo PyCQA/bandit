@@ -211,6 +211,10 @@ class BanditManager():
             except IOError as e:
                 self.b_rs.skip(fname, e.strerror)
                 new_files_list.remove(fname)
+            except SyntaxError as e:
+                self.b_rs.skip(fname,
+                               "syntax error while parsing AST from file")
+                new_files_list.remove(fname)
 
         if len(self.files_list) > self.progress:
             sys.stdout.write("]\n")
@@ -234,10 +238,7 @@ class BanditManager():
             res = b_node_visitor.BanditNodeVisitor(
                 fname, self.logger, self.b_conf, b_ma, b_rs, b_ts, self.debug
             )
-            try:
-                score = res.process(fdata)
-            except SyntaxError:
-                b_rs.skip(fname, "syntax error while parsing AST from file")
+            score = res.process(fdata)
         return score
 
     def _init_logger(self, debug=False, log_format=None):
