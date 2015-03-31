@@ -40,7 +40,7 @@ Usage
 -----
 Example usage across a code tree, showing one line of context for each issue::
 
-    $ find ~/openstack-repo/keystone -name '*.py' | xargs bandit -n 1
+    $ bandit -r -n 1 ~/openstack-repo/keystone
 
 Example usage across the examples/ directory, showing three lines of context
 and only reporting on the high-severity issues::
@@ -62,10 +62,11 @@ Usage::
     Bandit - a Python source code analyzer.
 
     positional arguments:
-      file                  source file/s to be tested
+      file                  source file/s or directory to be tested
 
     optional arguments:
       -h, --help            show this help message and exit
+      -r, --recursive       process files in subdirectories
       -a AGG_TYPE, --aggregate AGG_TYPE
                             group results by (vuln)erability type or (file) it
                             occurs in
@@ -130,9 +131,9 @@ To write a test:
    examples/ that contains one or more cases of that vulnerability.
  - Consider the vulnerability you're testing for, mark the function with one
    or more of the appropriate decorators:
-      - @checks_functions
-	  - @checks_imports
-	  - @checks_strings
+   - @checks('Call')
+   - @checks('Import', 'ImportFrom')
+   - @checks('Str')
  - Create a new Python source file to contain your test, you can reference
    existing tests for examples.
  - The function that you create should take a parameter "context" which is
@@ -159,5 +160,3 @@ http://greentreesnakes.readthedocs.org/en/latest/
 Documentation of the various types of AST nodes that Bandit currently covers
 or could be extended to cover:
 http://greentreesnakes.readthedocs.org/en/latest/nodes.html
-
-
