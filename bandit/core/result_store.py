@@ -19,6 +19,7 @@
 
 from collections import defaultdict
 from collections import OrderedDict
+import csv
 from datetime import datetime
 import json
 import linecache
@@ -42,6 +43,7 @@ class BanditResultStore():
         self.level = 0
         self.max_lines = -1
         self.format = 'txt'
+        self.out_file = None
 
     @property
     def count(self):
@@ -88,13 +90,48 @@ class BanditResultStore():
 
         self.count += 1
 
+    def _report_csv(self, file_list, scores, excluded_files):
+        '''Prints/returns warnings in JSON format
+
+        :param files_list: Which files were inspected
+        :param scores: The scores awarded to each file in the scope
+        :param excluded_files: Which files were excluded from the scope
+        :return: A collection containing the CSV data
+        '''
+
+        results = self._get_issue_list()
+
+        # Remove the code from all the issues in the list, as we will not
+        # be including it in the CSV data.
+        def del_code(issue):
+            del issue['code']
+        map(del_code, results)
+
+        if self.out_file is None:
+            self.out_file = 'bandit_results.csv'
+
+        with open(self.out_file, 'w') as fout:
+            fieldnames = ['filename',
+                          'error_type',
+                          'error_label',
+                          'line_num',
+                          'reason',
+                          'line_range']
+
+            writer = csv.DictWriter(fout, fieldnames=fieldnames,
+                                    extrasaction='ignore')
+            writer.writeheader()
+            for result in results:
+                writer.writerow(result)
+
+        print("CSV output written to file: %s" % self.out_file)
+
     def _report_json(self, file_list, scores, excluded_files):
         '''Prints/returns warnings in JSON format
 
         :param files_list: Which files were inspected
         :param scores: The scores awarded to each file in the scope
         :param excluded_files: Which files were excluded from the scope
-        :param lines: number of lines around the affected code to print
         :return: JSON string
         '''
 
@@ -117,19 +154,7 @@ class BanditResultStore():
                                             'score': self._sum_scores(score),
                                             'issue totals': totals})
 
-        for group in self.resstore.items():
-            issue_list = group[1]
-            for issue in issue_list:
-                if self._check_severity(issue['issue_type']):
-                    code = self._get_code(issue, True)
-                    holder = dict({"filename": issue['fname'],
-                                   "line_num": issue['lineno'],
-                                   "line_range": issue['linerange'],
-                                   "error_label": issue['test'],
-                                   "error_type": issue['issue_type'],
-                                   "code": code,
-                                   "reason": issue['issue_text']})
-                    collector.append(holder)
+        collector = self._get_issue_list()
 
         if self.agg_type == 'vuln':
             machine_output['results'] = sorted(collector,
@@ -138,16 +163,23 @@ class BanditResultStore():
             machine_output['results'] = sorted(collector,
                                                key=itemgetter('filename'))
 
-        return json.dumps(machine_output, sort_keys=True,
-                          indent=2, separators=(',', ': '))
+        result = json.dumps(machine_output, sort_keys=True,
+                            indent=2, separators=(',', ': '))
 
-    def _report_text(self, files_list, scores, excluded_files, lines=0):
+        if self.out_file:
+            with open(self.out_file, 'w') as fout:
+                fout.write(result)
+                # XXX: Should this be log output? (ukbelch)
+            print("JSON output written to file: %s" % self.out_file)
+        else:
+            print(result)
+
+    def _report_text(self, files_list, scores, excluded_files):
         '''Prints the contents of the result store
 
-        :param scope: Which files were inspected
+        :param files_list: Which files were inspected
         :param scores: The scores awarded to each file in the scope
-        :param lines: # of lines around the issue line to display (optional)
-        :param level: What level of severity to display (optional)
+        :param excluded_files: List of files excluded from the scope
         :return: TXT string with appropriate TTY coloring for terminals
         '''
 
@@ -221,7 +253,15 @@ class BanditResultStore():
                     tmpstr_list.append(
                         self._get_code(issue, True))
 
-        return ''.join(tmpstr_list)
+        result = ''.join(tmpstr_list)
+
+        if self.out_file:
+            with open(self.out_file, 'w') as fout:
+                fout.write(result)
+                # XXX: Should this be log output? (ukbelch)
+            print("Text output written to file: %s" % self.out_file)
+        else:
+            print(result)
 
     def report(self, files_list, scores, excluded_files=None, lines=-1,
                level=1, output_filename=None, output_format=None):
@@ -245,26 +285,48 @@ class BanditResultStore():
         self.level = level
         self.max_lines = lines
         self.format = output_format
+        self.out_file = output_filename
 
-        if self.format == 'json':
-            result = (self._report_json(files_list, scores,
-                                        excluded_files=excluded_files))
+        try:
+            if self.format == 'json':
+                self._report_json(files_list, scores,
+                                  excluded_files=excluded_files)
 
-        else:
-            # format is the default "txt"
-            if output_filename:
-                # output to file, specify plain text
-                self.format = 'plain'
-            result = self._report_text(files_list, scores,
-                                       excluded_files=excluded_files)
+            elif self.format == 'csv':
+                self.max_lines = 1
+                self._report_csv(files_list, scores,
+                                 excluded_files=excluded_files)
 
-        if output_filename is not None:
-            with open(output_filename, 'w') as fout:
-                fout.write(result)
-                # XXX: Should this be log output? (ukbelch)
-            print("Output written to file: %s" % output_filename)
-        else:
-            print(result)
+            else:
+                # format is the default "txt"
+                if self.out_file:
+                    # output to file, specify plain text
+                    self.format = 'plain'
+                self._report_text(files_list, scores,
+                                  excluded_files=excluded_files)
+
+        except IOError:
+            print("Unable to write to file: %s" % self.out_file)
+
+    def _get_issue_list(self):
+
+        collector = list()
+
+        for group in self.resstore.items():
+            issue_list = group[1]
+            for issue in issue_list:
+                if self._check_severity(issue['issue_type']):
+                    code = self._get_code(issue, True)
+                    holder = dict({"filename": issue['fname'],
+                                   "line_num": issue['lineno'],
+                                   "line_range": issue['linerange'],
+                                   "error_label": issue['test'],
+                                   "error_type": issue['issue_type'],
+                                   "code": code,
+                                   "reason": issue['issue_text']})
+                    collector.append(holder)
+
+        return collector
 
     def _get_code(self, issue, tabbed=False):
         '''Gets lines of code from a file
