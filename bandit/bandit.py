@@ -39,12 +39,13 @@ def main():
     parser.add_argument(
         '-a', '--aggregate', dest='agg_type',
         action='store', default='file', type=str,
-        help='group results by (vuln)erability type or (file) it occurs in'
+        choices=['file', 'vuln'],
+        help='group results by vulnerability type or file it occurs in'
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
         action='store', default=-1, type=int,
-        help='max number of code lines to display'
+        help='max number of code lines to display for each issue identified'
     )
     parser.add_argument(
         '-c', '--configfile', dest='config_file',

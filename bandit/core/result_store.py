@@ -73,7 +73,7 @@ class BanditResultStore():
         filename = context['filename']
         lineno = context['lineno']
         linerange = context['statement']['linerange']
-        (issue_type, issue_text) = issue
+        (issue_severity, issue_confidence, issue_text) = issue
 
         if self.agg_type == 'vuln':
             key = test
@@ -85,7 +85,8 @@ class BanditResultStore():
              'test': test,
              'lineno': lineno,
              'linerange': linerange,
-             'issue_type': issue_type,
+             'issue_severity': issue_severity,
+             'issue_confidence': issue_confidence,
              'issue_text': issue_text})
 
         self.count += 1
@@ -112,10 +113,11 @@ class BanditResultStore():
 
         with open(self.out_file, 'w') as fout:
             fieldnames = ['filename',
-                          'error_type',
-                          'error_label',
-                          'line_num',
-                          'reason',
+                          'test_name',
+                          'issue_severity',
+                          'issue_confidence',
+                          'issue_text',
+                          'line_number',
                           'line_range']
 
             writer = csv.DictWriter(fout, fieldnames=fieldnames,
@@ -145,9 +147,13 @@ class BanditResultStore():
 
         for filer, score in stats.iteritems():
             totals = {}
-            for i in range(self.level, len(constants.SEVERITY)):
-                severity = constants.SEVERITY[i]
-                sc = score[i] / constants.SEVERITY_VALUES[severity]
+            for i in range(self.level, len(constants.RANKING)):
+                severity = constants.RANKING[i]
+                severity_value = constants.RANKING_VALUES[severity]
+                try:
+                    sc = score['SEVERITY'][i] / severity_value
+                except ZeroDivisionError:
+                    sc = 0
                 totals[severity] = sc
 
             machine_output['stats'].append({'filename': filer,
@@ -193,9 +199,9 @@ class BanditResultStore():
             get_setting = self.config.get_setting
             color = {'HEADER': get_setting('color_HEADER'),
                      'DEFAULT': get_setting('color_DEFAULT'),
-                     'INFO': get_setting('color_INFO'),
-                     'WARN': get_setting('color_WARN'),
-                     'ERROR': get_setting('color_ERROR')
+                     'LOW': get_setting('color_LOW'),
+                     'MEDIUM': get_setting('color_MEDIUM'),
+                     'HIGH': get_setting('color_HIGH')
                      }
 
         # print header
@@ -237,18 +243,24 @@ class BanditResultStore():
         if self.count == 0:
             tmpstr_list.append("\tNo issues identified.\n")
 
-        for key, issues in self.resstore.items():
+        for filename, issues in self.resstore.items():
             for issue in issues:
 
-                # if the result in't filtered out by severity
-                if self._check_severity(issue['issue_type']):
-                    tmpstr_list.append("\n%s>> %s\n - %s::%s%s\n" % (
-                        color.get(issue['issue_type'], color['DEFAULT']),
-                        issue['issue_text'],
-                        issue['fname'],
-                        issue['lineno'],
-                        color['DEFAULT']
+                # if the result isn't filtered out by severity
+                if self._check_severity(issue['issue_severity']):
+                    tmpstr_list.append("\n%s>> Issue: %s\n" % (
+                        color.get(issue['issue_severity'], color['DEFAULT']),
+                        issue['issue_text']
                     ))
+                    tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
+                        issue['issue_severity'].capitalize(),
+                        issue['issue_confidence'].capitalize()
+                    ))
+                    tmpstr_list.append("   Location: %s:%s\n" % (
+                        issue['fname'],
+                        issue['lineno']
+                    ))
+                    tmpstr_list.append(color['DEFAULT'])
 
                     tmpstr_list.append(
                         self._get_code(issue, True))
@@ -258,8 +270,7 @@ class BanditResultStore():
         if self.out_file:
             with open(self.out_file, 'w') as fout:
                 fout.write(result)
-                # XXX: Should this be log output? (ukbelch)
-            print("Text output written to file: %s" % self.out_file)
+            self.logger.info("Text output written to file: %s" % self.out_file)
         else:
             print(result)
 
@@ -279,8 +290,8 @@ class BanditResultStore():
         if not excluded_files:
             excluded_files = []
 
-        if level >= len(constants.SEVERITY):
-            level = len(constants.SEVERITY) - 1
+        if level >= len(constants.RANKING):
+            level = len(constants.RANKING) - 1
 
         self.level = level
         self.max_lines = lines
@@ -315,15 +326,18 @@ class BanditResultStore():
         for group in self.resstore.items():
             issue_list = group[1]
             for issue in issue_list:
-                if self._check_severity(issue['issue_type']):
+                if self._check_severity(issue['issue_severity']):
                     code = self._get_code(issue, True)
-                    holder = dict({"filename": issue['fname'],
-                                   "line_num": issue['lineno'],
-                                   "line_range": issue['linerange'],
-                                   "error_label": issue['test'],
-                                   "error_type": issue['issue_type'],
-                                   "code": code,
-                                   "reason": issue['issue_text']})
+                    holder = dict({
+                        "filename": issue['fname'],
+                        "line_number": issue['lineno'],
+                        "line_range": issue['linerange'],
+                        "test_name": issue['test'],
+                        "issue_severity": issue['issue_severity'],
+                        "issue_confidence": issue['issue_confidence'],
+                        "code": code,
+                        "issue_text": issue['issue_text']
+                    })
                     collector.append(holder)
 
         return collector
@@ -360,7 +374,7 @@ class BanditResultStore():
                 pass
         return line + 1
 
-    def _sum_scores(self, score_list):
+    def _sum_scores(self, scores):
         '''Get total of all scores
 
         This just computes the sum of all recorded scores, filtering them
@@ -368,7 +382,10 @@ class BanditResultStore():
         :param score_list: the list of scores to total
         :return: an integer total sum of all scores above the threshold
         '''
-        return sum(score_list[self.level:])
+        total = 0
+        for score_type in scores:
+            total = total + sum(scores[score_type][self.level:])
+        return total
 
     def _check_severity(self, severity):
         '''Check severity level
@@ -377,4 +394,4 @@ class BanditResultStore():
         :param severity: the severity of the issue being checked
         :return: boolean result
         '''
-        return constants.SEVERITY.index(severity) >= self.level
+        return constants.RANKING.index(severity) >= self.level

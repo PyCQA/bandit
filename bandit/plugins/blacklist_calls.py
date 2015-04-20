@@ -20,7 +20,7 @@ from bandit.core.test_properties import *
 
 @takes_config
 @checks('Call')
-def blacklist_functions(context, config):
+def blacklist_calls(context, config):
     if config is not None and 'bad_name_sets' in config:
         sets = config['bad_name_sets']
     else:
@@ -39,6 +39,7 @@ def blacklist_functions(context, config):
 
     # for each check, go through and see if it matches all qualifications
     for check in checks:
+        confidence = 'HIGH'
         does_match = True
         # item 0=qualnames, 1=names, 2=message, 3=level, 4=params
         if does_match and check[0]:
@@ -68,14 +69,17 @@ def blacklist_functions(context, config):
 
         if does_match:
             level = None
-            if check[3] == 'ERROR':
-                level = bandit.ERROR
-            elif check[3] == 'WARN':
-                level = bandit.WARN
-            elif check[3] == 'INFO':
-                level = bandit.INFO
+            if check[3] == 'HIGH':
+                level = bandit.HIGH
+            elif check[3] == 'MEDIUM':
+                level = bandit.MEDIUM
+            elif check[3] == 'LOW':
+                level = bandit.LOW
 
-            return (level, "%s  %s" % (check[2], context.call_args_string))
+            return bandit.Issue(
+                severity=level, confidence=confidence,
+                text="%s  %s" % (check[2], context.call_args_string)
+            )
 
 
 def _get_tuple_for_item(blacklist_object):
@@ -84,7 +88,7 @@ def _get_tuple_for_item(blacklist_object):
     qualnames = None
     names = None
     message = ""
-    level = 'WARN'
+    level = 'MEDIUM'
     params = None
 
     # if the item we got passed isn't a dictionary, do nothing with this object
@@ -99,12 +103,12 @@ def _get_tuple_for_item(blacklist_object):
         message = blacklist_object['message']
 
     if 'level' in blacklist_object:
-        if blacklist_object['level'] == 'ERROR':
-            level = 'ERROR'
-        elif blacklist_object['level'] == 'WARN':
-            level = 'WARN'
-        elif blacklist_object['level'] == 'INFO':
-            level = 'INFO'
+        if blacklist_object['level'] == 'HIGH':
+            level = 'HIGH'
+        elif blacklist_object['level'] == 'MEDIUM':
+            level = 'MEDIUM'
+        elif blacklist_object['level'] == 'LOW':
+            level = 'LOW'
 
     if 'params' in blacklist_object:
         params = blacklist_object['params']

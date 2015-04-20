@@ -161,7 +161,10 @@ class BanditNodeVisitor(ast.NodeVisitor):
                  debug):
         self.debug = debug
         self.seen = 0
-        self.score = [0] * len(constants.SEVERITY)
+        self.scores = {
+            'SEVERITY': [0] * len(constants.RANKING),
+            'CONFIDENCE': [0] * len(constants.RANKING)
+        }
         self.fname = fname
         self.logger = logger
         self.config = config
@@ -223,7 +226,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         # For all child nodes and any tests run, add this function name to
         # current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, name)
-        self.update_score(self.tester.run_tests(self.context, 'FunctionDef'))
+        self.update_scores(self.tester.run_tests(self.context, 'FunctionDef'))
         super(BanditNodeVisitor, self).generic_visit(node)
         self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
@@ -246,7 +249,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['qualname'] = qualname
         self.context['name'] = name
 
-        self.update_score(self.tester.run_tests(self.context, 'Call'))
+        self.update_scores(self.tester.run_tests(self.context, 'Call'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Import(self, node):
@@ -264,7 +267,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
                 self.context['import_aliases'][nodename.asname] = nodename.name
             self.context['imports'].add(nodename.name)
             self.context['module'] = nodename.name
-        self.update_score(self.tester.run_tests(self.context, 'Import'))
+        self.update_scores(self.tester.run_tests(self.context, 'Import'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_ImportFrom(self, node):
@@ -300,7 +303,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
             self.context['imports'].add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name
-        self.update_score(self.tester.run_tests(self.context, 'ImportFrom'))
+        self.update_scores(self.tester.run_tests(self.context, 'ImportFrom'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Str(self, node):
@@ -328,14 +331,14 @@ class BanditNodeVisitor(ast.NodeVisitor):
             is_standalone_expr = False
         # if we don't have either one of those, run the test
         if not (is_str or is_standalone_expr):
-            self.update_score(self.tester.run_tests(self.context, 'Str'))
+            self.update_scores(self.tester.run_tests(self.context, 'Str'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Exec(self, node):
         self.context['str'] = 'exec'
 
         self.logger.debug("visit_Exec called (%s)" % ast.dump(node))
-        self.update_score(self.tester.run_tests(self.context, 'Exec'))
+        self.update_scores(self.tester.run_tests(self.context, 'Exec'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit(self, node):
@@ -364,9 +367,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         super(BanditNodeVisitor, self).visit(node)
         self.depth -= 1
         self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
-        return self.score
+        return self.scores
 
-    def update_score(self, score):
+    def update_scores(self, scores):
         '''Score updater
 
         Since we moved from a single score value to a map of scores per
@@ -375,7 +378,10 @@ class BanditNodeVisitor(ast.NodeVisitor):
         '''
         def add(x, y):
             return x + y
-        self.score = map(add, self.score, score)
+        for score_type in self.scores:
+            self.scores[score_type] = map(
+                add, self.scores[score_type], scores[score_type]
+            )
 
     def process(self, fdata):
         '''Main process loop
@@ -394,4 +400,4 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
             self.visit(self.statement['node'])
             self.statement = self.stmt_buffer.get_next()
-        return self.score
+        return self.scores

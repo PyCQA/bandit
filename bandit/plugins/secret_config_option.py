@@ -28,12 +28,19 @@ def password_config_option_not_marked_secret(context, config):
             if context.check_call_arg_value('secret',
                                             constants.FALSE_VALUES) in [
                                                 True, None]:
-                return(bandit.WARN, 'oslo config option not marked secret=True'
-                       ' identified, security issue.  %s' %
-                       context.call_args_string)
+                return bandit.Issue(
+                    severity=bandit.MEDIUM,
+                    confidence=bandit.MEDIUM,
+                    text="oslo config option not marked secret=True "
+                         "identifed, security issue.  %s" %
+                         context.call_args_string
+                )
             # Checks whether secret is not True, for example when its set to a
             # variable, secret=secret.
             elif not context.check_call_arg_value('secret', 'True'):
-                return(bandit.INFO, 'oslo config option possibly not marked'
-                       ' secret=True identified.  %s' %
-                       context.call_args_string)
+                return bandit.Issue(
+                    severity=bandit.LOW,
+                    confidence=bandit.MEDIUM,
+                    text="oslo config option possibly not marked secret=True "
+                         "identified.  %s" % context.call_args_string
+                )

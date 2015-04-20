@@ -43,7 +43,9 @@ def linux_commands_wildcard_injection(context, config):
                             vulnerable_func in argument_string and
                             '*' in argument_string
                     ):
-
-                        return(bandit.ERROR, 'Possible wildcard '
-                               'injection in call: %s' %
-                               context.call_function_name_qual)
+                        return bandit.Issue(
+                            severity=bandit.HIGH,
+                            confidence=bandit.MEDIUM,
+                            text="Possible wildcard injection in call: %s" %
+                                 context.call_function_name_qual
+                        )

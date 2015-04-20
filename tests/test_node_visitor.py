@@ -73,4 +73,4 @@ class StatementBufferTests(unittest.TestCase):
         self.assertEqual(3, len(stmt['linerange']))
 
         # the range should be the correct line numbers
-        self.assertEqual([11,12,13], stmt['linerange'])
+        self.assertEqual([11, 12, 13], stmt['linerange'])

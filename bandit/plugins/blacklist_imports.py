@@ -68,13 +68,13 @@ def _get_tuple_for_item(blacklist_object):
     # default values
     imports = None
     message = ""
-    level = 'WARN'
+    level = 'MEDIUM'
 
     # if the item we got passed isn't a dictionary, do nothing with the object;
     # if the item we got passed doesn't have an imports field, we can't do
     # anything with this.  Return None
-    if (not isinstance(blacklist_object, dict)
-            or 'imports' not in blacklist_object):
+    if (not isinstance(blacklist_object, dict) or
+            'imports' not in blacklist_object):
         return None
 
     imports = blacklist_object['imports']
@@ -83,12 +83,12 @@ def _get_tuple_for_item(blacklist_object):
         message = blacklist_object['message']
 
     if 'level' in blacklist_object:
-        if blacklist_object['level'] == 'ERROR':
-            level = 'ERROR'
-        elif blacklist_object['level'] == 'WARN':
-            level = 'WARN'
-        elif blacklist_object['level'] == 'INFO':
-            level = 'INFO'
+        if blacklist_object['level'] == 'HIGH':
+            level = 'HIGH'
+        elif blacklist_object['level'] == 'MEDIUM':
+            level = 'MEDIUM'
+        elif blacklist_object['level'] == 'LOW':
+            level = 'LOW'
 
     return_tuple = (imports, message, level)
     return return_tuple
@@ -99,11 +99,11 @@ def _get_result(check, im):
     message = check[1].replace('{module}', im)
 
     level = None
-    if check[2] == 'ERROR':
-        level = bandit.ERROR
-    elif check[2] == 'WARN':
-        level = bandit.WARN
-    elif check[2] == 'INFO':
-        level = bandit.INFO
+    if check[2] == 'HIGH':
+        level = bandit.HIGH
+    elif check[2] == 'MEDIUM':
+        level = bandit.MEDIUM
+    elif check[2] == 'LOW':
+        level = bandit.LOW
 
-    return level, "%s" % message
+    return bandit.Issue(severity=level, confidence=bandit.HIGH, text=message)

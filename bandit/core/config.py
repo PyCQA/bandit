@@ -112,26 +112,33 @@ class BanditConfig():
     def _init_output_colors(self):
         '''Sets the settings colors
 
-        sets settings['color_xxx'] where xxx is DEFAULT, HEADER, INFO, WARN,
-        ERROR
+        sets settings['color_xxx'] where xxx is DEFAULT, HEADER, LOW, MEDIUM,
+        HIGH
         '''
-        colors = ['HEADER', 'DEFAULT', 'INFO', 'WARN', 'ERROR']
+        colors = ['HEADER', 'DEFAULT', 'LOW', 'MEDIUM', 'HIGH']
         color_settings = dict()
 
-        for color in colors:
-            # grab the default color from constant
-            color_settings[color] = constants.color[color]
+        isatty = hasattr(sys.stdout, "isatty") and sys.stdout.isatty()
 
-            # check if the option has been set in config file
-            options_string = 'output_colors.' + color
-            if self.get_option(options_string):
-                color_string = self.get_option(options_string)
-                # some manipulation is needed because escape string doesn't
-                # come back from yaml correctly
-                if color_string.find('['):
-                    right_half = color_string[color_string.find('['):]
-                    left_half = '\033'
-                    color_settings[color] = left_half + right_half
+        for color in colors:
+            # if not a TTY, overwrite color codes in configuration
+            if not isatty:
+                color_settings[color] = ""
+            # else read color codes in from the config
+            else:
+                # grab the default color from constant
+                color_settings[color] = constants.color[color]
+
+                # check if the option has been set in config file
+                options_string = 'output_colors.' + color
+                if self.get_option(options_string):
+                    color_string = self.get_option(options_string)
+                    # some manipulation is needed because escape string doesn't
+                    # come back from yaml correctly
+                    if color_string.find('['):
+                        right_half = color_string[color_string.find('['):]
+                        left_half = '\033'
+                        color_settings[color] = left_half + right_half
 
             # update the settings dict with the color value
             settings_string = 'color_' + color

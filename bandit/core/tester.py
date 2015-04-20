@@ -43,7 +43,10 @@ class BanditTester():
         :return: a score based on the number and type of test results
         '''
 
-        score = [0] * len(constants.SEVERITY)
+        scores = {
+            'SEVERITY': [0] * len(constants.RANKING),
+            'CONFIDENCE': [0] * len(constants.RANKING)
+        }
 
         if not raw_context['lineno'] in raw_context['skip_lines']:
             tests = self.testset.get_tests(checktype)
@@ -59,16 +62,38 @@ class BanditTester():
                         result = test(context, test_config)
                     else:
                         result = test(context)
+
+                    # the test call returns a 2- or 3-tuple
+                    # - (issue_severity, issue_text) or
+                    # - (issue_severity, issue_confidence, issue_text)
+
+                    # add default confidence level, if not returned by test
+                    if (result is not None and len(result) == 2):
+                        result = (
+                            result[0],
+                            constants.CONFIDENCE_DEFAULT,
+                            result[1]
+                        )
+
+                    # if we have a result, record it and update scores
                     if result is not None:
                         self.results.add(temp_context, name, result)
-                        sev = constants.SEVERITY.index(result[0])
-                        score[sev] += constants.SEVERITY_VALUES[result[0]]
+                        self.logger.debug(
+                            "Issue identified by {0}: {1}".format(name, result)
+                        )
+                        sev = constants.RANKING.index(result[0])
+                        val = constants.RANKING_VALUES[result[0]]
+                        scores['SEVERITY'][sev] += val
+                        con = constants.RANKING.index(result[1])
+                        val = constants.RANKING_VALUES[result[1]]
+                        scores['CONFIDENCE'][con] += val
 
                 except Exception as e:
                     self.report_error(name, context, e)
                     if self.debug:
                         raise
-        return score
+        self.logger.debug("Returning scores: {0}".format(scores))
+        return scores
 
     def report_error(self, test, context, error):
         what = "Bandit internal error running: "
@@ -78,4 +103,6 @@ class BanditTester():
             context._context['lineno']
         )
         what += str(error)
+        import traceback
+        what += traceback.format_exc()
         self.logger.error(what)

@@ -25,9 +25,12 @@ def use_of_mako_templates(context):
         if 'mako' in qualname_list and func == 'Template':
             # unlike Jinja2, mako does not have a template wide autoescape
             # feature and thus each variable must be carefully sanitized.
-            return(bandit.WARN, "Mako templates allow HTML/JS rendering"
-                   " by default and are inherently open to XSS attacks."
-                   " Ensure variables in all templates are properly"
-                   " sanitized via the 'n', 'h' or 'x' flags (depending on"
-                   " context). For example, to HTML escape the variable 'data'"
-                   " do ${ data |h }")
+            return bandit.Issue(
+                severity=bandit.MEDIUM,
+                confidence=bandit.HIGH,
+                text="Mako templates allow HTML/JS rendering by default and "
+                     "are inherently open to XSS attacks. Ensure variables "
+                     "in all templates are properly sanitized via the 'n', "
+                     "'h' or 'x' flags (depending on context). For example, "
+                     "to HTML escape the variable 'data' do ${ data |h }."
+            )

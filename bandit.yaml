@@ -11,9 +11,9 @@ plugin_name_pattern: '*.py'
 #output_colors:
 #    DEFAULT: '\033[0m'
 #    HEADER: '\033[95m'
-#    INFO: '\033[94m'
-#    WARN: '\033[93m'
-#    ERROR: '\033[91m'
+#    LOW: '\033[94m'
+#    MEDIUM: '\033[93m'
+#    HIGH: '\033[91m'
 
 # optional: log format string
 #log_format: "[%(module)s]\t%(levelname)s\t%(message)s"
@@ -46,7 +46,7 @@ profiles:
         include:
             - hardcoded_sql_expressions
 
-blacklist_functions:
+blacklist_calls:
     bad_name_sets:
         - pickle:
             qualnames: [pickle.loads, pickle.load, pickle.Unpickler,
@@ -95,11 +95,11 @@ blacklist_imports:
     bad_import_sets:
         - telnet:
             imports: [telnetlib]
-            level: ERROR
+            level: HIGH
             message: "Telnet is considered insecure. Use SSH or some other encrypted protocol."
         - info_libs:
             imports: [pickle, cPickle, subprocess, Crypto]
-            level: INFO
+            level: LOW
             message: "Consider possible security implications associated with {module} module."
 
 hardcoded_password:
