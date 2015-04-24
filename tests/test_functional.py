@@ -68,6 +68,8 @@ class FunctionalTests(unittest.TestCase):
         :param example_script: Filename of an example script to test
         :param expect: dict with expected counts of issue types
         '''
+        # reset scores for subsequent calls to check_example
+        self.b_mgr.scores = []
         self.run_example(example_script)
         expected = 0
         result = 0
@@ -302,3 +304,41 @@ class FunctionalTests(unittest.TestCase):
         '''Test Mako templates for XSS.'''
         expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'HIGH': 3}}
         self.check_example('mako_templating.py', expect)
+
+    def test_xml(self):
+        '''Test xml vulnerabilities.'''
+        expect = {'SEVERITY': {'LOW': 1, 'HIGH': 4},
+                  'CONFIDENCE': {'HIGH': 1, 'MEDIUM': 4}}
+        self.check_example('xml_etree_celementtree.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 1, 'HIGH': 2},
+                  'CONFIDENCE': {'HIGH': 1, 'MEDIUM': 2}}
+        self.check_example('xml_expatbuilder.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 3, 'HIGH': 1},
+                  'CONFIDENCE': {'HIGH': 3, 'MEDIUM': 1}}
+        self.check_example('xml_lxml.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 2, 'HIGH': 2},
+                  'CONFIDENCE': {'HIGH': 2, 'MEDIUM': 2}}
+        self.check_example('xml_pulldom.py', expect)
+
+        expect = {'SEVERITY': {'HIGH': 1},
+                  'CONFIDENCE': {'HIGH': 1}}
+        self.check_example('xml_xmlrpc.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 1, 'HIGH': 4},
+                  'CONFIDENCE': {'HIGH': 1, 'MEDIUM': 4}}
+        self.check_example('xml_etree_elementtree.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 1, 'HIGH': 1},
+                  'CONFIDENCE': {'HIGH': 1, 'MEDIUM': 1}}
+        self.check_example('xml_expatreader.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 2, 'HIGH': 2},
+                  'CONFIDENCE': {'HIGH': 2, 'MEDIUM': 2}}
+        self.check_example('xml_minidom.py', expect)
+
+        expect = {'SEVERITY': {'LOW': 1, 'HIGH': 6},
+                  'CONFIDENCE': {'HIGH': 1, 'MEDIUM': 6}}
+        self.check_example('xml_sax.py', expect)
