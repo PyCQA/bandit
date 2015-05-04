@@ -24,7 +24,7 @@ from bandit.core import manager as b_manager
 from bandit.core import test_set as b_test_set
 
 
-cfg_file = os.path.join(os.getcwd(), 'bandit.yaml')
+cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
 
 
 class FunctionalTests(unittest.TestCase):

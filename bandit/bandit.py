@@ -81,24 +81,33 @@ def main():
     args = parser.parse_args()
     config_file = args.config_file
     if not config_file:
-        if 'VIRTUAL_ENV' in os.environ:
-            etc_config = '%s/etc/bandit/%s' % (os.environ['VIRTUAL_ENV'],
-                                               default_test_config)
-        else:
-            etc_config = '/etc/bandit/%s' % (default_test_config)
-        home_config = "%s/.config/bandit/%s" % (os.environ['HOME'],
-                                                default_test_config)
-        if os.access(default_test_config, os.R_OK):
-            config_file = default_test_config
-        elif os.access(home_config, os.R_OK):
-            config_file = home_config
-        elif os.access(etc_config, os.R_OK):
-            config_file = etc_config
+
+        home_config = None
+
+        # attempt to get the home directory from environment
+        home_dir = os.environ.get('HOME')
+        if home_dir:
+            home_config = "%s/.config/bandit/%s" % (home_dir,
+                                                    default_test_config)
+
+        installed_config = str(os.path.dirname(os.path.realpath(__file__)) +
+                               '/config/%s' % default_test_config)
+
+        # prefer config file in the following order:
+        # 1) current directory, 2) user home directory, 3) bundled config
+        config_paths = [default_test_config, home_config, installed_config]
+
+        for path in config_paths:
+            if path and os.access(path, os.R_OK):
+                config_file = path
+                break
 
     if not config_file:
         # no logger yet, so using print
-        print ("no config file found, tried ... \n\t%s \n\t%s \n\t%s") % (
-            etc_config, home_config, default_test_config)
+        print ("no config found, tried ...")
+        for path in config_paths:
+            if path:
+                print ("\t%s" % path)
         sys.exit(2)
 
     b_mgr = b_manager.BanditManager(config_file, args.agg_type,
