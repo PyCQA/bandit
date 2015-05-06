@@ -1,60 +1,59 @@
 Bandit
 ======
 
-A Python AST-based static analyzer from OpenStack Security Group.
+A security linter from OpenStack Security
 
 
 Overview
 --------
-Bandit provides a framework for performing analysis against Python source code,
-utilizing the ast module from the Python standard library.
-
-The ast module is used to convert source code into a parsed tree of Python
-syntax nodes.  Bandit allows users to define custom tests that are performed
-against those nodes.  At the completion of testing, a report is generated that
-lists security issues identified within the target source code.
-
+Bandit is a tool designed to find common security issues in Python code. To do
+this Bandit processes each file, builds an AST from it, and runs appropriate
+plugins against the AST nodes.  Once Bandit has finished scanning all the files
+it generates a report.
 
 Installation
 ------------
-Bandit is distributed as an installable package.  To clone and install in a
-Python virtual environment::
+Bandit is distributed on PyPI.  The best way to install it is with pip:
 
-    $ git clone https://git.openstack.org/stackforge/bandit.git
-    $ cd bandit
-    $ virtualenv venv
-    $ source venv/bin/activate
-    $ python setup.py install
 
-To test the new installation::
+***Create a virtual environment (optional):***
 
-    $ pip install tox
-    $ tox -epy27
+    virtualenv bandit-env
 
-To run PEP8 tests on diffs::
+***Install Bandit:***
 
-    $ tox -v -epep8
+    pip install bandit
+
+***Run Bandit:***
+
+    bandit -r path/to/your/code
+
+
+Bandit can also be installed from source.  To do so, download the source
+tarball from PyPI, then install it:
+
+    python setup.py install
 
 
 Usage
 -----
-Example usage across a code tree, showing one line of context for each issue::
+Example usage across a code tree:
 
-    $ bandit -r -n 1 ~/openstack-repo/keystone
+    bandit -r ~/openstack-repo/keystone
 
 Example usage across the examples/ directory, showing three lines of context
-and only reporting on the high-severity issues::
+and only reporting on the high-severity issues:
 
-    $ bandit examples/*.py -n 3 -lll
+    bandit examples/*.py -n 3 -lll
 
-Example usage across the examples/ directory, showing one line of context and
-running only tests in the ShellInjection profile::
+Bandit can be run with profiles.  To run Bandit against the examples directory
+using only the plugins listed in the ShellInjection profile:
 
-    $ bandit examples/*.py -n 1 -p ShellInjection
+    bandit examples/*.py -p ShellInjection
 
 Usage::
 
-    $ bandit -h
+    bandit -h
     usage: bandit [-h] [-a AGG_TYPE] [-n CONTEXT_LINES] [-c CONFIG_FILE]
                   [-p PROFILE] [-l] [-o OUTPUT_FILE] [-d]
                   file [file ...]
@@ -87,12 +86,22 @@ Usage::
 
 Configuration
 -------------
-The default configuration file is bandit.yaml.  This specifies a number of
-global options, and allows the creation of separate test profiles to include
-or exclude specific tests when Bandit is run.
+The Bandit config file is used to set several things, including:
+ - profiles - defines group of tests which should or shouldn't be run
+ - exclude_dirs - sections of the path, that if matched, will be excluded from
+ scanning
+ - plugin configs - used to tune plugins, for example: by tuning
+ blacklist_imports, you can set which imports should be flagged
+ - other - plugins directory, included file types, shell display
+ colors, etc.
 
-Additional configuration files can be created and passed to Bandit as a
-command line argument.
+Bandit requires a config file.  Bandit will use bandit.yaml in the following
+preference order:
+
+ - Bandit config file specified with -c command line option
+ - bandit.yaml file from current working directory
+ - bandit.yaml file from ~/.config/bandit/
+ - bandit.yaml file in config/ directory of the Bandit package
 
 
 Exclusions
@@ -145,6 +154,23 @@ To write a test:
    that it detects the vulnerability.  Consider variations on how this
    vulnerability might present itself and extend the example file and the test
    function accordingly.
+
+
+Contributing
+------------
+Contributions to Bandit are always welcome!  We can be found on #openstack-security
+on Freenode IRC.
+
+The best way to get started with Bandit is to grab the source:
+
+    git clone https://git.openstack.org/stackforge/bandit.git
+
+You can test any changes with tox:
+
+    pip install tox
+    tox -e pep8
+    tox -e py27
+    tox -e cover
 
 
 References
