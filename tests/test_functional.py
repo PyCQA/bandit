@@ -342,3 +342,9 @@ class FunctionalTests(unittest.TestCase):
         expect = {'SEVERITY': {'LOW': 1, 'HIGH': 6},
                   'CONFIDENCE': {'HIGH': 1, 'MEDIUM': 6}}
         self.check_example('xml_sax.py', expect)
+
+    def test_asserts(self):
+        '''Test catching the use of assert.'''
+        expect = {'SEVERITY': {'LOW': 1},
+                  'CONFIDENCE': {'HIGH': 1}}
+        self.check_example('assert.py', expect)

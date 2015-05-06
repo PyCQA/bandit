@@ -341,6 +341,13 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.update_scores(self.tester.run_tests(self.context, 'Exec'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
+    def visit_Assert(self, node):
+        self.context['str'] = 'assert'
+
+        self.logger.debug("visit_Assert called (%s)" % ast.dump(node))
+        self.update_scores(self.tester.run_tests(self.context, 'Assert'))
+        super(BanditNodeVisitor, self).generic_visit(node)
+
     def visit(self, node):
         '''Generic visitor
 
