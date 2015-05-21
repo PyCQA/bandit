@@ -91,6 +91,41 @@ class BanditResultStore():
 
         self.count += 1
 
+    def _report_xml(self, file_list, scores, excluded_files):
+        '''Prints/returns warnings in XML format (Xunit compatible)
+
+        :param files_list: Which files were inspected
+        :param scores: The scores awarded to each file in the scope
+        :param excluded_files: Which files were excluded from the scope
+        :return: A collection containing the XML data
+        '''
+
+        import xml.etree.cElementTree as ET
+
+        if self.out_file is None:
+            self.out_file = 'bandit_results.xml'
+
+        items = self.resstore.items()
+        root = ET.Element('testsuite', name='bandit', tests=str(len(items)))
+        for filename, issues in items:
+            for issue in issues:
+                test = issue['test']
+                testcase = ET.SubElement(root, 'testcase',
+                                         classname=filename, name=test)
+                if self._check_severity(issue['issue_severity']):
+                    text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
+                    text = text % (
+                        issue['issue_severity'], issue['issue_confidence'],
+                        issue['issue_text'], issue['fname'], issue['lineno'])
+                    ET.SubElement(testcase, 'error',
+                                  type=issue['issue_severity'],
+                                  message=issue['issue_text']).text = text
+
+        tree = ET.ElementTree(root)
+        tree.write(self.out_file, encoding='utf-8', xml_declaration=True)
+
+        print("XML output written to file: %s" % self.out_file)
+
     def _report_csv(self, file_list, scores, excluded_files):
         '''Prints/returns warnings in JSON format
 
@@ -308,6 +343,9 @@ class BanditResultStore():
                 self._report_csv(files_list, scores,
                                  excluded_files=excluded_files)
 
+            elif self.format == 'xml':
+                self._report_xml(files_list, scores,
+                                 excluded_files=excluded_files)
             else:
                 # format is the default "txt"
                 if self.out_file:
