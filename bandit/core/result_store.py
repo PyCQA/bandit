@@ -47,14 +47,6 @@ class BanditResultStore():
         self.format = 'txt'
         self.out_file = None
 
-    @property
-    def count(self):
-        '''Count property - used to get the current number of test results
-
-        :return: The current count of test results
-        '''
-        return self.count
-
     def skip(self, filename, reason):
         '''Indicates that the specified file was skipped and why
 

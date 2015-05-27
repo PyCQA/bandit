@@ -31,7 +31,8 @@ def jinja2_autoescape_false(context):
                 if isinstance(node, ast.keyword):
                     # definite autoescape = False
                     if (getattr(node, 'arg', None) == 'autoescape' and
-                            getattr(node.value, 'id', None) == 'False'):
+                            (getattr(node.value, 'id', None) == 'False' or
+                                getattr(node.value, 'value', None) is False)):
                         return bandit.Issue(
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,
@@ -42,7 +43,8 @@ def jinja2_autoescape_false(context):
                         )
                     # found autoescape
                     if getattr(node, 'arg', None) == 'autoescape':
-                        if(getattr(node.value, 'id', None) == 'True'):
+                        if (getattr(node.value, 'id', None) == 'True' or
+                                getattr(node.value, 'value', None) is True):
                             return
                         else:
                             return bandit.Issue(

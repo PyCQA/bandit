@@ -13,15 +13,26 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+import six
 
 import bandit
 from bandit.core.test_properties import *
 
 
-@checks('Exec')
-def exec_used(context):
+def exec_issue():
     return bandit.Issue(
         severity=bandit.MEDIUM,
         confidence=bandit.HIGH,
         text="Use of exec detected."
     )
+
+
+if six.PY2:
+    @checks('Exec')
+    def exec_used(context):
+        return exec_issue()
+else:
+    @checks('Call')
+    def exec_used(context):
+        if context.call_function_name_qual == 'exec':
+            return exec_issue()

@@ -54,4 +54,4 @@ CONFIDENCE_DEFAULT = 'UNDEFINED'
 # These are only useful when we have a constant in code. If we
 # have a variable we cannot determine if False.
 # See https://docs.python.org/2/library/stdtypes.html#truth-value-testing
-FALSE_VALUES = [None, False, 'False', 0, 0L, 0.0, 0j, '', (), [], {}]
+FALSE_VALUES = [None, False, 'False', 0, 0.0, 0j, '', (), [], {}]

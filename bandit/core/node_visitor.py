@@ -23,6 +23,12 @@ from bandit.core import utils as b_utils
 from bandit.core.utils import InvalidModulePath
 
 
+if hasattr(ast, 'TryExcept'):
+    ast_Try = (ast.TryExcept, ast.TryFinally)
+else:  # Python 3.3+
+    ast_Try = ast.Try
+
+
 class StatementBuffer():
     '''Buffer for code statements
 
@@ -82,20 +88,15 @@ class StatementBuffer():
                 tmp_buf = stmt.body
                 stmt.body = []
                 stmt.orelse = []
-            elif (isinstance(stmt, ast.TryExcept)):
-                for handler in stmt.handlers:
+            elif isinstance(stmt, ast_Try):
+                for handler in getattr(stmt, 'handlers', []):
                     stmt.body.extend(handler.body)
-                stmt.body.extend(stmt.orelse)
+                stmt.body.extend(getattr(stmt, 'orelse', []))
                 stmt.body.extend(tmp_buf)
                 tmp_buf = stmt.body
                 stmt.body = []
                 stmt.orelse = []
                 stmt.handlers = []
-            elif (isinstance(stmt, ast.TryFinally)):
-                stmt.body.extend(stmt.finalbody)
-                stmt.body.extend(tmp_buf)
-                tmp_buf = stmt.body
-                stmt.body = []
                 stmt.finalbody = []
 
             # once we are sure it's either a single statement or that
@@ -386,9 +387,9 @@ class BanditNodeVisitor(ast.NodeVisitor):
         def add(x, y):
             return x + y
         for score_type in self.scores:
-            self.scores[score_type] = map(
+            self.scores[score_type] = list(map(
                 add, self.scores[score_type], scores[score_type]
-            )
+            ))
 
     def process(self, fdata):
         '''Main process loop
