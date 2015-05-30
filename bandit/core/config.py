@@ -43,8 +43,11 @@ class BanditConfig():
             logger.error("could not open config file: %s" % config_file)
             sys.exit(2)
         else:
-            # yaml parser does its own exception handling
-            self._config = yaml.safe_load(f)
+            try:
+                self._config = yaml.safe_load(f)
+            except yaml.YAMLError:
+                logger.error("Invalid config file specified: %s" % config_file)
+                sys.exit(2)
 
         self._init_settings()
 
