@@ -14,15 +14,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import config  # noqa
-import context  # noqa
-import manager  # noqa
-import meta_ast  # noqa
-import node_visitor  # noqa
-import result_store  # noqa
-import test_set  # noqa
-import tester  # noqa
-import utils  # noqa
-from constants import *  # noqa
-from objects import *  # noqa
-from test_properties import *  # noqa
+from bandit.core import config  # noqa
+from bandit.core import context  # noqa
+from bandit.core import manager  # noqa
+from bandit.core import meta_ast  # noqa
+from bandit.core import node_visitor  # noqa
+from bandit.core import result_store  # noqa
+from bandit.core import test_set  # noqa
+from bandit.core import tester  # noqa
+from bandit.core import utils  # noqa
+from bandit.core.constants import *  # noqa
+from bandit.core.objects import *  # noqa
+from bandit.core.test_properties import *  # noqa

@@ -16,8 +16,9 @@
 
 import sys
 
-import constants
 import yaml
+
+from bandit.core import constants
 
 
 class BanditConfig():
