@@ -115,7 +115,7 @@ def main():
     # we getLogger() here because BanditManager has configured it at this point
     logger = logging.getLogger()
     if args.output_format != "json":
-        logger.info("using config: %s" % config_file)
+        logger.info("using config: %s", config_file)
 
     # check ability to write output file, if requested
     if args.output_file is not None:

@@ -305,7 +305,7 @@ class BanditResultStore():
         if self.out_file:
             with open(self.out_file, 'w') as fout:
                 fout.write(result)
-            self.logger.info("Text output written to file: %s" % self.out_file)
+            self.logger.info("Text output written to file: %s", self.out_file)
         else:
             print(result)
 

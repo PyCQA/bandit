@@ -66,7 +66,7 @@ class BanditManager():
             else:
                 self.logger.error(
                     'unable to find profile (%s) in config file: '
-                    '%s' % (profile_name, config_file)
+                    '%s', profile_name, config_file
                 )
                 sys.exit(2)
         else:
@@ -145,7 +145,7 @@ class BanditManager():
                     excluded_files.update(newly_excluded)
                 else:
                     self.logger.warn("Skipping directory (%s), use -r flag to "
-                                     "scan contents" % fname)
+                                     "scan contents", fname)
 
             else:
                 # if the user explicitly mentions a file on command line,
@@ -190,7 +190,7 @@ class BanditManager():
         new_files_list = list(self.files_list)
 
         for count, fname in enumerate(self.files_list):
-            self.logger.debug("working on file : %s" % fname)
+            self.logger.debug("working on file : %s", fname)
 
             if len(self.files_list) > self.progress:
                 # is it time to update the progress indicator?
