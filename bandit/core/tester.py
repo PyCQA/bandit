@@ -16,6 +16,8 @@
 
 import copy
 
+import six
+
 from bandit.core import constants
 from bandit.core import context as b_context
 
@@ -50,7 +52,7 @@ class BanditTester():
 
         if not raw_context['lineno'] in raw_context['skip_lines']:
             tests = self.testset.get_tests(checktype)
-            for name, test in tests.iteritems():
+            for name, test in six.iteritems(tests):
                 # execute test with the an instance of the context class
                 temp_context = copy.copy(raw_context)
                 context = b_context.Context(temp_context)

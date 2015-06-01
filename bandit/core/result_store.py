@@ -25,6 +25,8 @@ import json
 import linecache
 from operator import itemgetter
 
+import six
+
 from bandit.core import constants
 from bandit.core import utils
 
@@ -180,7 +182,7 @@ class BanditResultStore():
             machine_output['errors'].append({'filename': fname,
                                             'reason': reason})
 
-        for filer, score in stats.iteritems():
+        for filer, score in six.iteritems(stats):
             totals = {}
             for i in range(self.level, len(constants.RANKING)):
                 severity = constants.RANKING[i]
