@@ -14,10 +14,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import constants
-import context as b_context
-
 import copy
+
+from bandit.core import constants
+from bandit.core import context as b_context
 
 
 class BanditTester():

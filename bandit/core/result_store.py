@@ -25,8 +25,8 @@ import json
 import linecache
 from operator import itemgetter
 
-import constants
-import utils
+from bandit.core import constants
+from bandit.core import utils
 
 
 class BanditResultStore():

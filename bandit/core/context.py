@@ -16,7 +16,7 @@
 
 import _ast
 
-import utils
+from bandit.core import utils
 
 
 class Context():

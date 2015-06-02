@@ -16,7 +16,7 @@
 import ast
 import logging
 
-import constants
+from bandit.core import constants
 
 logger = logging.getLogger()
 

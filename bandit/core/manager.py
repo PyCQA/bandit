@@ -19,11 +19,11 @@ import logging
 import os
 import sys
 
-import config as b_config
-import meta_ast as b_meta_ast
-import node_visitor as b_node_visitor
-import result_store as b_result_store
-import test_set as b_test_set
+from bandit.core import config as b_config
+from bandit.core import meta_ast as b_meta_ast
+from bandit.core import node_visitor as b_node_visitor
+from bandit.core import result_store as b_result_store
+from bandit.core import test_set as b_test_set
 
 
 class BanditManager():

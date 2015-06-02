@@ -14,15 +14,20 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from core import config  # noqa
-from core import context  # noqa
-from core import manager  # noqa
-from core import meta_ast  # noqa
-from core import node_visitor  # noqa
-from core import result_store  # noqa
-from core import test_set  # noqa
-from core import tester  # noqa
-from core import utils  # noqa
-from core.constants import *  # noqa
-from core.objects import *  # noqa
-from core.test_properties import *  # noqa
+# This is necessary on Python 2.7 because of the local bandit module
+# (bandit.bandit), without from bandit.core will fail since bandit.bandit has
+# no submodule "core"
+from __future__ import absolute_import
+
+from bandit.core import config  # noqa
+from bandit.core import context  # noqa
+from bandit.core import manager  # noqa
+from bandit.core import meta_ast  # noqa
+from bandit.core import node_visitor  # noqa
+from bandit.core import result_store  # noqa
+from bandit.core import test_set  # noqa
+from bandit.core import tester  # noqa
+from bandit.core import utils  # noqa
+from bandit.core.constants import *  # noqa
+from bandit.core.objects import *  # noqa
+from bandit.core.test_properties import *  # noqa
