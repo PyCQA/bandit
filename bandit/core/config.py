@@ -41,13 +41,13 @@ class BanditConfig():
         try:
             f = open(config_file, 'r')
         except IOError:
-            logger.error("could not open config file: %s" % config_file)
+            logger.error("could not open config file: %s", config_file)
             sys.exit(2)
         else:
             try:
                 self._config = yaml.safe_load(f)
             except yaml.YAMLError:
-                logger.error("Invalid config file specified: %s" % config_file)
+                logger.error("Invalid config file specified: %s", config_file)
                 sys.exit(2)
 
         self._init_settings()
@@ -69,7 +69,7 @@ class BanditConfig():
                     cur_item = cur_item[level]
                 except Exception:
                     self._logger.error(
-                        "error while accessing config property: %s" %
+                        "error while accessing config property: %s",
                         option_string
                     )
                     return None

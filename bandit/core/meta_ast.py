@@ -34,7 +34,7 @@ class BanditMetaAst():
         :return: -
         '''
         node_id = hex(id(node))
-        self.logger.debug('adding node : %s [%s]' % (node_id, depth))
+        self.logger.debug('adding node : %s [%s]', node_id, depth)
         self.nodes[node_id] = {
             'raw': node, 'parent_id': parent_id, 'depth': depth
         }

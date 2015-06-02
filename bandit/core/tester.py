@@ -81,7 +81,7 @@ class BanditTester():
                     if result is not None:
                         self.results.add(temp_context, name, result)
                         self.logger.debug(
-                            "Issue identified by {0}: {1}".format(name, result)
+                            "Issue identified by %s: %s", name, result
                         )
                         sev = constants.RANKING.index(result[0])
                         val = constants.RANKING_VALUES[result[0]]
@@ -94,7 +94,7 @@ class BanditTester():
                     self.report_error(name, context, e)
                     if self.debug:
                         raise
-        self.logger.debug("Returning scores: {0}".format(scores))
+        self.logger.debug("Returning scores: %s", scores)
         return scores
 
     def report_error(self, test, context, error):

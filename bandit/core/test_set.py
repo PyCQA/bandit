@@ -147,15 +147,15 @@ class BanditTestSet():
             # try to import the module by name
             try:
                 outer = os.path.basename(os.path.normpath(directory))
-                self.logger.debug("importing plugin module: {0}".format(
-                                  outer + '.' + module_name))
+                self.logger.debug("importing plugin module: %s",
+                                  outer + '.' + module_name)
                 module = importlib.import_module(outer + '.' + module_name)
 
             # if it fails, die
             except ImportError as e:
-                self.logger.error("could not import plugin module '%s.%s'" %
-                                  (directory, module_name))
-                self.logger.error("\tdetail: '%s'" % (str(e)))
+                self.logger.error("could not import plugin module '%s.%s'",
+                                  directory, module_name)
+                self.logger.error("\tdetail: '%s'", str(e))
                 sys.exit(2)
 
             # otherwise we want to obtain a list of all functions in the module
@@ -174,8 +174,8 @@ class BanditTestSet():
                         except AttributeError as e:
                             self.logger.error(
                                 "could not locate test function '%s' in "
-                                "module '%s.%s'" %
-                                (fn_name, directory, module_name)
+                                "module '%s.%s'",
+                                fn_name, directory, module_name
                             )
                             sys.exit(2)
                         else:
@@ -207,9 +207,9 @@ class BanditTestSet():
         :return: A dictionary of tests which are of the specified type
         '''
         scoped_tests = {}
-        self.logger.debug('get_tests called with check type: %s' % checktype)
+        self.logger.debug('get_tests called with check type: %s', checktype)
         if checktype in self.tests:
             scoped_tests = self.tests[checktype]
-        self.logger.debug('get_tests returning scoped_tests : %s' %
+        self.logger.debug('get_tests returning scoped_tests : %s',
                           scoped_tests)
         return scoped_tests

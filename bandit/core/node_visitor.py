@@ -183,10 +183,10 @@ class BanditNodeVisitor(ast.NodeVisitor):
         try:
             self.namespace = b_utils.get_module_qualname_from_path(fname)
         except InvalidModulePath:
-            self.logger.info('Unable to find qualified name for module: {}'
-                             .format(self.fname))
+            self.logger.info('Unable to find qualified name for module: %s',
+                             self.fname)
             self.namespace = ""
-        self.logger.debug('Module qualified name: {}'.format(self.namespace))
+        self.logger.debug('Module qualified name: %s', self.namespace)
         self.stmt_buffer = StatementBuffer()
         self.statement = {}
 
@@ -215,7 +215,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
         self.context['function'] = node
 
-        self.logger.debug("visit_FunctionDef called (%s)" % ast.dump(node))
+        self.logger.debug("visit_FunctionDef called (%s)", ast.dump(node))
 
         qualname = self.namespace + '.' + b_utils.get_func_name(node)
         name = qualname.split('.')[-1]
@@ -241,7 +241,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
 
         self.context['call'] = node
 
-        self.logger.debug("visit_Call called (%s)" % ast.dump(node))
+        self.logger.debug("visit_Call called (%s)", ast.dump(node))
 
         qualname = b_utils.get_call_name(node, self.import_aliases)
         name = qualname.split('.')[-1]
@@ -261,7 +261,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.logger.debug("visit_Import called (%s)" % ast.dump(node))
+        self.logger.debug("visit_Import called (%s)", ast.dump(node))
         for nodename in node.names:
             if nodename.asname:
                 self.context['import_aliases'][nodename.asname] = nodename.name
@@ -279,7 +279,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
 
-        self.logger.debug("visit_ImportFrom called (%s)" % ast.dump(node))
+        self.logger.debug("visit_ImportFrom called (%s)", ast.dump(node))
 
         module = node.module
         if module is None:
@@ -315,7 +315,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :return: -
         '''
         self.context['str'] = node.s
-        self.logger.debug("visit_Str called (%s)" % ast.dump(node))
+        self.logger.debug("visit_Str called (%s)", ast.dump(node))
 
         # This check is to make sure we aren't running tests against
         # docstrings (any statement that is just a string, nothing else)
@@ -337,14 +337,14 @@ class BanditNodeVisitor(ast.NodeVisitor):
     def visit_Exec(self, node):
         self.context['str'] = 'exec'
 
-        self.logger.debug("visit_Exec called (%s)" % ast.dump(node))
+        self.logger.debug("visit_Exec called (%s)", ast.dump(node))
         self.update_scores(self.tester.run_tests(self.context, 'Exec'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
     def visit_Assert(self, node):
         self.context['str'] = 'assert'
 
-        self.logger.debug("visit_Assert called (%s)" % ast.dump(node))
+        self.logger.debug("visit_Assert called (%s)", ast.dump(node))
         self.update_scores(self.tester.run_tests(self.context, 'Assert'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
@@ -367,13 +367,12 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['skip_lines'] = self.stmt_buffer.get_skip_lines()
 
         self.seen += 1
-        self.logger.debug("entering: %s %s [%s]" % (
-            hex(id(node)), type(node), self.depth)
-        )
+        self.logger.debug("entering: %s %s [%s]", hex(id(node)), type(node),
+                          self.depth)
         self.depth += 1
         super(BanditNodeVisitor, self).visit(node)
         self.depth -= 1
-        self.logger.debug("%s\texiting : %s" % (self.depth, hex(id(node))))
+        self.logger.debug("%s\texiting : %s", self.depth, hex(id(node)))
         return self.scores
 
     def update_scores(self, scores):
@@ -402,8 +401,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.statement = self.stmt_buffer.get_next()
         while self.statement is not None:
             self.logger.debug('New statement loaded')
-            self.logger.debug('s_node: %s' % ast.dump(self.statement['node']))
-            self.logger.debug('s_lineno: %s' % self.statement['linerange'])
+            self.logger.debug('s_node: %s', ast.dump(self.statement['node']))
+            self.logger.debug('s_lineno: %s', self.statement['linerange'])
 
             self.visit(self.statement['node'])
             self.statement = self.stmt_buffer.get_next()
