@@ -16,4 +16,4 @@ if password:
 tn.write("ls\n")
 tn.write("exit\n")
 
-print tn.read_all()
+print(tn.read_all())
