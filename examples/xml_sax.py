@@ -7,13 +7,13 @@ class ExampleContentHandler(xml.sax.ContentHandler):
         xml.sax.ContentHandler.__init__(self)
 
     def startElement(self, name, attrs):
-        print 'start:', name
+        print('start:', name)
 
     def endElement(self, name):
-        print 'end:', name
+        print('end:', name)
 
     def characters(self, content):
-        print 'chars:', content
+        print('chars:', content)
 
 def main():
     xmlString = "<note>\n<to>Tove</to>\n<from>Jani</from>\n<heading>Reminder</heading>\n<body>Don't forget me this weekend!</body>\n</note>"
@@ -29,7 +29,7 @@ def main():
     # bad
     xml.sax.make_parser()
     sax.make_parser()
-    print 'nothing'
+    print('nothing')
     # good
     defusedxml.sax.make_parser()
 

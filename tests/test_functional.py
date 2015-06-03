@@ -90,7 +90,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_crypto_md5(self):
         '''Test the `hashlib.md5` example.'''
-        expect = {'SEVERITY': {'MEDIUM': 5}, 'CONFIDENCE': {'HIGH': 5}}
+        expect = {'SEVERITY': {'MEDIUM': 4}, 'CONFIDENCE': {'HIGH': 4}}
         self.check_example('crypto-md5.py', expect)
 
     def test_eval(self):
