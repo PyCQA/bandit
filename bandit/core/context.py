@@ -16,6 +16,8 @@
 
 import _ast
 
+import six
+
 from bandit.core import utils
 
 
@@ -184,10 +186,6 @@ class Context():
         elif isinstance(literal, _ast.Str):
             return literal.s
 
-        # Python 3 only
-        # elif isinstance(literal, _ast.Bytes):
-        #    return literal.s
-
         elif isinstance(literal, _ast.List):
             return_list = list()
             for li in literal.elts:
@@ -213,15 +211,18 @@ class Context():
             # what do we want to do with this?
             pass
 
-        # Python 3 only
-        # elif isinstance(literal, _ast.NameConstant):
-        #    return literal.value
-
         elif isinstance(literal, _ast.Name):
             return literal.id
 
-        elif hasattr(literal, 'value'):
+        # NOTE(sigmavirus24): NameConstants are only part of the AST in Python
+        # 3. NameConstants tend to refer to things like True and False. This
+        # prevents them from being re-assigned in Python 3.
+        elif six.PY3 and isinstance(literal, _ast.NameConstant):
             return str(literal.value)
+
+        # NOTE(sigmavirus24): Bytes are only part of the AST in Python 3
+        elif six.PY3 and isinstance(literal, _ast.Bytes):
+            return literal.s
 
         else:
             return None

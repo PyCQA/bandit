@@ -19,6 +19,8 @@ import os
 import unittest
 import inspect
 
+import six
+
 from bandit.core import constants as C
 from bandit.core import manager as b_manager
 from bandit.core import test_set as b_test_set
@@ -100,8 +102,14 @@ class FunctionalTests(unittest.TestCase):
 
     def test_exec(self):
         '''Test the `exec` example.'''
-        expect = {'SEVERITY': {'MEDIUM': 2}, 'CONFIDENCE': {'HIGH': 2}}
-        self.check_example('exec.py', expect)
+        filename = 'exec-{}.py'
+        if six.PY2:
+            filename = filename.format('py2')
+            expect = {'SEVERITY': {'MEDIUM': 2}, 'CONFIDENCE': {'HIGH': 2}}
+        else:
+            filename = filename.format('py3')
+            expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'HIGH': 1}}
+        self.check_example(filename, expect)
 
     def test_exec_as_root(self):
         '''Test for the `run_as_root=True` keyword argument.'''
@@ -173,10 +181,19 @@ class FunctionalTests(unittest.TestCase):
 
     def test_os_chmod(self):
         '''Test setting file permissions.'''
-        expect = {
-            'SEVERITY': {'MEDIUM': 2, 'HIGH': 9},
-            'CONFIDENCE': {'HIGH': 10, 'MEDIUM': 1}
-        }
+        filename = 'os-chmod-{}.py'
+        if six.PY2:
+            filename = filename.format('py2')
+            expect = {
+                'SEVERITY': {'MEDIUM': 2, 'HIGH': 9},
+                'CONFIDENCE': {'HIGH': 10, 'MEDIUM': 1}
+            }
+        else:
+            filename = filename.format('py3')
+            expect = {
+                'SEVERITY': {'MEDIUM': 2, 'HIGH': 9},
+                'CONFIDENCE': {'HIGH': 10, 'MEDIUM': 1}
+            }
         self.check_example('os-chmod.py', expect)
 
     def test_os_exec(self):
