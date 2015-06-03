@@ -56,7 +56,7 @@ class UtilTests(unittest.TestCase):
 
         # good/a/b/c/test_typical.py
         os.makedirs(os.path.join(
-            self.tempdir, 'good', 'a', 'b', 'c'), 0755)
+            self.tempdir, 'good', 'a', 'b', 'c'), 0o755)
         _touch(os.path.join(self.tempdir, 'good', '__init__.py'))
         _touch(os.path.join(self.tempdir, 'good', 'a', '__init__.py'))
         _touch(os.path.join(
@@ -68,7 +68,7 @@ class UtilTests(unittest.TestCase):
 
         # missingmid/a/b/c/test_missingmid.py
         os.makedirs(os.path.join(
-            self.tempdir, 'missingmid', 'a', 'b', 'c'), 0755)
+            self.tempdir, 'missingmid', 'a', 'b', 'c'), 0o755)
         _touch(os.path.join(self.tempdir, 'missingmid', '__init__.py'))
         # no missingmid/a/__init__.py
         _touch(os.path.join(
@@ -80,7 +80,7 @@ class UtilTests(unittest.TestCase):
 
         # missingend/a/b/c/test_missingend.py
         os.makedirs(os.path.join(
-            self.tempdir, 'missingend', 'a', 'b', 'c'), 0755)
+            self.tempdir, 'missingend', 'a', 'b', 'c'), 0o755)
         _touch(os.path.join(
             self.tempdir, 'missingend', '__init__.py'))
         _touch(os.path.join(
@@ -90,7 +90,7 @@ class UtilTests(unittest.TestCase):
             self.tempdir, 'missingend', 'a', 'b', 'c', 'test_missingend.py'))
 
         # syms/a/bsym/c/test_typical.py
-        os.makedirs(os.path.join(self.tempdir, 'syms', 'a'), 0755)
+        os.makedirs(os.path.join(self.tempdir, 'syms', 'a'), 0o755)
         _touch(os.path.join(self.tempdir, 'syms', '__init__.py'))
         _touch(os.path.join(self.tempdir, 'syms', 'a', '__init__.py'))
         os.symlink(os.path.join(self.tempdir, 'good', 'a', 'b'),

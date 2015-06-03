@@ -220,6 +220,9 @@ class Context():
         elif isinstance(literal, _ast.Name):
             return literal.id
 
+        elif hasattr(literal, 'value'):
+            return str(literal.value)
+
         else:
             return None
 
