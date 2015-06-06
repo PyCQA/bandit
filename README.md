@@ -162,6 +162,53 @@ To write a test:
    vulnerability might present itself and extend the example file and the test
    function accordingly.
 
+Extending Bandit
+----------------
+
+Bandit allows users to write and register extensions for checks and formatters.
+Bandit will load plugins from two entry-points:
+
+- `bandit.formatters`
+- `bandit.plugins`
+
+Formatters need to accept 4 things:
+
+- `result_store`: An instance of `bandit.core.BanditResultStore`
+- `file_list`: The list of files which were inspected in the scope
+- `scores`: The scores awarded to each file in the scope
+- `excluded_files`: The list of files that were excluded from the scope
+
+Plugins tend to take advantage of the `bandit.checks` decorator which allows
+the author to register a check for a particular type of AST node. For example,
+
+    @bandit.checks('Call')
+    def prohibit_unsafe_deserialization(context):
+        if 'unsafe_load' in context.call_function_name_qual:
+            return bandit.Issue(
+                severity=bandit.HIGH,
+                confidence=bandit.HIGH,
+                text="Unsafe deserialization detected."
+            )
+
+To register your plugin, you have two options:
+
+1. If you're using setuptools directly, add something like the following to
+   your `setup` call:
+
+        # If you have an imaginary bson formatter in the bandit_bson module
+        # and a function called `formatter`.
+        entry_points={'bandit.formatters': ['bson = bandit_bson:formatter']}
+        # Or a check for using mako templates in bandit_mako that
+        entry_points={'bandit.plugins': ['mako = bandit_mako']}
+
+2. If you're using pbr, add something like the following to your `setup.cfg`
+   file:
+
+        [entry_points]
+        bandit.formatters =
+            bson = bandit_bson:formatter
+        bandit.plugins =
+            mako = bandit_mako
 
 Contributing
 ------------
