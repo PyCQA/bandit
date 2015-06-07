@@ -56,33 +56,38 @@ using only the plugins listed in the ShellInjection profile:
 Usage::
 
     bandit -h
-    usage: bandit [-h] [-a AGG_TYPE] [-n CONTEXT_LINES] [-c CONFIG_FILE]
-                  [-p PROFILE] [-l] [-o OUTPUT_FILE] [-d]
-                  file [file ...]
+    usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
+                  [-p PROFILE] [-l] [-f {txt,json,csv,xml}] [-o OUTPUT_FILE] [-v]
+                  [-d]
+                  targets [targets ...]
 
     Bandit - a Python source code analyzer.
 
     positional arguments:
-      file                  source file/s or directory to be tested
+      targets               source file(s) or directory(s) to be tested
 
     optional arguments:
       -h, --help            show this help message and exit
       -r, --recursive       process files in subdirectories
-      -a AGG_TYPE, --aggregate AGG_TYPE
-                            group results by (vuln)erability type or (file) it
-                            occurs in
+      -a {file,vuln}, --aggregate {file,vuln}
+                            group results by vulnerability type or file it occurs
+                            in
       -n CONTEXT_LINES, --number CONTEXT_LINES
-                            number of context lines to print
+                            max number of code lines to display for each issue
+                            identified
       -c CONFIG_FILE, --configfile CONFIG_FILE
-                            test config file (default: bandit.yaml)
+                            test config file, defaults to /etc/bandit/bandit.yaml,
+                            or./bandit.yaml if not given
       -p PROFILE, --profile PROFILE
                             test set profile in config to use (defaults to all
                             tests)
       -l, --level           results level filter
-      -f {txt,json}, --format {txt,json}
-                            output format for STDOUT or file
+      -f {csv,json,txt,xml}, --format {csv,json,txt,xml}
+                            specify output format
       -o OUTPUT_FILE, --output OUTPUT_FILE
                             write report to filename
+      -v, --verbose         show extra information like excluded and included
+                            files
       -d, --debug           turn on debug mode
 
 
