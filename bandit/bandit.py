@@ -117,6 +117,8 @@ def main():
     logger = logging.getLogger()
     if args.output_format != "json":
         logger.info("using config: %s", config_file)
+        logger.info("running on Python %d.%d.%d", sys.version_info.major,
+                    sys.version_info.minor, sys.version_info.micro)
 
     # check ability to write output file, if requested
     if args.output_file is not None:
