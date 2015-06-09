@@ -73,10 +73,15 @@ def main():
         default=None, help='write report to filename'
     )
     parser.add_argument(
+        '-v', '--verbose', dest='verbose', action='store_true',
+        help='show extra information like excluded and included files'
+    )
+    parser.add_argument(
         '-d', '--debug', dest='debug', action='store_true',
         help='turn on debug mode'
     )
     parser.set_defaults(debug=False)
+    parser.set_defaults(verbose=False)
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
@@ -112,7 +117,8 @@ def main():
         sys.exit(2)
 
     b_mgr = b_manager.BanditManager(config_file, args.agg_type,
-                                    args.debug, profile_name=args.profile)
+                                    args.debug, profile_name=args.profile,
+                                    verbose=args.verbose)
     # we getLogger() here because BanditManager has configured it at this point
     logger = logging.getLogger()
     if args.output_format != "json":

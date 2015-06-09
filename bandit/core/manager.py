@@ -30,7 +30,8 @@ class BanditManager():
 
     scope = []
 
-    def __init__(self, config_file, agg_type, debug=False, profile_name=None):
+    def __init__(self, config_file, agg_type, debug=False, verbose=False,
+                 profile_name=None):
         '''Get logger, config, AST handler, and result store ready
 
         :param config_file: A file to read config from
@@ -39,6 +40,7 @@ class BanditManager():
         :return:
         '''
         self.debug = debug
+        self.verbose = verbose
         self.logger = self._init_logger(debug)
         self.b_conf = b_config.BanditConfig(self.logger, config_file)
         self.files_list = []
@@ -53,7 +55,7 @@ class BanditManager():
 
         self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
         self.b_rs = b_result_store.BanditResultStore(self.logger, self.b_conf,
-                                                     agg_type)
+                                                     agg_type, verbose)
 
         # if the profile name was specified, try to find it in the config
         if profile_name:

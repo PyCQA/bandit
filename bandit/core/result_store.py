@@ -36,7 +36,7 @@ class BanditResultStore():
     count = 0
     skipped = None
 
-    def __init__(self, logger, config, agg_type):
+    def __init__(self, logger, config, agg_type, verbose):
         self.count = 0
         self.skipped = []
         self.logger = logger
@@ -46,6 +46,7 @@ class BanditResultStore():
         self.max_lines = -1
         self.format = 'txt'
         self.out_file = None
+        self.verbose = verbose
 
     def skip(self, filename, reason):
         '''Indicates that the specified file was skipped and why
@@ -240,20 +241,22 @@ class BanditResultStore():
             datetime.utcnow()
         ))
 
-        # print which files were inspected
-        tmpstr_list.append("\n%sFiles in scope (%s):%s\n" % (
-            color['HEADER'], len(files_list),
-            color['DEFAULT']
-        ))
+        if self.verbose:
+            # print which files were inspected
+            tmpstr_list.append("\n%sFiles in scope (%s):%s\n" % (
+                color['HEADER'], len(files_list),
+                color['DEFAULT']
+            ))
 
-        for item in zip(files_list, map(self._sum_scores, scores)):
-            tmpstr_list.append("\t%s (score: %i)\n" % item)
+            for item in zip(files_list, map(self._sum_scores, scores)):
+                tmpstr_list.append("\t%s (score: %i)\n" % item)
 
-        # print which files were excluded and why
-        tmpstr_list.append("\n%sFiles excluded (%s):%s\n" % (color['HEADER'],
-                           len(excluded_files), color['DEFAULT']))
-        for fname in excluded_files:
-            tmpstr_list.append("\t%s\n" % fname)
+            # print which files were excluded and why
+            tmpstr_list.append("\n%sFiles excluded (%s):%s\n" %
+                               (color['HEADER'], len(excluded_files),
+                                color['DEFAULT']))
+            for fname in excluded_files:
+                tmpstr_list.append("\t%s\n" % fname)
 
         # print which files were skipped and why
         tmpstr_list.append("\n%sFiles skipped (%s):%s\n" % (
