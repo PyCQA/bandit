@@ -131,7 +131,7 @@ class BanditManager():
         excluded_files = set()
 
         excluded_path_strings = self.b_conf.get_option('exclude_dirs') or []
-        included_globs = self.b_conf.get_option('include') or '*.py'
+        included_globs = self.b_conf.get_option('include') or ['*.py']
 
         # build list of files we will analyze
         for fname in targets:
