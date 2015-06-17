@@ -365,3 +365,10 @@ class FunctionalTests(unittest.TestCase):
         expect = {'SEVERITY': {'LOW': 1},
                   'CONFIDENCE': {'HIGH': 1}}
         self.check_example('assert.py', expect)
+
+    def test_paramiko_injection(self):
+        '''Test paramiko command execution.'''
+        expect = {'SEVERITY': {'MEDIUM': 2},
+                  'CONFIDENCE': {'HIGH': 2}}
+        self.check_example('paramiko_injection.py', expect)
+
