@@ -20,12 +20,14 @@ import logging
 import os
 import sys
 
+from bandit.core import extension_loader as ext_loader
 from bandit.core import manager as b_manager
 
 default_test_config = 'bandit.yaml'
 
 
 def main():
+    extension_mgr = ext_loader.MANAGER
     parser = argparse.ArgumentParser(
         description='Bandit - a Python source code analyzer.'
     )
@@ -66,7 +68,7 @@ def main():
     parser.add_argument(
         '-f', '--format', dest='output_format', action='store',
         default='txt', help='specify output format',
-        choices=['txt', 'json', 'csv', 'xml']
+        choices=sorted(extension_mgr.formatter_names)
     )
     parser.add_argument(
         '-o', '--output', dest='output_file', action='store',
@@ -82,6 +84,10 @@ def main():
     )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
+
+    parser.epilog = ('The following plugin suites were discovered and'
+                     ' loaded: [' +
+                     ', '.join(extension_mgr.plugin_names) + ']')
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
