@@ -26,11 +26,11 @@ from bandit.core import utils
 
 
 class BanditResultStore():
-    resstore = OrderedDict()
     count = 0
     skipped = None
 
     def __init__(self, logger, config, agg_type, verbose):
+        self.resstore = OrderedDict()
         self.count = 0
         self.skipped = []
         self.logger = logger

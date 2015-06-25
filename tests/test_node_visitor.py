@@ -45,6 +45,15 @@ class StatementBufferTests(unittest.TestCase):
         # Check buffer has been reduced by one
         self.assertEqual(9, len(self.buf._buffer))
 
+    def test_get_next_lookahead(self):
+        # Check get_next(pop=False) returns an AST statement
+        stmt = self.buf.get_next(pop=False)
+        self.assertTrue(isinstance(stmt['node'], ast.AST))
+        # Check get_next(pop=False) returned the first statement
+        self.assertEqual(1, stmt['linerange'][0])
+        # Check buffer remains the same length
+        self.assertEqual(10, len(self.buf._buffer))
+
     def test_get_next_count(self):
         # Check get_next returns exactly 10 statements
         count = 0

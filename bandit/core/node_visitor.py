@@ -106,18 +106,22 @@ class StatementBuffer():
             # and isn't included in line-by-line output
             self._buffer.append(stmt)
 
-    def get_next(self):
+    def get_next(self, pop=True):
         '''Statment Retrieval
 
         Grab the next statement in the buffer for detailed processing
+        :param pop: shift next statement off array (default) or just lookahead
         :return statement: the next statement to be processed, or None
         '''
         if len(self._buffer):
-            # Update the context, and shift the next statement off the array
             statement = {}
-            statement['node'] = self._buffer.pop(0)
+            if pop:
+                # shift the next statement off the array
+                statement['node'] = self._buffer.pop(0)
+            else:
+                # get the next statement without shift
+                statement['node'] = self._buffer[0]
             statement['linerange'] = self.linenumber_range(statement['node'])
-
             return statement
         return None
 
@@ -365,6 +369,21 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['filename'] = self.fname
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
+
+            # deal with multiline strings lineno behavior (Python issue #16806)
+            current_lineno = self.context['lineno']
+            next_statement = self.stmt_buffer.get_next(pop=False)
+            if next_statement is not None:
+                next_lineno = min(next_statement['linerange'])
+            else:
+                next_lineno = self.stmt_buffer.file_len
+
+            if next_lineno - current_lineno > 1:
+                self.context['statement']['linerange'] = range(
+                    min(self.context['statement']['linerange']),
+                    next_lineno
+                )
+
         self.context['skip_lines'] = self.stmt_buffer.get_skip_lines()
 
         self.seen += 1

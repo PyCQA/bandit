@@ -17,3 +17,15 @@ def f():
     /tmp
     '''
 
+# trigger warning for tempfile
+def f():
+   x = (
+        'aaa '
+        'bbb '
+        'ccc '
+        'ddd '
+        '/tmp '
+        'xxx '
+        'zzz'
+   )
+   return x
