@@ -40,6 +40,7 @@ profiles:
             - any_other_function_with_shell_equals_true
             - start_process_with_a_shell
             - start_process_with_no_shell
+            - start_process_with_partial_path
         exclude:
 
     SqlInjection:

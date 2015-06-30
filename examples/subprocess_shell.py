@@ -5,20 +5,20 @@ from subprocess import Popen as pop
 def Popen(*args, **kwargs):
     print('hi')
 
-pop('gcc --version', shell=True)
-Popen('gcc --version', shell=True)
+pop('/bin/gcc --version', shell=True)
+Popen('/bin/gcc --version', shell=True)
 
-subprocess.Popen('gcc --version', shell=True)
-subprocess.Popen(['gcc', '--version'], shell=False)
-subprocess.Popen(['gcc', '--version'])
+subprocess.Popen('/bin/gcc --version', shell=True)
+subprocess.Popen(['/bin/gcc', '--version'], shell=False)
+subprocess.Popen(['/bin/gcc', '--version'])
 
-subprocess.call(["ls",
+subprocess.call(["/bin/ls",
                  "-l"
                  ])
-subprocess.call('ls -l', shell=True)
+subprocess.call('/bin/ls -l', shell=True)
 
-subprocess.check_call(['ls', '-l'], shell=False)
-subprocess.check_call('ls -l', shell=True)
+subprocess.check_call(['/bin/ls', '-l'], shell=False)
+subprocess.check_call('/bin/ls -l', shell=True)
 
-subprocess.check_output(['ls', '-l'])
-subprocess.check_output('ls -l', shell=True)
+subprocess.check_output(['/bin/ls', '-l'])
+subprocess.check_output('/bin/ls -l', shell=True)

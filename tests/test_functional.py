@@ -372,6 +372,13 @@ class FunctionalTests(unittest.TestCase):
                   'CONFIDENCE': {'HIGH': 2}}
         self.check_example('paramiko_injection.py', expect)
 
+    def test_partial_path(self):
+        '''Test process spawning with partial file paths.'''
+        expect = {'SEVERITY': {'LOW': 9},
+                  'CONFIDENCE': {'HIGH': 9}}
+
+        self.check_example('partial_path_process.py', expect)
+
     def test_multiline_code(self):
         '''Test issues in multiline statements return code as expected.'''
         self.run_example('multiline-str.py')

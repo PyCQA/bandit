@@ -6,7 +6,7 @@ import hashlib as hhhh
 from pickle import loads as lp
 import pickle as p
 
-pop('gcc --version', shell=True)
+pop('/bin/gcc --version', shell=True)
 
 h.md5('1')
 hh.md5('2')
