@@ -261,3 +261,57 @@ def safe_str(obj):
     except UnicodeEncodeError:
         # obj is unicode
         return unicode(obj).encode('unicode_escape')
+
+
+def embelish_ast(node):
+    """Add a parent and sibling info to every node."""
+    for _, value in ast.iter_fields(node):
+        if isinstance(value, list):
+            last = None
+            for item in value:
+                if isinstance(item, ast.AST):
+                    if last is not None:
+                        setattr(last, 'sibling', item)
+                    last = item
+                    setattr(item, 'parent', node)
+                    embelish_ast(item)
+
+        elif isinstance(value, ast.AST):
+            setattr(value, 'parent', node)
+            embelish_ast(value)
+
+
+def linerange(node):
+    """Get line number range from a node."""
+    strip = {"body": None, "orelse": None,
+             "handlers": None, "finalbody": None}
+    fields = dir(node)
+    for key in strip.keys():
+        if key in fields:
+            strip[key] = getattr(node, key)
+            setattr(node, key, [])
+
+    lines = set()
+    for n in ast.walk(node):
+        if hasattr(n, 'lineno'):
+            lines.add(n.lineno)
+
+    for key in strip.keys():
+        if strip[key] is not None:
+            setattr(node, key, strip[key])
+
+    if len(lines):
+        return range(min(lines), max(lines) + 1)
+    return [0, 1]
+
+
+def linerange_fix(node):
+    """Try and work around a known Python bug with multi-line strings."""
+    # deal with multiline strings lineno behavior (Python issue #16806)
+    lines = linerange(node)
+    if hasattr(node, 'sibling') and hasattr(node.sibling, 'lineno'):
+        start = min(lines)
+        delta = node.sibling.lineno - start
+        if delta > 1:
+            return range(start, node.sibling.lineno)
+    return lines

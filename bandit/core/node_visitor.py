@@ -23,128 +23,6 @@ from bandit.core import utils as b_utils
 from bandit.core.utils import InvalidModulePath
 
 
-if hasattr(ast, 'TryExcept'):
-    ast_Try = (ast.TryExcept, ast.TryFinally)
-else:  # Python 3.3+
-    ast_Try = ast.Try
-
-
-class StatementBuffer():
-    '''Buffer for code statements
-
-    Creates a buffer to store a code file as individual statements
-    for AST processing
-    '''
-    def __init__(self):
-        self._buffer = []
-        self.skip_lines = []
-
-    def load_buffer(self, fdata):
-        '''Buffer initialization
-
-        Read the file as lines, so we can store the length of the file
-        so we don't lose multi-line statements at the bottom of the target
-        file
-        :param fdata: The code to be parsed into the buffer
-        '''
-        self._buffer = []
-        self.skip_lines = []
-        lines = fdata.readlines()
-        self.file_len = len(lines)
-
-        for lineno in range(self.file_len):
-            found = False
-            for flag in constants.SKIP_FLAGS:
-                if "#" + flag in lines[lineno].replace(" ", "").lower():
-                    found = True
-            if found:
-                self.skip_lines.append(lineno + 1)
-
-        f_ast = ast.parse("".join(lines))
-        # We need to expand body blocks within compound statements
-        # into our statement buffer so each gets processed in
-        # isolation
-        tmp_buf = f_ast.body
-        while len(tmp_buf):
-            # For each statement, if it is one of the special statement
-            # types which contain a body, we first update the tmp_buf
-            # adding the internal body statements to the beginning of
-            # the temporary buffer, then clear the body of the special
-            # statement before adding it to the primary buffer
-            stmt = tmp_buf.pop(0)
-            if (isinstance(stmt, ast.ClassDef)
-                    or isinstance(stmt, ast.FunctionDef)
-                    or isinstance(stmt, ast.With)
-                    or isinstance(stmt, ast.Module)
-                    or isinstance(stmt, ast.Interactive)):
-                stmt.body.extend(tmp_buf)
-                tmp_buf = stmt.body
-                stmt.body = []
-            elif (isinstance(stmt, ast.For)
-                    or isinstance(stmt, ast.While)
-                    or isinstance(stmt, ast.If)):
-                stmt.body.extend(stmt.orelse)
-                stmt.body.extend(tmp_buf)
-                tmp_buf = stmt.body
-                stmt.body = []
-                stmt.orelse = []
-            elif isinstance(stmt, ast_Try):
-                for handler in getattr(stmt, 'handlers', []):
-                    stmt.body.extend(handler.body)
-                stmt.body.extend(getattr(stmt, 'orelse', []))
-                stmt.body.extend(tmp_buf)
-                tmp_buf = stmt.body
-                stmt.body = []
-                stmt.orelse = []
-                stmt.handlers = []
-                stmt.finalbody = []
-
-            # once we are sure it's either a single statement or that
-            # any content in a compound statement body has been removed
-            # we can add it to our primary buffer. The compound body
-            # must be removed so the ast isn't walked multiple times
-            # and isn't included in line-by-line output
-            self._buffer.append(stmt)
-
-    def get_next(self, pop=True):
-        '''Statment Retrieval
-
-        Grab the next statement in the buffer for detailed processing
-        :param pop: shift next statement off array (default) or just lookahead
-        :return statement: the next statement to be processed, or None
-        '''
-        if len(self._buffer):
-            statement = {}
-            if pop:
-                # shift the next statement off the array
-                statement['node'] = self._buffer.pop(0)
-            else:
-                # get the next statement without shift
-                statement['node'] = self._buffer[0]
-            statement['linerange'] = self.linenumber_range(statement['node'])
-            return statement
-        return None
-
-    def linenumber_range(self, node):
-        '''Get set of line numbers for statement
-
-        Walks the given statement node, and creates a set
-        of line numbers covered by the code
-        :param node: The statment line numbers are required for
-        :return lines: A set of line numbers
-        '''
-        lines = set()
-        for n in ast.walk(node):
-            if hasattr(n, 'lineno'):
-                lines.add(n.lineno)
-        # we'll return a range here, because in some cases ast.walk skips over
-        # important parts, such as the middle lines in a multi-line string
-        return range(min(lines), max(lines) + 1)
-
-    def get_skip_lines(self):
-        return self.skip_lines
-
-
 class BanditNodeVisitor(ast.NodeVisitor):
 
     imports = set()
@@ -192,8 +70,7 @@ class BanditNodeVisitor(ast.NodeVisitor):
                              self.fname)
             self.namespace = ""
         self.logger.debug('Module qualified name: %s', self.namespace)
-        self.stmt_buffer = StatementBuffer()
-        self.statement = {}
+        self.lines = []
 
     def visit_ClassDef(self, node):
         '''Visitor for AST ClassDef node
@@ -322,20 +199,8 @@ class BanditNodeVisitor(ast.NodeVisitor):
         self.context['str'] = node.s
         self.logger.debug("visit_Str called (%s)", ast.dump(node))
 
-        # This check is to make sure we aren't running tests against
-        # docstrings (any statement that is just a string, nothing else)
-        node_object = self.context['statement']['node']
-
-        # docstrings can be represented as standalone ast.Str
-        is_str = isinstance(node_object, ast.Str)
-        # or ast.Expr with a value of type ast.Str
-        if (isinstance(node_object, ast.Expr) and
-                isinstance(node_object.value, ast.Str)):
-            is_standalone_expr = True
-        else:
-            is_standalone_expr = False
-        # if we don't have either one of those, run the test
-        if not (is_str or is_standalone_expr):
+        if not isinstance(node.parent, ast.Expr):  # docstring
+            self.context['linerange'] = b_utils.linerange_fix(node.parent)
             self.update_scores(self.tester.run_tests(self.context, 'Str'))
         super(BanditNodeVisitor, self).generic_visit(node)
 
@@ -360,31 +225,19 @@ class BanditNodeVisitor(ast.NodeVisitor):
         :param node: The node that is being inspected
         :return: -
         '''
+        self.context = copy.copy(self.context_template)
         self.logger.debug(ast.dump(node))
         self.metaast.add_node(node, '', self.depth)
-
-        self.context = copy.copy(self.context_template)
-        self.context['statement'] = self.statement
-        self.context['node'] = node
-        self.context['filename'] = self.fname
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
+            if ("# nosec" in self.lines[node.lineno - 1] or
+                    "#nosec" in self.lines[node.lineno - 1]):
+                self.logger.debug("skipped, nosec")
+                return self.scores  # skip this node and all sub-nodes
 
-            # deal with multiline strings lineno behavior (Python issue #16806)
-            current_lineno = self.context['lineno']
-            next_statement = self.stmt_buffer.get_next(pop=False)
-            if next_statement is not None:
-                next_lineno = min(next_statement['linerange'])
-            else:
-                next_lineno = self.stmt_buffer.file_len
-
-            if next_lineno - current_lineno > 1:
-                self.context['statement']['linerange'] = range(
-                    min(self.context['statement']['linerange']),
-                    next_lineno
-                )
-
-        self.context['skip_lines'] = self.stmt_buffer.get_skip_lines()
+        self.context['node'] = node
+        self.context['linerange'] = b_utils.linerange_fix(node)
+        self.context['filename'] = self.fname
 
         self.seen += 1
         self.logger.debug("entering: %s %s [%s]", hex(id(node)), type(node),
@@ -412,18 +265,13 @@ class BanditNodeVisitor(ast.NodeVisitor):
     def process(self, fdata):
         '''Main process loop
 
-        Iniitalizes the statement buffer, iterates over each statement
-        in the buffer testing each AST in turn
+        Build and process the AST
         :param fdata: the open filehandle for the code to be processed
         :return score: the aggregated score for the current file
         '''
-        self.stmt_buffer.load_buffer(fdata)
-        self.statement = self.stmt_buffer.get_next()
-        while self.statement is not None:
-            self.logger.debug('New statement loaded')
-            self.logger.debug('s_node: %s', ast.dump(self.statement['node']))
-            self.logger.debug('s_lineno: %s', self.statement['linerange'])
-
-            self.visit(self.statement['node'])
-            self.statement = self.stmt_buffer.get_next()
+        fdata.seek(0)
+        self.lines = fdata.readlines()
+        f_ast = ast.parse("".join(self.lines))
+        b_utils.embelish_ast(f_ast)
+        self.visit(f_ast)
         return self.scores

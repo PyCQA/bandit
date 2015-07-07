@@ -50,50 +50,49 @@ class BanditTester():
             'CONFIDENCE': [0] * len(constants.RANKING)
         }
 
-        if not raw_context['lineno'] in raw_context['skip_lines']:
-            tests = self.testset.get_tests(checktype)
-            for name, test in six.iteritems(tests):
-                # execute test with the an instance of the context class
-                temp_context = copy.copy(raw_context)
-                context = b_context.Context(temp_context)
-                try:
-                    if hasattr(test, '_takes_config'):
-                        # TODO(??): Possibly allow override from profile
-                        test_config = self.config.get_option(
-                            test._takes_config)
-                        result = test(context, test_config)
-                    else:
-                        result = test(context)
+        tests = self.testset.get_tests(checktype)
+        for name, test in six.iteritems(tests):
+            # execute test with the an instance of the context class
+            temp_context = copy.copy(raw_context)
+            context = b_context.Context(temp_context)
+            try:
+                if hasattr(test, '_takes_config'):
+                    # TODO(??): Possibly allow override from profile
+                    test_config = self.config.get_option(
+                        test._takes_config)
+                    result = test(context, test_config)
+                else:
+                    result = test(context)
 
-                    # the test call returns a 2- or 3-tuple
-                    # - (issue_severity, issue_text) or
-                    # - (issue_severity, issue_confidence, issue_text)
+                # the test call returns a 2- or 3-tuple
+                # - (issue_severity, issue_text) or
+                # - (issue_severity, issue_confidence, issue_text)
 
-                    # add default confidence level, if not returned by test
-                    if (result is not None and len(result) == 2):
-                        result = (
-                            result[0],
-                            constants.CONFIDENCE_DEFAULT,
-                            result[1]
-                        )
+                # add default confidence level, if not returned by test
+                if (result is not None and len(result) == 2):
+                    result = (
+                        result[0],
+                        constants.CONFIDENCE_DEFAULT,
+                        result[1]
+                    )
 
-                    # if we have a result, record it and update scores
-                    if result is not None:
-                        self.results.add(temp_context, name, result)
-                        self.logger.debug(
-                            "Issue identified by %s: %s", name, result
-                        )
-                        sev = constants.RANKING.index(result[0])
-                        val = constants.RANKING_VALUES[result[0]]
-                        scores['SEVERITY'][sev] += val
-                        con = constants.RANKING.index(result[1])
-                        val = constants.RANKING_VALUES[result[1]]
-                        scores['CONFIDENCE'][con] += val
+                # if we have a result, record it and update scores
+                if result is not None:
+                    self.results.add(temp_context, name, result)
+                    self.logger.debug(
+                        "Issue identified by %s: %s", name, result
+                    )
+                    sev = constants.RANKING.index(result[0])
+                    val = constants.RANKING_VALUES[result[0]]
+                    scores['SEVERITY'][sev] += val
+                    con = constants.RANKING.index(result[1])
+                    val = constants.RANKING_VALUES[result[1]]
+                    scores['CONFIDENCE'][con] += val
 
-                except Exception as e:
-                    self.report_error(name, context, e)
-                    if self.debug:
-                        raise
+            except Exception as e:
+                self.report_error(name, context, e)
+                if self.debug:
+                    raise
         self.logger.debug("Returning scores: %s", scores)
         return scores
 

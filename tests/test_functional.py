@@ -394,7 +394,7 @@ class FunctionalTests(unittest.TestCase):
         self.assertEqual(range(2, 7), issues[0]['line_range'])
         self.assertIn('/tmp', issues[0]['code'])
         self.assertEqual(18, issues[1]['line_number'])
-        self.assertEqual(range(16, 21), issues[1]['line_range'])
+        self.assertEqual(range(16, 19), issues[1]['line_range'])
         self.assertIn('/tmp', issues[1]['code'])
         self.assertEqual(23, issues[2]['line_number'])
         self.assertEqual(range(22, 31), issues[2]['line_range'])
