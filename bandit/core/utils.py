@@ -263,24 +263,6 @@ def safe_str(obj):
         return unicode(obj).encode('unicode_escape')
 
 
-def embelish_ast(node):
-    """Add a parent and sibling info to every node."""
-    for _, value in ast.iter_fields(node):
-        if isinstance(value, list):
-            last = None
-            for item in value:
-                if isinstance(item, ast.AST):
-                    if last is not None:
-                        setattr(last, 'sibling', item)
-                    last = item
-                    setattr(item, 'parent', node)
-                    embelish_ast(item)
-
-        elif isinstance(value, ast.AST):
-            setattr(value, 'parent', node)
-            embelish_ast(value)
-
-
 def linerange(node):
     """Get line number range from a node."""
     strip = {"body": None, "orelse": None,
