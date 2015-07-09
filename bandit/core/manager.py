@@ -82,6 +82,10 @@ class BanditManager():
         self.scores = []
 
     @property
+    def has_tests(self):
+        return self.b_ts.has_tests
+
+    @property
     def get_logger(self):
         return self.logger
 

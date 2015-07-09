@@ -213,3 +213,7 @@ class BanditTestSet():
         self.logger.debug('get_tests returning scoped_tests : %s',
                           scoped_tests)
         return scoped_tests
+
+    @property
+    def has_tests(self):
+        return bool(self.tests)

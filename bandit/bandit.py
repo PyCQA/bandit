@@ -142,6 +142,12 @@ def main():
             )
             sys.exit(2)
 
+    # no point running if there are no tests available
+    if not b_mgr.has_tests:
+        logger.error('Could not find any tests to apply, please check '
+                     'the configuration.')
+        sys.exit(2)
+
     # initiate file discovery step within Bandit Manager
     b_mgr.discover_files(args.targets, args.recursive)
 
