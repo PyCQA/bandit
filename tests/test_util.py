@@ -221,3 +221,16 @@ class UtilTests(unittest.TestCase):
         self.assertEqual('', name)
         # TODO(ljfisher) At best we might be able to get:
         # self.assertEqual(name, 'a.list[0]')
+
+    def test_linerange(self):
+        self.test_file = open("./examples/jinja2_templating.py")
+        self.tree = ast.parse(self.test_file.read())
+        # Check linerange returns corrent number of lines
+        line = self.tree.body[8]
+        lrange = b_utils.linerange(line)
+
+        # line 9 should be three lines long
+        self.assertEqual(3, len(lrange))
+
+        # the range should be the correct line numbers
+        self.assertEqual([11, 12, 13], list(lrange))

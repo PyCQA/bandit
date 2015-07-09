@@ -61,7 +61,7 @@ class BanditResultStore():
         '''
         filename = context['filename']
         lineno = context['lineno']
-        linerange = context['statement']['linerange']
+        linerange = context['linerange']
         (issue_severity, issue_confidence, issue_text) = issue
 
         if self.agg_type == 'vuln':

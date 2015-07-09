@@ -47,7 +47,7 @@ def _ast_binop_stringify(data):
 
 @checks('Str')
 def hardcoded_sql_expressions(context):
-    statement = context.statement['node']
+    statement = context.node.parent
     if isinstance(statement, ast.Assign):
         test_str = _ast_build_string(statement.value).lower()
 
