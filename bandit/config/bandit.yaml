@@ -106,6 +106,9 @@ blacklist_imports:
             level: LOW
             message: "Consider possible security implications associated with {module} module."
 
+hardcoded_tmp_directory:
+    tmp_dirs:  ['/tmp', '/var/tmp', '/dev/shm']
+
 hardcoded_password:
     word_list: "wordlist/default-passwords"
 

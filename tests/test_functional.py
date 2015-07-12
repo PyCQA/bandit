@@ -122,8 +122,8 @@ class FunctionalTests(unittest.TestCase):
         self.check_example('hardcoded-passwords.py', expect)
 
     def test_hardcoded_tmp(self):
-        '''Test for hard-coded /tmp.'''
-        expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'MEDIUM': 1}}
+        '''Test for hard-coded /tmp, /var/tmp, /dev/shm'''
+        expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'MEDIUM': 3}}
         self.check_example('hardcoded-tmp.py', expect)
 
     def test_httplib_https(self):
