@@ -14,27 +14,56 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os.path
+import warnings
+
+from appdirs import site_data_dir
+
 import bandit
 from bandit.core.test_properties import *
+
+
+def find_word_list(cfg_word_list_f):
+    if not isinstance(cfg_word_list_f, str):
+        return None
+    try:
+        cfg_word_list_f % {'site_data_dir': ''}
+    except TypeError:
+        return cfg_word_list_f
+
+    site_data_dirs = ['.'] + site_data_dir("bandit", "",
+                                           multipath=True).split(':')
+    for dir in site_data_dirs:
+        word_list_path = cfg_word_list_f % {'site_data_dir': dir}
+        if os.path.isfile(word_list_path):
+            if dir == ".":
+                warnings.warn("Using relative path for word_list: %s"
+                              % word_list_path)
+            return word_list_path
+
+    raise RuntimeError("Could not substitute '%(site_data_dir)s' "
+                       "to a path with a valid word_list file")
 
 
 @takes_config
 @checks('Str')
 def hardcoded_password(context, config):
-    word_list_file = ""
-
-    # try to read the word list file from config
-    if(config is not None and 'word_list' in config and
-            type(config['word_list']) == str):
-        word_list_file = config['word_list']
-
+    word_list_file = None
     word_list = []
+    # try to read the word list file from config
+    if (config is not None and 'word_list' in config):
+        try:
+            word_list_file = find_word_list(config['word_list'])
+        except RuntimeError as e:
+            warnings.warn(e.message)
+            return
 
     # try to open the word list file and read passwords from it
     try:
         f = open(word_list_file, 'r')
     except (OSError, IOError):
-        return
+        raise RuntimeError("Could not open word_list (from config"
+                           " file): %s" % word_list_file)
     else:
         for word in f:
             word_list.append(word.strip())

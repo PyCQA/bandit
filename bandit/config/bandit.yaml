@@ -107,7 +107,9 @@ blacklist_imports:
             message: "Consider possible security implications associated with {module} module."
 
 hardcoded_password:
-    word_list: "wordlist/default-passwords"
+    # Support for full path, relative path and special "%(site_data_dir)s"
+    # substitution (/usr/{local}/share)
+    word_list: "%(site_data_dir)s/wordlist/default-passwords"
 
 ssl_with_bad_version:
     bad_protocol_versions:
