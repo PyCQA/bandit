@@ -369,7 +369,7 @@ class FunctionalTests(unittest.TestCase):
     def test_paramiko_injection(self):
         '''Test paramiko command execution.'''
         expect = {'SEVERITY': {'MEDIUM': 2},
-                  'CONFIDENCE': {'HIGH': 2}}
+                  'CONFIDENCE': {'MEDIUM': 2}}
         self.check_example('paramiko_injection.py', expect)
 
     def test_partial_path(self):

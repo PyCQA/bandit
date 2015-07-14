@@ -77,9 +77,6 @@ blacklist_calls:
         - urllib_urlopen:
             qualnames: [urllib.urlopen, urllib.urlretrieve, urllib.URLopener, urllib.FancyURLopener, urllib2.urlopen, urllib2.Request]
             message: "Audit url open for permitted schemes. Allowing use of file:/ or custom schemes is often unexpected."
-        - paramiko_injection:
-            qualnames: [paramiko.exec_command, paramiko.invoke_shell]
-            message: "Paramiko exec_command() and invoke_shell() usage may expose command injection vulnerabilities and should be reviewed."
 
 shell_injection:
     # Start a process using the subprocess module, or one of its wrappers.
