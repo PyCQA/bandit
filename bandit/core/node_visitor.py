@@ -230,6 +230,15 @@ class BanditNodeVisitor(object):
         self.update_scores(self.tester.run_tests(self.context, 'Assert'))
         self.generic_visit(node)
 
+    def visit_ExceptHandler(self, node):
+        if self.debug:
+            self.logger.debug("visit_ExceptHandler called (%s)",
+                              ast.dump(node))
+
+        self.update_scores(self.tester.run_tests(self.context,
+                                                 'ExceptHandler'))
+        self.generic_visit(node)
+
     def visit(self, node):
         '''Generic visitor
 

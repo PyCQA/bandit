@@ -379,6 +379,13 @@ class FunctionalTests(unittest.TestCase):
 
         self.check_example('partial_path_process.py', expect)
 
+    def test_try_except_pass(self):
+        '''Test try, except pass detection.'''
+        expect = {'SEVERITY': {'LOW': 3},
+                  'CONFIDENCE': {'HIGH': 3}}
+
+        self.check_example('try_except_pass.py', expect)
+
     def test_multiline_code(self):
         '''Test issues in multiline statements return code as expected.'''
         self.run_example('multiline-str.py')

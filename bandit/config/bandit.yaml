@@ -128,3 +128,6 @@ execute_with_run_as_root_equals_true:
         - neutron.agent.linux.utils.execute
         - nova.utils.execute
         - nova.utils.trycmd
+
+try_except_pass:
+  check_typed_exception: True
