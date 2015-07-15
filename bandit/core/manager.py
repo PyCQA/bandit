@@ -41,7 +41,7 @@ class BanditManager():
         '''
         self.debug = debug
         self.verbose = verbose
-        self.logger = self._init_logger(debug)
+        self.logger = logging.getLogger()
         self.b_conf = b_config.BanditConfig(self.logger, config_file)
         self.files_list = []
         self.excluded_files = []
@@ -246,30 +246,6 @@ class BanditManager():
             )
             score = res.process(fdata)
         return score
-
-    def _init_logger(self, debug=False, log_format=None):
-        '''Initialize the logger
-
-        :param debug: Whether to enable debug mode
-        :return: An instantiated logging instance
-        '''
-        log_level = logging.INFO
-        if debug:
-            log_level = logging.DEBUG
-
-        if not log_format:
-            # default log format
-            log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
-        else:
-            log_format_string = log_format
-
-        logger = logging.getLogger()
-        logger.setLevel(log_level)
-        handler = logging.StreamHandler(sys.stdout)
-        handler.setFormatter(logging.Formatter(log_format_string))
-        logger.addHandler(handler)
-        logger.debug("logging initialized")
-        return logger
 
 
 def _get_files_from_dir(files_dir, included_globs='*.py',

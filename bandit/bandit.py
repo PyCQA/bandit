@@ -20,14 +20,48 @@ import logging
 import os
 import sys
 
-from bandit.core import extension_loader as ext_loader
 from bandit.core import manager as b_manager
 
 default_test_config = 'bandit.yaml'
 
 
+def _init_logger(debug=False, log_format=None):
+    '''Initialize the logger
+
+    :param debug: Whether to enable debug mode
+    :return: An instantiated logging instance
+    '''
+    log_level = logging.INFO
+    if debug:
+        log_level = logging.DEBUG
+
+    if not log_format:
+        # default log format
+        log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
+    else:
+        log_format_string = log_format
+
+    logger = logging.getLogger()
+    logger.setLevel(log_level)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(log_format_string))
+    logger.addHandler(handler)
+    logger.debug("logging initialized")
+    return logger
+
+
+def _init_extensions():
+    from bandit.core import extension_loader as ext_loader
+    return ext_loader.MANAGER
+
+
 def main():
-    extension_mgr = ext_loader.MANAGER
+    # bring our logging stuff up as early as possible
+    debug = ('-d' in sys.argv or '--debug' in sys.argv)
+    logger = _init_logger(debug)
+    extension_mgr = _init_extensions()
+
+    # now do normal startup
     parser = argparse.ArgumentParser(
         description='Bandit - a Python source code analyzer.'
     )
@@ -115,18 +149,13 @@ def main():
                 break
 
     if not config_file:
-        # no logger yet, so using print
-        print ("no config found, tried ...")
-        for path in config_paths:
-            if path:
-                print ("\t%s" % path)
+        logger.error("no config found, tried:\n%s", '\t'.join(config_paths))
         sys.exit(2)
 
     b_mgr = b_manager.BanditManager(config_file, args.agg_type,
                                     args.debug, profile_name=args.profile,
                                     verbose=args.verbose)
-    # we getLogger() here because BanditManager has configured it at this point
-    logger = logging.getLogger()
+
     if args.output_format != "json":
         logger.info("using config: %s", config_file)
         logger.info("running on Python %d.%d.%d", sys.version_info.major,
