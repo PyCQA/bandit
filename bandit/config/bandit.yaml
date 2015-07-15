@@ -107,7 +107,9 @@ hardcoded_tmp_directory:
     tmp_dirs:  ['/tmp', '/var/tmp', '/dev/shm']
 
 hardcoded_password:
-    word_list: "wordlist/default-passwords"
+    # Support for full path, relative path and special "%(site_data_dir)s"
+    # substitution (/usr/{local}/share)
+    word_list: "%(site_data_dir)s/wordlist/default-passwords"
 
 ssl_with_bad_version:
     bad_protocol_versions:
