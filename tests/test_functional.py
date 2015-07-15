@@ -236,7 +236,7 @@ class FunctionalTests(unittest.TestCase):
 
     def test_random_module(self):
         '''Test for the `random` module.'''
-        expect = {'SEVERITY': {'LOW': 3}, 'CONFIDENCE': {'HIGH': 3}}
+        expect = {'SEVERITY': {'LOW': 6}, 'CONFIDENCE': {'HIGH': 6}}
         self.check_example('random_module.py', expect)
 
     def test_requests_ssl_verify_disabled(self):

@@ -3,7 +3,14 @@ import os
 import somelib
 
 bad = random.random()
+bad = random.randrange()
+bad = random.randint()
+bad = random.choice()
+bad = random.uniform()
+bad = random.triangular()
+
 good = os.urandom()
-bad = random.choice([0,1,2,3])
+good = random.SystemRandom()
+
 unknown = random()
 unknown = somelib.a.random()
