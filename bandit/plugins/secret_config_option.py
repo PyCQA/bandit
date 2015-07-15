@@ -20,27 +20,29 @@ from bandit.core.test_properties import *
 @checks('Call')
 def password_config_option_not_marked_secret(context, config):
 
-    if (context.call_function_name_qual in config['function_names']):
-        if context.get_call_arg_at_position(0).endswith('password'):
-            # Checks whether secret=False or secret is not set (None).
-            # Returns True if argument found, and matches supplied values
-            # and None if argument not found at all.
-            if context.check_call_arg_value('secret',
-                                            constants.FALSE_VALUES) in [
-                                                True, None]:
-                return bandit.Issue(
-                    severity=bandit.MEDIUM,
-                    confidence=bandit.MEDIUM,
-                    text="oslo config option not marked secret=True "
-                         "identifed, security issue.  %s" %
-                         context.call_args_string
-                )
-            # Checks whether secret is not True, for example when its set to a
-            # variable, secret=secret.
-            elif not context.check_call_arg_value('secret', 'True'):
-                return bandit.Issue(
-                    severity=bandit.LOW,
-                    confidence=bandit.MEDIUM,
-                    text="oslo config option possibly not marked secret=True "
-                         "identified.  %s" % context.call_args_string
-                )
+    if(context.call_function_name_qual in config['function_names'] and
+       context.get_call_arg_at_position(0) is not None and
+       context.get_call_arg_at_position(0).endswith('password')):
+
+        # Checks whether secret=False or secret is not set (None).
+        # Returns True if argument found, and matches supplied values
+        # and None if argument not found at all.
+        if context.check_call_arg_value('secret',
+                                        constants.FALSE_VALUES) in [
+                                            True, None]:
+            return bandit.Issue(
+                severity=bandit.MEDIUM,
+                confidence=bandit.MEDIUM,
+                text="oslo config option not marked secret=True "
+                     "identifed, security issue.  %s" %
+                     context.call_args_string
+            )
+        # Checks whether secret is not True, for example when its set to a
+        # variable, secret=secret.
+        elif not context.check_call_arg_value('secret', 'True'):
+            return bandit.Issue(
+                severity=bandit.LOW,
+                confidence=bandit.MEDIUM,
+                text="oslo config option possibly not marked secret=True "
+                     "identified.  %s" % context.call_args_string
+            )
