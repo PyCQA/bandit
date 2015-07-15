@@ -18,9 +18,15 @@ import bandit
 from bandit.core.test_properties import *
 
 
+@takes_config
 @checks('Str')
-def hardcoded_tmp_directory(context):
-    if '/tmp' in context.string_val:
+def hardcoded_tmp_directory(context, config):
+    if (config is not None and 'tmp_dirs' in config):
+        tmp_dirs = config['tmp_dirs']
+    else:
+        tmp_dirs = ['/tmp', '/var/tmp', '/dev/shm']
+
+    if any(s in context.string_val for s in tmp_dirs):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
