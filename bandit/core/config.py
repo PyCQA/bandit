@@ -103,7 +103,6 @@ class BanditConfig():
         '''
         self._init_progress_increment()
         self._init_output_colors()
-        self._init_plugins_dir()
         self._init_plugin_name_pattern()
 
     def _init_progress_increment(self):
@@ -147,13 +146,6 @@ class BanditConfig():
             # update the settings dict with the color value
             settings_string = 'color_' + color
             self._settings[settings_string] = color_settings[color]
-
-    def _init_plugins_dir(self):
-        '''Sets settings['plugins_dir'] from default or config file.'''
-        plugins_dir = constants.plugins_dir
-        if self.get_option('plugins_dir'):
-            plugins_dir = self.get_option('plugins_dir')
-        self._settings['plugins_dir'] = plugins_dir
 
     def _init_plugin_name_pattern(self):
         '''Sets settings['plugin_name_pattern'] from default or config file.'''
