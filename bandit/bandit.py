@@ -20,9 +20,13 @@ import logging
 import os
 import sys
 
-from bandit.core import manager as b_manager
+from appdirs import site_config_dir
+from appdirs import user_config_dir
 
-default_test_config = 'bandit.yaml'
+from bandit.core import manager as b_manager
+from bandit.core import utils
+
+BASE_CONFIG = '/bandit.yaml'
 
 
 def _init_logger(debug=False, log_format=None):
@@ -55,10 +59,34 @@ def _init_extensions():
     return ext_loader.MANAGER
 
 
+def _find_config():
+    # prefer config file in the following order:
+    # 1) current directory, 2) user home directory, 3) bundled config
+    config_dirs = (['.'] + [user_config_dir("bandit")] +
+                   site_config_dir("bandit", multipath=True).split(':'))
+    config_locations = [s + BASE_CONFIG for s in config_dirs]
+
+    # pip on Mac installs to the following path, but appdirs expects to
+    # follow Mac's BPFileSystem spec which doesn't include this path so
+    # we'll insert it. Issue raised as http://git.io/vOreU
+    mac_pip_cfg_path = "/usr/local/etc/bandit/bandit.yaml"
+    if mac_pip_cfg_path not in config_locations:
+        config_locations.append(mac_pip_cfg_path)
+
+    for config_file in config_locations:
+        if os.path.isfile(config_file):
+            return config_file  # Found a valid config
+    else:
+        # Failed to find any config, raise an error.
+        raise utils.NoConfigFileFound(config_locations)
+
+
 def main():
     # bring our logging stuff up as early as possible
     debug = ('-d' in sys.argv or '--debug' in sys.argv)
     logger = _init_logger(debug)
+    # By default path would be /etx/xdg/bandit, we want system paths
+    os.environ['XDG_CONFIG_DIRS'] = '/etc:/usr/local/etc'
     extension_mgr = _init_extensions()
 
     # now do normal startup
@@ -87,8 +115,8 @@ def main():
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
         action='store', default=None, type=str,
-        help=('test config file, defaults to /etc/bandit/bandit.yaml, or'
-              './bandit.yaml if not given')
+        help=('if omitted default locations are checked. '
+              'Check documentation for searched paths')
     )
     parser.add_argument(
         '-p', '--profile', dest='profile',
@@ -135,30 +163,11 @@ def main():
     args = parser.parse_args()
     config_file = args.config_file
     if not config_file:
-
-        home_config = None
-
-        # attempt to get the home directory from environment
-        home_dir = os.environ.get('HOME')
-        if home_dir:
-            home_config = "%s/.config/bandit/%s" % (home_dir,
-                                                    default_test_config)
-
-        installed_config = str(os.path.dirname(os.path.realpath(__file__)) +
-                               '/config/%s' % default_test_config)
-
-        # prefer config file in the following order:
-        # 1) current directory, 2) user home directory, 3) bundled config
-        config_paths = [default_test_config, home_config, installed_config]
-
-        for path in config_paths:
-            if path and os.access(path, os.R_OK):
-                config_file = path
-                break
-
-    if not config_file:
-        logger.error("no config found, tried:\n%s", '\t'.join(config_paths))
-        sys.exit(2)
+        try:
+            config_file = _find_config()
+        except utils.NoConfigFileFound as e:
+            logger.error(e)
+            sys.exit(2)
 
     b_mgr = b_manager.BanditManager(config_file, args.agg_type,
                                     args.debug, profile_name=args.profile,

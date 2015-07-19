@@ -181,6 +181,13 @@ class InvalidModulePath(Exception):
     pass
 
 
+class NoConfigFileFound(Exception):
+    def __init__(self, config_locations):
+        message = ("no config found - tried: " +
+                   ", ".join(config_locations))
+        super(NoConfigFileFound, self).__init__(message)
+
+
 def get_module_qualname_from_path(path):
     '''Get the module's qualified name by analysis of the path.
 
