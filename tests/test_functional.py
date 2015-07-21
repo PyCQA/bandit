@@ -249,15 +249,12 @@ class FunctionalTests(unittest.TestCase):
         expect = {'SEVERITY': {'LOW': 5}, 'CONFIDENCE': {'HIGH': 5}}
         self.check_example('skip.py', expect)
 
-    def test_sql_statements_with_sqlalchemy(self):
+    def test_sql_statements(self):
         '''Test for SQL injection through string building.'''
-        expect = {'SEVERITY': {'LOW': 4}, 'CONFIDENCE': {'LOW': 4}}
-        self.check_example('sql_statements_with_sqlalchemy.py', expect)
-
-    def test_sql_statements_without_sql_alchemy(self):
-        '''Test for SQL injection without SQLAlchemy.'''
-        expect = {'SEVERITY': {'MEDIUM': 4}, 'CONFIDENCE': {'LOW': 4}}
-        self.check_example('sql_statements_without_sql_alchemy.py', expect)
+        expect = {
+            'SEVERITY': {'MEDIUM': 10},
+            'CONFIDENCE': {'LOW': 5, 'MEDIUM': 5}}
+        self.check_example('sql_statements.py', expect)
 
     def test_ssl_insecure_version(self):
         '''Test for insecure SSL protocol versions.'''
