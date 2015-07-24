@@ -82,6 +82,51 @@ blacklist_calls:
             message: "Standard pseudo-random generators are not suitable for security/cryptographic purposes."
             level: "LOW"
 
+        # Most of this is based off of Christian Heimes' work on defusedxml:
+        #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+
+        - xml_bad_cElementTree:
+            qualnames: [xml.etree.cElementTree.parse,
+                        xml.etree.cElementTree.iterparse,
+                        xml.etree.cElementTree.fromstring,
+                        xml.etree.cElementTree.XMLParser]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_ElementTree:
+            qualnames: [xml.etree.ElementTree.parse,
+                        xml.etree.ElementTree.iterparse,
+                        xml.etree.ElementTree.fromstring,
+                        xml.etree.ElementTree.XMLParser]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_expatreader:
+            qualnames: [xml.sax.expatreader.create_parser]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_expatbuilder:
+            qualnames: [xml.dom.expatbuilder.parse,
+                        xml.dom.expatbuilder.parseString]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_sax:
+            qualnames: [xml.sax.parse,
+                        xml.sax.parseString,
+                        xml.sax.make_parser]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_minidom:
+            qualnames: [xml.dom.minidom.parse,
+                        xml.dom.minidom.parseString]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_pulldom:
+            qualnames: [xml.dom.pulldom.parse,
+                        xml.dom.pulldom.parseString]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+        - xml_bad_etree:
+            qualnames: [lxml.etree.parse,
+                        lxml.etree.fromstring,
+                        lxml.etree.RestrictedElement,
+                        lxml.etree.GlobalParserTLS,
+                        lxml.etree.getDefaultParser,
+                        lxml.etree.check_docinfo]
+            message: "Using {func} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {func} with it's defusedxml equivilent function."
+
+
 shell_injection:
     # Start a process using the subprocess module, or one of its wrappers.
     subprocess: [subprocess.Popen, subprocess.call, subprocess.check_call,
@@ -106,6 +151,26 @@ blacklist_imports:
             imports: [pickle, cPickle, subprocess, Crypto]
             level: LOW
             message: "Consider possible security implications associated with {module} module."
+
+        # Most of this is based off of Christian Heimes' work on defusedxml:
+        #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+
+        - xml_libs:
+            imports: [xml.etree.cElementTree,
+                      xml.etree.ElementTree,
+                      xml.sax.expatreader,
+                      xml.sax,
+                      xml.dom.expatbuilder,
+                      xml.dom.minidom,
+                      xml.dom.pulldom,
+                      lxml.etree,
+                      lxml]
+            message: "Using {module} to parse untrusted XML data is known to be vulnerable to XML attacks. Replace {module} with the equivilent defusedxml package."
+            level: LOW
+        - xml_libs_high:
+            imports: [xmlrpclib]
+            message: "Using {module} to parse untrusted XML data is known to be vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() function to monkey-patch xmlrpclib and mitigate XML vulnerabilities."
+            level: HIGH
 
 hardcoded_tmp_directory:
     tmp_dirs:  ['/tmp', '/var/tmp', '/dev/shm']
