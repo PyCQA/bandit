@@ -7,3 +7,6 @@ python-subunit>=0.0.18
 testrepository>=0.0.18
 testscenarios>=0.4
 testtools>=0.9.36,!=1.2.0
+
+sphinx>=1.1.2,!=1.2.0,!=1.3b1,<1.3
+oslosphinx>=2.5.0  # Apache-2.0

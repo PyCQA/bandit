@@ -10,3 +10,4 @@ venv*
 build/*
 cover/*
 .cover
+docs/build/*
