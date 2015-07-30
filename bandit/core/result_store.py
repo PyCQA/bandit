@@ -37,7 +37,8 @@ class BanditResultStore():
         self.logger = logger
         self.config = config
         self.agg_type = agg_type
-        self.level = 0
+        self.sev_level = 0
+        self.conf_level = 0
         self.max_lines = -1
         self.format = 'txt'
         self.out_file = None
@@ -98,13 +99,15 @@ class BanditResultStore():
         report_func(self, files_list, scores, excluded_files=excluded_files)
 
     def report(self, files_list, scores, excluded_files=None, lines=-1,
-               level=1, output_filename=None, output_format=None):
+               sev_level=1, conf_level=1, output_filename=None,
+               output_format=None):
         '''Prints the contents of the result store
 
         :param scope: Which files were inspected
         :param scores: The scores awarded to each file in the scope
         :param lines: # of lines around the issue line to display (optional)
-        :param level: What level of severity to display (optional)
+        :param sev_level: What level of severity to display (optional)
+        :param conf_level: What level of confidence to display (optional)
         :param output_filename: File to output the results (optional)
         :param output_format: File type to output (json|txt)
         :return: -
@@ -113,10 +116,13 @@ class BanditResultStore():
         if not excluded_files:
             excluded_files = []
 
-        if level >= len(constants.RANKING):
-            level = len(constants.RANKING) - 1
+        if sev_level >= len(constants.RANKING):
+            sev_level = len(constants.RANKING) - 1
+        if conf_level >= len(constants.RANKING):
+            conf_level = len(constants.RANKING) - 1
 
-        self.level = level
+        self.sev_level = sev_level
+        self.conf_level = conf_level
         self.max_lines = lines
         self.format = output_format
         self.out_file = output_filename
@@ -133,7 +139,8 @@ class BanditResultStore():
         for group in self.resstore.items():
             issue_list = group[1]
             for issue in issue_list:
-                if self._check_severity(issue['issue_severity']):
+                if (self._check_severity(issue['issue_severity']) and
+                        self._check_confidence(issue['issue_confidence'])):
                     code = self._get_code(issue, True)
                     holder = dict({
                         "filename": issue['fname'],
@@ -191,7 +198,7 @@ class BanditResultStore():
         '''
         total = 0
         for score_type in scores:
-            total = total + sum(scores[score_type][self.level:])
+            total = total + sum(scores[score_type][self.sev_level:])
         return total
 
     def _check_severity(self, severity):
@@ -201,4 +208,13 @@ class BanditResultStore():
         :param severity: the severity of the issue being checked
         :return: boolean result
         '''
-        return constants.RANKING.index(severity) >= self.level
+        return constants.RANKING.index(severity) >= self.sev_level
+
+    def _check_confidence(self, confidence):
+        '''Check confidence level
+
+        returns true if the issue confidence is above the threshold.
+        :param confidence: the confidence of the issue being checked
+        :return: boolean result
+        '''
+        return constants.RANKING.index(confidence) >= self.conf_level

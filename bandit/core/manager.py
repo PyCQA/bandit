@@ -121,11 +121,13 @@ class BanditManager():
 
         return count
 
-    def output_results(self, lines, level, output_filename, output_format):
+    def output_results(self, lines, sev_level, conf_level, output_filename,
+                       output_format):
         '''Outputs results from the result store
 
         :param lines: How many surrounding lines to show per result
-        :param level: Which levels to show (info, warning, error)
+        :param sev_level: Which severity levels to show (LOW, MEDIUM, HIGH)
+        :param conf_level: Which confidence levels to show (LOW, MEDIUM, HIGH)
         :param output_filename: File to store results
         :param output_format: output format, either 'json' or 'txt'
         :return: -
@@ -134,8 +136,8 @@ class BanditManager():
         self.b_rs.report(
             self.files_list, self.scores,
             excluded_files=self.excluded_files, lines=lines,
-            level=level, output_filename=output_filename,
-            output_format=output_format
+            sev_level=sev_level, conf_level=conf_level,
+            output_filename=output_filename, output_format=output_format
         )
 
     def output_metaast(self):
