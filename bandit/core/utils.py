@@ -340,4 +340,7 @@ def get_called_name(node):
     :returns: (String) the function name
     '''
     func = node.func
-    return (func.attr if isinstance(func, ast.Attribute) else func.id)
+    try:
+        return (func.attr if isinstance(func, ast.Attribute) else func.id)
+    except AttributeError:
+        return ""
