@@ -28,6 +28,36 @@ include:
 exclude_dirs:
 
 profiles:
+    All:
+        include:
+            - any_other_function_with_shell_equals_true
+            - assert_used
+            - blacklist_calls
+            - blacklist_import_func
+            - blacklist_imports
+            - exec_used
+            - execute_with_run_as_root_equals_true
+            - hardcoded_bind_all_interfaces
+            - hardcoded_password
+            - hardcoded_sql_expressions
+            - hardcoded_tmp_directory
+            - jinja2_autoescape_false
+            - linux_commands_wildcard_injection
+            - paramiko_calls
+            - password_config_option_not_marked_secret
+            - request_with_no_cert_validation
+            - set_bad_file_permissions
+            - subprocess_popen_with_shell_equals_true
+            - subprocess_without_shell_equals_true
+            - start_process_with_a_shell
+            - start_process_with_no_shell
+            - start_process_with_partial_path
+            - ssl_with_bad_defaults
+            - ssl_with_bad_version
+            - ssl_with_no_version
+            - try_except_pass
+            - use_of_mako_templates
+
     XSS:
         include:
             - jinja2_autoescape_false
