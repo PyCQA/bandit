@@ -24,6 +24,15 @@ query = "SELECT " + val + " FROM " + val +" WHERE id = " + val
 # bad
 cur.execute("SELECT " + val + " FROM " + val +" WHERE id = " + val)
 
+
+# bug: https://bugs.launchpad.net/bandit/+bug/1479625
+def a():
+    def b():
+        pass
+    return b
+
+a()("SELECT %s FROM foo" % val)
+
 # real world false positives
 choices=[('server_list', _("Select from active instances"))]
 print("delete from the cache as the first argument")
