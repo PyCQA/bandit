@@ -20,6 +20,7 @@ import os
 import sys
 
 from bandit.core import config as b_config
+from bandit.core import constants as constants
 from bandit.core import meta_ast as b_meta_ast
 from bandit.core import node_visitor as b_node_visitor
 from bandit.core import result_store as b_result_store
@@ -93,13 +94,32 @@ class BanditManager():
     def get_resultstore(self):
         return self.b_rs
 
-    @property
-    def results_count(self):
+    def results_count(self, sev_filter=None, conf_filter=None):
         '''Return the count of results
 
+        :param sev_filter: Severity level to filter lower
+        :param conf_filter: Confidence level to filter
         :return: Number of results in the set
         '''
-        return self.b_rs.count
+        count = 0
+
+        rank = constants.RANKING
+
+        for issue_file in self.b_rs.resstore:
+            for issue in self.b_rs.resstore[issue_file]:
+
+                if (sev_filter and
+                        rank.index(issue['issue_severity']) < sev_filter):
+                    # don't count if this doesn't match filter requirement
+                    continue
+
+                if (conf_filter and
+                        rank.index(issue['issue_confidence']) < conf_filter):
+                    continue
+
+                count += 1
+
+        return count
 
     def output_results(self, lines, level, output_filename, output_format):
         '''Outputs results from the result store
