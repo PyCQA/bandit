@@ -190,7 +190,7 @@ def main():
                          args.output_format)
 
     # return an exit code of 1 if there are results, 0 otherwise
-    if b_mgr.results_count > 0:
+    if b_mgr.results_count(sev_filter=args.level - 1) > 0:
         sys.exit(1)
     else:
         sys.exit(0)
