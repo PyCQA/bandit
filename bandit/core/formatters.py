@@ -102,6 +102,12 @@ def report_json(result_store, file_list, scores, excluded_files):
         machine_output['results'] = sorted(collector,
                                            key=itemgetter('filename'))
 
+    # timezone agnostic format
+    TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+
+    time_string = result_store.generated_time.strftime(TS_FORMAT)
+    machine_output['generated_at'] = time_string
+
     result = json.dumps(machine_output, sort_keys=True,
                         indent=2, separators=(',', ': '))
 
