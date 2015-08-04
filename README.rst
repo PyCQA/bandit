@@ -16,40 +16,40 @@ Installation
 Bandit is distributed on PyPI.  The best way to install it is with pip:
 
 
-***Create a virtual environment (optional):***
+Create a virtual environment (optional)::
 
     virtualenv bandit-env
 
-***Install Bandit:***
+Install Bandit::
 
     pip install bandit
     # Or, if you're working with a Python 3 project
     pip3.4 install bandit
 
-***Run Bandit:***
+Run Bandit::
 
     bandit -r path/to/your/code
 
 
 Bandit can also be installed from source.  To do so, download the source
-tarball from PyPI, then install it:
+tarball from PyPI, then install it::
 
     python setup.py install
 
 
 Usage
 -----
-Example usage across a code tree:
+Example usage across a code tree::
 
     bandit -r ~/openstack-repo/keystone
 
-Example usage across the examples/ directory, showing three lines of context
-and only reporting on the high-severity issues:
+Example usage across the ``examples/`` directory, showing three lines of
+context and only reporting on the high-severity issues::
 
     bandit examples/*.py -n 3 -lll
 
 Bandit can be run with profiles.  To run Bandit against the examples directory
-using only the plugins listed in the ShellInjection profile:
+using only the plugins listed in the ``ShellInjection`` profile::
 
     bandit examples/*.py -p ShellInjection
 
@@ -96,26 +96,26 @@ Configuration
 The Bandit config file is used to set several things, including:
  - profiles - defines group of tests which should or shouldn't be run
  - exclude_dirs - sections of the path, that if matched, will be excluded from
- scanning
+   scanning
  - plugin configs - used to tune plugins, for example: by tuning
- blacklist_imports, you can set which imports should be flagged
+   blacklist_imports, you can set which imports should be flagged
  - other - plugins directory, included file types, shell display
- colors, etc.
+   colors, etc.
 
 Bandit requires a config file.  Bandit will use bandit.yaml in the following
 preference order:
 
- - Bandit config file specified with -c command line option
+ - Bandit config file specified with ``-c`` command line option
  - bandit.yaml file from current working directory
- - bandit.yaml file from ~/.config/bandit/
- - bandit.yaml file in config/ directory of the Bandit package
+ - bandit.yaml file from ``~/.config/bandit/``
+ - bandit.yaml file in ``config/`` directory of the Bandit package
 
 
 Exclusions
 ----------
 In the event that a line of code triggers a Bandit issue, but that the line
 has been reviewed and the issue is a false positive or acceptable for some
-other reason, the line can be marked with a '# nosec' and any results
+other reason, the line can be marked with a ``# nosec`` and any results
 associated with it will not be reported.
 
 For example, although this line may cause Bandit to report a potential
@@ -126,18 +126,18 @@ security issue, it will not be reported::
 
 Vulnerability Tests
 -------------------
-Vulnerability tests or 'plugins' are defined in files in the plugins directory.
+Vulnerability tests or "plugins" are defined in files in the plugins directory.
 
 Tests are written in Python and are autodiscovered from the plugins directory.
 Each test can examine one or more type of Python statements.  Tests are marked
 with the types of Python statements they examine (for example: function call,
 string, import, etc).
 
-Tests are executed by the BanditNodeVisitor object as it visits each node in
-the AST.
+Tests are executed by the ``BanditNodeVisitor`` object as it visits each node
+in the AST.
 
-Test results are maintained in the BanditResultStore and aggregated for output
-at the completion of a test run.
+Test results are maintained in the ``BanditResultStore`` and aggregated for
+output at the completion of a test run.
 
 
 Writing Tests
@@ -181,6 +181,8 @@ Formatters need to accept 4 things:
 Plugins tend to take advantage of the `bandit.checks` decorator which allows
 the author to register a check for a particular type of AST node. For example,
 
+::
+
     @bandit.checks('Call')
     def prohibit_unsafe_deserialization(context):
         if 'unsafe_load' in context.call_function_name_qual:
@@ -193,7 +195,7 @@ the author to register a check for a particular type of AST node. For example,
 To register your plugin, you have two options:
 
 1. If you're using setuptools directly, add something like the following to
-   your `setup` call:
+   your ``setup`` call::
 
         # If you have an imaginary bson formatter in the bandit_bson module
         # and a function called `formatter`.
@@ -202,7 +204,7 @@ To register your plugin, you have two options:
         entry_points={'bandit.plugins': ['mako = bandit_mako']}
 
 2. If you're using pbr, add something like the following to your `setup.cfg`
-   file:
+   file::
 
         [entry_points]
         bandit.formatters =
@@ -215,11 +217,11 @@ Contributing
 Contributions to Bandit are always welcome!  We can be found on #openstack-security
 on Freenode IRC.
 
-The best way to get started with Bandit is to grab the source:
+The best way to get started with Bandit is to grab the source::
 
     git clone https://git.openstack.org/stackforge/bandit.git
 
-You can test any changes with tox:
+You can test any changes with tox::
 
     pip install tox
     tox -e pep8
