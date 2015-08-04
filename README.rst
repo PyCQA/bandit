@@ -81,7 +81,12 @@ Usage::
       -p PROFILE, --profile PROFILE
                             test set profile in config to use (defaults to all
                             tests)
-      -l, --level           results level filter
+      -l, --level           results severity filter. Show only issues of a given
+                            severity level or higher. -l for LOW, -ll for MEDIUM,
+                            -lll for HIGH
+      -i, --confidence      confidence results filter, show only issues of this
+                            level or higher. -i for LOW, -ii for MEDIUM, -iii for
+                            HIGH
       -f {csv,json,txt,xml}, --format {csv,json,txt,xml}
                             specify output format
       -o OUTPUT_FILE, --output OUTPUT_FILE
