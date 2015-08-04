@@ -96,10 +96,16 @@ def main():
         help='test set profile in config to use (defaults to all tests)'
     )
     parser.add_argument(
-        '-l', '--level', dest='level', action='count',
+        '-l', '--level', dest='severity', action='count',
         default=1, help=('results severity filter. Show only issues of a given'
                          ' severity level or higher. -l for LOW,'
                          ' -ll for MEDIUM, -lll for HIGH')
+    )
+    parser.add_argument(
+        '-i', '--confidence', dest='confidence', action='count',
+        default=1, help='confidence results filter, show only issues of this '
+                        'level or higher. -i for LOW, -ii for MEDIUM, '
+                        '-iii for HIGH'
     )
     parser.add_argument(
         '-f', '--format', dest='output_format', action='store',
@@ -188,11 +194,13 @@ def main():
         b_mgr.output_metaast()
 
     # trigger output of results by Bandit Manager
-    b_mgr.output_results(args.context_lines, args.level - 1, args.output_file,
+    b_mgr.output_results(args.context_lines, args.severity - 1,
+                         args.confidence - 1, args.output_file,
                          args.output_format)
 
     # return an exit code of 1 if there are results, 0 otherwise
-    if b_mgr.results_count(sev_filter=args.level - 1) > 0:
+    if b_mgr.results_count(sev_filter=args.severity - 1,
+                           conf_filter=args.confidence - 1) > 0:
         sys.exit(1)
     else:
         sys.exit(0)

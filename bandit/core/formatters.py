@@ -79,7 +79,7 @@ def report_json(result_store, file_list, scores, excluded_files):
 
     for filer, score in six.iteritems(stats):
         totals = {}
-        for i in range(result_store.level, len(constants.RANKING)):
+        for i in range(result_store.sev_level, len(constants.RANKING)):
             severity = constants.RANKING[i]
             severity_value = constants.RANKING_VALUES[severity]
             try:
@@ -189,7 +189,8 @@ def report_text(result_store, files_list, scores, excluded_files):
         for issue in issues:
 
             # if the result isn't filtered out by severity
-            if result_store._check_severity(issue['issue_severity']):
+            if (result_store._check_severity(issue['issue_severity']) and
+                    result_store._check_confidence(issue['issue_confidence'])):
                 tmpstr_list.append("\n%s>> Issue: %s\n" % (
                     color.get(issue['issue_severity'], color['DEFAULT']),
                     issue['issue_text']
@@ -239,7 +240,8 @@ def report_xml(result_store, file_list, scores, excluded_files):
             test = issue['test']
             testcase = ET.SubElement(root, 'testcase',
                                      classname=filename, name=test)
-            if result_store._check_severity(issue['issue_severity']):
+            if (result_store._check_severity(issue['issue_severity']) and
+                    result_store._check_confidence(issue['issue_confidence'])):
                 text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
                 text = text % (
                     issue['issue_severity'], issue['issue_confidence'],
