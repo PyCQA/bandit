@@ -20,8 +20,7 @@ import logging
 import os
 import sys
 
-from appdirs import site_config_dir
-from appdirs import user_config_dir
+import appdirs
 
 from bandit.core import manager as b_manager
 from bandit.core import utils
@@ -62,8 +61,9 @@ def _init_extensions():
 def _find_config():
     # prefer config file in the following order:
     # 1) current directory, 2) user home directory, 3) bundled config
-    config_dirs = (['.'] + [user_config_dir("bandit")] +
-                   site_config_dir("bandit", multipath=True).split(':'))
+    config_dirs = (
+        ['.'] + [appdirs.user_config_dir("bandit")] +
+        appdirs.site_config_dir("bandit", multipath=True).split(':'))
     config_locations = [s + BASE_CONFIG for s in config_dirs]
 
     # pip on Mac installs to the following path, but appdirs expects to
