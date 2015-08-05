@@ -3,6 +3,10 @@ Bandit
 
 A security linter from OpenStack Security
 
+* Free software: Apache license
+* Documentation: https://wiki.openstack.org/wiki/Security/Projects/Bandit
+* Source: https://git.openstack.org/cgit/openstack/bandit
+* Bugs: https://bugs.launchpad.net/bandit
 
 Overview
 --------
@@ -241,6 +245,10 @@ You can test any changes with tox::
     tox -e py34
     tox -e cover
 
+Reporting Bugs
+--------------
+Bugs should be reported on Launchpad. To file a bug against Bandit, visit:
+https://bugs.launchpad.net/bandit/+filebug
 
 Under Which Version of Python Should I Install Bandit?
 ------------------------------------------------------
