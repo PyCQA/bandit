@@ -42,7 +42,8 @@ def subprocess_without_shell_equals_true(context, config):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
-                text="subprocess call without a subshell."
+                text="subprocess call - check for execution of untrusted "
+                     "input."
             )
 
 
