@@ -188,6 +188,15 @@ class NoConfigFileFound(Exception):
         super(NoConfigFileFound, self).__init__(message)
 
 
+def warnings_formatter(message,
+                       category=UserWarning,
+                       filename='',
+                       lineno=-1,
+                       line=''):
+    '''Monkey patch for warnings.warn to suppress cruft output.'''
+    return "{0}\n".format(message)
+
+
 def get_module_qualname_from_path(path):
     '''Get the module's qualified name by analysis of the path.
 

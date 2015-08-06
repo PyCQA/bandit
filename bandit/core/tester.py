@@ -21,6 +21,9 @@ import six
 
 from bandit.core import constants
 from bandit.core import context as b_context
+from bandit.core import utils
+
+warnings.formatwarning = utils.warnings_formatter
 
 
 class BanditTester():

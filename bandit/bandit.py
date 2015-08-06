@@ -45,6 +45,8 @@ def _init_logger(debug=False, log_format=None):
     else:
         log_format_string = log_format
 
+    logging.captureWarnings(True)
+
     logger = logging.getLogger()
     logger.setLevel(log_level)
     handler = logging.StreamHandler(sys.stdout)
