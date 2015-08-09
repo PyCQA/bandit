@@ -236,6 +236,15 @@ class Context():
         else:
             return None
 
+    def get_call_arg_value(self, argument_name):
+        '''Gets the value of a named argument in a function call.
+
+        :return: named argument value
+        '''
+        kwd_values = self.call_keywords
+        if kwd_values is not None and argument_name in kwd_values:
+            return kwd_values[argument_name]
+
     def check_call_arg_value(self, argument_name, argument_values=None):
         '''Checks for a value of a named argument in a function call.
 
@@ -245,14 +254,13 @@ class Context():
         :return: Boolean True if argument found and matched, False if
         found and not matched, None if argument not found at all
         '''
-        kwd_values = self.call_keywords
-        if (kwd_values is not None and
-                argument_name in kwd_values):
+        arg_value = self.get_call_arg_value(argument_name)
+        if arg_value is not None:
             if not isinstance(argument_values, list):
                 # if passed a single value, or a tuple, convert to a list
                 argument_values = list((argument_values,))
             for val in argument_values:
-                if kwd_values[argument_name] == val:
+                if arg_value == val:
                     # if matched, fix up the context lineno for reporting
                     self.set_lineno_for_call_arg(argument_name)
                     return True
