@@ -87,8 +87,8 @@ blacklist_calls:
             qualnames: [marshal.load, marshal.loads]
             message: "Deserialization with the marshal module is possibly dangerous."
         - md5:
-            qualnames: [hashlib.md5]
-            message: "Use of insecure MD5 hash function."
+            qualnames: [hashlib.md5, Crypto.Hash.MD2.new, Crypto.Hash.MD4.new, Crypto.Hash.MD5.new, cryptography.hazmat.primitives.hashes.MD5]
+            message: "Use of insecure MD2, MD4, or MD5 hash function."
         - mktemp_q:
             qualnames: [tempfile.mktemp]
             message: "Use of insecure and deprecated function (mktemp)."
