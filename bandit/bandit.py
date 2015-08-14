@@ -19,13 +19,14 @@ import argparse
 import logging
 import os
 import sys
+import sysconfig
 
 import appdirs
 
 from bandit.core import manager as b_manager
 from bandit.core import utils
 
-BASE_CONFIG = '/bandit.yaml'
+BASE_CONFIG = 'bandit.yaml'
 
 
 def _init_logger(debug=False, log_format=None):
@@ -60,13 +61,25 @@ def _init_extensions():
     return ext_loader.MANAGER
 
 
+def _running_under_virtualenv():
+    if hasattr(sys, 'real_prefix'):
+        return True
+    elif sys.prefix != getattr(sys, 'base_prefix', sys.prefix):
+        return True
+
+
 def _find_config():
     # prefer config file in the following order:
     # 1) current directory, 2) user home directory, 3) bundled config
     config_dirs = (
         ['.'] + [appdirs.user_config_dir("bandit")] +
         appdirs.site_config_dir("bandit", multipath=True).split(':'))
-    config_locations = [s + BASE_CONFIG for s in config_dirs]
+    if _running_under_virtualenv():
+        config_dirs.append(os.path.join(sys.prefix, 'etc', 'bandit'))
+        config_dirs.append(
+            os.path.join(sysconfig.get_paths().get('purelib', ''),
+                         'bandit', 'config'))
+    config_locations = [os.path.join(s, BASE_CONFIG) for s in config_dirs]
 
     # pip on Mac installs to the following path, but appdirs expects to
     # follow Mac's BPFileSystem spec which doesn't include this path so

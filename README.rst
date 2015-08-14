@@ -120,12 +120,14 @@ GNU/Linux:
  - ~/.config/bandit/bandit.yaml
  - /etc/bandit/bandit.yaml
  - /usr/local/etc/bandit/bandit.yaml
+ - <path to venv>/etc/bandit/bandit.yaml (if running within virtualenv)
 
 Mac OSX:
  - ./bandit.yaml
  - /Users/${USER}/Library/Application Support/bandit/bandit.yaml
  - /Library/Application Support/bandit/bandit.yaml
  - /usr/local/etc/bandit/bandit.yaml
+ - <path to venv>/bandit/config/bandit.yaml (if running within virtualenv)
 
 Exclusions
 ----------
