@@ -18,6 +18,7 @@
 import ast
 import os
 import shutil
+import sys
 import tempfile
 import unittest
 
@@ -234,3 +235,13 @@ class UtilTests(unittest.TestCase):
 
         # the range should be the correct line numbers
         self.assertEqual([11, 12, 13], list(lrange))
+
+    def test_path_for_function(self):
+        path = b_utils.get_path_for_function(b_utils.get_path_for_function)
+        self.assertEqual(path, b_utils.__file__)
+
+    def test_path_for_function_no_file(self):
+        self.assertIsNone(b_utils.get_path_for_function(sys.settrace))
+
+    def test_path_for_function_no_module(self):
+        self.assertIsNone(b_utils.get_path_for_function(1))

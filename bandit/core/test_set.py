@@ -19,6 +19,8 @@ from collections import OrderedDict
 import copy
 import sys
 
+from bandit.core import utils
+
 
 class BanditTestSet():
 
@@ -123,9 +125,13 @@ class BanditTestSet():
                         self.tests[check] = {}
                     # if there is a test name collision, bail
                     if fn_name in self.tests[check]:
+                        path1 = (utils.get_path_for_function(function) or
+                                 '(unknown)')
+                        path2 = utils.get_path_for_function(
+                            self.tests[check][fn_name]) or '(unknown)'
                         self.logger.error(
                             "Duplicate function definition "
-                            "%s in %s", fn_name, file
+                            "%s in %s and %s", fn_name, path1, path2
                             )
                         sys.exit(2)
                     else:
