@@ -237,7 +237,7 @@ on Freenode IRC.
 
 The best way to get started with Bandit is to grab the source::
 
-    git clone https://git.openstack.org/stackforge/bandit.git
+    git clone https://git.openstack.org/openstack/bandit.git
 
 You can test any changes with tox::
 
