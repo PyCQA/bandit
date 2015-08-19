@@ -20,24 +20,15 @@ import bandit
 from bandit.core.test_properties import *
 
 
+_cached_blacklist_checks = []
+_cached_blacklist_config = None
+
+
 @takes_config
 @checks('Call')
 def blacklist_calls(context, config):
-    if config is not None and 'bad_name_sets' in config:
-        sets = config['bad_name_sets']
-    else:
-        sets = []
-
-    checks = []
-
-    # load all the checks from the config file
-    for cur_item in sets:
-        for blacklist_item in cur_item:
-            blacklist_object = cur_item[blacklist_item]
-            cur_check = _get_tuple_for_item(blacklist_object)
-            # skip bogus checks
-            if cur_check:
-                checks.append(cur_check)
+    _ensure_cache(config)
+    checks = _cached_blacklist_checks
 
     # for each check, go through and see if it matches all qualifications
     for check in checks:
@@ -90,6 +81,27 @@ def blacklist_calls(context, config):
                 text="%s  %s" % (message, context.call_args_string),
                 ident=context.call_function_name_qual
             )
+
+
+def _ensure_cache(config):
+    global _cached_blacklist_config
+    if _cached_blacklist_checks and config is _cached_blacklist_config:
+        return
+
+    _cached_blacklist_config = config
+    if config is not None and 'bad_name_sets' in config:
+        sets = config['bad_name_sets']
+    else:
+        sets = []
+
+    # load all the checks from the config file
+    for cur_item in sets:
+        for blacklist_item in cur_item:
+            blacklist_object = cur_item[blacklist_item]
+            cur_check = _get_tuple_for_item(blacklist_object)
+            # skip bogus checks
+            if cur_check:
+                _cached_blacklist_checks.append(cur_check)
 
 
 def _get_tuple_for_item(blacklist_object):
