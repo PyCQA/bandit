@@ -283,23 +283,24 @@ def linerange(node):
     """Get line number range from a node."""
     strip = {"body": None, "orelse": None,
              "handlers": None, "finalbody": None}
-    fields = dir(node)
     for key in strip.keys():
-        if key in fields:
+        if hasattr(node, key):
             strip[key] = getattr(node, key)
             setattr(node, key, [])
 
-    lines = set()
+    lines_min = 9999999999
+    lines_max = -1
     for n in ast.walk(node):
         if hasattr(n, 'lineno'):
-            lines.add(n.lineno)
+            lines_min = min(lines_min, n.lineno)
+            lines_max = max(lines_max, n.lineno)
 
     for key in strip.keys():
         if strip[key] is not None:
             setattr(node, key, strip[key])
 
-    if len(lines):
-        return range(min(lines), max(lines) + 1)
+    if lines_max > -1:
+        return range(lines_min, lines_max + 1)
     return [0, 1]
 
 
