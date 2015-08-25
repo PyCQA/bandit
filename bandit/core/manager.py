@@ -14,6 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from collections import Counter
 import fnmatch
 import logging
 import os
@@ -53,6 +54,7 @@ class BanditManager():
         self.b_ma = b_meta_ast.BanditMetaAst()
         self.skipped = []
         self.results = []
+        self.metrics = {}
         self.agg_type = agg_type
 
         # if the profile name was specified, try to find it in the config
@@ -212,9 +214,11 @@ class BanditManager():
                 with open(fname, 'rU') as fdata:
                     try:
                         # parse the current file
-                        score = self._execute_ast_visitor(
+                        score, metric = self._execute_ast_visitor(
                             fname, fdata, self.b_ma, self.b_ts)
                         self.scores.append(score)
+                        metric.update(_get_issue_counts([score, ]))
+                        self.metrics[fname] = metric
                     except KeyboardInterrupt as e:
                         sys.exit(2)
             except IOError as e:
@@ -232,6 +236,12 @@ class BanditManager():
         # reflect any files which may have been skipped
         self.files_list = new_files_list
 
+        # do final aggregation of metrics
+        c = Counter()
+        for fname in self.metrics:
+            c.update(self.metrics[fname])
+        self.metrics['_totals'] = dict(c)
+
     def _execute_ast_visitor(self, fname, fdata, b_ma, b_ts):
         '''Execute AST parse on each file
 
@@ -246,9 +256,9 @@ class BanditManager():
             res = b_node_visitor.BanditNodeVisitor(
                 fname, self.b_conf, b_ma, b_ts, self.debug
             )
-            score = res.process(fdata)
+            score, metrics = res.process(fdata)
             self.results.extend(res.tester.results)
-        return score
+        return score, metrics
 
 
 def _get_files_from_dir(files_dir, included_globs=['*.py'],
@@ -300,3 +310,24 @@ def _matches_glob_list(filename, glob_list):
         if fnmatch.fnmatch(filename, glob):
             return True
     return False
+
+
+def _get_issue_counts(scores):
+    '''Get issue counts aggregated by confidence/severity rankings.
+
+    :param scores: list of scores to aggregate / count
+    :return: aggregated total (count) of issues identified
+    '''
+    issue_counts = {}
+    for score in scores:
+        for res in b_constants.CRITERIA:
+            for i, rank in enumerate(b_constants.RANKING):
+                label = '{0}.{1}'.format(res, rank)
+                if label not in issue_counts:
+                    issue_counts[label] = 0
+                    count = (
+                        score[res][i] /
+                        b_constants.RANKING_VALUES[rank]
+                    )
+                    issue_counts[label] += count
+    return issue_counts

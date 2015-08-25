@@ -82,6 +82,31 @@ class FunctionalTests(testtools.TestCase):
                 result += sum(test_scores[score_type])
         self.assertEqual(expected, result)
 
+    def check_metrics(self, example_script, expect):
+        '''A helper method to test the metrics being returned.
+
+        :param example_script: Filename of an example script to test
+        :param expect: dict with expected values of metrics
+        '''
+        # reset scores and metrics for subsequent calls to run_example
+        self.b_mgr.scores = []
+        self.b_mgr.metrics = {}
+        self.run_example(example_script)
+        metrics = self.b_mgr.metrics
+        # test general metrics (excludes issue counts)
+        for k in expect:
+            if k != 'issues':
+                self.assertEqual(expect[k], metrics['_totals'][k])
+        # test issue counts
+        if 'issues' in expect:
+            for res in C.CRITERIA:
+                for rank in C.RANKING:
+                    label = '{0}.{1}'.format(res, rank)
+                    expected = 0
+                    if expect['issues'].get(res, None).get(rank, None):
+                        expected = expect['issues'][res][rank]
+                    self.assertEqual(expected, metrics['_totals'][label])
+
     def test_binding(self):
         '''Test the bind-to-0.0.0.0 example.'''
         expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'MEDIUM': 1}}
@@ -382,6 +407,18 @@ class FunctionalTests(testtools.TestCase):
                   'CONFIDENCE': {'HIGH': 2}}
 
         self.check_example('try_except_pass.py', expect)
+
+    def test_metric_gathering(self):
+        expect = {
+            'nosec': 2, 'loc': 7,
+            'issues': { 'CONFIDENCE': {'HIGH': 5}, 'SEVERITY': {'LOW': 5} }
+        }
+        self.check_metrics('skip.py', expect)
+        expect = {
+            'nosec': 0, 'loc': 4,
+            'issues': { 'CONFIDENCE': {'HIGH': 2}, 'SEVERITY': {'LOW': 2} }
+        }
+        self.check_metrics('imports.py', expect)
 
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
