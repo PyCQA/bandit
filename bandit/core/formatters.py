@@ -25,6 +25,7 @@ from bandit.core import constants
 def report_csv(result_store, file_list, scores, excluded_files):
     '''Prints/returns warnings in JSON format
 
+    :param result_store: results of scan as BanditResultStore object
     :param files_list: Which files were inspected
     :param scores: The scores awarded to each file in the scope
     :param excluded_files: Which files were excluded from the scope
@@ -54,8 +55,7 @@ def report_csv(result_store, file_list, scores, excluded_files):
         writer = csv.DictWriter(fout, fieldnames=fieldnames,
                                 extrasaction='ignore')
         writer.writeheader()
-        for result in results:
-            writer.writerow(result)
+        writer.writerows(results)
 
     print("CSV output written to file: %s" % result_store.out_file)
 
@@ -63,6 +63,7 @@ def report_csv(result_store, file_list, scores, excluded_files):
 def report_json(result_store, file_list, scores, excluded_files):
     '''Prints/returns warnings in JSON format
 
+    :param result_store: results of scan as BanditResultStore object
     :param files_list: Which files were inspected
     :param scores: The scores awarded to each file in the scope
     :param excluded_files: Which files were excluded from the scope
@@ -123,6 +124,7 @@ def report_json(result_store, file_list, scores, excluded_files):
 def report_text(result_store, files_list, scores, excluded_files):
     '''Prints the contents of the result store
 
+    :param result_store: results of scan as BanditResultStore object
     :param files_list: Which files were inspected
     :param scores: The scores awarded to each file in the scope
     :param excluded_files: List of files excluded from the scope
@@ -222,6 +224,7 @@ def report_text(result_store, files_list, scores, excluded_files):
 def report_xml(result_store, file_list, scores, excluded_files):
     '''Prints/returns warnings in XML format (Xunit compatible)
 
+    :param result_store: results of scan as BanditResultStore object
     :param files_list: Which files were inspected
     :param scores: The scores awarded to each file in the scope
     :param excluded_files: Which files were excluded from the scope
