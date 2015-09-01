@@ -17,7 +17,6 @@
 import _ast
 import ast
 import os.path
-import symtable
 
 
 """Various helper functions."""
@@ -96,18 +95,6 @@ def deepgetattr(obj, attr):
     for key in attr.split('.'):
         obj = getattr(obj, key)
     return obj
-
-
-def describe_symbol(sym):
-    assert type(sym) == symtable.Symbol
-    print("Symbol:", sym.get_name())
-
-    for prop in [
-            'referenced', 'imported', 'parameter',
-            'global', 'declared_global', 'local',
-            'free', 'assigned', 'namespace']:
-        if getattr(sym, 'is_' + prop)():
-            print('    is', prop)
 
 
 def lines_with_context(line_no, line_range, max_lines, file_len):
