@@ -9,5 +9,5 @@ venv*
 .testrepository
 build/*
 cover/*
-.cover
+.coverage
 docs/build/*
