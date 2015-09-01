@@ -65,14 +65,7 @@ class BanditConfig():
         cur_item = self._config
         for level in option_levels:
             if level in cur_item:
-                try:
-                    cur_item = cur_item[level]
-                except Exception:
-                    self._logger.error(
-                        "error while accessing config property: %s",
-                        option_string
-                    )
-                    return None
+                cur_item = cur_item[level]
             else:
                 return None
 
