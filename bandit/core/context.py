@@ -168,10 +168,11 @@ class Context():
         :return: List of defaults
         '''
         defaults = []
-        for default in self._context['node'].args.defaults:
-            defaults.append(utils.get_qual_attr(
-                default,
-                self._context['import_aliases']))
+        if 'node' in self._context:
+            for default in self._context['node'].args.defaults:
+                defaults.append(utils.get_qual_attr(
+                    default,
+                    self._context['import_aliases']))
         return defaults
 
     def _get_literal_value(self, literal):
