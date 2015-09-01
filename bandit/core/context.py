@@ -70,7 +70,7 @@ class Context():
 
         :return: The number of args a function call has
         '''
-        if hasattr(self._context['call'], 'args'):
+        if 'call' in self._context and hasattr(self._context['call'], 'args'):
             return len(self._context['call'].args)
         else:
             return None
