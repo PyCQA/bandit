@@ -129,7 +129,7 @@ def lines_with_context(line_no, line_range, max_lines, file_len):
     # limit scope to max_lines
     if len(l_range) > max_lines:
         # figure out a sane distribution of scope (extra lines after)
-        after = (max_lines - 1) / 2
+        after = (max_lines - 1) // 2
         before = max_lines - (after + 1)
         target = l_range.index(line_no)
 
