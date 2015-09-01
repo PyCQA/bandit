@@ -81,7 +81,7 @@ class Context():
 
         :return: Returns a string representation of the call arguments
         '''
-        if 'call' in self._context and hasattr(self._context, 'args'):
+        if 'call' in self._context and hasattr(self._context['call'], 'args'):
             return utils.ast_args_to_str(self._context['call'].args)
         else:
             return ''
