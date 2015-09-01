@@ -166,7 +166,7 @@ class BanditResultStore():
         issue_line = []
         prepend = ""
 
-        file_len = self._file_length(issue['fname'])
+        file_len = sum(1 for line in open(issue['fname']))
         lines = utils.lines_with_context(issue['lineno'],
                                          issue['linerange'],
                                          self.max_lines,
@@ -181,12 +181,6 @@ class BanditResultStore():
                                   l))
 
         return ''.join(issue_line)
-
-    def _file_length(self, filename):
-        with open(filename) as f:
-            for line, l in enumerate(f):
-                pass
-        return line + 1
 
     def _sum_scores(self, scores):
         '''Get total of all scores
