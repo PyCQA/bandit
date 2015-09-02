@@ -141,14 +141,22 @@ class Context():
 
     @property
     def string_val(self):
-        '''Get a string value of a standalone string
+        '''Get the value of a standalone unicode or string object
 
-        :return: String value of a standalone string
+        :return: value of a standalone unicode or string object
         '''
         if 'str' in self._context:
             return utils.safe_str(self._context['str'])
         else:
             return None
+
+    @property
+    def bytes_val(self):
+        '''Get the value of a standalone bytes object (py3 only)
+
+        :return: value of a standalone bytes object
+        '''
+        return self._context.get('bytes')
 
     @property
     def statement(self):
