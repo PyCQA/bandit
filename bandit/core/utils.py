@@ -252,13 +252,17 @@ def namespace_path_split(path):
     return tuple(path.rsplit('.', 1))
 
 
-def safe_str(obj):
-    '''return the byte string representation of obj.'''
-    try:
-        return str(obj)
-    except UnicodeEncodeError:
-        # obj is unicode
-        return unicode(obj).encode('unicode_escape')
+def escaped_bytes_representation(b):
+    '''PY3 bytes need escaping for comparison with other strings.
+
+    In practice it turns control characters into acceptable codepoints then
+    encodes them into bytes again to turn unprintable bytes into printable
+    escape sequences.
+
+    This is safe to do for the whole range 0..255 and result matches
+    unicode_escape on a unicode string.
+    '''
+    return b.decode('unicode_escape').encode('unicode_escape')
 
 
 def linerange(node):

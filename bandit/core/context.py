@@ -146,7 +146,7 @@ class Context():
         :return: value of a standalone unicode or string object
         '''
         if 'str' in self._context:
-            return utils.safe_str(self._context['str'])
+            return self._context['str']
         else:
             return None
 
@@ -157,6 +157,29 @@ class Context():
         :return: value of a standalone bytes object
         '''
         return self._context.get('bytes')
+
+    @property
+    def string_val_as_escaped_bytes(self):
+        '''Get escaped value of the object.
+
+        Turn the value of a string or bytes object into byte sequence with
+        unknown, control, and \ characters escaped.
+
+        This function should be used when looking for a known sequence in a
+        potentially badly encoded string in the code.
+
+        :return: sequence of printable ascii bytes representing original string
+        '''
+        val = self.string_val
+        if val is not None:
+            # it's any of str or unicode in py2, or str in py3
+            return val.encode('unicode_escape')
+
+        val = self.bytes_val
+        if val is not None:
+            return utils.escaped_bytes_representation(val)
+
+        return None
 
     @property
     def statement(self):
