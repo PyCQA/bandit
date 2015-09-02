@@ -275,6 +275,7 @@ class Context():
         :return: Value of the argument at the specified position if it exists
         '''
         if (
+            'call' in self._context and
             hasattr(self._context['call'], 'args') and
             position_num < len(self._context['call'].args)
         ):
