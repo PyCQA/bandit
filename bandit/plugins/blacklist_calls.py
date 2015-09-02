@@ -87,7 +87,8 @@ def blacklist_calls(context, config):
 
             return bandit.Issue(
                 severity=level, confidence=confidence,
-                text="%s  %s" % (message, context.call_args_string)
+                text="%s  %s" % (message, context.call_args_string),
+                ident=context.call_function_name_qual
             )
 
 

@@ -33,7 +33,7 @@ class BanditNodeVisitor(object):
                         'imports': None, 'import_aliases': None, 'call': None,
                         'function': None, 'lineno': None, 'skip_lines': None}
 
-    def __init__(self, fname, config, metaast, results, testset,
+    def __init__(self, fname, config, metaast, testset,
                  debug):
         self.debug = debug
         self.seen = 0
@@ -45,14 +45,13 @@ class BanditNodeVisitor(object):
         self.fname = fname
         self.config = config
         self.metaast = metaast
-        self.results = results
         self.testset = testset
         self.imports = set()
         self.context_template['imports'] = self.imports
         self.import_aliases = {}
         self.context_template['import_aliases'] = self.import_aliases
         self.tester = b_tester.BanditTester(
-            self.config, self.results, self.testset, self.debug
+            self.config, self.testset, self.debug
         )
 
         # in some cases we can't determine a qualified name

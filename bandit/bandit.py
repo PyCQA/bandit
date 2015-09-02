@@ -24,8 +24,10 @@ import sysconfig
 import appdirs
 
 from bandit.core import config as b_config
+from bandit.core import constants
 from bandit.core import manager as b_manager
 from bandit.core import utils
+
 
 BASE_CONFIG = 'bandit.yaml'
 logger = logging.getLogger()
@@ -230,8 +232,10 @@ def main():
         b_mgr.output_metaast()
 
     # trigger output of results by Bandit Manager
-    b_mgr.output_results(args.context_lines, args.severity - 1,
-                         args.confidence - 1, args.output_file,
+    b_mgr.output_results(args.context_lines,
+                         constants.RANKING[args.severity - 1],
+                         constants.RANKING[args.confidence - 1],
+                         args.output_file,
                          args.output_format)
 
     # return an exit code of 1 if there are results, 0 otherwise

@@ -26,28 +26,32 @@ from bandit.core import constants
 logger = logging.getLogger(__name__)
 
 
-def report_csv(result_store, file_list, scores, excluded_files):
-    '''Prints/returns warnings in JSON format
+def _sum_scores(manager, sev):
+    summation = 0
+    for scores in manager.scores:
+        summation += sum(scores['CONFIDENCE'][sev:])
+        summation += sum(scores['SEVERITY'][sev:])
+    return summation
 
-    :param result_store: results of scan as BanditResultStore object
-    :param files_list: Which files were inspected
-    :param scores: The scores awarded to each file in the scope
-    :param excluded_files: Which files were excluded from the scope
-    :return: A collection containing the CSV data
+
+def report_csv(manager, filename, sev_level, conf_level, lines=-1,
+               out_format='csv'):
+    '''Prints issues in CSV format
+
+    :param manager: the bandit manager object
+    :param filename: The output file name, or None for stdout
+    :param sev_level: Filtering severity level
+    :param conf_level: Filtering confidence level
+    :param lines: Number of lines to report, -1 for all
+    :param out_format: The ouput format name
     '''
 
-    results = result_store._get_issue_list()
+    results = manager.get_issue_list()
 
-    # Remove the code from all the issues in the list, as we will not
-    # be including it in the CSV data.
-    def del_code(issue):
-        del issue['code']
-    map(del_code, results)
+    if filename is None:
+        filename = 'bandit_results.csv'
 
-    if result_store.out_file is None:
-        result_store.out_file = 'bandit_results.csv'
-
-    with open(result_store.out_file, 'w') as fout:
+    with open(filename, 'w') as fout:
         fieldnames = ['filename',
                       'test_name',
                       'issue_severity',
@@ -59,33 +63,37 @@ def report_csv(result_store, file_list, scores, excluded_files):
         writer = csv.DictWriter(fout, fieldnames=fieldnames,
                                 extrasaction='ignore')
         writer.writeheader()
-        writer.writerows(results)
+        for result in results:
+            if result.filter(sev_level, conf_level):
+                writer.writerow(result.as_dict(with_code=False))
 
-    print("CSV output written to file: %s" % result_store.out_file)
+    print("CSV output written to file: %s" % filename)
 
 
-def report_json(result_store, file_list, scores, excluded_files):
-    '''Prints/returns warnings in JSON format
+def report_json(manager, filename, sev_level, conf_level, lines=-1,
+                out_format='json'):
+    '''''Prints issues in JSON format
 
-    :param result_store: results of scan as BanditResultStore object
-    :param files_list: Which files were inspected
-    :param scores: The scores awarded to each file in the scope
-    :param excluded_files: Which files were excluded from the scope
-    :return: JSON string
+    :param manager: the bandit manager object
+    :param filename: The output file name, or None for stdout
+    :param sev_level: Filtering severity level
+    :param conf_level: Filtering confidence level
+    :param lines: Number of lines to report, -1 for all
+    :param out_format: The ouput format name
     '''
 
-    stats = dict(zip(file_list, scores))
-
+    stats = dict(zip(manager.files_list, manager.scores))
     machine_output = dict({'results': [], 'errors': [], 'stats': []})
-    collector = list()
-    for (fname, reason) in result_store.skipped:
+    for (fname, reason) in manager.skipped:
         machine_output['errors'].append({'filename': fname,
-                                        'reason': reason})
+                                         'reason': reason})
 
     for filer, score in six.iteritems(stats):
         totals = {}
-        for i in range(result_store.sev_level, len(constants.RANKING)):
-            severity = constants.RANKING[i]
+        rank = constants.RANKING
+        sev_idx = rank.index(sev_level)
+        for i in range(sev_idx, len(rank)):
+            severity = rank[i]
             severity_value = constants.RANKING_VALUES[severity]
             try:
                 sc = score['SEVERITY'][i] / severity_value
@@ -95,14 +103,18 @@ def report_json(result_store, file_list, scores, excluded_files):
 
         machine_output['stats'].append({
             'filename': filer,
-            'score': result_store._sum_scores(score),
+            'score': _sum_scores(manager, sev_idx),
             'issue totals': totals})
 
-    collector = result_store._get_issue_list()
+    results = manager.get_issue_list()
+    collector = []
+    for result in results:
+        if result.filter(sev_level, conf_level):
+            collector.append(result.as_dict())
 
-    if result_store.agg_type == 'vuln':
+    if manager.agg_type == 'vuln':
         machine_output['results'] = sorted(collector,
-                                           key=itemgetter('error_type'))
+                                           key=itemgetter('test_name'))
     else:
         machine_output['results'] = sorted(collector,
                                            key=itemgetter('filename'))
@@ -110,29 +122,30 @@ def report_json(result_store, file_list, scores, excluded_files):
     # timezone agnostic format
     TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
-    time_string = result_store.generated_time.strftime(TS_FORMAT)
+    time_string = datetime.datetime.utcnow().strftime(TS_FORMAT)
     machine_output['generated_at'] = time_string
 
     result = json.dumps(machine_output, sort_keys=True,
                         indent=2, separators=(',', ': '))
 
-    if result_store.out_file:
-        with open(result_store.out_file, 'w') as fout:
+    if filename:
+        with open(filename, 'w') as fout:
             fout.write(result)
-            # XXX: Should this be log output? (ukbelch)
-        print("JSON output written to file: %s" % result_store.out_file)
+        logger.info("JSON output written to file: %s" % filename)
     else:
         print(result)
 
 
-def report_text(result_store, files_list, scores, excluded_files):
-    '''Prints the contents of the result store
+def report_text(manager, filename, sev_level, conf_level, lines=-1,
+                out_format='txt'):
+    '''Prints issues in Text formt
 
-    :param result_store: results of scan as BanditResultStore object
-    :param files_list: Which files were inspected
-    :param scores: The scores awarded to each file in the scope
-    :param excluded_files: List of files excluded from the scope
-    :return: TXT string with appropriate TTY coloring for terminals
+    :param manager: the bandit manager object
+    :param filename: The output file name, or None for stdout
+    :param sev_level: Filtering severity level
+    :param conf_level: Filtering confidence level
+    :param lines: Number of lines to report, -1 for all
+    :param out_format: The ouput format name
     '''
 
     tmpstr_list = []
@@ -140,9 +153,9 @@ def report_text(result_store, files_list, scores, excluded_files):
     # use a defaultdict to default to an empty string
     color = collections.defaultdict(str)
 
-    if result_store.format == 'txt':
+    if out_format == 'txt':
         # get text colors from settings for TTY output
-        get_setting = result_store.config.get_setting
+        get_setting = manager.b_conf.get_setting
         color = {'HEADER': get_setting('color_HEADER'),
                  'DEFAULT': get_setting('color_DEFAULT'),
                  'LOW': get_setting('color_LOW'),
@@ -157,30 +170,30 @@ def report_text(result_store, files_list, scores, excluded_files):
         datetime.datetime.utcnow()
     ))
 
-    if result_store.verbose:
+    if manager.verbose:
         # print which files were inspected
         tmpstr_list.append("\n%sFiles in scope (%s):%s\n" % (
-            color['HEADER'], len(files_list),
+            color['HEADER'], len(manager.files_list),
             color['DEFAULT']
         ))
 
-        for item in zip(files_list, map(result_store._sum_scores, scores)):
+        for item in zip(manager.files_list, map(_sum_scores, manager.scores)):
             tmpstr_list.append("\t%s (score: %i)\n" % item)
 
         # print which files were excluded and why
         tmpstr_list.append("\n%sFiles excluded (%s):%s\n" %
-                           (color['HEADER'], len(excluded_files),
+                           (color['HEADER'], len(manager.skipped),
                             color['DEFAULT']))
-        for fname in excluded_files:
+        for fname in manager.skipped:
             tmpstr_list.append("\t%s\n" % fname)
 
     # print which files were skipped and why
     tmpstr_list.append("\n%sFiles skipped (%s):%s\n" % (
-        color['HEADER'], len(result_store.skipped),
+        color['HEADER'], len(manager.skipped),
         color['DEFAULT']
     ))
 
-    for (fname, reason) in result_store.skipped:
+    for (fname, reason) in manager.skipped:
         tmpstr_list.append("\t%s (%s)\n" % (fname, reason))
 
     # print the results
@@ -188,75 +201,74 @@ def report_text(result_store, files_list, scores, excluded_files):
         color['HEADER'], color['DEFAULT']
     ))
 
-    if result_store.count == 0:
+    issues = manager.get_issue_list()
+    if not len(issues):
         tmpstr_list.append("\tNo issues identified.\n")
 
-    for filename, issues in result_store.resstore.items():
-        for issue in issues:
+    for issue in issues:
+        # if the result isn't filtered out by severity
+        if issue.filter(sev_level, conf_level):
+            tmpstr_list.append("\n%s>> Issue: %s\n" % (
+                color.get(issue.severity, color['DEFAULT']),
+                issue.text
+            ))
+            tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
+                issue.severity.capitalize(),
+                issue.confidence.capitalize()
+            ))
+            tmpstr_list.append("   Location: %s:%s\n" % (
+                issue.fname,
+                issue.lineno
+            ))
+            tmpstr_list.append(color['DEFAULT'])
 
-            # if the result isn't filtered out by severity
-            if (result_store._check_severity(issue['issue_severity']) and
-                    result_store._check_confidence(issue['issue_confidence'])):
-                tmpstr_list.append("\n%s>> Issue: %s\n" % (
-                    color.get(issue['issue_severity'], color['DEFAULT']),
-                    issue['issue_text']
-                ))
-                tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
-                    issue['issue_severity'].capitalize(),
-                    issue['issue_confidence'].capitalize()
-                ))
-                tmpstr_list.append("   Location: %s:%s\n" % (
-                    issue['fname'],
-                    issue['lineno']
-                ))
-                tmpstr_list.append(color['DEFAULT'])
-
-                tmpstr_list.append(
-                    result_store._get_code(issue, True))
+            tmpstr_list.append(
+                issue.get_code(lines, True))
 
     result = ''.join(tmpstr_list)
 
-    if result_store.out_file:
-        with open(result_store.out_file, 'w') as fout:
+    if filename:
+        with open(filename, 'w') as fout:
             fout.write(result)
-        logger.info("Text output written to file: %s", result_store.out_file)
+        logger.info("Text output written to file: %s", filename)
     else:
         print(result)
 
 
-def report_xml(result_store, file_list, scores, excluded_files):
-    '''Prints/returns warnings in XML format (Xunit compatible)
+def report_xml(manager, filename, sev_level, conf_level, lines=-1,
+               out_format='xml'):
+    '''Prints issues in XML formt
 
-    :param result_store: results of scan as BanditResultStore object
-    :param files_list: Which files were inspected
-    :param scores: The scores awarded to each file in the scope
-    :param excluded_files: Which files were excluded from the scope
-    :return: A collection containing the XML data
+    :param manager: the bandit manager object
+    :param filename: The output file name, or None for stdout
+    :param sev_level: Filtering severity level
+    :param conf_level: Filtering confidence level
+    :param lines: Number of lines to report, -1 for all
+    :param out_format: The ouput format name
     '''
 
     import xml.etree.cElementTree as ET
 
-    if result_store.out_file is None:
-        result_store.out_file = 'bandit_results.xml'
+    if filename is None:
+        filename = 'bandit_results.xml'
 
-    items = result_store.resstore.items()
-    root = ET.Element('testsuite', name='bandit', tests=str(len(items)))
-    for filename, issues in items:
-        for issue in issues:
-            test = issue['test']
-            testcase = ET.SubElement(root, 'testcase',
-                                     classname=filename, name=test)
-            if (result_store._check_severity(issue['issue_severity']) and
-                    result_store._check_confidence(issue['issue_confidence'])):
-                text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
-                text = text % (
-                    issue['issue_severity'], issue['issue_confidence'],
-                    issue['issue_text'], issue['fname'], issue['lineno'])
-                ET.SubElement(testcase, 'error',
-                              type=issue['issue_severity'],
-                              message=issue['issue_text']).text = text
+    issues = manager.get_issue_list()
+    root = ET.Element('testsuite', name='bandit', tests=str(len(issues)))
+
+    for issue in issues:
+        test = issue.test
+        testcase = ET.SubElement(root, 'testcase',
+                                 classname=issue.fname, name=test)
+        if issue.filter(sev_level, conf_level):
+            text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
+            text = text % (
+                issue.severity, issue.confidence,
+                issue.text, issue.fname, issue.lineno)
+            ET.SubElement(testcase, 'error',
+                          type=issue.severity,
+                          message=issue.text).text = text
 
     tree = ET.ElementTree(root)
-    tree.write(result_store.out_file, encoding='utf-8', xml_declaration=True)
+    tree.write(filename, encoding='utf-8', xml_declaration=True)
 
-    print("XML output written to file: %s" % result_store.out_file)
+    print("XML output written to file: %s" % filename)
