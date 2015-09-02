@@ -16,7 +16,6 @@
 import logging
 import os
 import tempfile
-import unittest
 import uuid
 
 import fixtures

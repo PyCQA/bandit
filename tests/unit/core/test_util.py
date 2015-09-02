@@ -20,7 +20,8 @@ import os
 import shutil
 import sys
 import tempfile
-import unittest
+
+import testtools
 
 import six
 
@@ -33,7 +34,7 @@ def _touch(path):
     newf.close()
 
 
-class UtilTests(unittest.TestCase):
+class UtilTests(testtools.TestCase):
     '''This set of tests exercises bandit.core.util functions
     '''
 
@@ -42,6 +43,7 @@ class UtilTests(unittest.TestCase):
         self._setup_get_module_qualname_from_path()
 
     def tearDown(self):
+        super(UtilTests, self).tearDown()
         self._tear_down_get_module_qualname_from_path()
 
     def _setup_get_module_qualname_from_path(self):
@@ -186,8 +188,8 @@ class UtilTests(unittest.TestCase):
     def test_get_module_qualname_from_path_dir(self):
         '''Test get_module_qualname_from_path with dir path '''
 
-        with self.assertRaises(b_utils.InvalidModulePath):
-            b_utils.get_module_qualname_from_path('/tmp/')
+        self.assertRaises(b_utils.InvalidModulePath,
+                          b_utils.get_module_qualname_from_path, '/tmp/')
 
     def test_namespace_path_join(self):
         p = b_utils.namespace_path_join('base1.base2', 'name')
