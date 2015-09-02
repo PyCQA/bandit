@@ -24,6 +24,7 @@ import mock
 import testtools
 
 from bandit.core import config
+from bandit.core import utils
 
 
 LOG = logging.getLogger('bandit.test')
@@ -71,16 +72,11 @@ class TestInit(testtools.TestCase):
         self.assertEqual(f.example_value, b_config.get_option(f.example_key))
 
     def test_file_does_not_exist(self):
-        # When the config file doesn't exist, sys.exit(2) is called.
+        # When the config file doesn't exist, ConfigFileUnopenable is raised.
 
         cfg_file = os.path.join(os.getcwd(), 'notafile')
-
-        m = self.useFixture(
-            fixtures.MockPatch('sys.exit', side_effect=Exception)).mock
-
-        self.assertRaises(Exception, config.BanditConfig, LOG, cfg_file)
-
-        m.assert_called_once_with(2)
+        self.assertRaisesRegex(utils.ConfigFileUnopenable, cfg_file,
+                               config.BanditConfig, LOG, cfg_file)
 
     def test_yaml_invalid(self):
         # When the config yaml file isn't valid, sys.exit(2) is called.
@@ -89,13 +85,9 @@ class TestInit(testtools.TestCase):
         # end it.
         invalid_yaml = '- [ something'
         f = self.useFixture(TempFile(invalid_yaml))
-
-        m = self.useFixture(
-            fixtures.MockPatch('sys.exit', side_effect=Exception)).mock
-
-        self.assertRaises(Exception, config.BanditConfig, LOG, f.name)
-
-        m.assert_called_once_with(2)
+        self.assertRaisesRegex(
+            utils.ConfigFileInvalidYaml, f.name, config.BanditConfig,
+            LOG, f.name)
 
     def test_progress_conf_setting(self):
         # The progress setting can be set in bandit.yaml via
