@@ -24,17 +24,6 @@ from bandit.core.utils import InvalidModulePath
 
 
 class BanditNodeVisitor(object):
-
-    imports = set()
-    import_aliases = {}
-    logger = None
-    results = None
-    tester = None
-    testset = None
-    fname = None
-    depth = 0
-
-    context = None
     context_template = {'node': None, 'filename': None,
                         'name': None, 'qualname': None, 'module': None,
                         'imports': None, 'import_aliases': None, 'call': None,
@@ -48,6 +37,7 @@ class BanditNodeVisitor(object):
             'SEVERITY': [0] * len(constants.RANKING),
             'CONFIDENCE': [0] * len(constants.RANKING)
         }
+        self.depth = 0
         self.fname = fname
         self.logger = logger
         self.config = config
