@@ -184,9 +184,13 @@ def main():
             logger.error(e)
             sys.exit(2)
 
-    b_mgr = b_manager.BanditManager(config_file, args.agg_type,
-                                    args.debug, profile_name=args.profile,
-                                    verbose=args.verbose)
+    try:
+        b_mgr = b_manager.BanditManager(config_file, args.agg_type,
+                                        args.debug, profile_name=args.profile,
+                                        verbose=args.verbose)
+    except (utils.ConfigFileUnopenable, utils.ConfigFileInvalidYaml) as e:
+        logger.error('%s', e)
+        sys.exit(2)
 
     if args.output_format != "json":
         logger.info("using config: %s", config_file)

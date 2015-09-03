@@ -19,6 +19,7 @@ import sys
 import yaml
 
 from bandit.core import constants
+from bandit.core import utils
 
 
 class BanditConfig():
@@ -33,7 +34,12 @@ class BanditConfig():
         Error out if loading the yaml file fails for any reason.
         :param logger: Logger to be used in the case of errors
         :param config_file: The Bandit yaml config file
-        :return: -
+
+        :raises bandit.utils.ConfigFileUnopenable: If the config file cannot be
+            opened.
+        :raises bandit.utils.ConfigFileInvalidYaml: If the config file cannot
+            be parsed.
+
         '''
 
         self._logger = logger
@@ -41,14 +47,12 @@ class BanditConfig():
         try:
             f = open(config_file, 'r')
         except IOError:
-            logger.error("could not open config file: %s", config_file)
-            sys.exit(2)
-        else:
-            try:
-                self._config = yaml.safe_load(f)
-            except yaml.YAMLError:
-                logger.error("Invalid config file specified: %s", config_file)
-                sys.exit(2)
+            raise utils.ConfigFileUnopenable(config_file)
+
+        try:
+            self._config = yaml.safe_load(f)
+        except yaml.YAMLError:
+            raise utils.ConfigFileInvalidYaml(config_file)
 
         self._init_settings()
 

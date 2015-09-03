@@ -180,6 +180,22 @@ class NoConfigFileFound(Exception):
         super(NoConfigFileFound, self).__init__(message)
 
 
+class ConfigFileUnopenable(Exception):
+    """Raised when the config file cannot be opened."""
+    def __init__(self, config_file):
+        self.config_file = config_file
+        message = 'Could not open config file: %s' % self.config_file
+        super(ConfigFileUnopenable, self).__init__(message)
+
+
+class ConfigFileInvalidYaml(Exception):
+    """Raised when the config file YAML cannot be parsed."""
+    def __init__(self, config_file):
+        self.config_file = config_file
+        message = 'Invalid config file specified: %s' % self.config_file
+        super(ConfigFileInvalidYaml, self).__init__(message)
+
+
 def warnings_formatter(message,
                        category=UserWarning,
                        filename='',
