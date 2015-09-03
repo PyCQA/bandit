@@ -42,10 +42,6 @@ class UtilTests(testtools.TestCase):
         super(UtilTests, self).setUp()
         self._setup_get_module_qualname_from_path()
 
-    def tearDown(self):
-        super(UtilTests, self).tearDown()
-        self._tear_down_get_module_qualname_from_path()
-
     def _setup_get_module_qualname_from_path(self):
         '''Setup a fake module directory tree for testing
            get_module_qualname_from_path().
@@ -57,6 +53,7 @@ class UtilTests(testtools.TestCase):
         '''
 
         self.tempdir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tempdir)
         self.reltempdir = os.path.relpath(self.tempdir)
 
         # good/a/b/c/test_typical.py
@@ -100,10 +97,6 @@ class UtilTests(testtools.TestCase):
         _touch(os.path.join(self.tempdir, 'syms', 'a', '__init__.py'))
         os.symlink(os.path.join(self.tempdir, 'good', 'a', 'b'),
                    os.path.join(self.tempdir, 'syms', 'a', 'bsym'))
-
-    def _tear_down_get_module_qualname_from_path(self):
-        '''Remove temp directory tree from test setup'''
-        shutil.rmtree(self.tempdir)
 
     def test_get_module_qualname_from_path_abs_typical(self):
         '''Test get_module_qualname_from_path with typical absolute paths'''
