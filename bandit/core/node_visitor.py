@@ -269,7 +269,9 @@ class BanditNodeVisitor(object):
         if self.debug:
             self.logger.debug(ast.dump(node))
 
-        self.metaast.add_node(node, '', self.depth)
+        if self.debug:
+            self.metaast.add_node(node, '', self.depth)
+
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
             if ("# nosec" in self.lines[node.lineno - 1] or
