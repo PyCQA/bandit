@@ -16,10 +16,10 @@
 
 import os
 
-import unittest
 import inspect
 
 import six
+import testtools
 
 from bandit.core import constants as C
 from bandit.core import manager as b_manager
@@ -29,7 +29,7 @@ from bandit.core import test_set as b_test_set
 cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
 
 
-class FunctionalTests(unittest.TestCase):
+class FunctionalTests(testtools.TestCase):
 
     '''This set of tests runs bandit against each example file in turn
     and records the score returned. This is compared to a known good value.
@@ -48,9 +48,6 @@ class FunctionalTests(unittest.TestCase):
         self.b_mgr.b_ts = b_test_set.BanditTestSet(self.b_mgr.logger,
                                                    config=self.b_mgr.b_conf,
                                                    profile=None)
-
-    def tearDown(self):
-        pass
 
     def run_example(self, example_script):
         '''A helper method to run the specified test
