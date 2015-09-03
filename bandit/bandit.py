@@ -23,10 +23,12 @@ import sysconfig
 
 import appdirs
 
+from bandit.core import config as b_config
 from bandit.core import manager as b_manager
 from bandit.core import utils
 
 BASE_CONFIG = 'bandit.yaml'
+logger = logging.getLogger()
 
 
 def _init_logger(debug=False, log_format=None):
@@ -35,6 +37,7 @@ def _init_logger(debug=False, log_format=None):
     :param debug: Whether to enable debug mode
     :return: An instantiated logging instance
     '''
+    logger.handlers = []
     log_level = logging.INFO
     if debug:
         log_level = logging.DEBUG
@@ -47,13 +50,11 @@ def _init_logger(debug=False, log_format=None):
 
     logging.captureWarnings(True)
 
-    logger = logging.getLogger()
     logger.setLevel(log_level)
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(logging.Formatter(log_format_string))
     logger.addHandler(handler)
     logger.debug("logging initialized")
-    return logger
 
 
 def _init_extensions():
@@ -99,7 +100,7 @@ def _find_config():
 def main():
     # bring our logging stuff up as early as possible
     debug = ('-d' in sys.argv or '--debug' in sys.argv)
-    logger = _init_logger(debug)
+    _init_logger(debug)
     # By default path would be /etx/xdg/bandit, we want system paths
     os.environ['XDG_CONFIG_DIRS'] = '/etc:/usr/local/etc'
     extension_mgr = _init_extensions()
@@ -185,12 +186,19 @@ def main():
             sys.exit(2)
 
     try:
-        b_mgr = b_manager.BanditManager(config_file, args.agg_type,
-                                        args.debug, profile_name=args.profile,
-                                        verbose=args.verbose)
+        b_conf = b_config.BanditConfig(config_file)
     except (utils.ConfigFileUnopenable, utils.ConfigFileInvalidYaml) as e:
         logger.error('%s', e)
         sys.exit(2)
+
+    # if the log format string was set in the options, reinitialize
+    if b_conf.get_option('log_format'):
+        log_format = b_conf.get_option('log_format')
+        _init_logger(debug, log_format=log_format)
+
+    b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
+                                    profile_name=args.profile,
+                                    verbose=args.verbose)
 
     if args.output_format != "json":
         logger.info("using config: %s", config_file)

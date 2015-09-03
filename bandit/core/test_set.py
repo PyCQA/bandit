@@ -17,17 +17,20 @@
 
 from collections import OrderedDict
 import copy
+import logging
 import sys
 
 from bandit.core import utils
+
+
+logger = logging.getLogger(__name__)
 
 
 class BanditTestSet():
 
     tests = OrderedDict()
 
-    def __init__(self, logger, config, profile=None):
-        self.logger = logger
+    def __init__(self, config, profile=None):
         self.config = config
         filter_list = self._filter_list_from_config(profile=profile)
         self.load_tests(filter=filter_list)
@@ -62,7 +65,7 @@ class BanditTestSet():
             for exc in profile['exclude']:
                 exclude_list.append(exc)
 
-        self.logger.debug(
+        logger.debug(
             "_filter_list_from_config completed - include: %s, exclude %s",
             include_list, exclude_list
         )
@@ -100,9 +103,9 @@ class BanditTestSet():
 
         # copy tests back over from temp copy
         self.tests = copy.deepcopy(temp_dict)
-        self.logger.debug('obtained filtered set of tests:')
+        logger.debug('obtained filtered set of tests:')
         for k in self.tests:
-            self.logger.debug('\t%s : %s', k, self.tests[k])
+            logger.debug('\t%s : %s', k, self.tests[k])
 
     def _get_extension_manager(self):
         from bandit.core import extension_loader
@@ -129,14 +132,14 @@ class BanditTestSet():
                                  '(unknown)')
                         path2 = utils.get_path_for_function(
                             self.tests[check][fn_name]) or '(unknown)'
-                        self.logger.error(
+                        logger.error(
                             "Duplicate function definition "
                             "%s in %s and %s", fn_name, path1, path2
                             )
                         sys.exit(2)
                     else:
                         self.tests[check][fn_name] = function
-                        self.logger.debug(
+                        logger.debug(
                             'added function %s targetting %s',
                             fn_name, check
                             )
@@ -149,11 +152,10 @@ class BanditTestSet():
         :return: A dictionary of tests which are of the specified type
         '''
         scoped_tests = {}
-        self.logger.debug('get_tests called with check type: %s', checktype)
+        logger.debug('get_tests called with check type: %s', checktype)
         if checktype in self.tests:
             scoped_tests = self.tests[checktype]
-        self.logger.debug('get_tests returning scoped_tests : %s',
-                          scoped_tests)
+        logger.debug('get_tests returning scoped_tests : %s', scoped_tests)
         return scoped_tests
 
     @property

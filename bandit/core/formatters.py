@@ -15,11 +15,15 @@ import collections
 import csv
 import datetime
 import json
+import logging
 from operator import itemgetter
 
 import six
 
 from bandit.core import constants
+
+
+logger = logging.getLogger(__name__)
 
 
 def report_csv(result_store, file_list, scores, excluded_files):
@@ -215,8 +219,7 @@ def report_text(result_store, files_list, scores, excluded_files):
     if result_store.out_file:
         with open(result_store.out_file, 'w') as fout:
             fout.write(result)
-        result_store.logger.info("Text output written to file: %s",
-                                 result_store.out_file)
+        logger.info("Text output written to file: %s", result_store.out_file)
     else:
         print(result)
 

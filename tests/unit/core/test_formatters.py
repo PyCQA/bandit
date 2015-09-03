@@ -24,6 +24,7 @@ import testtools
 
 import bandit
 from bandit.core import constants
+from bandit.core import config
 from bandit.core import manager
 from bandit.core import formatters
 
@@ -33,8 +34,8 @@ class FormattersTests(testtools.TestCase):
     def setUp(self):
         super(FormattersTests, self).setUp()
         cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-        path = os.path.join(os.getcwd(), 'bandit', 'plugins')
-        self.manager = manager.BanditManager(cfg_file, 'file')
+        conf = config.BanditConfig(cfg_file)
+        self.manager = manager.BanditManager(conf, 'file')
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.context = {'filename': self.tmp_fname,
                         'lineno': 4,

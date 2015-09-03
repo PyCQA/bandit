@@ -15,6 +15,7 @@
 # under the License.
 
 import copy
+import logging
 import warnings
 
 import six
@@ -24,14 +25,14 @@ from bandit.core import context as b_context
 from bandit.core import utils
 
 warnings.formatwarning = utils.warnings_formatter
+logger = logging.getLogger(__name__)
 
 
 class BanditTester():
 
     results = None
 
-    def __init__(self, logger, config, results, testset, debug):
-        self.logger = logger
+    def __init__(self, config, results, testset, debug):
         self.config = config
         self.results = results
         self.testset = testset
@@ -89,7 +90,7 @@ class BanditTester():
                 # if we have a result, record it and update scores
                 if result is not None:
                     self.results.add(temp_context, name, result)
-                    self.logger.debug(
+                    logger.debug(
                         "Issue identified by %s: %s", name, result
                     )
                     sev = constants.RANKING.index(result[0])
@@ -103,7 +104,7 @@ class BanditTester():
                 self.report_error(name, context, e)
                 if self.debug:
                     raise
-        self.logger.debug("Returning scores: %s", scores)
+        logger.debug("Returning scores: %s", scores)
         return scores
 
     def report_error(self, test, context, error):
@@ -116,4 +117,4 @@ class BanditTester():
         what += str(error)
         import traceback
         what += traceback.format_exc()
-        self.logger.error(what)
+        logger.error(what)
