@@ -14,6 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import fnmatch
+
 import bandit
 from bandit.core.test_properties import *
 
@@ -45,7 +47,11 @@ def blacklist_calls(context, config):
         if does_match and check[0]:
             matched_qn = False
             for qn in check[0]:
+                # case where string matches exactly
                 if context.call_function_name_qual == qn:
+                    matched_qn = True
+                # case where string matches to wildcard
+                elif fnmatch.fnmatch(context.call_function_name_qual, qn):
                     matched_qn = True
             if not matched_qn:
                 does_match = False

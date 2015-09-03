@@ -149,10 +149,15 @@ blacklist_calls:
                 Standard pseudo-random generators are not suitable for
                 security/cryptographic purposes.
             level: LOW
-
+        - telnetlib:
+            qualnames:
+                - telnetlib.*
+            message: >
+                Telnet-related funtions are being called. Telnet is considered
+                insecure. Use SSH or some other encrypted protocol.
+            level: HIGH
         # Most of this is based off of Christian Heimes' work on defusedxml:
         #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
-
         - xml_bad_cElementTree:
             qualnames: 
                 - xml.etree.cElementTree.parse
@@ -275,8 +280,8 @@ blacklist_imports:
             imports: [telnetlib]
             level: HIGH
             message: >
-                Telnet is considered insecure. Use SSH or some other encrypted
-                protocol.
+                A telnet-related module is being imported.  Telnet is
+                considered insecure. Use SSH or some other encrypted protocol.
         - info_libs:
             imports: [pickle, cPickle, subprocess, Crypto]
             level: LOW
