@@ -129,7 +129,7 @@ class BanditManager():
         :param sev_level: Which severity levels to show (LOW, MEDIUM, HIGH)
         :param conf_level: Which confidence levels to show (LOW, MEDIUM, HIGH)
         :param output_filename: File to store results
-        :param output_format: output format, either 'json' or 'txt'
+        :param output_format: output format, 'csv', 'json', 'txt', or 'xml'
         :return: -
         '''
 

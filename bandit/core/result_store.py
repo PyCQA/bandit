@@ -109,7 +109,7 @@ class BanditResultStore():
         :param sev_level: What level of severity to display (optional)
         :param conf_level: What level of confidence to display (optional)
         :param output_filename: File to output the results (optional)
-        :param output_format: File type to output (json|txt)
+        :param output_format: File type to output (csv|json|txt|xml)
         :return: -
         '''
 
