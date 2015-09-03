@@ -12,3 +12,4 @@ cover/*
 .coverage
 docs/build/*
 ChangeLog
+docs/source/api
