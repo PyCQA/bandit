@@ -403,3 +403,11 @@ class FunctionalTests(unittest.TestCase):
         self.assertEqual(23, issues[2]['line_number'])
         self.assertEqual(range(22, 31), issues[2]['line_range'])
         self.assertIn('/tmp', issues[2]['code'])
+
+    def test_weak_cryptographic_key(self):
+        '''Test for weak key sizes.'''
+        expect = {
+            'SEVERITY': {'MEDIUM': 4, 'HIGH': 4},
+            'CONFIDENCE': {'HIGH': 8}
+        }
+        self.check_example('weak_cryptographic_key_sizes.py', expect)
