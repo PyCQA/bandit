@@ -3,7 +3,6 @@ import stat
 
 keyfile = 'foo'
 
-os.chmod('/etc/passwd', 0777)
 os.chmod('/etc/passwd', 0227)
 os.chmod('/etc/passwd', 07)
 os.chmod('/etc/passwd', 0664)
