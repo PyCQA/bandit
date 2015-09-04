@@ -69,7 +69,7 @@ class BanditConfig():
         option_levels = option_string.split('.')
         cur_item = self._config
         for level in option_levels:
-            if level in cur_item:
+            if cur_item and (level in cur_item):
                 cur_item = cur_item[level]
             else:
                 return None

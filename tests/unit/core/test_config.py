@@ -29,19 +29,14 @@ from bandit.core import utils
 class TempFile(fixtures.Fixture):
     def __init__(self, contents=None):
         super(TempFile, self).__init__()
-
-        if not contents:
-            self.example_key = uuid.uuid4().hex
-            self.example_value = uuid.uuid4().hex
-            contents = '%s: %s' % (self.example_key, self.example_value)
-
         self.contents = contents
 
     def setUp(self):
         super(TempFile, self).setUp()
 
         with tempfile.NamedTemporaryFile(mode='wt', delete=False) as f:
-            f.write(self.contents)
+            if self.contents:
+                f.write(self.contents)
 
         self.addCleanup(os.unlink, f.name)
 
@@ -52,7 +47,10 @@ class TestInit(testtools.TestCase):
     def test_settings(self):
         # Can initialize a BanditConfig.
 
-        f = self.useFixture(TempFile())
+        example_key = uuid.uuid4().hex
+        example_value = self.getUniqueString()
+        contents = '%s: %s' % (example_key, example_value)
+        f = self.useFixture(TempFile(contents))
         b_config = config.BanditConfig(f.name)
 
         # After initialization, can get settings.
@@ -64,8 +62,8 @@ class TestInit(testtools.TestCase):
         self.assertEqual('', b_config.get_setting('color_HIGH'))
         self.assertEqual('*.py', b_config.get_setting('plugin_name_pattern'))
 
-        self.assertEqual({f.example_key: f.example_value}, b_config.config)
-        self.assertEqual(f.example_value, b_config.get_option(f.example_key))
+        self.assertEqual({example_key: example_value}, b_config.config)
+        self.assertEqual(example_value, b_config.get_option(example_key))
 
     def test_file_does_not_exist(self):
         # When the config file doesn't exist, ConfigFileUnopenable is raised.
