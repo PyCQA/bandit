@@ -130,10 +130,6 @@ class BanditManager():
             output_filename=output_filename, output_format=output_format
         )
 
-    def output_metaast(self):
-        '''Outputs all the nodes from the Meta AST.'''
-        self.b_ma.report()
-
     def discover_files(self, targets, recursive=False):
         '''Add tests directly and from a directory to the test set
 
