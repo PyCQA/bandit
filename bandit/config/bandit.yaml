@@ -119,6 +119,10 @@ blacklist_calls:
                 Use of insecure cipher {func}. Replace with a known secure
                 cipher such as AES.
             level: HIGH
+        - cipher_modes:
+            qualnames:
+                - cryptography.hazmat.primitives.ciphers.modes.ECB
+            message: Use of insecure cipher mode {func}.
         - mktemp_q:
             qualnames: [tempfile.mktemp]
             message: Use of insecure and deprecated function (mktemp).

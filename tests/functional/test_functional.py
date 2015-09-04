@@ -97,6 +97,11 @@ class FunctionalTests(testtools.TestCase):
         expect = {'SEVERITY': {'LOW': 1, 'HIGH': 8}, 'CONFIDENCE': {'HIGH': 9}}
         self.check_example('ciphers.py', expect)
 
+    def test_cipher_modes(self):
+        '''Test for insecure cipher modes.'''
+        expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'HIGH': 1}}
+        self.check_example('cipher-modes.py', expect)
+
     def test_eval(self):
         '''Test the `eval` example.'''
         expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'HIGH': 3}}
