@@ -18,7 +18,8 @@ import logging
 
 from bandit.core import constants
 
-logger = logging.getLogger()
+
+logger = logging.getLogger(__name__)
 
 
 def severity(sev):

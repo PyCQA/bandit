@@ -19,7 +19,6 @@ import logging
 import os
 import sys
 
-from bandit.core import config as b_config
 from bandit.core import constants as constants
 from bandit.core import meta_ast as b_meta_ast
 from bandit.core import node_visitor as b_node_visitor
@@ -27,55 +26,50 @@ from bandit.core import result_store as b_result_store
 from bandit.core import test_set as b_test_set
 
 
+logger = logging.getLogger(__name__)
+
+
 class BanditManager():
 
     scope = []
 
-    def __init__(self, config_file, agg_type, debug=False, verbose=False,
+    def __init__(self, config, agg_type, debug=False, verbose=False,
                  profile_name=None):
         '''Get logger, config, AST handler, and result store ready
 
-        :param config_file: A file to read config from
+        :param config: config options object
+        :type config: bandit.core.BanditConfig
+        :param agg_type: aggregation type
         :param debug: Whether to show debug messsages or not
+        :param verbose: Whether to show verbose output
         :param profile_name: Optional name of profile to use (from cmd line)
         :return:
         '''
         self.debug = debug
         self.verbose = verbose
-        self.logger = logging.getLogger()
-        self.b_conf = b_config.BanditConfig(self.logger, config_file)
+        self.b_conf = config
         self.files_list = []
         self.excluded_files = []
-
-        # if the log format string was set in the options, reinitialize
-        if self.b_conf.get_option('log_format'):
-            # have to clear old handler
-            self.logger.handlers = []
-            log_format = self.b_conf.get_option('log_format')
-            self.logger = self._init_logger(debug, log_format=log_format)
-
-        self.b_ma = b_meta_ast.BanditMetaAst(self.logger)
-        self.b_rs = b_result_store.BanditResultStore(self.logger, self.b_conf,
-                                                     agg_type, verbose)
+        self.b_ma = b_meta_ast.BanditMetaAst()
+        self.b_rs = b_result_store.BanditResultStore(self.b_conf, agg_type,
+                                                     verbose)
 
         # if the profile name was specified, try to find it in the config
         if profile_name:
             if profile_name in self.b_conf.config['profiles']:
                 profile = self.b_conf.config['profiles'][profile_name]
-                self.logger.debug(
+                logger.debug(
                     "read in profile '%s': %s",
                     profile_name, profile
                 )
             else:
-                self.logger.error(
-                    'unable to find profile (%s) in config file: '
-                    '%s', profile_name, config_file
-                )
+                logger.error('unable to find profile (%s) in config file: %s',
+                             profile_name, self.b_conf.config_file)
                 sys.exit(2)
         else:
             profile = None
 
-        self.b_ts = b_test_set.BanditTestSet(self.logger, config=self.b_conf,
+        self.b_ts = b_test_set.BanditTestSet(config=self.b_conf,
                                              profile=profile)
 
         # set the increment of after how many files to show progress
@@ -85,10 +79,6 @@ class BanditManager():
     @property
     def has_tests(self):
         return self.b_ts.has_tests
-
-    @property
-    def get_logger(self):
-        return self.logger
 
     @property
     def get_resultstore(self):
@@ -172,8 +162,8 @@ class BanditManager():
                     files_list.update(new_files)
                     excluded_files.update(newly_excluded)
                 else:
-                    self.logger.warn("Skipping directory (%s), use -r flag to "
-                                     "scan contents", fname)
+                    logger.warn("Skipping directory (%s), use -r flag to "
+                                "scan contents", fname)
 
             else:
                 # if the user explicitly mentions a file on command line,
@@ -218,7 +208,7 @@ class BanditManager():
         new_files_list = list(self.files_list)
 
         for count, fname in enumerate(self.files_list):
-            self.logger.debug("working on file : %s", fname)
+            logger.debug("working on file : %s", fname)
 
             if len(self.files_list) > self.progress:
                 # is it time to update the progress indicator?
@@ -264,7 +254,7 @@ class BanditManager():
         score = []
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
-                fname, self.logger, self.b_conf, b_ma, b_rs, b_ts, self.debug
+                fname, self.b_conf, b_ma, b_rs, b_ts, self.debug
             )
             score = res.process(fdata)
         return score

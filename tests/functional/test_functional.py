@@ -21,6 +21,7 @@ import inspect
 import six
 import testtools
 
+from bandit.core import config as b_config
 from bandit.core import constants as C
 from bandit.core import manager as b_manager
 from bandit.core import test_set as b_test_set
@@ -43,11 +44,10 @@ class FunctionalTests(testtools.TestCase):
         # them up here for the testing environment.
         #
         path = os.path.join(os.getcwd(), 'bandit', 'plugins')
-        self.b_mgr = b_manager.BanditManager(cfg_file, 'file')
+        b_conf = b_config.BanditConfig(cfg_file)
+        self.b_mgr = b_manager.BanditManager(b_conf, 'file')
         self.b_mgr.b_conf._settings['plugins_dir'] = path
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(self.b_mgr.logger,
-                                                   config=self.b_mgr.b_conf,
-                                                   profile=None)
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf)
 
     def run_example(self, example_script):
         '''A helper method to run the specified test

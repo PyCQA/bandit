@@ -30,11 +30,10 @@ class BanditResultStore():
     count = 0
     skipped = None
 
-    def __init__(self, logger, config, agg_type, verbose):
+    def __init__(self, config, agg_type, verbose):
         self.resstore = OrderedDict()
         self.count = 0
         self.skipped = []
-        self.logger = logger
         self.config = config
         self.agg_type = agg_type
         self.sev_level = 0
