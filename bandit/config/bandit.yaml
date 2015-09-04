@@ -57,8 +57,7 @@ profiles:
             - ssl_with_no_version
             - try_except_pass
             - use_of_mako_templates
-            - weak_crypto_key_size_cryptography_io
-            - weak_crypto_key_size_pycrypto
+            - weak_cryptographic_key
 
     XSS:
         include:
