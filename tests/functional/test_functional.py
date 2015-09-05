@@ -381,6 +381,13 @@ class FunctionalTests(testtools.TestCase):
 
         self.check_example('try_except_pass.py', expect)
 
+        conf = self.b_mgr.b_conf._config
+        conf['try_except_pass']['check_typed_exception'] = False
+        expect = {'SEVERITY': {'LOW': 2},
+                  'CONFIDENCE': {'HIGH': 2}}
+
+        self.check_example('try_except_pass.py', expect)
+
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
         expect = {
