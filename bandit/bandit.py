@@ -227,7 +227,7 @@ def main():
     # initiate execution of tests within Bandit Manager
     b_mgr.run_tests()
     if args.debug:
-        b_mgr.output_metaast()
+        print(b_mgr.b_ma)
 
     # trigger output of results by Bandit Manager
     b_mgr.output_results(args.context_lines, args.severity - 1,

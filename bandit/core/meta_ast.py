@@ -40,15 +40,15 @@ class BanditMetaAst():
             'raw': node, 'parent_id': parent_id, 'depth': depth
         }
 
-    def report(self):
+    def __str__(self):
         '''Dumps a listing of all of the nodes
 
-        Dumps (prints) a listing of all of the nodes for debugging purposes
+        Dumps a listing of all of the nodes for debugging purposes
         :return: -
         '''
         tmpstr = ""
         for k, v in self.nodes.items():
             tmpstr += "Node: %s\n" % k
             tmpstr += "\t%s\n" % str(v)
-        tmpstr += "Length : %s\n" % len(self.nodes)
-        print(tmpstr)
+        tmpstr += "Length: %s\n" % len(self.nodes)
+        return tmpstr
