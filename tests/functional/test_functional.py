@@ -92,6 +92,11 @@ class FunctionalTests(testtools.TestCase):
         expect = {'SEVERITY': {'MEDIUM': 8}, 'CONFIDENCE': {'HIGH': 8}}
         self.check_example('crypto-md5.py', expect)
 
+    def test_ciphers(self):
+        '''Test the `Crypto.Cipher` example.'''
+        expect = {'SEVERITY': {'LOW': 1, 'HIGH': 8}, 'CONFIDENCE': {'HIGH': 9}}
+        self.check_example('ciphers.py', expect)
+
     def test_eval(self):
         '''Test the `eval` example.'''
         expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'HIGH': 3}}
