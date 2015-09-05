@@ -22,6 +22,8 @@ from appdirs import site_data_dir
 import bandit
 from bandit.core.test_properties import *
 
+_wordlist = []
+
 
 def find_word_list(cfg_word_list_f):
     if not isinstance(cfg_word_list_f, str):
@@ -41,33 +43,37 @@ def find_word_list(cfg_word_list_f):
                               % word_list_path)
             return word_list_path
 
-    raise RuntimeError("Could not substitute '%(site_data_dir)s' "
-                       "to a path with a valid word_list file")
+        raise RuntimeError("Could not substitute '%(site_data_dir)s' "
+                           "to a path with a valid word_list file")
+
+
+def _get_wordlist(config):
+    global _wordlist
+    if not len(_wordlist):
+        # try to read the word list file from config
+        if (config is not None and 'word_list' in config):
+            try:
+                word_list_file = find_word_list(config['word_list'])
+            except RuntimeError as e:
+                warnings.warn(e.message)
+                return
+
+        # try to open the word list file and read passwords from it
+        try:
+            f = open(word_list_file, 'r')
+        except (OSError, IOError):
+            raise RuntimeError("Could not open word_list (from config"
+                               " file): %s" % word_list_file)
+        else:
+            _wordlist = [word.strip() for word in f]
+            f.close()
+    return _wordlist
 
 
 @takes_config
 @checks('Str')
 def hardcoded_password(context, config):
-    word_list_file = None
-    word_list = []
-    # try to read the word list file from config
-    if (config is not None and 'word_list' in config):
-        try:
-            word_list_file = find_word_list(config['word_list'])
-        except RuntimeError as e:
-            warnings.warn(e.message)
-            return
-
-    # try to open the word list file and read passwords from it
-    try:
-        f = open(word_list_file, 'r')
-    except (OSError, IOError):
-        raise RuntimeError("Could not open word_list (from config"
-                           " file): %s" % word_list_file)
-    else:
-        for word in f:
-            word_list.append(word.strip())
-        f.close()
+    word_list = _get_wordlist(config)
 
     # for every password in the list, check against the current string
     for word in word_list:
