@@ -13,3 +13,4 @@ cover/*
 docs/build/*
 ChangeLog
 docs/source/api
+.*.sw?
