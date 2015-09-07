@@ -31,8 +31,7 @@ def _classify_key_size(key_type, key_size):
                      (key_type, size))
 
 
-@checks('Call')
-def weak_crypto_key_size_cryptography_io(context):
+def _weak_crypto_key_size_cryptography_io(context):
     func_key_type = {
         'cryptography.hazmat.primitives.asymmetric.dsa.'
         'generate_private_key': 'DSA',
@@ -51,8 +50,7 @@ def weak_crypto_key_size_cryptography_io(context):
         return _classify_key_size(key_type, key_size)
 
 
-@checks('Call')
-def weak_crypto_key_size_pycrypto(context):
+def _weak_crypto_key_size_pycrypto(context):
     func_key_type = {
         'Crypto.PublicKey.DSA.generate': 'DSA',
         'Crypto.PublicKey.RSA.generate': 'RSA',
@@ -63,3 +61,9 @@ def weak_crypto_key_size_pycrypto(context):
                     context.get_call_arg_at_position(0) or
                     2048)
         return _classify_key_size(key_type, key_size)
+
+
+@checks('Call')
+def weak_cryptographic_key(context):
+    return (_weak_crypto_key_size_cryptography_io(context) or
+            _weak_crypto_key_size_pycrypto(context))
