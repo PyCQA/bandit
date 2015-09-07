@@ -186,17 +186,13 @@ class FunctionalTests(testtools.TestCase):
         filename = 'os-chmod-{}.py'
         if six.PY2:
             filename = filename.format('py2')
-            expect = {
-                'SEVERITY': {'MEDIUM': 2, 'HIGH': 9},
-                'CONFIDENCE': {'HIGH': 10, 'MEDIUM': 1}
-            }
         else:
             filename = filename.format('py3')
-            expect = {
-                'SEVERITY': {'MEDIUM': 2, 'HIGH': 9},
-                'CONFIDENCE': {'HIGH': 10, 'MEDIUM': 1}
-            }
-        self.check_example('os-chmod.py', expect)
+        expect = {
+            'SEVERITY': {'MEDIUM': 2, 'HIGH': 8},
+            'CONFIDENCE': {'MEDIUM': 1, 'HIGH': 9}
+        }
+        self.check_example(filename, expect)
 
     def test_os_exec(self):
         '''Test for `os.exec*`.'''
