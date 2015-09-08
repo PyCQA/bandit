@@ -20,9 +20,9 @@ import os
 import sys
 
 from bandit.core import constants as constants
+from bandit.core import extension_loader
 from bandit.core import meta_ast as b_meta_ast
 from bandit.core import node_visitor as b_node_visitor
-from bandit.core import result_store as b_result_store
 from bandit.core import test_set as b_test_set
 
 
@@ -51,8 +51,9 @@ class BanditManager():
         self.files_list = []
         self.excluded_files = []
         self.b_ma = b_meta_ast.BanditMetaAst()
-        self.b_rs = b_result_store.BanditResultStore(self.b_conf, agg_type,
-                                                     verbose)
+        self.skipped = []
+        self.results = []
+        self.agg_type = agg_type
 
         # if the profile name was specified, try to find it in the config
         if profile_name:
@@ -76,15 +77,14 @@ class BanditManager():
         self.progress = self.b_conf.get_setting('progress')
         self.scores = []
 
+    def get_issue_list(self):
+        return self.results
+
     @property
     def has_tests(self):
         return self.b_ts.has_tests
 
-    @property
-    def get_resultstore(self):
-        return self.b_rs
-
-    def results_count(self, sev_filter=None, conf_filter=None):
+    def results_count(self, sev_filter=0, conf_filter=0):
         '''Return the count of results
 
         :param sev_filter: Severity level to filter lower
@@ -95,18 +95,8 @@ class BanditManager():
 
         rank = constants.RANKING
 
-        for issue_file in self.b_rs.resstore:
-            for issue in self.b_rs.resstore[issue_file]:
-
-                if (sev_filter and
-                        rank.index(issue['issue_severity']) < sev_filter):
-                    # don't count if this doesn't match filter requirement
-                    continue
-
-                if (conf_filter and
-                        rank.index(issue['issue_confidence']) < conf_filter):
-                    continue
-
+        for issue in self.results:
+            if issue.filter(rank[sev_filter], rank[conf_filter]):
                 count += 1
 
         return count
@@ -122,13 +112,26 @@ class BanditManager():
         :param output_format: output format, 'csv', 'json', 'txt', or 'xml'
         :return: -
         '''
+        try:
+            formatters_mgr = extension_loader.MANAGER.formatters_mgr
+            try:
+                formatter = formatters_mgr[output_format]
+            except KeyError:  # Unrecognized format, so use text instead
+                formatter = formatters_mgr['txt']
+                output_format = 'txt'
 
-        self.b_rs.report(
-            self.files_list, self.scores,
-            excluded_files=self.excluded_files, lines=lines,
-            sev_level=sev_level, conf_level=conf_level,
-            output_filename=output_filename, output_format=output_format
-        )
+            if output_format == 'csv':
+                lines = 1
+            elif formatter.name == 'txt' and output_filename:
+                output_format = 'plain'
+
+            report_func = formatter.plugin
+            report_func(self, filename=output_filename,
+                        sev_level=sev_level, conf_level=conf_level,
+                        lines=lines, out_format=output_format)
+
+        except IOError:
+            print("Unable to write to file: %s" % self.out_file)
 
     def discover_files(self, targets, recursive=False):
         '''Add tests directly and from a directory to the test set
@@ -216,18 +219,16 @@ class BanditManager():
                     try:
                         # parse the current file
                         score = self._execute_ast_visitor(
-                            fname, fdata, self.b_ma,
-                            self.b_rs, self.b_ts
-                        )
+                            fname, fdata, self.b_ma, self.b_ts)
                         self.scores.append(score)
                     except KeyboardInterrupt as e:
                         sys.exit(2)
             except IOError as e:
-                self.b_rs.skip(fname, e.strerror)
+                self.skipped.append((fname, e.strerror))
                 new_files_list.remove(fname)
             except SyntaxError as e:
-                self.b_rs.skip(fname,
-                               "syntax error while parsing AST from file")
+                self.skipped.append(
+                    (fname, "syntax error while parsing AST from file"))
                 new_files_list.remove(fname)
 
         if len(self.files_list) > self.progress:
@@ -237,22 +238,22 @@ class BanditManager():
         # reflect any files which may have been skipped
         self.files_list = new_files_list
 
-    def _execute_ast_visitor(self, fname, fdata, b_ma, b_rs, b_ts):
+    def _execute_ast_visitor(self, fname, fdata, b_ma, b_ts):
         '''Execute AST parse on each file
 
         :param fname: The name of the file being parsed
         :param fdata: The file data of the file being parsed
         :param b_ma: The class Meta AST instance
-        :param b_rs: The class result store instance
         :param b_ts: The class test set instance
         :return: The accumulated test score
         '''
         score = []
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
-                fname, self.b_conf, b_ma, b_rs, b_ts, self.debug
+                fname, self.b_conf, b_ma, b_ts, self.debug
             )
             score = res.process(fdata)
+            self.results.extend(res.tester.results)
         return score
 
 

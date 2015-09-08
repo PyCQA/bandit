@@ -29,12 +29,9 @@ logger = logging.getLogger(__name__)
 
 
 class BanditTester():
-
-    results = None
-
-    def __init__(self, config, results, testset, debug):
+    def __init__(self, config, testset, debug):
         self.config = config
-        self.results = results
+        self.results = []
         self.testset = testset
         self.last_result = None
         self.debug = debug
@@ -75,29 +72,23 @@ class BanditTester():
                 else:
                     result = test(context)
 
-                # the test call returns a 2- or 3-tuple
-                # - (issue_severity, issue_text) or
-                # - (issue_severity, issue_confidence, issue_text)
-
-                # add default confidence level, if not returned by test
-                if (result is not None and len(result) == 2):
-                    result = (
-                        result[0],
-                        constants.CONFIDENCE_DEFAULT,
-                        result[1]
-                    )
-
                 # if we have a result, record it and update scores
                 if result is not None:
-                    self.results.add(temp_context, name, result)
+                    result.fname = temp_context['filename']
+                    result.lineno = temp_context['lineno']
+                    result.linerange = temp_context['linerange']
+                    result.test = test.__name__
+
+                    self.results.append(result)
+
                     logger.debug(
                         "Issue identified by %s: %s", name, result
                     )
-                    sev = constants.RANKING.index(result[0])
-                    val = constants.RANKING_VALUES[result[0]]
+                    sev = constants.RANKING.index(result.severity)
+                    val = constants.RANKING_VALUES[result.severity]
                     scores['SEVERITY'][sev] += val
-                    con = constants.RANKING.index(result[1])
-                    val = constants.RANKING_VALUES[result[1]]
+                    con = constants.RANKING.index(result.confidence)
+                    val = constants.RANKING_VALUES[result.confidence]
                     scores['CONFIDENCE'][con] += val
 
             except Exception as e:
