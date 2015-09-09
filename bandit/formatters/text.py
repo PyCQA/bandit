@@ -1,0 +1,121 @@
+# -*- coding:utf-8 -*-
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+import collections
+import datetime
+import logging
+
+from bandit.core import utils
+
+logger = logging.getLogger(__name__)
+
+
+def report(manager, filename, sev_level, conf_level, lines=-1,
+           out_format='txt'):
+    '''Prints issues in Text formt
+
+    :param manager: the bandit manager object
+    :param filename: The output file name, or None for stdout
+    :param sev_level: Filtering severity level
+    :param conf_level: Filtering confidence level
+    :param lines: Number of lines to report, -1 for all
+    :param out_format: The ouput format name
+    '''
+
+    tmpstr_list = []
+
+    # use a defaultdict to default to an empty string
+    color = collections.defaultdict(str)
+
+    if out_format == 'txt':
+        # get text colors from settings for TTY output
+        get_setting = manager.b_conf.get_setting
+        color = {'HEADER': get_setting('color_HEADER'),
+                 'DEFAULT': get_setting('color_DEFAULT'),
+                 'LOW': get_setting('color_LOW'),
+                 'MEDIUM': get_setting('color_MEDIUM'),
+                 'HIGH': get_setting('color_HIGH')
+                 }
+
+    # print header
+    tmpstr_list.append("%sRun started:%s\n\t%s\n" % (
+        color['HEADER'],
+        color['DEFAULT'],
+        datetime.datetime.utcnow()
+    ))
+
+    if manager.verbose:
+        # print which files were inspected
+        tmpstr_list.append("\n%sFiles in scope (%s):%s\n" % (
+            color['HEADER'], len(manager.files_list),
+            color['DEFAULT']
+        ))
+
+        for item in zip(manager.files_list, map(utils.sum_scores,
+                                                manager.scores)):
+            tmpstr_list.append("\t%s (score: %i)\n" % item)
+
+        # print which files were excluded and why
+        tmpstr_list.append("\n%sFiles excluded (%s):%s\n" %
+                           (color['HEADER'], len(manager.skipped),
+                            color['DEFAULT']))
+        for fname in manager.skipped:
+            tmpstr_list.append("\t%s\n" % fname)
+
+    # print which files were skipped and why
+    tmpstr_list.append("\n%sFiles skipped (%s):%s\n" % (
+        color['HEADER'], len(manager.skipped),
+        color['DEFAULT']
+    ))
+
+    for (fname, reason) in manager.skipped:
+        tmpstr_list.append("\t%s (%s)\n" % (fname, reason))
+
+    # print the results
+    tmpstr_list.append("\n%sTest results:%s\n" % (
+        color['HEADER'], color['DEFAULT']
+    ))
+
+    issues = manager.get_issue_list()
+    if not len(issues):
+        tmpstr_list.append("\tNo issues identified.\n")
+
+    for issue in issues:
+        # if the result isn't filtered out by severity
+        if issue.filter(sev_level, conf_level):
+            tmpstr_list.append("\n%s>> Issue: %s\n" % (
+                color.get(issue.severity, color['DEFAULT']),
+                issue.text
+            ))
+            tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
+                issue.severity.capitalize(),
+                issue.confidence.capitalize()
+            ))
+            tmpstr_list.append("   Location: %s:%s\n" % (
+                issue.fname,
+                issue.lineno
+            ))
+            tmpstr_list.append(color['DEFAULT'])
+
+            tmpstr_list.append(
+                issue.get_code(lines, True))
+
+    result = ''.join(tmpstr_list)
+
+    if filename:
+        with open(filename, 'w') as fout:
+            fout.write(result)
+        logger.info("Text output written to file: %s", filename)
+    else:
+        print(result)
