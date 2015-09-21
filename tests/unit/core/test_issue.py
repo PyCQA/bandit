@@ -18,6 +18,7 @@ import testtools
 
 import bandit
 from bandit.core import issue
+from bandit.core import constants
 
 
 class IssueTests(testtools.TestCase):
@@ -38,27 +39,41 @@ class IssueTests(testtools.TestCase):
         test_issue = _get_issue_instance()
         test_issue_dict = test_issue.as_dict(with_code=False)
         self.assertIsInstance(test_issue_dict, dict)
-        for attr in [
-            'filename', 'test_name', 'issue_severity', 'issue_confidence',
-            'issue_text', 'line_number', 'line_range'
-        ]:
-            self.assertIn(attr, test_issue_dict)
+        self.assertEqual(test_issue_dict['filename'], 'code.py')
+        self.assertEqual(test_issue_dict['test_name'], 'bandit_plugin')
+        self.assertEqual(test_issue_dict['issue_severity'], 'MEDIUM')
+        self.assertEqual(test_issue_dict['issue_confidence'], 'MEDIUM')
+        self.assertEqual(test_issue_dict['issue_text'], 'Test issue')
+        self.assertEqual(test_issue_dict['line_number'], 1)
+        self.assertEqual(test_issue_dict['line_range'], [])
 
-    def test_issue_filter(self):
-        test_issue = _get_issue_instance()
-        result = test_issue.filter(bandit.HIGH, bandit.HIGH)
-        self.assertFalse(result)
-        result = test_issue.filter(bandit.MEDIUM, bandit.MEDIUM)
-        self.assertTrue(result)
-        result = test_issue.filter(bandit.LOW, bandit.LOW)
-        self.assertTrue(result)
-        result = test_issue.filter(bandit.LOW, bandit.HIGH)
-        self.assertFalse(result)
-        result = test_issue.filter(bandit.HIGH, bandit.LOW)
-        self.assertFalse(result)
+    def test_issue_filter_severity(self):
+        levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
+        issues = [_get_issue_instance(l, bandit.HIGH) for l in levels]
 
-def _get_issue_instance():
-    new_issue = issue.Issue(bandit.MEDIUM, bandit.MEDIUM, 'Test issue')
+        for level in levels:
+            rank = constants.RANKING.index(level)
+            for issue in issues:
+                test = constants.RANKING.index(issue.severity)
+                result = issue.filter(level, bandit.UNDEFINED)
+                self.assertTrue((test >= rank) == result)
+
+
+    def test_issue_filter_confidence(self):
+        levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
+        issues = [_get_issue_instance(bandit.HIGH, l) for l in levels]
+
+        for level in levels:
+            rank = constants.RANKING.index(level)
+            for issue in issues:
+                test = constants.RANKING.index(issue.confidence)
+                result = issue.filter(bandit.UNDEFINED, level)
+                self.assertTrue((test >= rank) == result)
+
+
+
+def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
+    new_issue = issue.Issue(severity, confidence, 'Test issue')
     new_issue.fname = 'code.py'
     new_issue.test = 'bandit_plugin'
     new_issue.lineno = 1
