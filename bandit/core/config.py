@@ -27,10 +27,6 @@ logger = logging.getLogger(__name__)
 
 
 class BanditConfig():
-
-    _config = dict()
-    _settings = dict()
-
     def __init__(self, config_file):
         '''Attempt to initialize a config dictionary from a yaml file.
 
@@ -99,6 +95,7 @@ class BanditConfig():
         possible).
         :return: -
         '''
+        self._settings = {}
         self._init_progress_increment()
         self._init_output_colors()
         self._init_plugin_name_pattern()
