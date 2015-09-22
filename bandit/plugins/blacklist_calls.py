@@ -31,33 +31,22 @@ def blacklist_calls(context, config):
     checks = _cached_blacklist_checks
 
     # for each check, go through and see if it matches all qualifications
-    for check in checks:
+    for qualnames, names, message_tpl, level, params in checks:
         confidence = 'HIGH'
         does_match = True
         # item 0=qualnames, 1=names, 2=message, 3=level, 4=params
-        if does_match and check[0]:
-            matched_qn = False
-            for qn in check[0]:
-                # case where string matches exactly
-                if context.call_function_name_qual == qn:
-                    matched_qn = True
-                # case where string matches to wildcard
-                elif fnmatch.fnmatch(context.call_function_name_qual, qn):
-                    matched_qn = True
-            if not matched_qn:
-                does_match = False
+        if does_match and qualnames:
+            # match the qualname - respect wildcards if present
+            does_match = any(
+                fnmatch.fnmatch(context.call_function_name_qual, qn)
+                for qn in qualnames)
 
-        if does_match and check[1]:
-            matched_n = False
-            for n in check[1]:
-                if context.call_function_name == n:
-                    matched_n = True
-            if not matched_n:
-                does_match = False
+        if does_match and names:
+            does_match = any(context.call_function_name == n for n in names)
 
-        if does_match and check[4]:
+        if does_match and params:
             matched_p = False
-            for p in check[4]:
+            for p in params:
                 for arg_num in range(0, context.call_args_count - 1):
                     if p == context.get_call_arg_at_position(arg_num):
                         matched_p = True
@@ -65,16 +54,8 @@ def blacklist_calls(context, config):
                 does_match = False
 
         if does_match:
-            level = None
-            if check[3] == 'HIGH':
-                level = bandit.HIGH
-            elif check[3] == 'MEDIUM':
-                level = bandit.MEDIUM
-            elif check[3] == 'LOW':
-                level = bandit.LOW
-
-            message = check[2].replace("{func}",
-                                       context.call_function_name_qual)
+            message = message_tpl.replace("{func}",
+                                          context.call_function_name_qual)
 
             return bandit.Issue(
                 severity=level, confidence=confidence,
@@ -105,32 +86,20 @@ def _ensure_cache(config):
 
 
 def _get_tuple_for_item(blacklist_object):
-    # defaults, one or more of these are likely to not be set, so they won't be
-    # checked
-    qualnames = None
-    names = None
-    message = ""
-    level = 'MEDIUM'
-    params = None
+    level_map = {'LOW': bandit.LOW, 'MEDIUM': bandit.MEDIUM,
+                 'HIGH': bandit.HIGH}
 
     # if the item we got passed isn't a dictionary, do nothing with this object
     if not isinstance(blacklist_object, dict):
         return None
 
-    if 'qualnames' in blacklist_object:
-        qualnames = blacklist_object['qualnames']
-    if 'names' in blacklist_object:
-        names = blacklist_object['names']
-    if 'message' in blacklist_object:
-        message = blacklist_object['message']
+    # not all of the fields will be set, so all have default fallbacks
+    qualnames = blacklist_object.get('qualnames')
+    names = blacklist_object.get('names')
+    message = blacklist_object.get('message', '')
+    params = blacklist_object.get('params')
 
-    if 'level' in blacklist_object:
-        _level = blacklist_object['level'].upper()
-        if _level in {'HIGH', 'MEDIUM', 'LOW'}:
-            level = _level
+    level_name = blacklist_object.get('level', 'MEDIUM').upper()
+    level = level_map.get(level_name, 'MEDIUM')
 
-    if 'params' in blacklist_object:
-        params = blacklist_object['params']
-
-    return_tuple = (qualnames, names, message, level, params)
-    return return_tuple
+    return (qualnames, names, message, level, params)
