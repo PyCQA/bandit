@@ -32,8 +32,7 @@ def ssl_with_bad_version(context, config):
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="ssl.wrap_socket call with insecure SSL/TLS protocol "
-                     "version identified, security issue.  %s" %
-                     context.call_args_string
+                     "version identified, security issue."
             )
     elif (context.call_function_name_qual == 'pyOpenSSL.SSL.Context'):
         if context.check_call_arg_value('method', bad_ssl_versions):
@@ -41,8 +40,7 @@ def ssl_with_bad_version(context, config):
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="SSL.Context call with insecure SSL/TLS protocol "
-                     "version identified, security issue.  %s" %
-                     context.call_args_string
+                     "version identified, security issue."
             )
 
     elif (context.call_function_name_qual != 'ssl.wrap_socket' and
@@ -53,8 +51,7 @@ def ssl_with_bad_version(context, config):
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
                 text="Function call with insecure SSL/TLS protocol "
-                     "identified, possible security issue.  %s" %
-                     context.call_args_string
+                     "identified, possible security issue."
             )
 
 
@@ -70,7 +67,7 @@ def ssl_with_bad_defaults(context, config):
                 confidence=bandit.MEDIUM,
                 text="Function definition identified with insecure SSL/TLS "
                      "protocol version by default, possible security "
-                     "issue.  %s" % context.call_args_string
+                     "issue."
             )
 
 
@@ -87,5 +84,5 @@ def ssl_with_no_version(context):
                 confidence=bandit.MEDIUM,
                 text="ssl.wrap_socket call with no SSL/TLS protocol version "
                      "specified, the default SSLv23 could be insecure, "
-                     "possible security issue.  %s" % context.call_args_string
+                     "possible security issue."
             )

@@ -30,7 +30,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="subprocess call with shell=True identified, security "
-                     "issue.  %s" % context.call_args_string
+                     "issue."
             )
 
 
@@ -61,7 +61,7 @@ def any_other_function_with_shell_equals_true(context, config):
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
                 text="Function call with shell=True parameter identifed, "
-                     "possible security issue.  %s" % context.call_args_string
+                     "possible security issue."
                 )
 
 
@@ -106,6 +106,5 @@ def start_process_with_partial_path(context, config):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text=("Starting a process with a partial executable path"
-                          " %s" % context.call_args_string)
+                    text="Starting a process with a partial executable path"
                 )

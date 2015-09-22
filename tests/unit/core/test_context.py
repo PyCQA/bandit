@@ -63,23 +63,6 @@ class ContextTests(testtools.TestCase):
         new_context = context.Context()
         self.assertIsNone(new_context.call_args_count)
 
-    @mock.patch('bandit.core.utils.ast_args_to_str')
-    def test_call_args_string(self, ast_args_to_str):
-        expected_string = 'spam eggs'
-        ast_args_to_str.return_value = expected_string
-        ref_call = mock.Mock()
-        ref_call.args = ['spam', 'eggs']
-        ref_context = dict(call=ref_call)
-        new_context = context.Context(context_object=ref_context)
-        self.assertEqual(expected_string, new_context.call_args_string)
-
-        ref_context = dict(call=None)
-        new_context = context.Context(context_object=ref_context)
-        self.assertEqual('', new_context.call_args_string)
-
-        new_context = context.Context()
-        self.assertEqual('', new_context.call_args_string)
-
     def test_call_function_name(self):
         expected_string = 'spam'
         ref_context = dict(name=expected_string)

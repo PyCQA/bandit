@@ -76,17 +76,6 @@ class Context():
             return None
 
     @property
-    def call_args_string(self):
-        '''Get a string representation of the call arguments
-
-        :return: Returns a string representation of the call arguments
-        '''
-        if 'call' in self._context and hasattr(self._context['call'], 'args'):
-            return utils.ast_args_to_str(self._context['call'].args)
-        else:
-            return ''
-
-    @property
     def call_function_name(self):
         '''Get the name (not FQ) of a function call
 
