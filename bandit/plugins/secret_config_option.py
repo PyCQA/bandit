@@ -34,8 +34,7 @@ def password_config_option_not_marked_secret(context, config):
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
                 text="oslo config option not marked secret=True "
-                     "identifed, security issue.  %s" %
-                     context.call_args_string
+                     "identifed, security issue."
             )
         # Checks whether secret is not True, for example when its set to a
         # variable, secret=secret.
@@ -44,5 +43,5 @@ def password_config_option_not_marked_secret(context, config):
                 severity=bandit.LOW,
                 confidence=bandit.MEDIUM,
                 text="oslo config option possibly not marked secret=True "
-                     "identified.  %s" % context.call_args_string
+                     "identified."
             )

@@ -27,12 +27,6 @@ logger = logging.getLogger(__name__)
 """Various helper functions."""
 
 
-def ast_args_to_str(args):
-        res = ('\n\tArgument/s:\n\t\t%s' %
-               '\n\t\t'.join([ast.dump(arg) for arg in args]))
-        return res
-
-
 def _get_attr_qual_name(node, aliases):
     '''Get a the full name for the attribute node.
 
@@ -41,7 +35,7 @@ def _get_attr_qual_name(node, aliases):
     Attributes. This will give you how the code referenced the name but
     will not tell you what the name actually refers to. If we
     encounter a node without a static name we punt with an
-    empty string. If this encounters something more comples, such as
+    empty string. If this encounters something more complex, such as
     foo.mylist[0](a,b) we just return empty string.
 
     :param node: AST Name or Attribute node

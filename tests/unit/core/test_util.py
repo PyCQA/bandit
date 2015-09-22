@@ -259,22 +259,6 @@ class UtilTests(testtools.TestCase):
         res = b_utils.escaped_bytes_representation(b"ascii\u0000\uffff")
         self.assertEqual(res, b"ascii\\x00\\uffff")
 
-    def test_ast_args_to_str(self):
-        call_node = ast.parse('foo(a, b)')
-        args_str = b_utils.ast_args_to_str(call_node.body[0].value.args)
-        expected = ("\n\tArgument/s:\n\t\tName(id='a', ctx=Load())"
-                    "\n\t\tName(id='b', ctx=Load())")
-        self.assertEqual(expected, args_str)
-        call_node = ast.parse("foo(True, 1, 'cc')")
-        args_str = b_utils.ast_args_to_str(call_node.body[0].value.args)
-        if six.PY2:
-            expected = ("\n\tArgument/s:\n\t\tName(id='True', ctx=Load())"
-                        "\n\t\tNum(n=1)\n\t\tStr(s='cc')")
-        else:
-            expected = ("\n\tArgument/s:\n\t\tNameConstant(value=True)"
-                        "\n\t\tNum(n=1)\n\t\tStr(s='cc')")
-        self.assertEqual(expected, args_str)
-
     def test_deepgetattr(self):
         a = type('', (), {})
         a.b = type('', (), {})
