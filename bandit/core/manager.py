@@ -19,7 +19,7 @@ import logging
 import os
 import sys
 
-from bandit.core import constants as constants
+from bandit.core import constants as b_constants
 from bandit.core import extension_loader
 from bandit.core import meta_ast as b_meta_ast
 from bandit.core import node_visitor as b_node_visitor
@@ -64,9 +64,9 @@ class BanditManager():
                     profile_name, profile
                 )
             else:
-                logger.error('unable to find profile (%s) in config file: %s',
-                             profile_name, self.b_conf.config_file)
-                sys.exit(2)
+                raise RuntimeError('unable to find profile (%s) in config'
+                                   'file: %s' % (profile_name,
+                                                 self.b_conf.config_file))
         else:
             profile = None
 
@@ -84,22 +84,15 @@ class BanditManager():
     def has_tests(self):
         return self.b_ts.has_tests
 
-    def results_count(self, sev_filter=0, conf_filter=0):
+    def results_count(self, sev_filter=b_constants.LOW,
+                      conf_filter=b_constants.LOW):
         '''Return the count of results
 
         :param sev_filter: Severity level to filter lower
         :param conf_filter: Confidence level to filter
         :return: Number of results in the set
         '''
-        count = 0
-
-        rank = constants.RANKING
-
-        for issue in self.results:
-            if issue.filter(rank[sev_filter], rank[conf_filter]):
-                count += 1
-
-        return count
+        return sum(i.filter(sev_filter, conf_filter) for i in self.results)
 
     def output_results(self, lines, sev_level, conf_level, output_filename,
                        output_format):
@@ -132,12 +125,12 @@ class BanditManager():
                         lines=lines, out_format=output_format)
 
         except IOError:
-            print("Unable to write to file: %s" % self.out_file)
+            print("Unable to write to file: %s" % output_filename)
 
     def discover_files(self, targets, recursive=False):
         '''Add tests directly and from a directory to the test set
 
-        :param scope: The command line list of files and directories
+        :param targets: The command line list of files and directories
         :param recursive: True/False - whether to add all files from dirs
         :return:
         '''
@@ -258,7 +251,7 @@ class BanditManager():
         return score
 
 
-def _get_files_from_dir(files_dir, included_globs='*.py',
+def _get_files_from_dir(files_dir, included_globs=['*.py'],
                         excluded_path_strings=None):
     if not excluded_path_strings:
         excluded_path_strings = []
