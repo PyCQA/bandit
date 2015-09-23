@@ -232,15 +232,16 @@ def main():
         print(b_mgr.b_ma)
 
     # trigger output of results by Bandit Manager
+    sev_level = constants.RANKING[args.severity - 1]
+    conf_level = constants.RANKING[args.confidence - 1]
     b_mgr.output_results(args.context_lines,
-                         constants.RANKING[args.severity - 1],
-                         constants.RANKING[args.confidence - 1],
+                         sev_level,
+                         conf_level,
                          args.output_file,
                          args.output_format)
 
     # return an exit code of 1 if there are results, 0 otherwise
-    if b_mgr.results_count(sev_filter=args.severity - 1,
-                           conf_filter=args.confidence - 1) > 0:
+    if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:
         sys.exit(1)
     else:
         sys.exit(0)
