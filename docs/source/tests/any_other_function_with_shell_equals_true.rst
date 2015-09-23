@@ -3,10 +3,10 @@ any_other_function_with_shell_equals_true
 
 Description
 -----------
-Th plugin test interrogates method calls for the presence of a keyword parameter
-`shell` equalling true. It is related to detection of shell injection issues and
-is intended to catch custom wrappers to vulnerable methods that may have been
-created.
+This plugin test interrogates method calls for the presence of a keyword
+parameter `shell` equalling true. It is related to detection of shell injection
+issues and is intended to catch custom wrappers to vulnerable methods that may
+have been created.
 
 Available Since
 ---------------
