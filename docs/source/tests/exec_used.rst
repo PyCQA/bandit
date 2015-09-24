@@ -29,4 +29,4 @@ Sample Output
 References
 ----------
 .. [1] https://docs.python.org/2.0/ref/exec.html
-__TODO__ : add info on exec and similar to sec best practice and link here
+.. [2] TODO : add info on exec and similar to sec best practice and link here
