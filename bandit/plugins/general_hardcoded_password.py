@@ -14,72 +14,67 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os.path
-import warnings
-
-from appdirs import site_data_dir
+import sys
 
 import bandit
 from bandit.core.test_properties import *
 
-_wordlist = []
+
+candidates = set(["password", "pass", "passwd", "pwd", "secret", "token",
+                  "secrete"])
 
 
-def find_word_list(cfg_word_list_f):
-    if not isinstance(cfg_word_list_f, str):
-        return None
-    try:
-        cfg_word_list_f % {'site_data_dir': ''}
-    except TypeError:
-        return cfg_word_list_f
-
-    site_data_dirs = ['.'] + site_data_dir("bandit", "",
-                                           multipath=True).split(':')
-    for dir in site_data_dirs:
-        word_list_path = cfg_word_list_f % {'site_data_dir': dir}
-        if os.path.isfile(word_list_path):
-            if dir == ".":
-                warnings.warn("Using relative path for word_list: %s"
-                              % word_list_path)
-            return word_list_path
-
-        raise RuntimeError("Could not substitute '%(site_data_dir)s' "
-                           "to a path with a valid word_list file")
+def _report(value):
+    return bandit.Issue(
+        severity=bandit.LOW,
+        confidence=bandit.MEDIUM,
+        text=("Possible hardcoded password: '%s'" % value))
 
 
-def _get_wordlist(config):
-    global _wordlist
-    if not len(_wordlist):
-        # try to read the word list file from config
-        if (config is not None and 'word_list' in config):
-            try:
-                word_list_file = find_word_list(config['word_list'])
-            except RuntimeError as e:
-                warnings.warn(e.message)
-                return
-
-        # try to open the word list file and read passwords from it
-        try:
-            f = open(word_list_file, 'r')
-        except (OSError, IOError):
-            raise RuntimeError("Could not open word_list (from config"
-                               " file): %s" % word_list_file)
-        else:
-            _wordlist = [word.strip() for word in f]
-            f.close()
-    return _wordlist
-
-
-@takes_config
 @checks('Str')
-def hardcoded_password(context, config):
-    word_list = _get_wordlist(config)
+def hardcoded_password_string(context):
+    node = context.node
+    if isinstance(node.parent, ast.Assign):
+        # looks for "candidate='some_string'"
+        for targ in node.parent.targets:
+            if isinstance(targ, ast.Name) and targ.id in candidates:
+                return _report(node.s)
 
-    # for every password in the list, check against the current string
-    for word in word_list:
-        if context.string_val and context.string_val == word:
-            return bandit.Issue(
-                severity=bandit.LOW,
-                confidence=bandit.LOW,
-                text="Possible hardcoded password '(%s)'" % word
-            )
+    elif isinstance(node.parent, ast.Index) and node.s in candidates:
+        # looks for "dict[candidate]='some_string'"
+        # assign -> subscript -> index -> string
+        assign = node.parent.parent.parent
+        if isinstance(assign, ast.Assign) and isinstance(assign.value,
+                                                         ast.Str):
+            return _report(assign.value.s)
+
+    elif isinstance(node.parent, ast.Compare):
+        # looks for "candidate == 'some_string'"
+        comp = node.parent
+        if isinstance(comp.left, ast.Name) and comp.left.id in candidates:
+            if isinstance(comp.comparators[0], ast.Str):
+                return _report(comp.comparators[0].s)
+
+
+@checks('Call')
+def hardcoded_password_funcarg(context):
+    # looks for "function(candidate='some_string')"
+    for kw in context.node.keywords:
+        if isinstance(kw.value, ast.Str) and kw.arg in candidates:
+            return _report(kw.value.s)
+
+
+@checks('FunctionDef')
+def hardcoded_password_default(context):
+    # looks for "def function(candidate='some_string')"
+
+    # this pads the list of default values with "None" if nothing is given
+    defs = [None] * (len(context.node.args.args) -
+                     len(context.node.args.defaults))
+    defs.extend(context.node.args.defaults)
+
+    # go through all (param, value)s and look for candidates
+    for key, val in zip(context.node.args.args, defs):
+        check = key.arg if sys.version_info.major > 2 else key.id  # Py3
+        if isinstance(val, ast.Str) and check in candidates:
+            return _report(val.s)

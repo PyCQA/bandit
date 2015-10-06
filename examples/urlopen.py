@@ -26,8 +26,7 @@ def test_urlopen():
     handler = urllib2.HTTPBasicAuthHandler()
     handler.add_password(realm='test',
                          uri='http://mysite.com',
-                         user='bob',
-                         passwd='blah')
+                         user='bob')
     opener = urllib2.build_opener(handler)
     urllib2.install_opener(opener)
     urllib2.urlopen('file:///bin/ls')
