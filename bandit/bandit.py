@@ -127,7 +127,7 @@ def main():
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
-        action='store', default=-1, type=int,
+        action='store', default=3, type=int,
         help='max number of code lines to display for each issue identified'
     )
     parser.add_argument(

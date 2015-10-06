@@ -15,7 +15,8 @@
 # under the License.
 
 from bandit.core import constants
-from bandit.core import utils
+
+from six.moves import xrange
 
 import linecache
 
@@ -50,22 +51,25 @@ class Issue(object):
         return (rank.index(self.severity) >= rank.index(severity) and
                 rank.index(self.confidence) >= rank.index(confidence))
 
-    def get_code(self, max_lines=-1, tabbed=False):
+    def get_code(self, max_lines=3, tabbed=False):
         '''Gets lines of code from a file the generated this issue.
 
         :param max_lines: Max lines of context to return
         :param tabbed: Use tabbing in the output
         :return: strings of code
         '''
-        lc = linecache
-        file_len = sum(1 for line in open(self.fname))
-        lines = utils.lines_with_context(self.lineno, self.linerange,
-                                         max_lines, file_len)
+        lines = []
+        max_lines = max(max_lines, 1)
+        lmin = max(1, self.lineno - max_lines / 2)
+        lmax = lmin + len(self.linerange) + max_lines - 1
 
-        if not tabbed:
-            return ''.join([lc.getline(self.fname, l) for l in lines])
-        return ''.join(["%s\t%s" % (l, lc.getline(self.fname, l))
-                        for l in lines])
+        tmplt = "%i\t%s" if tabbed else "%i %s"
+        for line in xrange(int(lmin), int(lmax)):
+            text = linecache.getline(self.fname, line)
+            if not len(text):
+                break
+            lines.append(tmplt % (line, text))
+        return ''.join(lines)
 
     def as_dict(self, with_code=True):
         '''Convert the issue to a dict of values for outputting.'''
