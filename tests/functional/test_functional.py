@@ -406,8 +406,8 @@ class FunctionalTests(testtools.TestCase):
         )
 
         self.assertEqual(1, issues[0].lineno)
-        self.assertEqual(range(1, 3), issues[0].linerange)
+        self.assertEqual(list(range(1, 3)), issues[0].linerange)
         self.assertIn('subprocess', issues[0].get_code())
         self.assertEqual(5, issues[1].lineno)
-        self.assertEqual(range(3, 6+1), issues[1].linerange)
+        self.assertEqual(list(range(3, 6+1)), issues[1].linerange)
         self.assertIn('shell=True', issues[1].get_code())

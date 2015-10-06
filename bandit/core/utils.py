@@ -296,7 +296,7 @@ def linerange(node):
             setattr(node, key, strip[key])
 
     if lines_max > -1:
-        return range(lines_min, lines_max + 1)
+        return list(range(lines_min, lines_max + 1))
     return [0, 1]
 
 
@@ -308,7 +308,7 @@ def linerange_fix(node):
         start = min(lines)
         delta = node.sibling.lineno - start
         if delta > 1:
-            return range(start, node.sibling.lineno)
+            return list(range(start, node.sibling.lineno))
     return lines
 
 
