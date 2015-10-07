@@ -161,11 +161,6 @@ class FunctionalTests(testtools.TestCase):
         expect = {'SEVERITY': {'LOW': 2}, 'CONFIDENCE': {'HIGH': 2}}
         self.check_example('imports.py', expect)
 
-    def test_multiline_str(self):
-        '''Test docstrings and multi-line strings are handled properly.'''
-        expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'MEDIUM': 3}}
-        self.check_example('multiline-str.py', expect)
-
     def test_mktemp(self):
         '''Test for `tempfile.mktemp`.'''
         expect = {'SEVERITY': {'MEDIUM': 4}, 'CONFIDENCE': {'HIGH': 4}}
@@ -398,22 +393,21 @@ class FunctionalTests(testtools.TestCase):
 
     def test_multiline_code(self):
         '''Test issues in multiline statements return code as expected.'''
-        self.run_example('multiline-str.py')
+        self.run_example('multiline_statement.py')
         self.assertEqual(0, len(self.b_mgr.skipped))
         self.assertEqual(1, len(self.b_mgr.files_list))
-        self.assertTrue(self.b_mgr.files_list[0].endswith('multiline-str.py'))
+        self.assertTrue(self.b_mgr.files_list[0].endswith(
+                        'multiline_statement.py'))
+
         issues = self.b_mgr.get_issue_list()
-        self.assertEqual(3, len(issues))
+        self.assertEqual(2, len(issues))
         self.assertTrue(
-            issues[0].fname.endswith('examples/multiline-str.py')
+            issues[0].fname.endswith('examples/multiline_statement.py')
         )
 
-        self.assertEqual(4, issues[0].lineno)
-        self.assertEqual(range(2, 7), issues[0].linerange)
-        self.assertIn('/tmp', issues[0].get_code())
-        self.assertEqual(18, issues[1].lineno)
-        self.assertEqual(range(16, 19), issues[1].linerange)
-        self.assertIn('/tmp', issues[1].get_code())
-        self.assertEqual(23, issues[2].lineno)
-        self.assertEqual(range(22, 31), issues[2].linerange)
-        self.assertIn('/tmp', issues[2].get_code())
+        self.assertEqual(1, issues[0].lineno)
+        self.assertEqual(range(1, 3), issues[0].linerange)
+        self.assertIn('subprocess', issues[0].get_code())
+        self.assertEqual(5, issues[1].lineno)
+        self.assertEqual(range(3, 6+1), issues[1].linerange)
+        self.assertIn('shell=True', issues[1].get_code())

@@ -26,7 +26,7 @@ def hardcoded_tmp_directory(context, config):
     else:
         tmp_dirs = ['/tmp', '/var/tmp', '/dev/shm']
 
-    if any(s in context.string_val for s in tmp_dirs):
+    if any(context.string_val.startswith(s) for s in tmp_dirs):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
