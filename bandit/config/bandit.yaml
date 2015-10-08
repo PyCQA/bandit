@@ -39,7 +39,9 @@ profiles:
             - exec_used
             - execute_with_run_as_root_equals_true
             - hardcoded_bind_all_interfaces
-            - hardcoded_password
+            - hardcoded_password_string
+            - hardcoded_password_funcarg
+            - hardcoded_password_default
             - hardcoded_sql_expressions
             - hardcoded_tmp_directory
             - jinja2_autoescape_false
@@ -82,7 +84,7 @@ profiles:
 blacklist_calls:
     bad_name_sets:
         - pickle:
-            qualnames: 
+            qualnames:
                 - pickle.loads
                 - pickle.load
                 - pickle.Unpickler
@@ -96,7 +98,7 @@ blacklist_calls:
             message: >
                 Deserialization with the marshal module is possibly dangerous.
         - md5:
-            qualnames: 
+            qualnames:
                 - hashlib.md5
                 - Crypto.Hash.MD2.new
                 - Crypto.Hash.MD4.new
@@ -141,7 +143,7 @@ blacklist_calls:
                 Use of unsafe yaml load. Allows instantiation of arbitrary
                 objects. Consider yaml.safe_load().
         - urllib_urlopen:
-            qualnames: 
+            qualnames:
                 - urllib.urlopen
                 - urllib.urlretrieve
                 - urllib.URLopener
@@ -173,7 +175,7 @@ blacklist_calls:
         # Most of this is based off of Christian Heimes' work on defusedxml:
         #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
         - xml_bad_cElementTree:
-            qualnames: 
+            qualnames:
                 - xml.etree.cElementTree.parse
                 - xml.etree.cElementTree.iterparse
                 - xml.etree.cElementTree.fromstring
