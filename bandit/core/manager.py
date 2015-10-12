@@ -35,7 +35,7 @@ class BanditManager():
     scope = []
 
     def __init__(self, config, agg_type, debug=False, verbose=False,
-                 profile_name=None):
+                 profile_name=None, ignore_nosec=False):
         '''Get logger, config, AST handler, and result store ready
 
         :param config: config options object
@@ -44,10 +44,12 @@ class BanditManager():
         :param debug: Whether to show debug messsages or not
         :param verbose: Whether to show verbose output
         :param profile_name: Optional name of profile to use (from cmd line)
+        :param ignore_nosec: Whether to ignore #nosec or not
         :return:
         '''
         self.debug = debug
         self.verbose = verbose
+        self.ignore_nosec = ignore_nosec
         self.b_conf = config
         self.files_list = []
         self.excluded_files = []
@@ -254,7 +256,7 @@ class BanditManager():
         score = []
         if fdata is not None:
             res = b_node_visitor.BanditNodeVisitor(
-                fname, self.b_conf, b_ma, b_ts, self.debug
+                fname, self.b_conf, b_ma, b_ts, self.debug, self.ignore_nosec
             )
             score, metrics = res.process(fdata)
             self.results.extend(res.tester.results)

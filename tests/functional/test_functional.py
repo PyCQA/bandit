@@ -49,7 +49,7 @@ class FunctionalTests(testtools.TestCase):
         self.b_mgr.b_conf._settings['plugins_dir'] = path
         self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf)
 
-    def run_example(self, example_script):
+    def run_example(self, example_script, ignore_nosec=False):
         '''A helper method to run the specified test
 
         This method runs the test, which populates the self.b_mgr.scores
@@ -58,10 +58,11 @@ class FunctionalTests(testtools.TestCase):
         :param example_script: Filename of an example script to test
         '''
         path = os.path.join(os.getcwd(), 'examples', example_script)
+        self.b_mgr.ignore_nosec = ignore_nosec
         self.b_mgr.discover_files([path], True)
         self.b_mgr.run_tests()
 
-    def check_example(self, example_script, expect):
+    def check_example(self, example_script, expect, ignore_nosec=False):
         '''A helper method to test the scores for example scripts.
 
         :param example_script: Filename of an example script to test
@@ -69,7 +70,7 @@ class FunctionalTests(testtools.TestCase):
         '''
         # reset scores for subsequent calls to check_example
         self.b_mgr.scores = []
-        self.run_example(example_script)
+        self.run_example(example_script, ignore_nosec=ignore_nosec)
         expected = 0
         result = 0
         for test_scores in self.b_mgr.scores:
@@ -271,6 +272,11 @@ class FunctionalTests(testtools.TestCase):
         '''Test `#nosec` and `#noqa` comments.'''
         expect = {'SEVERITY': {'LOW': 5}, 'CONFIDENCE': {'HIGH': 5}}
         self.check_example('skip.py', expect)
+
+    def test_ignore_skip(self):
+        ''' Test --ignore-nosec flag.'''
+        expect = {'SEVERITY': {'LOW': 7}, 'CONFIDENCE': {'HIGH': 7}}
+        self.check_example('skip.py', expect, ignore_nosec=True)
 
     def test_sql_statements(self):
         '''Test for SQL injection through string building.'''

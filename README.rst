@@ -59,10 +59,10 @@ using only the plugins listed in the ``ShellInjection`` profile::
 
 Usage::
 
-    bandit -h
+    $ bandit -h
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
-                  [-p PROFILE] [-l] [-f {txt,json,csv,xml}] [-o OUTPUT_FILE] [-v]
-                  [-d]
+                  [-p PROFILE] [-l] [-i] [-f {txt,json,csv,xml}]
+                  [-o OUTPUT_FILE] [-v] [-d] [--ignore-nosec]
                   targets [targets ...]
 
     Bandit - a Python source code analyzer.
@@ -98,6 +98,7 @@ Usage::
       -v, --verbose         show extra information like excluded and included
                             files
       -d, --debug           turn on debug mode
+      --ignore-nosec        do not skip lines with # nosec comments
 
 
 Configuration

@@ -171,8 +171,13 @@ def main():
         '-d', '--debug', dest='debug', action='store_true',
         help='turn on debug mode'
     )
+    parser.add_argument(
+        '--ignore-nosec', dest='ignore_nosec', action='store_true',
+        help='do not skip lines with # nosec comments'
+    )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
+    parser.set_defaults(ignore_nosec=False)
 
     plugin_list = '\n\t'.join(sorted(extension_mgr.plugin_names))
     parser.epilog = ('The following plugin suites were discovered and'
@@ -201,7 +206,8 @@ def main():
 
     b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
                                     profile_name=args.profile,
-                                    verbose=args.verbose)
+                                    verbose=args.verbose,
+                                    ignore_nosec=args.ignore_nosec)
 
     if args.output_format != "json":
         logger.info("using config: %s", config_file)

@@ -34,8 +34,9 @@ class BanditNodeVisitor(object):
                         'function': None, 'lineno': None, 'skip_lines': None}
 
     def __init__(self, fname, config, metaast, testset,
-                 debug):
+                 debug, ignore_nosec):
         self.debug = debug
+        self.ignore_nosec = ignore_nosec
         self.seen = 0
         self.scores = {
             'SEVERITY': [0] * len(constants.RANKING),
@@ -267,11 +268,13 @@ class BanditNodeVisitor(object):
 
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
-            if ("# nosec" in self.lines[node.lineno - 1] or
-                    "#nosec" in self.lines[node.lineno - 1]):
-                logger.debug("skipped, nosec")
-                self.metrics['nosec'] += 1
-                return
+
+            if not self.ignore_nosec:
+                if ("# nosec" in self.lines[node.lineno - 1] or
+                        "#nosec" in self.lines[node.lineno - 1]):
+                    logger.debug("skipped, nosec")
+                    self.metrics['nosec'] += 1
+                    return
 
         self.context['node'] = node
         self.context['linerange'] = b_utils.linerange_fix(node)
