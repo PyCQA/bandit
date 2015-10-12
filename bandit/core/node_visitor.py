@@ -279,6 +279,7 @@ class BanditNodeVisitor(object):
         logger.debug("entering: %s %s [%s]", hex(id(node)), type(node),
                      self.depth)
         self.depth += 1
+        logger.debug(self.context)
 
         method = 'visit_' + node.__class__.__name__
         visitor = getattr(self, method, self.generic_visit)
