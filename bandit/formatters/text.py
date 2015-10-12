@@ -16,6 +16,7 @@ import collections
 import datetime
 import logging
 
+from bandit.core import constants
 from bandit.core import utils
 
 logger = logging.getLogger(__name__)
@@ -72,6 +73,30 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
                             color['DEFAULT']))
         for fname in manager.skipped:
             tmpstr_list.append("\t%s\n" % fname)
+
+    # print out basic metrics from run
+    metrics_summary = ''
+    for (label, metric) in [
+        ('Total lines of code', 'loc'),
+        ('Total lines skipped (#nosec)', 'nosec')
+    ]:
+        metrics_summary += "\t{0}: {1}\n".format(
+            label, manager.metrics['_totals'][metric]
+        )
+    for (criteria, default) in constants.CRITERIA:
+        metrics_summary += "\tTotal issues (by {0}):\n".format(
+            criteria.lower()
+        )
+        for rank in constants.RANKING:
+            metrics_summary += "\t\t{0}: {1}\n".format(
+                rank.capitalize(),
+                manager.metrics['_totals']['{0}.{1}'.format(criteria, rank)]
+            )
+    tmpstr_list.append("\n%sRun metrics:%s\n%s" % (
+        color['HEADER'],
+        color['DEFAULT'],
+        metrics_summary
+    ))
 
     # print which files were skipped and why
     tmpstr_list.append("\n%sFiles skipped (%s):%s\n" % (

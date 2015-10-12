@@ -75,6 +75,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
         machine_output['results'] = sorted(collector,
                                            key=itemgetter('filename'))
 
+    machine_output['metrics'] = manager.metrics
+
     # timezone agnostic format
     TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 

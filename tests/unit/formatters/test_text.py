@@ -47,6 +47,16 @@ class TextFormatterTests(testtools.TestCase):
 
         self.manager.results.append(self.issue)
 
+        #mock up the metrics
+        self.manager.metrics = {}
+        for key in ['_totals', 'binding.py']:
+            self.manager.metrics[key] = {'loc':4, 'nosec':2}
+            for (criteria, default) in constants.CRITERIA:
+                for rank in constants.RANKING:
+                    self.manager.metrics[key]['{0}.{1}'.format(
+                        criteria, rank
+                    )] = 0
+
     def test_report(self):
         self.manager.verbose = True
         file_list = ['binding.py']
@@ -67,4 +77,12 @@ class TextFormatterTests(testtools.TestCase):
             self.assertIn(expected, data)
             expected = '   Location: %s:%d' % (self.tmp_fname,
                                                self.context['lineno'])
+            self.assertIn(expected, data)
+            expected = 'Total lines of code: {0}'.format(
+                self.manager.metrics['_totals']['loc']
+            )
+            self.assertIn(expected, data)
+            expected = 'Total lines skipped (#nosec): {0}'.format(
+                self.manager.metrics['_totals']['nosec']
+            )
             self.assertIn(expected, data)
