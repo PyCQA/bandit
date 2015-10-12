@@ -109,7 +109,8 @@ def main():
 
     # now do normal startup
     parser = argparse.ArgumentParser(
-        description='Bandit - a Python source code analyzer.'
+        description='Bandit - a Python source code analyzer.',
+        formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
         'targets', metavar='targets', type=str, nargs='+',
@@ -173,9 +174,9 @@ def main():
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
 
+    plugin_list = '\n\t'.join(sorted(extension_mgr.plugin_names))
     parser.epilog = ('The following plugin suites were discovered and'
-                     ' loaded: [' +
-                     ', '.join(extension_mgr.plugin_names) + ']')
+                     ' loaded:\n\t{0}\n'.format(plugin_list))
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
