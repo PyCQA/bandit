@@ -20,7 +20,8 @@ from bandit.core.test_properties import *
 
 @checks('Call')
 def paramiko_calls(context):
-    issue_text = 'Probable Paramiko shell execution, check inputs'
+    issue_text = ('Possible shell injection via Paramiko call, check inputs '
+                  'are properly sanitized.')
     for module in ['paramiko']:
         if context.is_module_imported_like(module):
             if context.call_function_name in ['exec_command', 'invoke_shell']:
