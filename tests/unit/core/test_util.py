@@ -272,21 +272,3 @@ class UtilTests(testtools.TestCase):
         self.assertEqual('deep value', b_utils.deepgetattr(a, 'b.c.d'))
         self.assertEqual('deep value 2', b_utils.deepgetattr(a, 'b.c.d2'))
         self.assertRaises(AttributeError, b_utils.deepgetattr, a.b, 'z')
-
-    def test_lines_with_context(self):
-        res = b_utils.lines_with_context(2, [0, 1, 2, 3, 4], 20, 100)
-        self.assertEqual([-1, 0, 1, 2, 3, 4, 5], res)
-        res = b_utils.lines_with_context(8, [0, 1, 2, 3, 4, 5, 6, 7], 3, 100)
-        self.assertEqual([7, 8], res)
-        res = b_utils.lines_with_context(8, [0, 1, 2, 3, 4, 5, 6, 7], 3, 6)
-        self.assertEqual([2, 3, 4], res)
-        res = b_utils.lines_with_context(1, [0, 1, 2, 3, 4, 5, 6, 7], 3, 6)
-        self.assertEqual([0, 1, 2], res)
-        res = b_utils.lines_with_context(5, [5, 6, 7], 4, 6)
-        self.assertEqual([4, 5, 6, 7], res)
-        res = b_utils.lines_with_context(0, [0], 0, 0)
-        self.assertEqual([], res)
-        self.assertRaises(
-            ValueError, b_utils.lines_with_context,
-            3, [5, 6, 7], 4, 6
-        )
