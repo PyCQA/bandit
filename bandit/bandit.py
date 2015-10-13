@@ -229,8 +229,8 @@ def main():
 
     # initiate execution of tests within Bandit Manager
     b_mgr.run_tests()
-    if args.debug:
-        print(b_mgr.b_ma)
+    logger.debug(b_mgr.b_ma)
+    logger.debug(b_mgr.metrics)
 
     # trigger output of results by Bandit Manager
     sev_level = constants.RANKING[args.severity - 1]
