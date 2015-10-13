@@ -175,6 +175,12 @@ def main():
         '--ignore-nosec', dest='ignore_nosec', action='store_true',
         help='do not skip lines with # nosec comments'
     )
+    parser.add_argument(
+        '-x', '--exclude', dest='excluded_paths', action='store',
+        default='', help='Comma separated list of paths to exclude from scan. '
+                         'Note that these are in addition to the excluded '
+                         'paths provided in the config file.'
+    )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
     parser.set_defaults(ignore_nosec=False)
@@ -231,7 +237,7 @@ def main():
         sys.exit(2)
 
     # initiate file discovery step within Bandit Manager
-    b_mgr.discover_files(args.targets, args.recursive)
+    b_mgr.discover_files(args.targets, args.recursive, args.excluded_paths)
 
     # initiate execution of tests within Bandit Manager
     b_mgr.run_tests()

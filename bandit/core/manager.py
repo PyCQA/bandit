@@ -131,7 +131,7 @@ class BanditManager():
         except IOError:
             print("Unable to write to file: %s" % output_filename)
 
-    def discover_files(self, targets, recursive=False):
+    def discover_files(self, targets, recursive=False, excluded_paths=''):
         '''Add tests directly and from a directory to the test set
 
         :param targets: The command line list of files and directories
@@ -145,6 +145,11 @@ class BanditManager():
 
         excluded_path_strings = self.b_conf.get_option('exclude_dirs') or []
         included_globs = self.b_conf.get_option('include') or ['*.py']
+
+        # if there are command line provided exclusions add them to the list
+        if excluded_paths:
+            for path in excluded_paths.split(','):
+                excluded_path_strings.append(path)
 
         # build list of files we will analyze
         for fname in targets:

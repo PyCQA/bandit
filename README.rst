@@ -63,6 +63,7 @@ Usage::
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
                   [-p PROFILE] [-l] [-i] [-f {txt,json,csv,xml}]
                   [-o OUTPUT_FILE] [-v] [-d] [--ignore-nosec]
+                  [--exclude EXCLUDED_PATHS]
                   targets [targets ...]
 
     Bandit - a Python source code analyzer.
@@ -99,6 +100,10 @@ Usage::
                             files
       -d, --debug           turn on debug mode
       --ignore-nosec        do not skip lines with # nosec comments
+      -x, --exclude EXCLUDED_PATHS
+                            Comma separated list of paths to exclude from scan.
+                            Note that these are in addition to the excluded paths
+                            provided in the config file.
 
 
 Configuration
