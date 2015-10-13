@@ -320,13 +320,13 @@ def _get_issue_counts(scores):
     '''
     issue_counts = {}
     for score in scores:
-        for res in b_constants.CRITERIA:
+        for (criteria, default) in b_constants.CRITERIA:
             for i, rank in enumerate(b_constants.RANKING):
-                label = '{0}.{1}'.format(res, rank)
+                label = '{0}.{1}'.format(criteria, rank)
                 if label not in issue_counts:
                     issue_counts[label] = 0
                     count = (
-                        score[res][i] /
+                        score[criteria][i] /
                         b_constants.RANKING_VALUES[rank]
                     )
                     issue_counts[label] += count

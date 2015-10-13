@@ -34,7 +34,7 @@ SKIP_FLAGS = ['nosec', ]
 
 RANKING = ['UNDEFINED', 'LOW', 'MEDIUM', 'HIGH']
 RANKING_VALUES = {'UNDEFINED': 1, 'LOW': 3, 'MEDIUM': 5, 'HIGH': 10}
-CRITERIA = {'SEVERITY': 'UNDEFINED', 'CONFIDENCE': 'UNDEFINED'}
+CRITERIA = [('SEVERITY', 'UNDEFINED'), ('CONFIDENCE', 'UNDEFINED')]
 
 # add each ranking to globals, to allow direct access in module name space
 for rank in RANKING:

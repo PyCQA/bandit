@@ -99,12 +99,12 @@ class FunctionalTests(testtools.TestCase):
                 self.assertEqual(expect[k], metrics['_totals'][k])
         # test issue counts
         if 'issues' in expect:
-            for res in C.CRITERIA:
+            for (criteria, default) in C.CRITERIA:
                 for rank in C.RANKING:
-                    label = '{0}.{1}'.format(res, rank)
+                    label = '{0}.{1}'.format(criteria, rank)
                     expected = 0
-                    if expect['issues'].get(res, None).get(rank, None):
-                        expected = expect['issues'][res][rank]
+                    if expect['issues'].get(criteria, None).get(rank, None):
+                        expected = expect['issues'][criteria][rank]
                     self.assertEqual(expected, metrics['_totals'][label])
 
     def test_binding(self):
