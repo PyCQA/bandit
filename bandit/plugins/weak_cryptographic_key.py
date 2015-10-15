@@ -20,6 +20,7 @@ def _classify_key_size(key_type, key_size):
     key_sizes = {
         'DSA': [(1024, bandit.HIGH), (2048, bandit.MEDIUM)],
         'RSA': [(1024, bandit.HIGH), (2048, bandit.MEDIUM)],
+        'EC': [(160, bandit.HIGH), (224, bandit.MEDIUM)],
     }
 
     for size, level in key_sizes[key_type]:
@@ -37,16 +38,28 @@ def _weak_crypto_key_size_cryptography_io(context):
         'generate_private_key': 'DSA',
         'cryptography.hazmat.primitives.asymmetric.rsa.'
         'generate_private_key': 'RSA',
+        'cryptography.hazmat.primitives.asymmetric.ec.'
+        'generate_private_key': 'EC',
     }
     arg_position = {
         'DSA': 0,
         'RSA': 1,
+        'EC': 0,
     }
     key_type = func_key_type.get(context.call_function_name_qual)
-    if key_type:
+    if key_type in ['DSA', 'RSA']:
         key_size = (context.get_call_arg_value('key_size') or
                     context.get_call_arg_at_position(arg_position[key_type]) or
                     2048)
+        return _classify_key_size(key_type, key_size)
+    elif key_type == 'EC':
+        curve_key_sizes = {
+            'SECP192R1': 192,
+            'SECT163K1': 163,
+            'SECT163R2': 163,
+        }
+        curve = context.call_args[arg_position[key_type]]
+        key_size = curve_key_sizes[curve] if curve in curve_key_sizes else 224
         return _classify_key_size(key_type, key_size)
 
 
