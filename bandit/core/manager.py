@@ -14,7 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from collections import Counter
 import fnmatch
 import logging
 import os
@@ -23,6 +22,7 @@ import sys
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
 from bandit.core import meta_ast as b_meta_ast
+from bandit.core import metrics
 from bandit.core import node_visitor as b_node_visitor
 from bandit.core import test_set as b_test_set
 
@@ -56,8 +56,8 @@ class BanditManager():
         self.b_ma = b_meta_ast.BanditMetaAst()
         self.skipped = []
         self.results = []
-        self.metrics = {}
         self.agg_type = agg_type
+        self.metrics = metrics.Metrics()
 
         # if the profile name was specified, try to find it in the config
         if profile_name:
@@ -221,11 +221,12 @@ class BanditManager():
                 with open(fname, 'rU') as fdata:
                     try:
                         # parse the current file
-                        score, metric = self._execute_ast_visitor(
-                            fname, fdata, self.b_ma, self.b_ts)
+                        lines = fdata.readlines()
+                        self.metrics.begin(fname)
+                        self.metrics.count_locs(lines)
+                        score = self._execute_ast_visitor(fname, lines)
                         self.scores.append(score)
-                        metric.update(_get_issue_counts([score, ]))
-                        self.metrics[fname] = metric
+                        self.metrics.count_issues([score, ])
                     except KeyboardInterrupt as e:
                         sys.exit(2)
             except IOError as e:
@@ -244,28 +245,23 @@ class BanditManager():
         self.files_list = new_files_list
 
         # do final aggregation of metrics
-        c = Counter()
-        for fname in self.metrics:
-            c.update(self.metrics[fname])
-        self.metrics['_totals'] = dict(c)
+        self.metrics.aggregate()
 
-    def _execute_ast_visitor(self, fname, fdata, b_ma, b_ts):
+    def _execute_ast_visitor(self, fname, lines):
         '''Execute AST parse on each file
 
         :param fname: The name of the file being parsed
-        :param fdata: The file data of the file being parsed
-        :param b_ma: The class Meta AST instance
-        :param b_ts: The class test set instance
+        :param lines: The lines of code to process
         :return: The accumulated test score
         '''
         score = []
-        if fdata is not None:
-            res = b_node_visitor.BanditNodeVisitor(
-                fname, self.b_conf, b_ma, b_ts, self.debug, self.ignore_nosec
-            )
-            score, metrics = res.process(fdata)
-            self.results.extend(res.tester.results)
-        return score, metrics
+        res = b_node_visitor.BanditNodeVisitor(fname, self.b_conf, self.b_ma,
+                                               self.b_ts, self.debug,
+                                               self.ignore_nosec, self.metrics)
+
+        score = res.process(lines)
+        self.results.extend(res.tester.results)
+        return score
 
 
 def _get_files_from_dir(files_dir, included_globs=['*.py'],
@@ -317,24 +313,3 @@ def _matches_glob_list(filename, glob_list):
         if fnmatch.fnmatch(filename, glob):
             return True
     return False
-
-
-def _get_issue_counts(scores):
-    '''Get issue counts aggregated by confidence/severity rankings.
-
-    :param scores: list of scores to aggregate / count
-    :return: aggregated total (count) of issues identified
-    '''
-    issue_counts = {}
-    for score in scores:
-        for (criteria, default) in b_constants.CRITERIA:
-            for i, rank in enumerate(b_constants.RANKING):
-                label = '{0}.{1}'.format(criteria, rank)
-                if label not in issue_counts:
-                    issue_counts[label] = 0
-                    count = (
-                        score[criteria][i] /
-                        b_constants.RANKING_VALUES[rank]
-                    )
-                    issue_counts[label] += count
-    return issue_counts

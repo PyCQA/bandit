@@ -34,7 +34,7 @@ class BanditNodeVisitor(object):
                         'function': None, 'lineno': None, 'skip_lines': None}
 
     def __init__(self, fname, config, metaast, testset,
-                 debug, ignore_nosec):
+                 debug, ignore_nosec, metrics):
         self.debug = debug
         self.ignore_nosec = ignore_nosec
         self.seen = 0
@@ -42,7 +42,6 @@ class BanditNodeVisitor(object):
             'SEVERITY': [0] * len(constants.RANKING),
             'CONFIDENCE': [0] * len(constants.RANKING)
         }
-        self.metrics = {'loc': 0, 'nosec': 0}
         self.depth = 0
         self.fname = fname
         self.config = config
@@ -65,6 +64,7 @@ class BanditNodeVisitor(object):
             self.namespace = ""
         logger.debug('Module qualified name: %s', self.namespace)
         self.lines = []
+        self.metrics = metrics
 
     def visit_ClassDef(self, node):
         '''Visitor for AST ClassDef node
@@ -273,7 +273,7 @@ class BanditNodeVisitor(object):
                 if ("# nosec" in self.lines[node.lineno - 1] or
                         "#nosec" in self.lines[node.lineno - 1]):
                     logger.debug("skipped, nosec")
-                    self.metrics['nosec'] += 1
+                    self.metrics.note_nosec()
                     return
 
         self.context['node'] = node
@@ -326,19 +326,14 @@ class BanditNodeVisitor(object):
                 add, self.scores[score_type], scores[score_type]
             ))
 
-    def process(self, fdata):
+    def process(self, lines):
         '''Main process loop
 
         Build and process the AST
-        :param fdata: the open filehandle for the code to be processed
+        :param lines: lines code to process
         :return score: the aggregated score for the current file
         '''
-        fdata.seek(0)
-        self.lines = fdata.readlines()
-        # only include non-blank lines in the loc metric
-        self.metrics['loc'] += len(
-            [line for line in self.lines if line.strip()]
-        )
+        self.lines = lines
         f_ast = ast.parse("".join(self.lines))
         self.generic_visit(f_ast)
-        return self.scores, self.metrics
+        return self.scores

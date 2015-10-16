@@ -22,6 +22,7 @@ import bandit
 from bandit.core import constants
 from bandit.core import config
 from bandit.core import manager
+from bandit.core import metrics
 from bandit.core import issue
 from bandit.formatters import json as b_json
 
@@ -47,6 +48,7 @@ class JsonFormatterTests(testtools.TestCase):
         self.issue.test = self.check_name
 
         self.manager.results.append(self.issue)
+        metrics.metrics = metrics.Metrics()
 
     def test_report(self):
         self.manager.files_list = ['binding.py']
