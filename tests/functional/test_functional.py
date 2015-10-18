@@ -459,3 +459,10 @@ class FunctionalTests(testtools.TestCase):
         self.assertEqual(5, issues[1].lineno)
         self.assertEqual(list(range(3, 6+1)), issues[1].linerange)
         self.assertIn('shell=True', issues[1].get_code())
+
+    def test_flask_debug_true(self):
+        expect = {
+            'SEVERITY': {'HIGH': 1},
+            'CONFIDENCE': {'MEDIUM': 1}
+        }
+        self.check_example('flask_debug.py', expect)
