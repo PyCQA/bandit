@@ -14,6 +14,11 @@
 
 from __future__ import absolute_import
 import csv
+import logging
+
+from bandit.core import utils
+
+logger = logging.getLogger(__name__)
 
 
 def report(manager, filename, sev_level, conf_level, lines=-1,
@@ -30,10 +35,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 
     results = manager.get_issue_list()
 
-    if filename is None:
-        filename = 'bandit_results.csv'
-
-    with open(filename, 'w') as fout:
+    with utils.output_file(filename, 'w') as fout:
         fieldnames = ['filename',
                       'test_name',
                       'issue_severity',
@@ -49,4 +51,5 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
             if result.filter(sev_level, conf_level):
                 writer.writerow(result.as_dict(with_code=False))
 
-    print("CSV output written to file: %s" % filename)
+    if filename is not None:
+        logger.info("CSV output written to file: %s" % filename)

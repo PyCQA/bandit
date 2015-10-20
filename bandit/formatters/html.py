@@ -12,6 +12,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import logging
+
+from bandit.core import utils
+
+logger = logging.getLogger(__name__)
+
 
 def report(manager, filename, sev_level, conf_level, lines=-1,
            out_format='html'):
@@ -83,9 +89,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
                 results_str += result + "\n"
     report = report_block.format(results=results_str)
 
-    if filename:
-        with open(filename, 'w') as fout:
-            fout.write(report)
-        print("HTML output written to file: %s" % filename)
-    else:
-        print(report)
+    with utils.output_file(filename, 'w') as fout:
+        fout.write(report)
+
+    if filename is not None:
+        logger.info("HTML output written to file: %s" % filename)

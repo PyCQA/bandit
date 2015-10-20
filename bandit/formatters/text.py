@@ -138,9 +138,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 
     result = ''.join(tmpstr_list)
 
-    if filename:
-        with open(filename, 'w') as fout:
-            fout.write(result)
+    with utils.output_file(filename, 'w') as fout:
+        fout.write(result)
+
+    if filename is not None:
         logger.info("Text output written to file: %s", filename)
-    else:
-        print(result)

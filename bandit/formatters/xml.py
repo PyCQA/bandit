@@ -13,7 +13,11 @@
 # under the License.
 
 from __future__ import absolute_import
+import logging
+import sys
 from xml.etree import cElementTree as ET
+
+logger = logging.getLogger(__name__)
 
 
 def report(manager, filename, sev_level, conf_level, lines=-1,
@@ -27,9 +31,6 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     :param lines: Number of lines to report, -1 for all
     :param out_format: The ouput format name
     '''
-
-    if filename is None:
-        filename = 'bandit_results.xml'
 
     issues = manager.get_issue_list()
     root = ET.Element('testsuite', name='bandit', tests=str(len(issues)))
@@ -48,6 +49,12 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
                           message=issue.text).text = text
 
     tree = ET.ElementTree(root)
-    tree.write(filename, encoding='utf-8', xml_declaration=True)
 
-    print("XML output written to file: %s" % filename)
+    outfile = sys.stdout
+    if filename is not None:
+        outfile = open(filename, "wb")
+
+    tree.write(outfile, encoding='utf-8', xml_declaration=True)
+
+    if filename is not None:
+        logger.info("XML output written to file: %s" % filename)
