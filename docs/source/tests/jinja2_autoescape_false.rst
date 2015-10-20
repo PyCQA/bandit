@@ -56,3 +56,4 @@ References
 - https://realpython.com/blog/python/primer-on-jinja-templating/
 - http://jinja.pocoo.org/docs/dev/api/#autoescaping
 - https://security.openstack.org
+- https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html

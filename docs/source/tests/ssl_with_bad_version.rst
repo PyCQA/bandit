@@ -76,6 +76,8 @@ Sample Output
 
 References
 ----------
-.. [1] http://heartbleed.com/
-.. [2] https://poodlebleed.com/
-.. [3] https://security.openstack.org/
+- [1] http://heartbleed.com/
+- [2] https://poodlebleed.com/
+- https://security.openstack.org/
+- https://security.openstack.org/guidelines/dg_move-data-securely.html
+
