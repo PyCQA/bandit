@@ -86,9 +86,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     result = json.dumps(machine_output, sort_keys=True,
                         indent=2, separators=(',', ': '))
 
-    if filename:
-        with open(filename, 'w') as fout:
-            fout.write(result)
+    with utils.output_file(filename, 'w') as fout:
+        fout.write(result)
+
+    if filename is not None:
         logger.info("JSON output written to file: %s" % filename)
-    else:
-        print(result)

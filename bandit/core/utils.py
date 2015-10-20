@@ -16,6 +16,7 @@
 
 import _ast
 import ast
+import contextlib
 import logging
 import os.path
 import sys
@@ -25,6 +26,21 @@ logger = logging.getLogger(__name__)
 
 
 """Various helper functions."""
+
+
+@contextlib.contextmanager
+def output_file(filename, filemode):
+    isfileoutput = filename is not None
+    try:
+        out = sys.stdout
+        if isfileoutput:
+            out = open(filename, filemode)
+        yield out
+    except Exception:
+        raise
+    finally:
+        if isfileoutput:
+            out.close()
 
 
 def _get_attr_qual_name(node, aliases):
