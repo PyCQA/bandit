@@ -86,3 +86,18 @@ class Issue(object):
         if with_code:
             out['code'] = self.get_code()
         return out
+
+    def from_dict(self, data, with_code=True):
+        self.code = data["code"]
+        self.fname = data["filename"]
+        self.severity = data["issue_severity"]
+        self.confidence = data["issue_confidence"]
+        self.text = data["issue_text"]
+        self.lineno = data["line_number"]
+        self.linerange = data["line_range"]
+
+
+def issue_from_dict(data):
+    i = Issue(severity=data["issue_severity"])
+    i.from_dict(data)
+    return i

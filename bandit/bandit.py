@@ -181,6 +181,10 @@ def main():
                          'Note that these are in addition to the excluded '
                          'paths provided in the config file.'
     )
+    parser.add_argument(
+        '-b', '--baseline', dest='baseline', action='store',
+        default=None, help='Path to a baseline report, in JSON format. '
+    )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
     parser.set_defaults(ignore_nosec=False)
@@ -214,6 +218,15 @@ def main():
                                     profile_name=args.profile,
                                     verbose=args.verbose,
                                     ignore_nosec=args.ignore_nosec)
+
+    if args.baseline is not None:
+        try:
+            with open(args.baseline) as bl:
+                data = bl.read()
+                b_mgr.populate_baseline(data)
+        except IOError:
+            logger.warn("Could not open baseline report: %s", args.baseline)
+            sys.exit(2)
 
     if args.output_format != "json":
         logger.info("using config: %s", config_file)
