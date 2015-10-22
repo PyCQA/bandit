@@ -48,7 +48,16 @@ class JsonFormatterTests(testtools.TestCase):
         self.issue.test = self.check_name
 
         self.manager.results.append(self.issue)
-        metrics.metrics = metrics.Metrics()
+        self.manager.metrics = metrics.Metrics()
+
+        #mock up the metrics
+        for key in ['_totals', 'binding.py']:
+            self.manager.metrics.data[key] = {'loc': 4, 'nosec': 2}
+            for (criteria, default) in constants.CRITERIA:
+                for rank in constants.RANKING:
+                    self.manager.metrics.data[key]['{0}.{1}'.format(
+                        criteria, rank
+                    )] = 0
 
     def test_report(self):
         self.manager.files_list = ['binding.py']

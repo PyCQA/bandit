@@ -35,20 +35,46 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 <!DOCTYPE html>
 <html>
 <head>
+<style>
+.metrics-main {{
+    border: 1px solid black;
+    padding-top:.5em;
+    padding-bottom:.5em;
+    padding-left:1em ;
+    font-size: 1.1em;
+    line-height: 130%;
+}}
+
+.metrics-title {{
+    font-size: 1.5em;
+    font-weight: 500;
+}}
+
+.issue-description {{
+    font-size: 1.3em;
+    font-weight: 500;
+}}
+
+</style>
 <title>
     Bandit Report
 </title>
 </head>
 <body>
+    <div class="metrics-main">
+        {metrics}
+    </div>
+    <br><br>
     <div class="results">
         {results}
     </div>
 </body>
 </html>
+
     """
 
     issue_block = """
-<h2 class="test_text">{test_text}</h2>
+<div class="issue-description">{test_text}</div><br>
 <div class="details">
     <b>Severity: </b>
     <span class='severity severity_{severity}'>{severity}</span><br />
@@ -87,10 +113,26 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
         if results[res]:
             for result in results[res]:
                 results_str += result + "\n"
-    report = report_block.format(results=results_str)
+
+    # print out basic metrics from run
+
+    metrics_summary = '<div class=metrics-title>Metrics:</div><br>\n'
+
+    for (label, metric) in [
+        ('Total lines of code', 'loc'),
+        ('Total lines skipped (#nosec)', 'nosec')
+    ]:
+        metrics_summary += "{0}: <span class='{1}'>{2}</span><br>\n".format(
+            label,
+            metric,
+            manager.metrics.data['_totals'][metric]
+        )
+
+    report_contents = report_block.format(metrics=metrics_summary,
+                                          results=results_str)
 
     with utils.output_file(filename, 'w') as fout:
-        fout.write(report)
+        fout.write(report_contents)
 
     if filename is not None:
         logger.info("HTML output written to file: %s" % filename)
