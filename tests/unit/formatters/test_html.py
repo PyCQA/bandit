@@ -20,7 +20,9 @@ import testtools
 
 import bandit
 from bandit.core import config
+from bandit.core import constants
 from bandit.core import manager
+from bandit.core import metrics
 from bandit.core import issue
 from bandit.formatters import html as b_html
 
@@ -48,6 +50,16 @@ class HtmlFormatterTests(testtools.TestCase):
         self.issue.test = self.check_name
 
         self.manager.results.append(self.issue)
+        self.manager.metrics = metrics.Metrics()
+
+        #mock up the metrics
+        for key in ['_totals', 'binding.py']:
+            self.manager.metrics.data[key] = {'loc': 4, 'nosec': 2}
+            for (criteria, default) in constants.CRITERIA:
+                for rank in constants.RANKING:
+                    self.manager.metrics.data[key]['{0}.{1}'.format(
+                        criteria, rank
+                    )] = 0
 
     def test_report(self):
         b_html.report(
@@ -58,7 +70,11 @@ class HtmlFormatterTests(testtools.TestCase):
             soup = BeautifulSoup(f.read(), 'html.parser')
             sev_span = soup.find_all('span', class_='severity')[0]
             conf_span = soup.find_all('span', class_='confidence')[0]
-            text_h2 = soup.find_all('h2', class_='test_text')[0]
+            loc_span = soup.find_all('span', class_='loc')[0]
+            nosec_span = soup.find_all('span', class_='nosec')[0]
+
             self.assertEqual(self.issue.severity, sev_span.string)
             self.assertEqual(self.issue.confidence, conf_span.string)
-            self.assertEqual(self.issue.text, text_h2.string)
+            self.assertEqual('4', loc_span.string)
+            self.assertEqual('2', nosec_span.string)
+
