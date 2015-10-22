@@ -33,3 +33,4 @@ Sample Output
 References
 ----------
  - http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf
+ - https://security.openstack.org/guidelines/dg_strong-crypto.html

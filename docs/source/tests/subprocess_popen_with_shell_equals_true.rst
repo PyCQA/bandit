@@ -65,3 +65,4 @@ References
 - https://security.openstack.org
 - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments
 - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+- https://security.openstack.org/guidelines/dg_avoid-shell-true.html

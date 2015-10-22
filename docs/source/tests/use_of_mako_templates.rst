@@ -43,3 +43,5 @@ References
 - http://www.makotemplates.org/
 - https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
 - https://security.openstack.org
+- https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
+

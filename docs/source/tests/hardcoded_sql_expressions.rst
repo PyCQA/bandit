@@ -44,4 +44,5 @@ Sample Output
 
 References
 ----------
- - https://www.owasp.org/index.php/SQL_Injection
+- https://www.owasp.org/index.php/SQL_Injection
+- https://security.openstack.org/guidelines/dg_parameterize-database-queries.html

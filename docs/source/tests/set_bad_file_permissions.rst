@@ -42,5 +42,6 @@ Sample Output
 
 References
 ----------
+- https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html
 - https://en.wikipedia.org/wiki/File_system_permissions
 - https://security.openstack.org

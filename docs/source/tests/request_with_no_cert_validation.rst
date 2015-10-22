@@ -23,5 +23,5 @@ Sample Output
 
 References
 ----------
-??
-
+- https://security.openstack.org/guidelines/dg_move-data-securely.html
+- https://security.openstack.org/guidelines/dg_validate-certificates.html
