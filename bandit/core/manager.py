@@ -15,12 +15,18 @@
 # under the License.
 
 import fnmatch
+import json
 import logging
 import os
 import sys
 
+import six
+
+from collections import Counter
+
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
+from bandit.core import issue
 from bandit.core import meta_ast as b_meta_ast
 from bandit.core import metrics
 from bandit.core import node_visitor as b_node_visitor
@@ -56,6 +62,7 @@ class BanditManager():
         self.b_ma = b_meta_ast.BanditMetaAst()
         self.skipped = []
         self.results = []
+        self.baseline = []
         self.agg_type = agg_type
         self.metrics = metrics.Metrics()
 
@@ -82,11 +89,48 @@ class BanditManager():
         self.scores = []
 
     def get_issue_list(self):
+        if len(self.baseline):
+            return self.filter_results()
         return self.results
 
     @property
     def has_tests(self):
         return self.b_ts.has_tests
+
+    def populate_baseline(self, data):
+        '''Populate a baseline set of issues from a JSON report
+
+        This will populate a list of baseline issues discovered from a previous
+        run of bandit. Later this baseline can be used to filter out the result
+        set, see filter_results.
+        '''
+        items = []
+        try:
+            jdata = json.loads(data)
+            items = [issue.issue_from_dict(j) for j in jdata["results"]]
+        except Exception as e:
+            logger.warn("Failed to load baseline data: %s", e)
+        self.baseline = items
+
+    def filter_results(self):
+        '''Returns a list of results filtered by the baseline
+
+        This works by checking the number of results returned from each file we
+        process. If the number of results is different to the number reported
+        for the same file in the baseline, then we return all results for the
+        file. We can't reliably return just the new results, as line numbers
+        will likely have changed.
+        '''
+        if len(self.baseline) == 0:
+            return self.results
+
+        outs = []
+        base = Counter([jd.fname for jd in self.baseline])
+        vals = Counter([jd.fname for jd in self.results])
+        for key, val in six.iteritems(vals):
+            if key not in base or val != base[key]:
+                outs.extend([r for r in self.results if r.fname == key])
+        return outs
 
     def results_count(self, sev_filter=b_constants.LOW,
                       conf_filter=b_constants.LOW):
@@ -96,7 +140,8 @@ class BanditManager():
         :param conf_filter: Confidence level to filter
         :return: Number of results in the set
         '''
-        return sum(i.filter(sev_filter, conf_filter) for i in self.results)
+        res = self.filter_results()
+        return sum(i.filter(sev_filter, conf_filter) for i in res)
 
     def output_results(self, lines, sev_level, conf_level, output_filename,
                        output_format):

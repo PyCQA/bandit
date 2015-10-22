@@ -467,3 +467,27 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'MEDIUM': 1}
         }
         self.check_example('flask_debug.py', expect)
+
+    def test_baseline_filter(self):
+        json = """{
+          "results": [
+            {
+              "code": "...",
+              "filename": "%s/examples/flask_debug.py",
+              "issue_confidence": "MEDIUM",
+              "issue_severity": "HIGH",
+              "issue_text": "A Flask app appears to be run with debug=True ..",
+              "line_number": 10,
+              "line_range": [
+                10
+              ],
+              "test_name": "flask_debug_true"
+            }
+          ]
+        }
+        """ % os.getcwd()
+
+        self.b_mgr.populate_baseline(json)
+        self.run_example('flask_debug.py')
+        self.assertEqual(len(self.b_mgr.baseline), 1)
+        self.assertEqual(self.b_mgr.get_issue_list(), [])
