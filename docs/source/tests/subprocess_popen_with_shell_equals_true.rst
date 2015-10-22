@@ -9,12 +9,12 @@ doing so may present a security issue if appropriate care is not taken to
 sanitize any user provided or variable input.
 
 This plugin test is part of a family of tests built to check for process
-spawning and warn appropriately. Specifically, this test look for the spawning
+spawning and warn appropriately. Specifically, this test looks for the spawning
 of a subprocess using a command shell. This type of subprocess invocation is
 dangerous as it is vulnerable to various shell injection attacks. Great care
 should be taken to sanitize all input in order to mitigate this risk. Calls of
 this type are identified by a parameter of "shell=True" being given in addition
-to the command to run, bandit will report a HIGH severity warning.
+to the command to run, Bandit will report a HIGH severity warning.
 
 See also:
 
@@ -42,6 +42,7 @@ have shell=True specified.
 .. code-block:: yaml
 
     shell_injection:
+
         # Start a process using the subprocess module, or one of its wrappers.
         subprocess:
             - subprocess.Popen
