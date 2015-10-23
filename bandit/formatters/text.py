@@ -120,8 +120,9 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     for issue in issues:
         # if the result isn't filtered out by severity
         if issue.filter(sev_level, conf_level):
-            tmpstr_list.append("\n%s>> Issue: %s\n" % (
+            tmpstr_list.append("\n%s>> Issue: [%s] %s\n" % (
                 color.get(issue.severity, color['DEFAULT']),
+                issue.test,
                 issue.text
             ))
             tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (

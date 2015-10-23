@@ -70,7 +70,7 @@ class TextFormatterTests(testtools.TestCase):
 
         with open(self.tmp_fname) as f:
             data = f.read()
-            expected = '>> Issue: %s' % self.issue.text
+            expected = '>> Issue: [%s] %s' % (self.issue.test, self.issue.text)
             self.assertIn(expected, data)
             expected = '   Severity: %s   Confidence: %s' % (
                 self.issue.severity.capitalize(),
