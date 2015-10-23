@@ -74,7 +74,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     """
 
     issue_block = """
-<div class="issue-description">{test_text}</div><br>
+<div class="issue-description"><b>{test_name}:</b> {test_text}</div><br>
 <div class="details">
     <b>Severity: </b>
     <span class='severity severity_{severity}'>{severity}</span><br />
@@ -101,6 +101,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
         if issue.filter(sev_level, conf_level):
             code = issue.get_code(lines, True)
             temp_result = issue_block.format(
+                test_name=issue.test,
                 test_text=issue.text,
                 severity=issue.severity,
                 confidence=issue.confidence,
