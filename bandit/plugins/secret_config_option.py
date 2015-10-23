@@ -40,8 +40,8 @@ def password_config_option_not_marked_secret(context, config):
         # variable, secret=secret.
         elif not context.check_call_arg_value('secret', 'True'):
             return bandit.Issue(
-                severity=bandit.LOW,
-                confidence=bandit.MEDIUM,
+                severity=bandit.MEDIUM,
+                confidence=bandit.LOW,
                 text="oslo config option possibly not marked secret=True "
                      "identified."
             )
