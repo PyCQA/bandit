@@ -39,6 +39,7 @@ shell (by replacing the calling process) respectively.
 This plugin specifically scans for methods listed in `shell` section.
 
 .. code-block:: yaml
+
     shell_injection:
         shell:
             - os.system
