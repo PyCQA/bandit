@@ -22,3 +22,7 @@ subprocess.check_call('/bin/ls -l', shell=True)
 
 subprocess.check_output(['/bin/ls', '-l'])
 subprocess.check_output('/bin/ls -l', shell=True)
+
+subprocess.Popen('/bin/ls *', shell=True)
+subprocess.Popen('/bin/ls %s' % ('something',), shell=True)
+subprocess.Popen('/bin/ls {}'.format('something'), shell=True)

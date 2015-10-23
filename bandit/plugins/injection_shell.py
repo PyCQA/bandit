@@ -15,10 +15,20 @@
 # under the License.
 
 import ast
+import re
 
 import bandit
 from bandit.core.test_properties import checks
 from bandit.core.test_properties import takes_config
+
+
+def _has_special_characters(command):
+    # check if it contains any of the characters that may cause globing,
+    # multiple commands, subshell, or variable resolution
+    # glob: [ { * ?
+    # variable: $
+    # subshell: ` $
+    return bool(re.search(r'[{|\[;$\*\?`]', command))
 
 
 @takes_config('shell_injection')
@@ -26,12 +36,41 @@ from bandit.core.test_properties import takes_config
 def subprocess_popen_with_shell_equals_true(context, config):
     if config and context.call_function_name_qual in config['subprocess']:
         if context.check_call_arg_value('shell', 'True'):
-            return bandit.Issue(
-                severity=bandit.HIGH,
-                confidence=bandit.HIGH,
-                text="subprocess call with shell=True identified, security "
-                     "issue."
-            )
+            if len(context.call_args) > 0:
+                command = context.call_args[0]
+
+                no_formatting = isinstance(command, str)
+                if no_formatting:
+                    no_special_chars = not _has_special_characters(command)
+                else:
+                    no_special_chars = False
+
+                if no_formatting and no_special_chars:
+                    return bandit.Issue(
+                        severity=bandit.LOW,
+                        confidence=bandit.HIGH,
+                        text="subprocess call with shell=True seems safe, but "
+                             "may be changed in the future, consider "
+                             "rewriting without shell"
+                    )
+                elif no_formatting:
+                    return bandit.Issue(
+                        severity=bandit.MEDIUM,
+                        confidence=bandit.HIGH,
+                        text="call with shell=True contains special shell "
+                             "characters, consider moving extra logic into "
+                             "Python code"
+                    )
+                else:
+                    return bandit.Issue(
+                        severity=bandit.HIGH,
+                        confidence=bandit.HIGH,
+                        text="subprocess call with shell=True identified, "
+                             "security issue."
+                    )
+            else:
+                # no arguments? no issue
+                pass
 
 
 @takes_config('shell_injection')

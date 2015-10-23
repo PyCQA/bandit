@@ -168,7 +168,7 @@ class FunctionalTests(testtools.TestCase):
     def test_imports_aliases(self):
         '''Test the `import X as Y` syntax.'''
         expect = {
-            'SEVERITY': {'LOW': 3, 'MEDIUM': 5, 'HIGH': 1},
+            'SEVERITY': {'LOW': 4, 'MEDIUM': 5, 'HIGH': 0},
             'CONFIDENCE': {'HIGH': 9}
         }
         self.check_example('imports-aliases.py', expect)
@@ -297,8 +297,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         '''Test for `subprocess.Popen` with `shell=True`.'''
         expect = {
-            'SEVERITY': {'HIGH': 5, 'MEDIUM': 1, 'LOW': 7},
-            'CONFIDENCE': {'HIGH': 13}
+            'SEVERITY': {'HIGH': 2, 'MEDIUM': 2, 'LOW': 12},
+            'CONFIDENCE': {'HIGH': 16}
         }
         self.check_example('subprocess_shell.py', expect)
 
@@ -310,7 +310,7 @@ class FunctionalTests(testtools.TestCase):
     def test_utils_shell(self):
         '''Test for `utils.execute*` with `shell=True`.'''
         expect = {
-            'SEVERITY': {'HIGH': 4, 'LOW': 1},
+            'SEVERITY': {'LOW': 5},
             'CONFIDENCE': {'HIGH': 5}
         }
         self.check_example('utils-shell.py', expect)
@@ -318,7 +318,7 @@ class FunctionalTests(testtools.TestCase):
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
         expect = {
-            'SEVERITY': {'HIGH': 5, 'MEDIUM':3, 'LOW': 6},
+            'SEVERITY': {'HIGH': 4, 'MEDIUM':4, 'LOW': 6},
             'CONFIDENCE': {'MEDIUM': 8, 'HIGH': 6}
         }
         self.check_example('wildcard-injection.py', expect)
