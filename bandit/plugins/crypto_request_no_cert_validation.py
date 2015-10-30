@@ -20,12 +20,9 @@ from bandit.core.test_properties import *
 
 @checks('Call')
 def request_with_no_cert_validation(context):
-    if (
-        'requests' in context.call_function_name_qual and (
-            'get' in context.call_function_name or
-            'post' in context.call_function_name)
-    ):
-
+    http_verbs = ('get', 'options', 'head', 'post', 'put', 'patch', 'delete')
+    if ('requests' in context.call_function_name_qual and
+            context.call_function_name in http_verbs):
         if context.check_call_arg_value('verify', 'False'):
 
             return bandit.Issue(

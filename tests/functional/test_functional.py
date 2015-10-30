@@ -239,7 +239,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_requests_ssl_verify_disabled(self):
         '''Test for the `requests` library skipping verification.'''
-        expect = {'SEVERITY': {'HIGH': 2}, 'CONFIDENCE': {'HIGH': 2}}
+        expect = {'SEVERITY': {'HIGH': 7}, 'CONFIDENCE': {'HIGH': 7}}
         self.check_example('requests-ssl-verify-disabled.py', expect)
 
     def test_skip(self):
