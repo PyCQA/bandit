@@ -33,7 +33,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     :param out_format: The ouput format name
     '''
 
-    results = manager.get_issue_list()
+    results = manager.get_issue_list(sev_level=sev_level,
+                                     conf_level=conf_level)
 
     with utils.output_file(filename, 'w') as fout:
         fieldnames = ['filename',
@@ -48,8 +49,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
                                 extrasaction='ignore')
         writer.writeheader()
         for result in results:
-            if result.filter(sev_level, conf_level):
-                writer.writerow(result.as_dict(with_code=False))
+            writer.writerow(result.as_dict(with_code=False))
 
     if filename is not None:
         logger.info("CSV output written to file: %s" % filename)

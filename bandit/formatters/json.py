@@ -62,11 +62,10 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
             'score': utils.sum_scores(manager, sev_idx),
             'issue totals': totals})
 
-    results = manager.get_issue_list()
-    collector = []
-    for result in results:
-        if result.filter(sev_level, conf_level):
-            collector.append(result.as_dict())
+    results = manager.get_issue_list(sev_level=sev_level,
+                                     conf_level=conf_level)
+
+    collector = [r.as_dict() for r in results]
 
     if manager.agg_type == 'vuln':
         machine_output['results'] = sorted(collector,

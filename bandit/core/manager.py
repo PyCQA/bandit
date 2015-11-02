@@ -88,10 +88,10 @@ class BanditManager():
         self.progress = self.b_conf.get_setting('progress')
         self.scores = []
 
-    def get_issue_list(self):
-        if len(self.baseline):
-            return self.filter_results()
-        return self.results
+    def get_issue_list(self,
+                       sev_level=b_constants.LOW,
+                       conf_level=b_constants.LOW):
+        return self.filter_results(sev_level, conf_level)
 
     @property
     def has_tests(self):
@@ -112,7 +112,7 @@ class BanditManager():
             logger.warn("Failed to load baseline data: %s", e)
         self.baseline = items
 
-    def filter_results(self):
+    def filter_results(self, sev_filter, conf_filter):
         '''Returns a list of results filtered by the baseline
 
         This works by checking the number of results returned from each file we
@@ -120,16 +120,23 @@ class BanditManager():
         for the same file in the baseline, then we return all results for the
         file. We can't reliably return just the new results, as line numbers
         will likely have changed.
+
+        :param sev_filter: severity level filter to apply
+        :param conf_filter: confidence level filter to apply
         '''
-        if len(self.baseline) == 0:
-            return self.results
+
+        results = [i for i in self.results if
+                   i.filter(sev_filter, conf_filter)]
+
+        if not self.baseline:
+            return results
 
         outs = []
         base = Counter([jd.fname for jd in self.baseline])
-        vals = Counter([jd.fname for jd in self.results])
+        vals = Counter([jd.fname for jd in results])
         for key, val in six.iteritems(vals):
             if key not in base or val != base[key]:
-                outs.extend([r for r in self.results if r.fname == key])
+                outs.extend([r for r in results if r.fname == key])
         return outs
 
     def results_count(self, sev_filter=b_constants.LOW,
@@ -140,8 +147,9 @@ class BanditManager():
         :param conf_filter: Confidence level to filter
         :return: Number of results in the set
         '''
-        res = self.filter_results()
-        return sum(i.filter(sev_filter, conf_filter) for i in res)
+        res = self.filter_results(sev_filter=sev_filter,
+                                  conf_filter=conf_filter)
+        return len(res)
 
     def output_results(self, lines, sev_level, conf_level, output_filename,
                        output_format):

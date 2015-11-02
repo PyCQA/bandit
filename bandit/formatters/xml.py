@@ -32,21 +32,21 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     :param out_format: The ouput format name
     '''
 
-    issues = manager.get_issue_list()
+    issues = manager.get_issue_list(sev_level=sev_level, conf_level=conf_level)
     root = ET.Element('testsuite', name='bandit', tests=str(len(issues)))
 
     for issue in issues:
         test = issue.test
         testcase = ET.SubElement(root, 'testcase',
                                  classname=issue.fname, name=test)
-        if issue.filter(sev_level, conf_level):
-            text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
-            text = text % (
-                issue.severity, issue.confidence,
-                issue.text, issue.fname, issue.lineno)
-            ET.SubElement(testcase, 'error',
-                          type=issue.severity,
-                          message=issue.text).text = text
+
+        text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
+        text = text % (
+            issue.severity, issue.confidence,
+            issue.text, issue.fname, issue.lineno)
+        ET.SubElement(testcase, 'error',
+                      type=issue.severity,
+                      message=issue.text).text = text
 
     tree = ET.ElementTree(root)
 
