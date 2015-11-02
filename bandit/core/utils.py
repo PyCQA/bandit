@@ -329,11 +329,3 @@ def get_path_for_function(f):
     else:
         logger.warn("Cannot resolve file path for module %s", module_name)
         return None
-
-
-def sum_scores(manager, sev):
-    summation = 0
-    for scores in manager.scores:
-        summation += sum(scores['CONFIDENCE'][sev:])
-        summation += sum(scores['SEVERITY'][sev:])
-    return summation
