@@ -93,21 +93,20 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 
     results = {}
 
-    issues = manager.get_issue_list()
+    issues = manager.get_issue_list(sev_level=sev_level, conf_level=conf_level)
     for issue in issues:
         if not results.get(issue.fname):
             results[issue.fname] = []
 
-        if issue.filter(sev_level, conf_level):
-            code = issue.get_code(lines, True)
-            temp_result = issue_block.format(
-                test_name=issue.test,
-                test_text=issue.text,
-                severity=issue.severity,
-                confidence=issue.confidence,
-                path=issue.fname, code=code
-            )
-            results[issue.fname].append(temp_result)
+        code = issue.get_code(lines, True)
+        temp_result = issue_block.format(
+            test_name=issue.test,
+            test_text=issue.text,
+            severity=issue.severity,
+            confidence=issue.confidence,
+            path=issue.fname, code=code
+        )
+        results[issue.fname].append(temp_result)
 
     results_str = ""
     for res in results:

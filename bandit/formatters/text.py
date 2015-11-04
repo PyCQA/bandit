@@ -113,30 +113,29 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
         color['HEADER'], color['DEFAULT']
     ))
 
-    issues = manager.get_issue_list()
+    issues = manager.get_issue_list(sev_level=sev_level, conf_level=conf_level)
+
     if not len(issues):
         tmpstr_list.append("\tNo issues identified.\n")
 
     for issue in issues:
-        # if the result isn't filtered out by severity
-        if issue.filter(sev_level, conf_level):
-            tmpstr_list.append("\n%s>> Issue: [%s] %s\n" % (
-                color.get(issue.severity, color['DEFAULT']),
-                issue.test,
-                issue.text
-            ))
-            tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
-                issue.severity.capitalize(),
-                issue.confidence.capitalize()
-            ))
-            tmpstr_list.append("   Location: %s:%s\n" % (
-                issue.fname,
-                issue.lineno
-            ))
-            tmpstr_list.append(color['DEFAULT'])
+        tmpstr_list.append("\n%s>> Issue: [%s] %s\n" % (
+            color.get(issue.severity, color['DEFAULT']),
+            issue.test,
+            issue.text
+        ))
+        tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
+            issue.severity.capitalize(),
+            issue.confidence.capitalize()
+        ))
+        tmpstr_list.append("   Location: %s:%s\n" % (
+            issue.fname,
+            issue.lineno
+        ))
+        tmpstr_list.append(color['DEFAULT'])
 
-            tmpstr_list.append(
-                issue.get_code(lines, True))
+        tmpstr_list.append(
+            issue.get_code(lines, True))
 
     result = ''.join(tmpstr_list)
 
