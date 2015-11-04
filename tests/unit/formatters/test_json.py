@@ -82,4 +82,5 @@ class JsonFormatterTests(testtools.TestCase):
                              data['results'][0]['line_range'])
             self.assertEqual(self.check_name, data['results'][0]['test_name'])
             self.assertEqual('binding.py', data['stats'][0]['filename'])
-            self.assertEqual(0, data['stats'][0]['score'])
+            self.assertEqual({'CONFIDENCE': 0, 'SEVERITY': 0},
+                             data['stats'][0]['score'])

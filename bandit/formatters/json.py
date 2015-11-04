@@ -59,7 +59,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 
         machine_output['stats'].append({
             'filename': filer,
-            'score': utils.sum_scores(manager, sev_idx),
+            'score': {'SEVERITY': sum(i for i in score['SEVERITY']),
+                      'CONFIDENCE': sum(i for i in score['CONFIDENCE'])},
             'issue totals': totals})
 
     results = manager.get_issue_list()

@@ -321,6 +321,9 @@ class BanditNodeVisitor(object):
         '''
         def add(x, y):
             return x + y
+
+        # we'll end up with something like:
+        # SEVERITY: {0, 0, 0, 10}  where 10 is weighted by finding and level
         for score_type in self.scores:
             self.scores[score_type] = list(map(
                 add, self.scores[score_type], scores[score_type]
