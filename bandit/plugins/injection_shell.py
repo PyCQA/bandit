@@ -37,10 +37,9 @@ def subprocess_popen_with_shell_equals_true(context, config):
     if config and context.call_function_name_qual in config['subprocess']:
         if context.check_call_arg_value('shell', 'True'):
             if len(context.call_args) > 0:
-                command = context.call_args[0]
-
-                no_formatting = isinstance(command, str)
+                no_formatting = isinstance(context.node.args[0], ast.Str)
                 if no_formatting:
+                    command = context.call_args[0]
                     no_special_chars = not _has_special_characters(command)
                 else:
                     no_special_chars = False
