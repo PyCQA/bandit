@@ -23,14 +23,20 @@ class Metrics(object):
     """Bandit metric gathering.
 
     This class is a singleton used to gather and process metrics collected when
-    processesing a code base with bandit. Metric collection is statefull, that
-    is, an active metric block will be set when requested and all subsequant
-    operations will effect that metric block untill it is replaced by a setting
+    processing a code base with bandit. Metric collection is stateful, that
+    is, an active metric block will be set when requested and all subsequent
+    operations will effect that metric block until it is replaced by a setting
     a new one.
     """
 
     def __init__(self):
-        self.data = {}
+        self.data = dict()
+        self.data['_totals'] = {'loc': 0, 'nosec': 0}
+
+        # initialize 0 totals for criteria and rank; this will be reset later
+        for rank in constants.RANKING:
+            for criteria in constants.CRITERIA:
+                self.data['_totals']['{0}.{1}'.format(criteria[0], rank)] = 0
 
     def begin(self, fname):
         """Begin a new metric block.
