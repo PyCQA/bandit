@@ -26,3 +26,6 @@ subprocess.check_output('/bin/ls -l', shell=True)
 subprocess.Popen('/bin/ls *', shell=True)
 subprocess.Popen('/bin/ls %s' % ('something',), shell=True)
 subprocess.Popen('/bin/ls {}'.format('something'), shell=True)
+
+command = "/bin/ls" + unknown_function()
+subprocess.Popen(command, shell=True)
