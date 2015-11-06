@@ -53,7 +53,7 @@ class TempFile(fixtures.Fixture):
 
 class ManagerTests(testtools.TestCase):
 
-    def _get_issue_instance(sev=constants.MEDIUM, conf=constants.MEDIUM):
+    def _get_issue_instance(self, sev=constants.MEDIUM, conf=constants.MEDIUM):
         new_issue = issue.Issue(sev, conf, 'Test issue')
         new_issue.fname = 'code.py'
         new_issue.test = 'bandit_plugin'
@@ -278,3 +278,55 @@ class ManagerTests(testtools.TestCase):
             m.formatters_mgr = {'txt': fmt}
             self.manager.output_results(3, constants.LOW, constants.LOW,
                                         "dummy", "test")
+
+    def test_compare_baseline(self):
+        issue_a = self._get_issue_instance()
+        issue_a.fname = 'file1.py'
+
+        issue_b = self._get_issue_instance()
+        issue_b.fname = 'file2.py'
+
+        issue_c = self._get_issue_instance(sev=constants.HIGH)
+        issue_c.fname = 'file1.py'
+
+        # issue c is in results, not in baseline
+        self.assertEqual([issue_c],
+                         manager._compare_baseline_results(
+                             [issue_a, issue_b],
+                             [issue_a, issue_b, issue_c]))
+
+        # baseline and results are the same
+        self.assertEqual([],
+                         manager._compare_baseline_results([issue_a, issue_b, issue_c],
+                                                           [issue_a, issue_b, issue_c]))
+
+        # results are better than baseline
+        self.assertEqual([],
+                         manager._compare_baseline_results([issue_a, issue_b, issue_c],
+                                                           [issue_a, issue_b]))
+
+    def test_find_candidate_matches(self):
+        issue_a = self._get_issue_instance()
+        issue_b = self._get_issue_instance()
+
+        issue_c = self._get_issue_instance()
+        issue_c.fname = 'file1.py'
+
+        # issue a and b are the same, both should be returned as candidates
+        self.assertEqual({issue_a: [issue_a, issue_b]},
+                         manager._find_candidate_matches([issue_a], [issue_a, issue_b]))
+
+        # issue a and c are different, only a should be returned
+        self.assertEqual({issue_a: [issue_a]},
+                         manager._find_candidate_matches([issue_a], [issue_a, issue_c]))
+
+        # c doesn't match a, empty list should be returned
+        self.assertEqual({issue_a: []},
+                         manager._find_candidate_matches([issue_a], [issue_c]))
+
+        # a and b match, a and b should both return a and b candidates
+        self.assertEqual({issue_a: [issue_a, issue_b],
+                          issue_b: [issue_a, issue_b]},
+
+                         manager._find_candidate_matches([issue_a, issue_b],
+                                                         [issue_a, issue_b, issue_c]))

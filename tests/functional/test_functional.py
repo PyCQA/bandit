@@ -476,7 +476,7 @@ class FunctionalTests(testtools.TestCase):
               "filename": "%s/examples/flask_debug.py",
               "issue_confidence": "MEDIUM",
               "issue_severity": "HIGH",
-              "issue_text": "A Flask app appears to be run with debug=True ..",
+              "issue_text": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the execution of arbitrary code.",
               "line_number": 10,
               "line_range": [
                 10
@@ -490,4 +490,4 @@ class FunctionalTests(testtools.TestCase):
         self.b_mgr.populate_baseline(json)
         self.run_example('flask_debug.py')
         self.assertEqual(len(self.b_mgr.baseline), 1)
-        self.assertEqual(self.b_mgr.get_issue_list(), [])
+        self.assertEqual(self.b_mgr.get_issue_list(), {})
