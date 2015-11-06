@@ -137,7 +137,10 @@ blacklist_calls:
                 Use of mark_safe() may expose cross-site scripting
                 vulnerabilities and should be reviewed.
         - httpsconnection:
-            qualnames: [httplib.HTTPSConnection]
+            qualnames:
+                - httplib.HTTPSConnection
+                - http.client.HTTPSConnection
+                - six.moves.http_client.HTTPSConnection
             message: >
                 Use of HTTPSConnection does not provide security, see
                 https://wiki.openstack.org/wiki/OSSN/OSSN-0033
@@ -149,11 +152,19 @@ blacklist_calls:
         - urllib_urlopen:
             qualnames:
                 - urllib.urlopen
+                - urllib.request.urlopen
                 - urllib.urlretrieve
+                - urllib.request.urlretrieve
                 - urllib.URLopener
+                - urllib.request.URLopener
                 - urllib.FancyURLopener
+                - urllib.request.FancyURLopener
                 - urllib2.urlopen
                 - urllib2.Request
+                - six.moves.urllib.request.urlopen
+                - six.moves.urllib.request.urlretrieve
+                - six.moves.urllib.request.URLopener
+                - six.moves.urllib.request.FancyURLopener
             message: >
                 Audit url open for permitted schemes. Allowing use of file:/ or
                 custom schemes is often unexpected.

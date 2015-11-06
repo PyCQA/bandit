@@ -162,7 +162,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_httplib_https(self):
         '''Test for `httplib.HTTPSConnection`.'''
-        expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'HIGH': 1}}
+        expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'HIGH': 3}}
         self.check_example('httplib_https.py', expect)
 
     def test_imports_aliases(self):
@@ -304,7 +304,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_urlopen(self):
         '''Test for dangerous URL opening.'''
-        expect = {'SEVERITY': {'MEDIUM': 6}, 'CONFIDENCE': {'HIGH': 6}}
+        expect = {'SEVERITY': {'MEDIUM': 14}, 'CONFIDENCE': {'HIGH': 14}}
         self.check_example('urlopen.py', expect)
 
     def test_utils_shell(self):
