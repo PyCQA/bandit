@@ -69,9 +69,9 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 
         # print which files were excluded and why
         tmpstr_list.append("\n%sFiles excluded (%s):%s\n" %
-                           (color['HEADER'], len(manager.skipped),
+                           (color['HEADER'], len(manager.excluded_files),
                             color['DEFAULT']))
-        for fname in manager.skipped:
+        for fname in manager.excluded_files:
             tmpstr_list.append("\t%s\n" % fname)
 
     # print out basic metrics from run
