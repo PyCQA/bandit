@@ -70,6 +70,49 @@ class IssueTests(testtools.TestCase):
                 result = issue.filter(bandit.UNDEFINED, level)
                 self.assertTrue((test >= rank) == result)
 
+    def test_matches_issue(self):
+        issue_a = _get_issue_instance()
+
+        issue_b = _get_issue_instance(severity=bandit.HIGH)
+
+        issue_c = _get_issue_instance(confidence=bandit.LOW)
+
+        issue_d = _get_issue_instance()
+        issue_d.text = 'ABCD'
+
+        issue_e = _get_issue_instance()
+        issue_e.fname = 'file1.py'
+
+        issue_f = issue_a
+
+        issue_g = _get_issue_instance()
+        issue_g.test = 'ZZZZ'
+
+        issue_h = issue_a
+        issue_h.lineno = 12345
+
+        # positive tests
+        self.assertTrue(issue_a.matches_issue(issue_a))
+        self.assertTrue(issue_a.matches_issue(issue_f))
+        self.assertTrue(issue_f.matches_issue(issue_a))
+
+        # severity doesn't match
+        self.assertFalse(issue_a.matches_issue(issue_b))
+
+        # confidence doesn't match
+        self.assertFalse(issue_a.matches_issue(issue_c))
+
+        # text doesn't match
+        self.assertFalse(issue_a.matches_issue(issue_d))
+
+        # filename doesn't match
+        self.assertFalse(issue_a.matches_issue(issue_e))
+
+        # plugin name doesn't match
+        self.assertFalse(issue_a.matches_issue(issue_g))
+
+        # line number doesn't match but should pass because we don't test that
+        self.assertTrue(issue_a.matches_issue(issue_h))
 
 
 def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):

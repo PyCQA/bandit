@@ -20,10 +20,6 @@ import logging
 import os
 import sys
 
-import six
-
-from collections import Counter
-
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
 from bandit.core import issue
@@ -131,13 +127,10 @@ class BanditManager():
         if not self.baseline:
             return results
 
-        outs = []
-        base = Counter([jd.fname for jd in self.baseline])
-        vals = Counter([jd.fname for jd in results])
-        for key, val in six.iteritems(vals):
-            if key not in base or val != base[key]:
-                outs.extend([r for r in results if r.fname == key])
-        return outs
+        unmatched = _compare_baseline_results(self.baseline, results)
+        # if it's a baseline we'll return a dictionary of issues and a list of
+        # candidate issues
+        return _find_candidate_matches(unmatched, results)
 
     def results_count(self, sev_filter=b_constants.LOW,
                       conf_filter=b_constants.LOW):
@@ -366,3 +359,60 @@ def _matches_glob_list(filename, glob_list):
         if fnmatch.fnmatch(filename, glob):
             return True
     return False
+
+
+def _compare_baseline_results(baseline, results):
+    """Compare a baseline list of issues to list of results
+
+    This function compares a baseline set of issues to a current set of issues
+    to find results that weren't present in the baseline.  To do this we'll
+    compare filename, severity, confidence, and issue text (using the
+    Issue.matches_issue() method.
+
+    :param baseline: Baseline list of issues
+    :param results: Current list of issues
+    :return: List of unmatched issues
+    """
+    unmatched_issues = []
+
+    # approach here: go through each issue in current results, check if it was
+    # present in the baseline.  If it was, remove it from the baseline (so we
+    # don't count it twice).  If it wasn't then we have an unmatched issue, so
+    # add it to the unmatched list.
+    for new_issue in results:
+        # keep track of index in the baseline where the issue was so we can
+        # remove it from the list
+        for found_index, baseline_issue in enumerate(baseline):
+            if new_issue.matches_issue(baseline_issue):
+                break
+
+        # we went through all the results and didn't find it, add to unmatched
+        if found_index == len(baseline):
+            unmatched_issues.append(new_issue)
+        # we found it, remove from the baseline
+        else:
+            del baseline[found_index]
+
+    return unmatched_issues
+
+
+def _find_candidate_matches(unmatched_issues, results_list):
+    """Returns a dictionary with issue candidates
+
+    For example, let's say we find a new command injection issue in a file
+    which used to have two.  Bandit can't tell which of the command injection
+    issues in the file are new, so it will show all three.  The user should
+    be able to pick out the new one.
+
+    :param unmatched_issues: List of issues that weren't present before
+    :param results_list: Master list of current Bandit findings
+    :return: A dictionary with a list of candidates for each issue
+    """
+
+    issue_candidates = {}
+
+    for unmatched in unmatched_issues:
+        issue_candidates[unmatched] = ([i for i in results_list if
+                                        unmatched.matches_issue(i)])
+
+    return issue_candidates
