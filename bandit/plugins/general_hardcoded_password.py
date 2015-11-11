@@ -75,6 +75,7 @@ def hardcoded_password_default(context):
 
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
-        check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-        if isinstance(val, ast.Str) and check in candidates:
-            return _report(val.s)
+        if isinstance(key, ast.Name):
+            check = key.arg if sys.version_info.major > 2 else key.id  # Py3
+            if isinstance(val, ast.Str) and check in candidates:
+                return _report(val.s)
