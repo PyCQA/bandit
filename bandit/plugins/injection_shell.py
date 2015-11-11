@@ -31,20 +31,30 @@ def _has_special_characters(command):
     return bool(re.search(r'[{|\[;$\*\?`]', command))
 
 
+def _evaluate_shell_call(context):
+    no_formatting = isinstance(context.node.args[0], ast.Str)
+    if no_formatting:
+        command = context.call_args[0]
+        no_special_chars = not _has_special_characters(command)
+    else:
+        no_special_chars = False
+
+    if no_formatting and no_special_chars:
+        return bandit.LOW
+    elif no_formatting:
+        return bandit.MEDIUM
+    else:
+        return bandit.HIGH
+
+
 @takes_config('shell_injection')
 @checks('Call')
 def subprocess_popen_with_shell_equals_true(context, config):
     if config and context.call_function_name_qual in config['subprocess']:
         if context.check_call_arg_value('shell', 'True'):
             if len(context.call_args) > 0:
-                no_formatting = isinstance(context.node.args[0], ast.Str)
-                if no_formatting:
-                    command = context.call_args[0]
-                    no_special_chars = not _has_special_characters(command)
-                else:
-                    no_special_chars = False
-
-                if no_formatting and no_special_chars:
+                sev = _evaluate_shell_call(context)
+                if sev == bandit.LOW:
                     return bandit.Issue(
                         severity=bandit.LOW,
                         confidence=bandit.HIGH,
@@ -52,7 +62,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
                              "may be changed in the future, consider "
                              "rewriting without shell"
                     )
-                elif no_formatting:
+                elif sev == bandit.MEDIUM:
                     return bandit.Issue(
                         severity=bandit.MEDIUM,
                         confidence=bandit.HIGH,
@@ -67,9 +77,6 @@ def subprocess_popen_with_shell_equals_true(context, config):
                         text="subprocess call with shell=True identified, "
                              "security issue."
                     )
-            else:
-                # no arguments? no issue
-                pass
 
 
 @takes_config('shell_injection')
@@ -107,11 +114,31 @@ def any_other_function_with_shell_equals_true(context, config):
 @checks('Call')
 def start_process_with_a_shell(context, config):
     if config and context.call_function_name_qual in config['shell']:
-        return bandit.Issue(
-            severity=bandit.MEDIUM,
-            confidence=bandit.MEDIUM,
-            text="Starting a process with a shell: check for injection."
-        )
+        if len(context.call_args) > 0:
+            sev = _evaluate_shell_call(context)
+            if sev == bandit.LOW:
+                return bandit.Issue(
+                    severity=bandit.LOW,
+                    confidence=bandit.HIGH,
+                    text="Starting a process with a shell: "
+                         "Seems safe, but may be changed in the future, "
+                         "consider rewriting without shell"
+                )
+            elif sev == bandit.MEDIUM:
+                return bandit.Issue(
+                    severity=bandit.MEDIUM,
+                    confidence=bandit.HIGH,
+                    text="Starting a process with a shell and special shell "
+                         "characters, consider moving extra logic into "
+                         "Python code"
+                )
+            else:
+                return bandit.Issue(
+                    severity=bandit.HIGH,
+                    confidence=bandit.HIGH,
+                    text="Starting a process with a shell, possible injection"
+                         " detected, security issue."
+                )
 
 
 @takes_config('shell_injection')
