@@ -107,6 +107,11 @@ def main():
     os.environ['XDG_CONFIG_DIRS'] = '/etc:/usr/local/etc'
     extension_mgr = _init_extensions()
 
+    baseline_formatters = [f.name for f in filter(lambda x:
+                                                  hasattr(x.plugin,
+                                                          '_accepts_baseline'),
+                                                  extension_mgr.formatters)]
+
     # now do normal startup
     parser = argparse.ArgumentParser(
         description='Bandit - a Python source code analyzer.',
@@ -184,6 +189,8 @@ def main():
     parser.add_argument(
         '-b', '--baseline', dest='baseline', action='store',
         default=None, help='Path to a baseline report, in JSON format. '
+                           'Note: baseline reports must be output in one of '
+                           'the following formats: ' + str(baseline_formatters)
     )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
@@ -226,6 +233,11 @@ def main():
                 b_mgr.populate_baseline(data)
         except IOError:
             logger.warn("Could not open baseline report: %s", args.baseline)
+            sys.exit(2)
+
+        if args.output_format not in baseline_formatters:
+            logger.warn('Baseline must be used with one of the following '
+                        'formats: ' + str(baseline_formatters))
             sys.exit(2)
 
     if args.output_format != "json":
