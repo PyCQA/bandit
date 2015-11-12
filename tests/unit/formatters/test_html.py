@@ -1,4 +1,5 @@
 # Copyright (c) 2015 Rackspace, Inc.
+# Copyright (c) 2015 Hewlett Packard Enterprise
 #
 #  Licensed under the Apache License, Version 2.0 (the "License"); you may
 #  not use this file except in compliance with the License. You may obtain
@@ -12,17 +13,17 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
+from collections import OrderedDict
 import os
 import tempfile
 
 from bs4 import BeautifulSoup
+import mock
 import testtools
 
 import bandit
 from bandit.core import config
-from bandit.core import constants
 from bandit.core import manager
-from bandit.core import metrics
 from bandit.core import issue
 from bandit.formatters import html as b_html
 
@@ -31,50 +32,106 @@ class HtmlFormatterTests(testtools.TestCase):
 
     def setUp(self):
         super(HtmlFormatterTests, self).setUp()
+
         cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
         conf = config.BanditConfig(cfg_file)
         self.manager = manager.BanditManager(conf, 'file')
+
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
-        self.context = {'filename': self.tmp_fname,
-                        'lineno': 4,
-                        'linerange': [4]}
-        self.check_name = 'hardcoded_bind_all_interfaces'
-        self.issue = issue.Issue(
-            bandit.MEDIUM, bandit.MEDIUM, 'Possible binding to all interfaces.'
-        )
+
         self.manager.out_file = self.tmp_fname
 
-        self.issue.fname = self.context['filename']
-        self.issue.lineno = self.context['lineno']
-        self.issue.linerange = self.context['linerange']
-        self.issue.test = self.check_name
+    def test_report_with_skipped(self):
+        self.manager.skipped = [('abc.py', 'File is bad')]
 
-        self.manager.results.append(self.issue)
-        self.manager.metrics = metrics.Metrics()
-
-        #mock up the metrics
-        for key in ['_totals', 'binding.py']:
-            self.manager.metrics.data[key] = {'loc': 4, 'nosec': 2}
-            for (criteria, default) in constants.CRITERIA:
-                for rank in constants.RANKING:
-                    self.manager.metrics.data[key]['{0}.{1}'.format(
-                        criteria, rank
-                    )] = 0
-
-    def test_report(self):
         b_html.report(
-            self.manager, self.tmp_fname, self.issue.severity,
-            self.issue.confidence)
+            self.manager, self.tmp_fname, bandit.LOW, bandit.LOW)
 
         with open(self.tmp_fname) as f:
             soup = BeautifulSoup(f.read(), 'html.parser')
-            sev_span = soup.find_all('span', class_='severity')[0]
-            conf_span = soup.find_all('span', class_='confidence')[0]
-            loc_span = soup.find_all('span', class_='loc')[0]
-            nosec_span = soup.find_all('span', class_='nosec')[0]
+            skipped_span = soup.find_all('span', id='skipped')[0]
 
-            self.assertEqual(self.issue.severity, sev_span.string)
-            self.assertEqual(self.issue.confidence, conf_span.string)
-            self.assertEqual('4', loc_span.string)
-            self.assertEqual('2', nosec_span.string)
+            self.assertEqual(1, len(soup.find_all('span', id='skipped')))
+            self.assertIn('abc.py', skipped_span.text)
+            self.assertIn('File is bad', skipped_span.text)
 
+    @mock.patch('bandit.core.issue.Issue.get_code')
+    @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
+    def test_report_contents(self, get_issue_list, get_code):
+        self.manager.metrics.data['_totals'] = {'loc': 1000, 'nosec': 50}
+
+        issue_a = _get_issue_instance(severity=bandit.LOW)
+        issue_a.fname = 'abc.py'
+        issue_a.test = 'AAAAAAA'
+        issue_a.text = 'BBBBBBB'
+        issue_a.confidence = 'CCCCCCC'
+        # don't need to test severity, it determines the color which we're
+        # testing separately
+
+        issue_b = _get_issue_instance(severity=bandit.MEDIUM)
+        issue_c = _get_issue_instance(severity=bandit.HIGH)
+
+        issue_x = _get_issue_instance()
+        get_code.return_value = 'some code'
+
+        issue_y = _get_issue_instance()
+
+        get_issue_list.return_value = OrderedDict([(issue_a, [issue_x, issue_y]),
+                                                   (issue_b, [issue_x]),
+                                                   (issue_c, [issue_y])])
+
+        b_html.report(
+            self.manager, self.tmp_fname, bandit.LOW, bandit.LOW)
+
+        with open(self.tmp_fname) as f:
+            soup = BeautifulSoup(f.read(), 'html.parser')
+
+            self.assertEqual('1000', soup.find_all('span', id='loc')[0].text)
+            self.assertEqual('50', soup.find_all('span', id='nosec')[0].text)
+
+            issue1 = soup.find_all('span', id='issue-0')[0]
+            issue2 = soup.find_all('span', id='issue-1')[0]
+            issue3 = soup.find_all('span', id='issue-2')[0]
+
+            # make sure the class has been applied properly
+            self.assertEqual(1, len(issue1.find_all(
+                'div', {'class': 'issue-sev-low'})))
+
+            self.assertEqual(1, len(issue2.find_all(
+                'div', {'class': 'issue-sev-medium'})))
+
+            self.assertEqual(1, len(issue3.find_all(
+                'div', {'class': 'issue-sev-high'})))
+
+            # issue1 has a candidates section with 2 candidates in it
+            self.assertEqual(1, len(issue1.find_all('span', id='candidates')))
+            self.assertEqual(2, len(issue1.find_all('span', id='candidate')))
+
+            # issue2 doesn't have candidates
+            self.assertEqual(0, len(issue2.find_all('span', id='candidates')))
+            self.assertEqual(0, len(issue2.find_all('span', id='candidate')))
+
+            # issue1 doesn't have code issue 2 and 3 do
+            self.assertEqual(0, len(issue1.find_all('span', id='code')))
+            self.assertEqual(1, len(issue2.find_all('span', id='code')))
+            self.assertEqual(1, len(issue3.find_all('span', id='code')))
+
+            # issue2 code and issue1 first candidate have code
+            self.assertIn('some code', issue1.find_all('span',
+                                                       id='candidate')[0].text)
+            self.assertIn('some code', issue2.find_all('span',
+                                                       id='code')[0].text)
+
+            # make sure correct things are being output in issues
+            self.assertIn('AAAAAAA:', issue1.text)
+            self.assertIn('BBBBBBB', issue1.text)
+            self.assertIn('CCCCCCC', issue1.text)
+            self.assertIn('abc.py', issue1.text)
+
+
+def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
+    new_issue = issue.Issue(severity, confidence, 'Test issue')
+    new_issue.fname = 'code.py'
+    new_issue.test = 'bandit_plugin'
+    new_issue.lineno = 1
+    return new_issue
