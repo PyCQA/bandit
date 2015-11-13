@@ -228,7 +228,8 @@ class FunctionalTests(testtools.TestCase):
 
     def test_os_popen(self):
         '''Test for `os.popen`.'''
-        expect = {'SEVERITY': {'MEDIUM': 7}, 'CONFIDENCE': {'MEDIUM': 7}}
+        expect = {'SEVERITY': {'LOW': 7, 'MEDIUM': 1, 'HIGH': 1},
+                  'CONFIDENCE': {'HIGH': 9}}
         self.check_example('os-popen.py', expect)
 
     def test_os_spawn(self):
@@ -243,7 +244,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_os_system(self):
         '''Test for `os.system`.'''
-        expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'MEDIUM': 1}}
+        expect = {'SEVERITY': {'LOW': 1}, 'CONFIDENCE': {'HIGH': 1}}
         self.check_example('os_system.py', expect)
 
     def test_pickle(self):
@@ -256,7 +257,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_popen_wrappers(self):
         '''Test the `popen2` and `commands` modules.'''
-        expect = {'SEVERITY': {'MEDIUM': 7}, 'CONFIDENCE': {'MEDIUM': 7}}
+        expect = {'SEVERITY': {'MEDIUM': 7}, 'CONFIDENCE': {'HIGH': 7}}
         self.check_example('popen_wrappers.py', expect)
 
     def test_random_module(self):
@@ -319,7 +320,7 @@ class FunctionalTests(testtools.TestCase):
         '''Test for wildcard injection in shell commands.'''
         expect = {
             'SEVERITY': {'HIGH': 4, 'MEDIUM':4, 'LOW': 6},
-            'CONFIDENCE': {'MEDIUM': 8, 'HIGH': 6}
+            'CONFIDENCE': {'MEDIUM': 5, 'HIGH': 9}
         }
         self.check_example('wildcard-injection.py', expect)
 
