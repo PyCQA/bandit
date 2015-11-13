@@ -15,6 +15,7 @@
 # under the License.
 
 from collections import OrderedDict
+import copy
 import fnmatch
 import json
 import logging
@@ -141,9 +142,7 @@ class BanditManager():
         :param conf_filter: Confidence level to filter
         :return: Number of results in the set
         '''
-        res = self.filter_results(sev_filter=sev_filter,
-                                  conf_filter=conf_filter)
-        return len(res)
+        return len(self.get_issue_list(sev_filter, conf_filter))
 
     def output_results(self, lines, sev_level, conf_level, output_filename,
                        output_format):
@@ -376,6 +375,9 @@ def _compare_baseline_results(baseline, results):
     """
     unmatched_issues = []
 
+    # make a copy so we don't mess with the original baseline list
+    baseline_copy = copy.deepcopy(baseline)
+
     # approach here: go through each issue in current results, check if it was
     # present in the baseline.  If it was, remove it from the baseline (so we
     # don't count it twice).  If it wasn't then we have an unmatched issue, so
@@ -383,16 +385,16 @@ def _compare_baseline_results(baseline, results):
     for new_issue in results:
         # keep track of index in the baseline where the issue was so we can
         # remove it from the list
-        for found_index, baseline_issue in enumerate(baseline):
+        for found_index, baseline_issue in enumerate(baseline_copy):
             if new_issue.matches_issue(baseline_issue):
                 break
 
         # we went through all the results and didn't find it, add to unmatched
-        if found_index == len(baseline):
+        if found_index == len(baseline_copy):
             unmatched_issues.append(new_issue)
         # we found it, remove from the baseline
         else:
-            del baseline[found_index]
+            del baseline_copy[found_index]
 
     return unmatched_issues
 
