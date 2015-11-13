@@ -1,3 +1,4 @@
+# Copyright (c) 2015 Hewlett Packard Enterprise
 # -*- coding:utf-8 -*-
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,27 +18,35 @@ import datetime
 import logging
 
 from bandit.core import constants
+from bandit.core.test_properties import accepts_baseline
 from bandit.core import utils
 
 logger = logging.getLogger(__name__)
 
 
+@accepts_baseline
 def report(manager, filename, sev_level, conf_level, lines=-1,
            out_format='txt'):
-    '''Prints issues in Text formt
+    """Prints baseline issues in the text format
+
+    This is identical to normal text output except for each issue
+    we're going to output the issue we've found and the candidate
+    issues in the file.
 
     :param manager: the bandit manager object
     :param filename: The output file name, or None for stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
-    :param out_format: The ouput format name
-    '''
+    :param out_format: The output format name
+    """
 
     tmpstr_list = []
 
     # use a defaultdict to default to an empty string
     color = collections.defaultdict(str)
+
+    candidate_indent = ' ' * 10
 
     if out_format == 'txt':
         # get text colors from settings for TTY output
@@ -63,8 +72,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
             color['DEFAULT']
         ))
         for (item, score) in zip(manager.files_list, manager.scores):
-            score_dict = {'SEVERITY': sum(i for i in score['SEVERITY']),
-                          'CONFIDENCE': sum(i for i in score['CONFIDENCE'])}
+            score_dict = {'SEVERITY': sum(score['SEVERITY']),
+                          'CONFIDENCE': sum(score['CONFIDENCE'])}
             tmpstr_list.append("\t%s (score: %s)\n" % (item, score_dict))
 
         # print which files were excluded and why
@@ -80,18 +89,17 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
         ('Total lines of code', 'loc'),
         ('Total lines skipped (#nosec)', 'nosec')
     ]:
-        metrics_summary += "\t{0}: {1}\n".format(
+        metrics_summary += "\t%s: %s\n" % (
             label, manager.metrics.data['_totals'][metric]
         )
     for (criteria, default) in constants.CRITERIA:
-        metrics_summary += "\tTotal issues (by {0}):\n".format(
+        metrics_summary += "\tTotal issues (by %s):\n" % (
             criteria.lower()
         )
         for rank in constants.RANKING:
-            metrics_summary += "\t\t{0}: {1}\n".format(
+            metrics_summary += "\t\t%s: %s\n" % (
                 rank.capitalize(),
-                manager.metrics.data['_totals']['{0}.{1}'.format(criteria,
-                                                                 rank)]
+                manager.metrics.data['_totals']['%s.%s' % (criteria, rank)]
             )
     tmpstr_list.append("\n%sRun metrics:%s\n%s" % (
         color['HEADER'],
@@ -118,24 +126,28 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     if not len(issues):
         tmpstr_list.append("\tNo issues identified.\n")
 
-    for issue in issues:
-        tmpstr_list.append("\n%s>> Issue: [%s] %s\n" % (
-            color.get(issue.severity, color['DEFAULT']),
-            issue.test,
-            issue.text
-        ))
-        tmpstr_list.append("   Severity: %s   Confidence: %s\n" % (
-            issue.severity.capitalize(),
-            issue.confidence.capitalize()
-        ))
-        tmpstr_list.append("   Location: %s:%s\n" % (
-            issue.fname,
-            issue.lineno
-        ))
-        tmpstr_list.append(color['DEFAULT'])
+    baseline = not isinstance(issues, list)
 
-        tmpstr_list.append(
-            issue.get_code(lines, True))
+    for issue in issues:
+        # if not a baseline or only one candidate we know the issue
+        if not baseline or len(issues[issue]) == 1:
+            tmpstr_list += _output_issue_str(issue, color, "",
+                                             lines=lines)
+
+        # otherwise show the finding and the candidates
+        else:
+            tmpstr_list += _output_issue_str(issue, color, "",
+                                             show_lineno=False,
+                                             show_code=False)
+
+            tmpstr_list.append('\n-- Candidate Issues --\n')
+            for candidate in issues[issue]:
+                tmpstr_list += _output_issue_str(candidate, color,
+                                                 candidate_indent,
+                                                 lines=lines)
+                tmpstr_list.append('\n')
+
+        tmpstr_list.append(str('-' * 50 + '\n'))
 
     result = ''.join(tmpstr_list)
 
@@ -144,3 +156,36 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
 
     if filename is not None:
         logger.info("Text output written to file: %s", filename)
+
+
+def _output_issue_str(issue, color, indent, show_lineno=True, show_code=True,
+                      lines=-1):
+    # returns a list of lines that should be added to the existing lines list
+    tmpstr_list = list()
+
+    tmpstr_list.append("\n%s%s>> Issue: [%s] %s\n" % (
+        indent,
+        color.get(issue.severity, color['DEFAULT']),
+        issue.test,
+        issue.text
+    ))
+
+    tmpstr_list.append("%s   Severity: %s   Confidence: %s\n" % (
+        indent,
+        issue.severity.capitalize(),
+        issue.confidence.capitalize()
+    ))
+
+    tmpstr_list.append("%s   Location: %s:%s\n" % (
+        indent,
+        issue.fname,
+        issue.lineno if show_lineno else ""
+    ))
+
+    tmpstr_list.append(color['DEFAULT'])
+
+    if show_code:
+        tmpstr_list += list(indent + l + '\n' for l in
+                            issue.get_code(lines, True).split('\n'))
+
+    return tmpstr_list
