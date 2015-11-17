@@ -16,45 +16,8 @@
 import ast
 import logging
 
-from bandit.core import constants
-
 
 logger = logging.getLogger(__name__)
-
-
-def severity(sev):
-    '''Decorator function to set 'severity' property.'''
-    def wrapper(func):
-        if sev not in constants.SEVERITY_LEVEL._fields:
-            raise TypeError("Severity error: %s is not one of %s." % (sev,
-                            ",".join(constants.SEVERITY_LEVEL._fields)))
-        func._severity = sev
-        return func
-    return wrapper
-
-
-def category(new_category):
-    '''Decorator function to set 'category'.'''
-    def wrapper(func):
-        func._category = new_category
-        return func
-    return wrapper
-
-
-def title(new_title):
-    '''Decorator function to set 'title' property.'''
-    def wrapper(func):
-        func._title = new_title
-        return func
-    return wrapper
-
-
-def uuid(new_uuid):
-    '''Decorator function to set 'uuid' property.'''
-    def wrapper(func):
-        func._uuid = uuid
-        return func
-    return wrapper
 
 
 def checks(*args):

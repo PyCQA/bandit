@@ -14,6 +14,7 @@
 
 import bandit
 from bandit.core.test_properties import *
+from bandit.core import constants
 
 
 @takes_config
