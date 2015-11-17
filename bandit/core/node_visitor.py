@@ -73,14 +73,8 @@ class BanditNodeVisitor(object):
         :param node: Node being inspected
         :return: -
         '''
-
-        if self.debug:
-            logger.debug("visit_ClassDef called (%s)", ast.dump(node))
-
         # For all child nodes, add this class name to current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, node.name)
-        self.generic_visit(node)
-        self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
     def visit_FunctionDef(self, node):
         '''Visitor for AST FunctionDef nodes
@@ -93,10 +87,6 @@ class BanditNodeVisitor(object):
         '''
 
         self.context['function'] = node
-
-        if self.debug:
-            logger.debug("visit_FunctionDef called (%s)", ast.dump(node))
-
         qualname = self.namespace + '.' + b_utils.get_func_name(node)
         name = qualname.split('.')[-1]
 
@@ -107,8 +97,6 @@ class BanditNodeVisitor(object):
         # current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, name)
         self.update_scores(self.tester.run_tests(self.context, 'FunctionDef'))
-        self.generic_visit(node)
-        self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
     def visit_Call(self, node):
         '''Visitor for AST Call nodes
@@ -120,10 +108,6 @@ class BanditNodeVisitor(object):
         '''
 
         self.context['call'] = node
-
-        if self.debug:
-            logger.debug("visit_Call called (%s)", ast.dump(node))
-
         qualname = b_utils.get_call_name(node, self.import_aliases)
         name = qualname.split('.')[-1]
 
@@ -131,7 +115,6 @@ class BanditNodeVisitor(object):
         self.context['name'] = name
 
         self.update_scores(self.tester.run_tests(self.context, 'Call'))
-        self.generic_visit(node)
 
     def visit_Import(self, node):
         '''Visitor for AST Import nodes
@@ -141,16 +124,12 @@ class BanditNodeVisitor(object):
         :param node: The node that is being inspected
         :return: -
         '''
-        if self.debug:
-            logger.debug("visit_Import called (%s)", ast.dump(node))
-
         for nodename in node.names:
             if nodename.asname:
                 self.context['import_aliases'][nodename.asname] = nodename.name
             self.context['imports'].add(nodename.name)
             self.context['module'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'Import'))
-        self.generic_visit(node)
 
     def visit_ImportFrom(self, node):
         '''Visitor for AST Import nodes
@@ -160,9 +139,6 @@ class BanditNodeVisitor(object):
         :param node: The node that is being inspected
         :return: -
         '''
-        if self.debug:
-            logger.debug("visit_ImportFrom called (%s)", ast.dump(node))
-
         module = node.module
         if module is None:
             return self.visit_Import(node)
@@ -186,7 +162,6 @@ class BanditNodeVisitor(object):
             self.context['module'] = module
             self.context['name'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'ImportFrom'))
-        self.generic_visit(node)
 
     def visit_Str(self, node):
         '''Visitor for AST String nodes
@@ -197,14 +172,9 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['str'] = node.s
-
-        if self.debug:
-            logger.debug("visit_Str called (%s)", ast.dump(node))
-
         if not isinstance(node.parent, ast.Expr):  # docstring
             self.context['linerange'] = b_utils.linerange_fix(node.parent)
             self.update_scores(self.tester.run_tests(self.context, 'Str'))
-        self.generic_visit(node)
 
     def visit_Bytes(self, node):
         '''Visitor for AST Bytes nodes
@@ -215,55 +185,15 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['bytes'] = node.s
-
-        if self.debug:
-            logger.debug("visit_Bytes called (%s)", ast.dump(node))
-
         if not isinstance(node.parent, ast.Expr):  # docstring
             self.context['linerange'] = b_utils.linerange_fix(node.parent)
             self.update_scores(self.tester.run_tests(self.context, 'Bytes'))
-        self.generic_visit(node)
 
-    def visit_Exec(self, node):
-        self.context['str'] = 'exec'
-
-        if self.debug:
-            logger.debug("visit_Exec called (%s)", ast.dump(node))
-
-        self.update_scores(self.tester.run_tests(self.context, 'Exec'))
-        self.generic_visit(node)
-
-    def visit_Assert(self, node):
-        self.context['str'] = 'assert'
-
-        if self.debug:
-            logger.debug("visit_Assert called (%s)", ast.dump(node))
-
-        self.update_scores(self.tester.run_tests(self.context, 'Assert'))
-        self.generic_visit(node)
-
-    def visit_ExceptHandler(self, node):
-        if self.debug:
-            logger.debug("visit_ExceptHandler called (%s)",
-                         ast.dump(node))
-
-        self.update_scores(self.tester.run_tests(self.context,
-                                                 'ExceptHandler'))
-        self.generic_visit(node)
-
-    def visit(self, node):
-        '''Generic visitor
-
-        add the node to the node collection, and log it
-        :param node: The node that is being inspected
-        :return: -
-        '''
+    def pre_visit(self, node):
         self.context = copy.copy(self.context_template)
 
         if self.debug:
             logger.debug(ast.dump(node))
-
-        if self.debug:
             self.metaast.add_node(node, '', self.depth)
 
         if hasattr(node, 'lineno'):
@@ -274,7 +204,7 @@ class BanditNodeVisitor(object):
                         "#nosec" in self.lines[node.lineno - 1]):
                     logger.debug("skipped, nosec")
                     self.metrics.note_nosec()
-                    return
+                    return False
 
         self.context['node'] = node
         self.context['linerange'] = b_utils.linerange_fix(node)
@@ -285,13 +215,27 @@ class BanditNodeVisitor(object):
                      self.depth)
         self.depth += 1
         logger.debug(self.context)
+        return True
 
-        method = 'visit_' + node.__class__.__name__
-        visitor = getattr(self, method, self.generic_visit)
-        visitor(node)
+    def visit(self, node):
+        name = node.__class__.__name__
+        method = 'visit_' + name
+        visitor = getattr(self, method, None)
+        if visitor is not None:
+            if self.debug:
+                logger.debug("%s called (%s)", method, ast.dump(node))
+            visitor(node)
+        else:
+            self.update_scores(self.tester.run_tests(self.context, name))
 
+    def post_visit(self, node):
         self.depth -= 1
         logger.debug("%s\texiting : %s", self.depth, hex(id(node)))
+
+        # HACK(tkelsey): this is needed to clean up post-recursion stuff that
+        # gets setup in the visit methods for these node types.
+        if isinstance(node, ast.FunctionDef) or isinstance(node, ast.ClassDef):
+            self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
     def generic_visit(self, node):
         """Drive the visitor."""
@@ -305,12 +249,20 @@ class BanditNodeVisitor(object):
                         else:
                             setattr(item, 'sibling', None)
                         setattr(item, 'parent', node)
-                        self.visit(node=item)
+
+                        if self.pre_visit(item):
+                            self.visit(item)
+                            self.generic_visit(item)
+                            self.post_visit(item)
 
             elif isinstance(value, ast.AST):
                 setattr(value, 'sibling', None)
                 setattr(value, 'parent', node)
-                self.visit(node=value)
+
+                if self.pre_visit(value):
+                    self.visit(value)
+                    self.generic_visit(value)
+                    self.post_visit(value)
 
     def update_scores(self, scores):
         '''Score updater
