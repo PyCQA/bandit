@@ -15,8 +15,8 @@
 # under the License.
 
 import ast
-import copy
 import logging
+import operator
 
 from bandit.core import constants
 from bandit.core import tester as b_tester
@@ -28,11 +28,6 @@ logger = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor(object):
-    context_template = {'node': None, 'filename': None,
-                        'name': None, 'qualname': None, 'module': None,
-                        'imports': None, 'import_aliases': None, 'call': None,
-                        'function': None, 'lineno': None, 'skip_lines': None}
-
     def __init__(self, fname, config, metaast, testset,
                  debug, ignore_nosec, metrics):
         self.debug = debug
@@ -48,9 +43,7 @@ class BanditNodeVisitor(object):
         self.metaast = metaast
         self.testset = testset
         self.imports = set()
-        self.context_template['imports'] = self.imports
         self.import_aliases = {}
-        self.context_template['import_aliases'] = self.import_aliases
         self.tester = b_tester.BanditTester(
             self.config, self.testset, self.debug
         )
@@ -126,13 +119,13 @@ class BanditNodeVisitor(object):
         '''
         for nodename in node.names:
             if nodename.asname:
-                self.context['import_aliases'][nodename.asname] = nodename.name
-            self.context['imports'].add(nodename.name)
+                self.import_aliases[nodename.asname] = nodename.name
+            self.imports.add(nodename.name)
             self.context['module'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'Import'))
 
     def visit_ImportFrom(self, node):
-        '''Visitor for AST Import nodes
+        '''Visitor for AST ImportFrom nodes
 
         add relevant information about node to
         the context for use in tests which inspect imports.
@@ -149,16 +142,16 @@ class BanditNodeVisitor(object):
             #      name in import_aliases instead of the local definition.
             #      We need better tracking of names.
             if nodename.asname:
-                self.context['import_aliases'][nodename.asname] = (
+                self.import_aliases[nodename.asname] = (
                     module + "." + nodename.name
                 )
             else:
                 # Even if import is not aliased we need an entry that maps
                 # name to module.name.  For example, with 'from a import b'
                 # b should be aliased to the qualified name a.b
-                self.context['import_aliases'][nodename.name] = (module + '.' +
-                                                                 nodename.name)
-            self.context['imports'].add(module + "." + nodename.name)
+                self.import_aliases[nodename.name] = (module + '.' +
+                                                      nodename.name)
+            self.imports.add(module + "." + nodename.name)
             self.context['module'] = module
             self.context['name'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'ImportFrom'))
@@ -190,7 +183,9 @@ class BanditNodeVisitor(object):
             self.update_scores(self.tester.run_tests(self.context, 'Bytes'))
 
     def pre_visit(self, node):
-        self.context = copy.copy(self.context_template)
+        self.context = {}
+        self.context['imports'] = self.imports
+        self.context['import_aliases'] = self.import_aliases
 
         if self.debug:
             logger.debug(ast.dump(node))
@@ -271,14 +266,11 @@ class BanditNodeVisitor(object):
         severity, this is needed to update the stored list.
         :param score: The score list to update our scores with
         '''
-        def add(x, y):
-            return x + y
-
         # we'll end up with something like:
         # SEVERITY: {0, 0, 0, 10}  where 10 is weighted by finding and level
         for score_type in self.scores:
             self.scores[score_type] = list(map(
-                add, self.scores[score_type], scores[score_type]
+                operator.add, self.scores[score_type], scores[score_type]
             ))
 
     def process(self, lines):
