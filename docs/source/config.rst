@@ -94,3 +94,35 @@ The following miscellaneous options are available:
 | output_colors       | Optional terminal escape sequences to display colors,|
 |                     | if not given defaults will be used.                  |
 +---------------------+------------------------------------------------------+
+
+Generating a default configuration
+----------------------------------
+Some users might want to use a 'generic' configuration for bandit. Using
+'bandit-config-generator', it is possible to generate such a configuration
+without writing a whole bandit.yaml. Instead, one can write a minimal
+configuration file (named 'minimal.yaml', for instance) that looks like
+this:
+
+.. code-block:: yaml
+
+    profile_name: my-bandit-config
+    exclude_checkers: [assert_used, try_except_pass]
+
+Then, it is possible to call 'bandit-config-generator' to generate a valid
+configuration:
+
+.. code-block:: bash
+
+    bandit-config-generator --out my-bandit.yaml bandit.yaml minimal.yaml
+
+Where 'bandit.yaml' is the full configuration example provided by bandit.
+
+The following options are available:
+
++---------------------+------------------------------------------------------+
+| Option              | Description                                          |
++=====================+======================================================+
+| profile_name        | The name of the profile that will be generated.      |
++---------------------+------------------------------------------------------+
+| exclude_checkers    | A list of checkers to disable.                       |
++---------------------+------------------------------------------------------+
