@@ -15,7 +15,6 @@
 # under the License.
 
 from collections import OrderedDict
-import copy
 import fnmatch
 import json
 import logging
@@ -365,38 +364,13 @@ def _compare_baseline_results(baseline, results):
     """Compare a baseline list of issues to list of results
 
     This function compares a baseline set of issues to a current set of issues
-    to find results that weren't present in the baseline.  To do this we'll
-    compare filename, severity, confidence, and issue text (using the
-    Issue.matches_issue() method.
+    to find results that weren't present in the baseline.
 
     :param baseline: Baseline list of issues
     :param results: Current list of issues
     :return: List of unmatched issues
     """
-    unmatched_issues = []
-
-    # make a copy so we don't mess with the original baseline list
-    baseline_copy = copy.deepcopy(baseline)
-
-    # approach here: go through each issue in current results, check if it was
-    # present in the baseline.  If it was, remove it from the baseline (so we
-    # don't count it twice).  If it wasn't then we have an unmatched issue, so
-    # add it to the unmatched list.
-    for new_issue in results:
-        # keep track of index in the baseline where the issue was so we can
-        # remove it from the list
-        for found_index, baseline_issue in enumerate(baseline_copy):
-            if new_issue.matches_issue(baseline_issue):
-                break
-
-        # we went through all the results and didn't find it, add to unmatched
-        if found_index == len(baseline_copy):
-            unmatched_issues.append(new_issue)
-        # we found it, remove from the baseline
-        else:
-            del baseline_copy[found_index]
-
-    return unmatched_issues
+    return [a for a in results if a not in baseline]
 
 
 def _find_candidate_matches(unmatched_issues, results_list):
@@ -416,6 +390,6 @@ def _find_candidate_matches(unmatched_issues, results_list):
 
     for unmatched in unmatched_issues:
         issue_candidates[unmatched] = ([i for i in results_list if
-                                        unmatched.matches_issue(i)])
+                                        unmatched == i])
 
     return issue_candidates

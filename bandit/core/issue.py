@@ -38,6 +38,19 @@ class Issue(object):
             self.text, (self.ident or self.test), self.severity,
             self.confidence, self.fname, self.lineno)
 
+    def __eq__(self, other):
+        # if the issue text, severity, confidence, and filename match, it's
+        # the same issue from our perspective
+        match_types = ['text', 'severity', 'confidence', 'fname', 'test']
+        return all(getattr(self, field) == getattr(other, field)
+                   for field in match_types)
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __hash__(self):
+        return id(self)
+
     def filter(self, severity, confidence):
         '''Utilty to filter on confidence and severity
 
@@ -104,14 +117,6 @@ class Issue(object):
         self.test = data["test_name"]
         self.lineno = data["line_number"]
         self.linerange = data["line_range"]
-
-    def matches_issue(self, compared_issue):
-        # if the issue text, severity, confidence, and filename match, it's
-        # the same issue from our perspective
-        match_types = ['text', 'severity', 'confidence', 'fname', 'test']
-
-        return all(getattr(self, field) == getattr(compared_issue, field)
-                   for field in match_types)
 
 
 def issue_from_dict(data):

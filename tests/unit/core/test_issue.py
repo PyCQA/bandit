@@ -92,27 +92,27 @@ class IssueTests(testtools.TestCase):
         issue_h.lineno = 12345
 
         # positive tests
-        self.assertTrue(issue_a.matches_issue(issue_a))
-        self.assertTrue(issue_a.matches_issue(issue_f))
-        self.assertTrue(issue_f.matches_issue(issue_a))
+        self.assertEqual(issue_a, issue_a)
+        self.assertEqual(issue_a, issue_f)
+        self.assertEqual(issue_f, issue_a)
 
         # severity doesn't match
-        self.assertFalse(issue_a.matches_issue(issue_b))
+        self.assertNotEqual(issue_a, issue_b)
 
         # confidence doesn't match
-        self.assertFalse(issue_a.matches_issue(issue_c))
+        self.assertNotEqual(issue_a, issue_c)
 
         # text doesn't match
-        self.assertFalse(issue_a.matches_issue(issue_d))
+        self.assertNotEqual(issue_a, issue_d)
 
         # filename doesn't match
-        self.assertFalse(issue_a.matches_issue(issue_e))
+        self.assertNotEqual(issue_a, issue_e)
 
         # plugin name doesn't match
-        self.assertFalse(issue_a.matches_issue(issue_g))
+        self.assertNotEqual(issue_a, issue_g)
 
         # line number doesn't match but should pass because we don't test that
-        self.assertTrue(issue_a.matches_issue(issue_h))
+        self.assertEqual(issue_a, issue_h)
 
 
 def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
