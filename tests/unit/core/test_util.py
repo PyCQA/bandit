@@ -16,6 +16,7 @@
 # under the License.
 
 import ast
+import mock
 import os
 import shutil
 import sys
@@ -26,6 +27,12 @@ import testtools
 import six
 
 from bandit.core import utils as b_utils
+
+from sys import version_info
+if version_info.major == 2:
+    import __builtin__ as builtins
+else:
+    import builtins
 
 
 def _touch(path):
@@ -272,3 +279,24 @@ class UtilTests(testtools.TestCase):
         self.assertEqual('deep value', b_utils.deepgetattr(a, 'b.c.d'))
         self.assertEqual('deep value 2', b_utils.deepgetattr(a, 'b.c.d2'))
         self.assertRaises(AttributeError, b_utils.deepgetattr, a.b, 'z')
+
+    @mock.patch('os.path.isdir')
+    def test_check_output_destination_dir(self, isdir):
+        isdir.return_value = True
+        def _b_tester(a, b):
+            with b_utils.output_file(a, b):
+                pass
+
+        self.assertRaises(RuntimeError, _b_tester, 'derp', 'r')
+
+    @mock.patch('os.path.isdir')
+    def test_check_output_destination_bad(self, isdir):
+        with mock.patch.object(builtins, 'open') as b_open:
+            isdir.return_value = False
+            b_open.side_effect = IOError()
+
+            def _b_tester(a, b):
+                with b_utils.output_file(a, b):
+                    pass
+
+            self.assertRaises(IOError, _b_tester, 'derp', 'r')

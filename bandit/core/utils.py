@@ -30,16 +30,17 @@ logger = logging.getLogger(__name__)
 
 @contextlib.contextmanager
 def output_file(filename, filemode):
-    isfileoutput = filename is not None
     try:
         out = sys.stdout
-        if isfileoutput:
+        if filename is not None:
+            if os.path.isdir(filename):
+                raise RuntimeError('Specified destination is a directory')
             out = open(filename, filemode)
         yield out
     except Exception:
         raise
     finally:
-        if isfileoutput:
+        if out is not sys.stdout:
             out.close()
 
 

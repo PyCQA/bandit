@@ -27,12 +27,6 @@ from bandit.core import issue
 from bandit.core import constants
 from bandit.core import extension_loader
 
-from sys import version_info
-if version_info.major == 2:
-    import __builtin__ as builtins
-else:
-    import builtins
-
 
 class TempFile(fixtures.Fixture):
     def __init__(self, contents=None):
@@ -157,39 +151,6 @@ class ManagerTests(testtools.TestCase):
 
         self.assertEqual([3,2,1], r)
 
-    @mock.patch('os.path.isfile')
-    def test_check_output_destination_exists(self, isfile):
-        isfile.return_value = True
-        a = self.manager.check_output_destination('derp')
-        self.assertEqual(a, 'File already exists')
-
-    @mock.patch('os.path.isfile')
-    @mock.patch('os.path.isdir')
-    def test_check_output_destination_dir(self, isdir, isfile):
-        isfile.return_value = False
-        isdir.return_value = True
-        a = self.manager.check_output_destination('derp')
-        self.assertEqual(a, 'Specified destination is a directory')
-
-    @mock.patch('os.path.isfile')
-    @mock.patch('os.path.isdir')
-    def test_check_output_destination_bad(self, isfile, isdir):
-        with mock.patch.object(builtins, 'open') as b_open:
-            isfile.return_value = False
-            isdir.return_value = False
-            b_open.side_effect = IOError()
-            a = self.manager.check_output_destination('derp')
-            self.assertEqual(a, 'Specified destination is not writable')
-
-    @mock.patch('os.path.isfile')
-    @mock.patch('os.path.isdir')
-    def test_check_output_destination_bad(self, isfile, isdir):
-        with mock.patch.object(builtins, 'open'):
-            isfile.return_value = False
-            isdir.return_value = False
-            a = self.manager.check_output_destination('derp')
-            self.assertEqual(a, True)
-
     @mock.patch('os.path.isdir')
     def test_discover_files_recurse_skip(self, isdir):
         isdir.return_value = True
@@ -231,53 +192,6 @@ class ManagerTests(testtools.TestCase):
             self.manager.discover_files(['thing'], True)
             self.assertEqual(self.manager.files_list, ['thing'])
             self.assertEqual(self.manager.excluded_files, [])
-
-    def test_output_results_bad(self):
-        fmt = mock.MagicMock()
-        with mock.patch('bandit.core.extension_loader.MANAGER') as m:
-            m.formatters_mgr = {'test': fmt}
-            self.assertRaises(KeyError, self.manager.output_results,
-                3, constants.LOW, constants.LOW, None, "txt")
-
-    def test_output_results_txt(self):
-        fmt = mock.MagicMock()
-        with mock.patch('bandit.core.extension_loader.MANAGER') as m:
-            m.formatters_mgr = {'txt': fmt}
-            self.manager.output_results(3, constants.LOW, constants.LOW,
-                                        None, "test")
-            fmt.plugin.assert_called_with(self.manager, conf_level='LOW',
-                                          filename=None, lines=3,
-                                          out_format='txt', sev_level='LOW')
-
-    def test_output_results_csv(self):
-        fmt = mock.MagicMock()
-        with mock.patch('bandit.core.extension_loader.MANAGER') as m:
-            m.formatters_mgr = {'csv': fmt}
-            self.manager.output_results(3, constants.LOW, constants.LOW,
-                                        None, "csv")
-            fmt.plugin.assert_called_with(self.manager, conf_level='LOW',
-                                          filename=None, lines=1,
-                                          out_format='csv', sev_level='LOW')
-
-    def test_output_results_txt_plain(self):
-        fmt = mock.MagicMock()
-        fmt.name = 'txt'
-        with mock.patch('bandit.core.extension_loader.MANAGER') as m:
-            m.formatters_mgr = {'txt': fmt}
-            self.manager.output_results(3, constants.LOW, constants.LOW,
-                                        "dummy", "test")
-            fmt.plugin.assert_called_with(self.manager, conf_level='LOW',
-                                          filename="dummy", lines=3,
-                                          out_format='plain', sev_level='LOW')
-
-    def test_output_results_io_error(self):
-        fmt = mock.MagicMock()
-        fmt.name = 'txt'
-        fmt.plugin.side_effect = IOError
-        with mock.patch('bandit.core.extension_loader.MANAGER') as m:
-            m.formatters_mgr = {'txt': fmt}
-            self.manager.output_results(3, constants.LOW, constants.LOW,
-                                        "dummy", "test")
 
     def test_compare_baseline(self):
         issue_a = self._get_issue_instance()

@@ -161,7 +161,7 @@ def main():
     )
     parser.add_argument(
         '-f', '--format', dest='output_format', action='store',
-        default='txt', help='specify output format',
+        default='screen', help='specify output format',
         choices=sorted(extension_mgr.formatter_names)
     )
     parser.add_argument(
@@ -244,16 +244,6 @@ def main():
         logger.info("using config: %s", config_file)
         logger.info("running on Python %d.%d.%d", sys.version_info.major,
                     sys.version_info.minor, sys.version_info.micro)
-
-    # check ability to write output file, if requested
-    if args.output_file is not None:
-        check_dest = b_mgr.check_output_destination(args.output_file)
-        if check_dest is not True:
-            logger.error(
-                'Problem with specified output destination\n\t%s: %s',
-                check_dest, args.output_file
-            )
-            sys.exit(2)
 
     # no point running if there are no tests available
     if not b_mgr.has_tests:

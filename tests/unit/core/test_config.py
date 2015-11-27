@@ -54,11 +54,6 @@ class TestInit(testtools.TestCase):
         b_config = config.BanditConfig(f.name)
 
         # After initialization, can get settings.
-        self.assertEqual('', b_config.get_setting('color_HEADER'))
-        self.assertEqual('', b_config.get_setting('color_DEFAULT'))
-        self.assertEqual('', b_config.get_setting('color_LOW'))
-        self.assertEqual('', b_config.get_setting('color_MEDIUM'))
-        self.assertEqual('', b_config.get_setting('color_HIGH'))
         self.assertEqual('*.py', b_config.get_setting('plugin_name_pattern'))
 
         self.assertEqual({example_key: example_value}, b_config.config)
@@ -80,38 +75,6 @@ class TestInit(testtools.TestCase):
         f = self.useFixture(TempFile(invalid_yaml))
         self.assertRaisesRegex(
             utils.ConfigFileInvalidYaml, f.name, config.BanditConfig, f.name)
-
-    def test_colors_isatty_defaults(self):
-        # When stdout says it's a tty there are default colors.
-
-        f = self.useFixture(TempFile())
-
-        self.useFixture(
-            fixtures.MockPatch('sys.stdout.isatty', return_value=True))
-
-        b_config = config.BanditConfig(f.name)
-
-        self.assertEqual('\x1b[95m', b_config.get_setting('color_HEADER'))
-        self.assertEqual('\x1b[0m', b_config.get_setting('color_DEFAULT'))
-        self.assertEqual('\x1b[94m', b_config.get_setting('color_LOW'))
-        self.assertEqual('\x1b[93m', b_config.get_setting('color_MEDIUM'))
-        self.assertEqual('\x1b[91m', b_config.get_setting('color_HIGH'))
-
-    def test_colors_isatty_config(self):
-        # When stdout says it's a tty the colors can be set in bandit.yaml
-
-        self.useFixture(
-            fixtures.MockPatch('sys.stdout.isatty', return_value=True))
-
-        sample_yaml = """
-output_colors:
-    HEADER: '\\033[23m'
-"""
-        f = self.useFixture(TempFile(sample_yaml))
-
-        b_config = config.BanditConfig(f.name)
-
-        self.assertEqual('\x1b[23m', b_config.get_setting('color_HEADER'))
 
 
 class TestGetOption(testtools.TestCase):

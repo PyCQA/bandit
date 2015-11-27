@@ -82,5 +82,5 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("High: 2", output)
         self.assertIn("Files skipped (0):", output)
         self.assertIn("Issue: [blacklist_imports] Consider possible", output)
-        self.assertIn("imports.py:2\n", output)
-        self.assertIn("imports.py:4\n", output)
+        self.assertIn("imports.py:2", output)
+        self.assertIn("imports.py:4", output)

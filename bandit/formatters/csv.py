@@ -40,8 +40,7 @@ from bandit.core import utils
 logger = logging.getLogger(__name__)
 
 
-def report(manager, filename, sev_level, conf_level, lines=-1,
-           out_format='csv'):
+def report(manager, filename, sev_level, conf_level, lines=-1):
     '''Prints issues in CSV format
 
     :param manager: the bandit manager object
@@ -49,7 +48,6 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
-    :param out_format: The ouput format name
     '''
 
     results = manager.get_issue_list(sev_level=sev_level,

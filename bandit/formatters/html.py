@@ -152,8 +152,7 @@ logger = logging.getLogger(__name__)
 
 
 @accepts_baseline
-def report(manager, filename, sev_level, conf_level, lines=-1,
-           out_format='html'):
+def report(manager, filename, sev_level, conf_level, lines=-1):
     """Writes issues to 'filename' in HTML format
 
     :param manager: the bandit manager object
@@ -161,7 +160,6 @@ def report(manager, filename, sev_level, conf_level, lines=-1,
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
-    :param out_format: The output format name
     """
 
     header_block = """
