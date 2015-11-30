@@ -43,7 +43,7 @@ def write_config_file(config, f):
 
     # Write the rest of the config.
     for key in config:
-        if key == 'profile':
+        if key == 'profiles':
             continue
         f.write('\n')
         f.write(yaml.dump({key: config[key]}, default_flow_style=False))
