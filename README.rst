@@ -61,9 +61,9 @@ Usage::
 
     $ bandit -h
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
-                  [-p PROFILE] [-l] [-i] [-f {txt,json,csv,xml}]
-                  [-o OUTPUT_FILE] [-v] [-d] [--ignore-nosec]
-                  [--exclude EXCLUDED_PATHS]
+                  [-p PROFILE] [-l] [-i] [-f {csv,html,json,txt,xml}]
+                  [-o OUTPUT_FILE] [-v] [-d] [--ignore-nosec] [-x EXCLUDED_PATHS]
+                  [-b BASELINE]
                   targets [targets ...]
 
     Bandit - a Python source code analyzer.
@@ -92,7 +92,7 @@ Usage::
       -i, --confidence      confidence results filter, show only issues of this
                             level or higher. -i for LOW, -ii for MEDIUM, -iii for
                             HIGH
-      -f {csv,json,txt,xml}, --format {csv,json,txt,xml}
+      -f {csv,html,json,txt,xml}, --format {csv,html,json,txt,xml}
                             specify output format
       -o OUTPUT_FILE, --output OUTPUT_FILE
                             write report to filename
@@ -104,6 +104,43 @@ Usage::
                             Comma separated list of paths to exclude from scan.
                             Note that these are in addition to the excluded paths
                             provided in the config file.
+      -b BASELINE, --baseline BASELINE
+                            Path to a baseline report, in JSON format. Note:
+                            baseline reports must be output in one of the
+                            following formats: ['txt', 'html']
+
+    The following plugin suites were discovered and loaded:
+      any_other_function_with_shell_equals_true
+      assert_used
+      blacklist_calls
+      blacklist_import_func
+      blacklist_imports
+      exec_used
+      execute_with_run_as_root_equals_true
+      flask_debug_true
+      hardcoded_bind_all_interfaces
+      hardcoded_password_default
+      hardcoded_password_funcarg
+      hardcoded_password_string
+      hardcoded_sql_expressions
+      hardcoded_tmp_directory
+      jinja2_autoescape_false
+      linux_commands_wildcard_injection
+      paramiko_calls
+      password_config_option_not_marked_secret
+      request_with_no_cert_validation
+      set_bad_file_permissions
+      ssl_with_bad_defaults
+      ssl_with_bad_version
+      ssl_with_no_version
+      start_process_with_a_shell
+      start_process_with_no_shell
+      start_process_with_partial_path
+      subprocess_popen_with_shell_equals_true
+      subprocess_without_shell_equals_true
+      try_except_pass
+      use_of_mako_templates
+      weak_cryptographic_key
 
 
 Configuration
