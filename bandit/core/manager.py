@@ -72,7 +72,7 @@ class BanditManager():
                     profile_name, profile
                 )
             else:
-                raise RuntimeError('unable to find profile (%s) in config'
+                raise RuntimeError('unable to find profile (%s) in config '
                                    'file: %s' % (profile_name,
                                                  self.b_conf.config_file))
         else:

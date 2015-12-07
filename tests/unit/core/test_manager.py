@@ -105,7 +105,7 @@ class ManagerTests(testtools.TestCase):
             err = str(e)
 
         self.assertTrue(err.startswith(
-            "unable to find profile (Bad) in configfile:"))
+            "unable to find profile (Bad) in config file:"))
 
     def test_matches_globlist(self):
         self.assertTrue(manager._matches_glob_list('test', ['*tes*']))
