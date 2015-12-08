@@ -1,0 +1,224 @@
+# -*- coding:utf-8 -*-
+#
+# Copyright 2015 Hewlett-Packard Enterprise
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+# #############################################################################
+# Bandit Baseline is a tool that runs Bandit against a Git commit, and compares
+# the current commit findings to the parent commit findings.
+
+# To do this it checks out the parent commit, runs Bandit (with any provided
+# filters or profiles), checks out the current commit, runs Bandit, and then
+# reports on any new findings.
+# #############################################################################
+
+import argparse
+import contextlib
+import logging
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+
+import git
+
+bandit_args = sys.argv[1:]
+baseline_tmp_file = '_bandit_baseline_run.json_'
+current_commit = None
+default_output_format = 'terminal'
+logger = logging.getLogger(__name__)
+repo = None
+report_basename = 'bandit_baseline_result'
+valid_baseline_formats = ['txt', 'html']
+
+
+def main():
+    # our cleanup function needs this and can't be passed arguments
+    global current_commit
+    global repo
+
+    parent_commit = None
+    output_format = None
+    repo = None
+    report_fname = None
+
+    init_logger()
+
+    output_format, repo, report_fname = initialize()
+
+    if not repo:
+        sys.exit(2)
+
+    # #################### Find current and parent commits ####################
+    try:
+        branch = repo.active_branch
+        commits = repo.iter_commits(branch)
+
+        commit = next(commits)
+        current_commit = commit.hexsha
+        logger.info('Got current commit: [%s]', commit.name_rev)
+
+        commit = next(commits)
+        parent_commit = commit.hexsha
+        logger.info('Got parent commit: [%s]', commit.name_rev)
+
+    except (git.GitCommandError, StopIteration):
+        logger.error("Unable to get current branch and/or parent branch")
+        sys.exit(2)
+
+    # #################### Run Bandit against both commits ####################
+    output_type = (['-f', 'txt'] if output_format == default_output_format
+                   else ['-o', report_fname])
+
+    with baseline_setup() as t:
+
+        bandit_tmpfile = "{}/{}".format(t, baseline_tmp_file)
+
+        steps = [{'message': 'Getting Bandit baseline results',
+                  'commit': parent_commit,
+                  'args': bandit_args + ['-f', 'json', '-o', bandit_tmpfile]},
+
+                 {'message': 'Comparing Bandit results to baseline',
+                  'commit': current_commit,
+                  'args': bandit_args + ['-b', bandit_tmpfile] + output_type}]
+
+        return_code = None
+
+        for step in steps:
+            repo.head.reset(commit=step['commit'], working_tree=True)
+
+            logger.info(step['message'])
+
+            bandit_command = ['bandit'] + step['args']
+
+            try:
+                output = subprocess.check_output(bandit_command)
+            except subprocess.CalledProcessError as e:
+                output = e.output
+                return_code = e.returncode
+            else:
+                return_code = 0
+
+            if return_code not in [0, 1]:
+                logger.error("Error running command: %s\nOutput: %s\n",
+                             bandit_args, output)
+
+    # #################### Output and exit ####################################
+    # print output or display message about written report
+    if output_format == default_output_format:
+        print(output)
+    else:
+        logger.info("Successfully wrote %s", report_fname)
+
+    # exit with the code the last Bandit run returned
+    sys.exit(return_code)
+
+
+# #################### Clean up before exit ###################################
+@contextlib.contextmanager
+def baseline_setup():
+    d = tempfile.mkdtemp()
+    yield d
+    shutil.rmtree(d, True)
+
+    if repo:
+        repo.head.reset(commit=current_commit, working_tree=True)
+
+
+# #################### Setup logging ##########################################
+def init_logger():
+    logger.handlers = []
+    log_level = logging.INFO
+    log_format_string = "[%(levelname)7s ] %(message)s"
+    logging.captureWarnings(True)
+    logger.setLevel(log_level)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(log_format_string))
+    logger.addHandler(handler)
+
+
+# #################### Perform initialization and validate assumptions ########
+def initialize():
+    valid = True
+
+    # #################### Parse Args #########################################
+    parser = argparse.ArgumentParser(
+        description='Bandit Baseline - Generates Bandit results compared to "'
+                    'a baseline',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='Additional Bandit arguments such as severity filtering (-ll) '
+               'can be added and will be passed to Bandit.'
+    )
+
+    parser.add_argument('targets', metavar='targets', type=str, nargs='+',
+                        help='source file(s) or directory(s) to be tested')
+
+    parser.add_argument('-f', dest='output_format', action='store',
+                        default='terminal', help='specify output format',
+                        choices=valid_baseline_formats)
+
+    args, unknown = parser.parse_known_args()
+
+    # #################### Setup Output #######################################
+    # set the output format, or use a default if not provided
+    output_format = (args.output_format if args.output_format
+                     else default_output_format)
+
+    if output_format == default_output_format:
+        logger.info("No output format specified, using %s",
+                    default_output_format)
+
+    # set the report name based on the output format
+    report_fname = "{}.{}".format(report_basename, output_format)
+
+    # #################### Check Requirements #################################
+    try:
+        repo = git.Repo(os.getcwd())
+
+    except git.exc.InvalidGitRepositoryError:
+        logger.error("Bandit baseline must be called from a git project root")
+        valid = False
+
+    except git.exc.GitCommandNotFound:
+        logger.error("Git command not found")
+        valid = False
+
+    else:
+        if repo.is_dirty():
+            logger.error("Current working directory is dirty and must be "
+                         "resolved")
+            valid = False
+
+    # if output format is specified, we need to be able to write the report
+    if output_format != default_output_format and os.path.exists(report_fname):
+        logger.error("File %s already exists, aborting", report_fname)
+        valid = False
+
+    # Bandit needs to be able to create this temp file
+    if os.path.exists(baseline_tmp_file):
+        logger.error("Temporary file %s needs to be removed prior to running",
+                     baseline_tmp_file)
+        valid = False
+
+    # we must validate -o is not provided, as it will mess up Bandit baseline
+    if '-o' in bandit_args:
+        logger.error("Bandit baseline must not be called with the -o option")
+        valid = False
+
+    return (output_format, repo, report_fname) if valid else (None, None, None)
+
+
+if __name__ == '__main__':
+    main()
