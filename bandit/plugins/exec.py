@@ -13,6 +13,35 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+
+r"""
+Description
+-----------
+This plugin test checks for the use of Python's `exec` method or keyword. The
+Python docs succinctly describe why the use of `exec` is risky.
+
+Config Options
+--------------
+None
+
+Sample Output
+-------------
+.. code-block:: none
+
+    >> Issue: Use of exec detected.
+       Severity: Medium   Confidence: High
+       Location: ./examples/exec-py2.py:2
+    1 exec("do evil")
+    2 exec "do evil"
+
+References
+----------
+ - https://docs.python.org/2.0/ref/exec.html
+ - TODO: add info on exec and similar to sec best practice and link here
+
+.. versionadded:: 0.9.0
+"""
+
 import six
 
 import bandit
