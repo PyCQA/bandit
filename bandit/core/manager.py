@@ -248,7 +248,7 @@ class BanditManager():
         '''
         # display progress, if number of files warrants it
         if len(self.files_list) > self.progress:
-            sys.stdout.write("%s [" % len(self.files_list))
+            sys.stderr.write("%s [" % len(self.files_list))
 
         # if we have problems with a file, we'll remove it from the files_list
         # and add it to the skipped list instead
@@ -260,8 +260,8 @@ class BanditManager():
             if len(self.files_list) > self.progress:
                 # is it time to update the progress indicator?
                 if count % self.progress == 0:
-                    sys.stdout.write("%s.. " % count)
-                    sys.stdout.flush()
+                    sys.stderr.write("%s.. " % count)
+                    sys.stderr.flush()
             try:
                 with open(fname, 'rU') as fdata:
                     try:
@@ -283,8 +283,8 @@ class BanditManager():
                 new_files_list.remove(fname)
 
         if len(self.files_list) > self.progress:
-            sys.stdout.write("]\n")
-            sys.stdout.flush()
+            sys.stderr.write("]\n")
+            sys.stderr.flush()
 
         # reflect any files which may have been skipped
         self.files_list = new_files_list
