@@ -15,9 +15,6 @@ plugin_name_pattern: '*.py'
 #    MEDIUM: \033[93m
 #    HIGH: \033[91m
 
-# optional: log format string
-#log_format: "[%(module)s]\t%(levelname)s\t%(message)s"
-
 # globs of files which should be analyzed
 include:
     - '*.py'

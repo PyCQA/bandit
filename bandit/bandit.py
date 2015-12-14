@@ -46,14 +46,14 @@ def _init_logger(debug=False, log_format=None):
 
     if not log_format:
         # default log format
-        log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
+        log_format_string = constants.log_format_string
     else:
         log_format_string = log_format
 
     logging.captureWarnings(True)
 
     logger.setLevel(log_level)
-    handler = logging.StreamHandler(sys.stdout)
+    handler = logging.StreamHandler(sys.stderr)
     handler.setFormatter(logging.Formatter(log_format_string))
     logger.addHandler(handler)
     logger.debug("logging initialized")

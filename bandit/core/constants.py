@@ -46,3 +46,6 @@ CONFIDENCE_DEFAULT = 'UNDEFINED'
 # have a variable we cannot determine if False.
 # See https://docs.python.org/2/library/stdtypes.html#truth-value-testing
 FALSE_VALUES = [None, False, 'False', 0, 0.0, 0j, '', (), [], {}]
+
+# override with "log_format" option in config file
+log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
