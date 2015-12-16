@@ -10,8 +10,8 @@ venv*
 build/*
 cover/*
 .coverage
-docs/build/*
+doc/build/*
 ChangeLog
-docs/source/api
+doc/source/api
 .*.sw?
 AUTHORS

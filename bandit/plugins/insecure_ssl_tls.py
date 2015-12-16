@@ -25,6 +25,83 @@ def get_bad_proto_versions(config):
 @takes_config
 @checks('Call')
 def ssl_with_bad_version(context, config):
+    """Test for SSL use with bad version used
+
+    Several highly publicized exploitable flaws have been discovered
+    in all versions of SSL and early versions of TLS. It is strongly
+    recommended that use of the following known broken protocol versions be
+    avoided:
+
+    - SSL v2
+    - SSL v3
+    - TLS v1
+    - TLS v1.1
+
+    This plugin test scans for calls to Python methods with parameters that
+    indicate the used broken SSL/TLS protocol versions. Currently, detection
+    supports methods using Python's native SSL/TLS support and the pyOpenSSL
+    module. A HIGH severity warning will be reported whenever known broken
+    protocol versions are detected.
+
+    It is worth noting that native support for TLS 1.2 is only available in
+    more recent Python versions, specifically 2.7.9 and up, and 3.x
+
+    See also:
+
+    - :doc:`../plugins/ssl_with_bad_defaults`
+    - :doc:`../plugins/ssl_with_no_version`
+
+    A note on 'SSLv23':
+
+    Amongst the available SSL/TLS versions provided by Python/pyOpenSSL there
+    exists the option to use SSLv23. This very poorly named option actually
+    means "use the highest version of SSL/TLS supported by both the server and
+    client". This may (and should be) a version well in advance of SSL v2 or
+    v3. Bandit can scan for the use of SSLv23 if desired, but its detection
+    does not necessarily indicate a problem.
+
+    When using SSLv23 it is important to also provide flags to explicitly
+    exclude bad versions of SSL/TLS from the protocol versions considered. Both
+    the Python native and pyOpenSSL modules provide the ``OP_NO_SSLv2`` and
+    ``OP_NO_SSLv3`` flags for this purpose.
+
+
+    Config Options:
+
+    .. code-block:: yaml
+
+        ssl_with_bad_version:
+            bad_protocol_versions:
+                - PROTOCOL_SSLv2
+                - SSLv2_METHOD
+                - SSLv23_METHOD
+                - PROTOCOL_SSLv3  # strict option
+                - PROTOCOL_TLSv1  # strict option
+                - SSLv3_METHOD    # strict option
+                - TLSv1_METHOD    # strict option
+
+
+    Sample Output:
+
+    .. code-block:: none
+
+        >> Issue: ssl.wrap_socket call with insecure SSL/TLS protocol version
+        identified, security issue.
+           Severity: High   Confidence: High
+           Location: ./examples/ssl-insecure-version.py:13
+        12  # strict tests
+        13  ssl.wrap_socket(ssl_version=ssl.PROTOCOL_SSLv3)
+        14  ssl.wrap_socket(ssl_version=ssl.PROTOCOL_TLSv1)
+
+    References:
+
+    - http://heartbleed.com/
+    - https://poodlebleed.com/
+    - https://security.openstack.org/
+    - https://security.openstack.org/guidelines/dg_move-data-securely.html
+
+    .. versionadded:: 0.9.0
+    """
     bad_ssl_versions = get_bad_proto_versions(config)
     if (context.call_function_name_qual == 'ssl.wrap_socket'):
         if context.check_call_arg_value('ssl_version', bad_ssl_versions):
@@ -58,6 +135,51 @@ def ssl_with_bad_version(context, config):
 @takes_config("ssl_with_bad_version")
 @checks('FunctionDef')
 def ssl_with_bad_defaults(context, config):
+    """Test for SSL use with bad defaults specified
+
+    This plugin is part of a family of tests that detect the use of known bad
+    versions of SSL/TLS, please see :doc:`../plugins/ssl_with_bad_version` for
+    a complete discussion. Specifically, this plugin test scans for Python
+    methods with default parameter values that specify the use of broken
+    SSL/TLS protocol versions. Currently, detection supports methods using
+    Python's native SSL/TLS support and the pyOpenSSL module. A MEDIUM severity
+    warning will be reported whenever known broken protocol versions are
+    detected.
+
+    See also:
+
+    - :doc:`../plugins/ssl_with_bad_version`
+    - :doc:`../plugins/ssl_with_no_version`
+
+
+    Config Options:
+
+    This test shares the configuration provided for the standard
+    :doc:`../plugins/ssl_with_bad_version` test, please refer to its
+    documentation.
+
+    Sample Output:
+
+    .. code-block:: none
+
+        >> Issue: Function definition identified with insecure SSL/TLS protocol
+        version by default, possible security issue.
+           Severity: Medium   Confidence: Medium
+           Location: ./examples/ssl-insecure-version.py:28
+        27
+        28  def open_ssl_socket(version=SSL.SSLv2_METHOD):
+        29      pass
+
+    References:
+
+    - http://heartbleed.com/
+    - https://poodlebleed.com/
+    - https://security.openstack.org/
+    - https://security.openstack.org/guidelines/dg_move-data-securely.html
+
+    .. versionadded:: 0.9.0
+    """
+
     bad_ssl_versions = get_bad_proto_versions(config)
     for default in context.function_def_defaults_qual:
         val = default.split(".")[-1]
@@ -73,6 +195,51 @@ def ssl_with_bad_defaults(context, config):
 
 @checks('Call')
 def ssl_with_no_version(context):
+    """Test for SSL use with no version specified
+
+    This plugin is part of a family of tests that detect the use of known bad
+    versions of SSL/TLS, please see :doc:`../plugins/ssl_with_bad_version` for
+    a complete discussion. Specifically, This plugin test scans for specific
+    methods in Python's native SSL/TLS support and the pyOpenSSL module that
+    configure the version of SSL/TLS protocol to use. These methods are known
+    to provide default value that maximize compatibility, but permit use of the
+    aforementioned broken protocol versions. A LOW severity warning will be
+    reported whenever this is detected.
+
+    See also:
+
+    - :doc:`../plugins/ssl_with_bad_version`
+    - :doc:`../plugins/ssl_with_bad_defaults`
+
+
+    Config Options:
+
+    This test shares the configuration provided for the standard
+    :doc:`../plugins/ssl_with_bad_version` test, please refer to its
+    documentation.
+
+    Sample Output:
+
+    .. code-block:: none
+
+        >> Issue: ssl.wrap_socket call with no SSL/TLS protocol version
+        specified, the default SSLv23 could be insecure, possible security
+        issue.
+           Severity: Low   Confidence: Medium
+           Location: ./examples/ssl-insecure-version.py:23
+        22
+        23  ssl.wrap_socket()
+        24
+
+    References:
+
+    - http://heartbleed.com/
+    - https://poodlebleed.com/
+    - https://security.openstack.org/
+    - https://security.openstack.org/guidelines/dg_move-data-securely.html
+
+    .. versionadded:: 0.9.0
+    """
     if (context.call_function_name_qual == 'ssl.wrap_socket'):
         if context.check_call_arg_value('ssl_version') is None:
             # check_call_arg_value() returns False if the argument is found
