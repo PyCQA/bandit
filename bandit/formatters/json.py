@@ -12,6 +12,81 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+r"""
+Description
+-----------
+This formatter outputs the issues in JSON.
+
+Sample Output
+-------------
+.. code-block:: javascript
+
+    {
+      "errors": [],
+      "generated_at": "2015-12-16T22:27:34Z",
+      "metrics": {
+        "_totals": {
+          "CONFIDENCE.HIGH": 1,
+          "CONFIDENCE.LOW": 0,
+          "CONFIDENCE.MEDIUM": 0,
+          "CONFIDENCE.UNDEFINED": 0,
+          "SEVERITY.HIGH": 0,
+          "SEVERITY.LOW": 0,
+          "SEVERITY.MEDIUM": 1,
+          "SEVERITY.UNDEFINED": 0,
+          "loc": 5,
+          "nosec": 0
+        },
+        "examples/yaml_load.py": {
+          "CONFIDENCE.HIGH": 1,
+          "CONFIDENCE.LOW": 0,
+          "CONFIDENCE.MEDIUM": 0,
+          "CONFIDENCE.UNDEFINED": 0,
+          "SEVERITY.HIGH": 0,
+          "SEVERITY.LOW": 0,
+          "SEVERITY.MEDIUM": 1,
+          "SEVERITY.UNDEFINED": 0,
+          "loc": 5,
+          "nosec": 0
+        }
+      },
+      "results": [
+        {
+          "code": "4     ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})\n5
+                         y = yaml.load(ystr)\n6     yaml.dump(y)\n",
+          "filename": "examples/yaml_load.py",
+          "issue_confidence": "HIGH",
+          "issue_severity": "MEDIUM",
+          "issue_text": "Use of unsafe yaml load. Allows instantiation of
+                         arbitrary objects. Consider yaml.safe_load().\n",
+          "line_number": 5,
+          "line_range": [
+            5
+          ],
+          "test_name": "blacklist_calls"
+        }
+      ],
+      "stats": [
+        {
+          "filename": "examples/yaml_load.py",
+          "issue totals": {
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 1,
+            "UNDEFINED": 0
+          },
+          "score": {
+            "CONFIDENCE": 10,
+            "SEVERITY": 5
+          }
+        }
+      ]
+    }
+
+.. versionadded:: 0.10.0
+
+"""
+
 from __future__ import absolute_import
 import datetime
 import json

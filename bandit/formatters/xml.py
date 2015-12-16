@@ -12,6 +12,29 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+r"""
+Description
+-----------
+This formatter outputs the issues as XML.
+
+Sample Output
+-------------
+.. code-block:: xml
+
+    <?xml version='1.0' encoding='utf-8'?>
+    <testsuite name="bandit" tests="1"><testcase
+    classname="examples/yaml_load.py" name="blacklist_calls"><error
+    message="Use of unsafe yaml load. Allows instantiation of arbitrary
+    objects. Consider yaml.safe_load().&#10;" type="MEDIUM">Severity: MEDIUM
+    Confidence: HIGH Use of unsafe yaml load. Allows instantiation of arbitrary
+    objects. Consider yaml.safe_load().
+
+    Location examples/yaml_load.py:5</error></testcase></testsuite>
+
+.. versionadded:: 0.12.0
+
+"""
+
 from __future__ import absolute_import
 import logging
 import sys

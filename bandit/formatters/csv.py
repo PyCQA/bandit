@@ -12,6 +12,25 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+r"""
+Description
+-----------
+This formatter outputs the issues in a comma separated values format.
+
+Sample Output
+-------------
+.. code-block:: none
+
+    filename,test_name,issue_severity,issue_confidence,issue_text,line_number,
+    line_range
+    examples/yaml_load.py,blacklist_calls,MEDIUM,HIGH,"Use of unsafe yaml load.
+    Allows instantiation of arbitrary objects. Consider yaml.safe_load().
+    ",5,[5]
+
+.. versionadded:: 0.11.0
+
+"""
+
 from __future__ import absolute_import
 import csv
 import logging

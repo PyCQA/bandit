@@ -13,6 +13,136 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
+r"""
+Description
+-----------
+This formatter outputs the issues as HTML.
+
+Sample Output
+-------------
+.. code-block:: html
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+
+    <title>
+        Bandit Report
+    </title>
+
+    <style>
+
+    html * {
+        font-family: "Arial", sans-serif;
+    }
+
+    pre {
+        font-family: "Monaco", monospace;
+    }
+
+    .bordered-box {
+        border: 1px solid black;
+        padding-top:.5em;
+        padding-bottom:.5em;
+        padding-left:1em;
+
+    }
+
+    .metrics-box {
+        font-size: 1.1em;
+        line-height: 130%;
+    }
+
+    .metrics-title {
+        font-size: 1.5em;
+        font-weight: 500;
+        margin-bottom: .25em;
+    }
+
+    .issue-description {
+        font-size: 1.3em;
+        font-weight: 500;
+    }
+
+    .candidate-issues {
+        margin-left: 2em;
+        border-left: solid 1px; LightGray;
+        padding-left: 5%;
+        margin-top: .2em;
+        margin-bottom: .2em;
+    }
+
+    .issue-block {
+        border: 1px solid LightGray;
+        padding-left: .5em;
+        padding-top: .5em;
+        padding-bottom: .5em;
+        margin-bottom: .5em;
+    }
+
+    .issue-sev-high {
+        background-color: Pink;
+    }
+
+    .issue-sev-medium {
+        background-color: NavajoWhite;
+    }
+
+    .issue-sev-low {
+        background-color: LightCyan;
+    }
+
+    </style>
+    </head>
+
+    <body>
+
+    <span id='metrics'>
+        <div class='metrics-box bordered-box'>
+            <div class='metrics-title'>
+                Metrics:<br>
+            </div>
+            Total lines of code: <span id='loc'>5</span><br>
+            Total lines skipped (#nosec): <span id='nosec'>0</span>
+        </div>
+    </span>
+
+
+
+
+    <br>
+    <span id='results'>
+
+    <span id='issue-0'>
+    <div class='issue-block issue-sev-medium'>
+        <b>blacklist_calls: </b> Use of unsafe yaml load. Allows instantiation
+        of arbitrary objects. Consider yaml.safe_load().
+    <br>
+        <b>Severity: </b>MEDIUM<br />
+        <b>Confidence: </b>HIGH</br />
+        <b>File: </b><a href='examples/yaml_load.py' target='_blank'>
+        examples/yaml_load.py</a> <br />
+
+    <span id='code'>
+    <pre>
+    4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
+    5       y = yaml.load(ystr)
+    6       yaml.dump(y)
+    </pre>
+    </span>
+
+    </div>
+    </span>
+
+    </span>
+
+    </body>
+    </html>
+
+.. versionadded:: 0.14.0
+
+"""
+
 import logging
 
 from bandit.core.test_properties import accepts_baseline
