@@ -54,7 +54,6 @@ class TestInit(testtools.TestCase):
         b_config = config.BanditConfig(f.name)
 
         # After initialization, can get settings.
-        self.assertEqual(50, b_config.get_setting('progress'))
         self.assertEqual('', b_config.get_setting('color_HEADER'))
         self.assertEqual('', b_config.get_setting('color_DEFAULT'))
         self.assertEqual('', b_config.get_setting('color_LOW'))
@@ -81,17 +80,6 @@ class TestInit(testtools.TestCase):
         f = self.useFixture(TempFile(invalid_yaml))
         self.assertRaisesRegex(
             utils.ConfigFileInvalidYaml, f.name, config.BanditConfig, f.name)
-
-    def test_progress_conf_setting(self):
-        # The progress setting can be set in bandit.yaml via
-        # show_progress_any.
-
-        example_value = 23
-        sample_yaml = 'show_progress_every: %s' % example_value
-        f = self.useFixture(TempFile(sample_yaml))
-
-        b_config = config.BanditConfig(f.name)
-        self.assertEqual(example_value, b_config.get_setting('progress'))
 
     def test_colors_isatty_defaults(self):
         # When stdout says it's a tty there are default colors.
