@@ -96,16 +96,8 @@ class BanditConfig():
         :return: -
         '''
         self._settings = {}
-        self._init_progress_increment()
         self._init_output_colors()
         self._init_plugin_name_pattern()
-
-    def _init_progress_increment(self):
-        '''Sets settings['progress'] from default or config file.'''
-        progress = constants.progress_increment
-        if self.get_option('show_progress_every'):
-            progress = self.get_option('show_progress_every')
-        self._settings['progress'] = progress
 
     def _init_output_colors(self):
         '''Sets the settings colors

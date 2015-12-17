@@ -1,6 +1,3 @@
-# optional: after how many files to update progress
-#show_progress_every: 100
-
 # optional: plugins directory name
 #plugins_dir: plugins
 

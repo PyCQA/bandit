@@ -82,7 +82,7 @@ class BanditManager():
                                              profile=profile)
 
         # set the increment of after how many files to show progress
-        self.progress = self.b_conf.get_setting('progress')
+        self.progress = b_constants.progress_increment
         self.scores = []
 
     def get_issue_list(self,
