@@ -89,6 +89,7 @@ def _evaluate_ast(node):
 
 
 @test.checks('Str')
+@test.test_id('B608')
 def hardcoded_sql_expressions(context):
     val = _evaluate_ast(context.node)
     if _check_string(val[1]):

@@ -81,11 +81,12 @@ References
 import ast
 
 import bandit
-from bandit.core import test_properties
+from bandit.core import test_properties as test
 
 
-@test_properties.takes_config
-@test_properties.checks('ExceptHandler')
+@test.takes_config
+@test.checks('ExceptHandler')
+@test.test_id('B110')
 def try_except_pass(context, config):
     node = context.node
     if len(node.body) == 1:

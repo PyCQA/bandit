@@ -105,11 +105,12 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B609')
 def linux_commands_wildcard_injection(context, config):
     if not ('shell' in config and 'subprocess' in config):
         return

@@ -63,11 +63,12 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@takes_config
-@checks('Call')
+@test.takes_config
+@test.checks('Call')
+@test.test_id('B111')
 def execute_with_run_as_root_equals_true(context, config):
 
     if (context.call_function_name_qual in config['function_names']):

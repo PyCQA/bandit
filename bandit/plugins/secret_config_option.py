@@ -67,12 +67,13 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
 from bandit.core import constants
+from bandit.core import test_properties as test
 
 
-@takes_config
-@checks('Call')
+@test.takes_config
+@test.checks('Call')
+@test.test_id('B109')
 def password_config_option_not_marked_secret(context, config):
 
     if(context.call_function_name_qual in config['function_names'] and

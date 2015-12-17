@@ -62,10 +62,11 @@ References
 import stat
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B103')
 def set_bad_file_permissions(context):
     if 'chmod' in context.call_function_name:
         if context.call_args_count == 2:

@@ -53,10 +53,11 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Assert')
+@test.test_id('B101')
+@test.checks('Assert')
 def assert_used(context):
         return bandit.Issue(
             severity=bandit.LOW,

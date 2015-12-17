@@ -22,6 +22,7 @@ import sys
 import sysconfig
 
 import appdirs
+import six
 
 from bandit.core import config as b_config
 from bandit.core import constants
@@ -196,7 +197,10 @@ def main():
     parser.set_defaults(verbose=False)
     parser.set_defaults(ignore_nosec=False)
 
-    plugin_list = '\n\t'.join(sorted(extension_mgr.plugin_names))
+    plugin_info = ["%s\t%s" % (a[0], a[1].name) for a in
+                   six.iteritems(extension_mgr.plugins_by_id)]
+
+    plugin_list = '\n\t'.join(sorted(plugin_info))
     parser.epilog = ('The following plugin suites were discovered and'
                      ' loaded:\n\t{0}\n'.format(plugin_list))
 

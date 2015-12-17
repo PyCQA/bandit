@@ -18,8 +18,7 @@ import ast
 import re
 
 import bandit
-from bandit.core.test_properties import checks
-from bandit.core.test_properties import takes_config
+from bandit.core import test_properties as test
 
 
 def _has_special_characters(command):
@@ -47,8 +46,9 @@ def _evaluate_shell_call(context):
         return bandit.HIGH
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B602')
 def subprocess_popen_with_shell_equals_true(context, config):
     """subprocess_popen_with_shell_equals_true
 
@@ -169,8 +169,9 @@ def subprocess_popen_with_shell_equals_true(context, config):
                     )
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B603')
 def subprocess_without_shell_equals_true(context, config):
     """subprocess_without_shell_equals_true
 
@@ -247,8 +248,9 @@ def subprocess_without_shell_equals_true(context, config):
             )
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B604')
 def any_other_function_with_shell_equals_true(context, config):
     """any_other_function_with_shell_equals_true
 
@@ -328,8 +330,9 @@ def any_other_function_with_shell_equals_true(context, config):
                 )
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B605')
 def start_process_with_a_shell(context, config):
     """start_process_with_a_shell
 
@@ -428,8 +431,9 @@ def start_process_with_a_shell(context, config):
                 )
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B606')
 def start_process_with_no_shell(context, config):
     """start_process_with_no_shell
 
@@ -514,8 +518,9 @@ def start_process_with_no_shell(context, config):
         )
 
 
-@takes_config('shell_injection')
-@checks('Call')
+@test.takes_config('shell_injection')
+@test.checks('Call')
+@test.test_id('B607')
 def start_process_with_partial_path(context, config):
     """start_process_with_partial_path
 

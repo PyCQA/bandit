@@ -47,10 +47,11 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Str')
+@test.checks('Str')
+@test.test_id('B104')
 def hardcoded_bind_all_interfaces(context):
     if context.string_val == '0.0.0.0':
         return bandit.Issue(
