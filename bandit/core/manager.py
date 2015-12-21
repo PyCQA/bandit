@@ -151,30 +151,23 @@ class BanditManager():
         :param sev_level: Which severity levels to show (LOW, MEDIUM, HIGH)
         :param conf_level: Which confidence levels to show (LOW, MEDIUM, HIGH)
         :param output_filename: File to store results
-        :param output_format: output format, 'csv', 'json', 'txt', 'xml', or
-            'html'
+        :param output_format: output format plugin name
         :return: -
         '''
         try:
             formatters_mgr = extension_loader.MANAGER.formatters_mgr
-            try:
-                formatter = formatters_mgr[output_format]
-            except KeyError:  # Unrecognized format, so use text instead
-                formatter = formatters_mgr['txt']
-                output_format = 'txt'
+            if output_format not in formatters_mgr:
+                output_format = 'screen'
 
-            if output_format == 'csv':
-                lines = 1
-            elif formatter.name == 'txt' and output_filename:
-                output_format = 'plain'
-
+            formatter = formatters_mgr[output_format]
             report_func = formatter.plugin
             report_func(self, filename=output_filename,
                         sev_level=sev_level, conf_level=conf_level,
-                        lines=lines, out_format=output_format)
+                        lines=lines)
 
-        except IOError:
-            print("Unable to write to file: %s" % output_filename)
+        except Exception:
+            raise RuntimeError("Unable to output report using '%s' formatter."
+                               % output_format)
 
     def discover_files(self, targets, recursive=False, excluded_paths=''):
         '''Add tests directly and from a directory to the test set
@@ -225,21 +218,6 @@ class BanditManager():
 
         self.files_list = sorted(files_list)
         self.excluded_files = sorted(excluded_files)
-
-    def check_output_destination(self, output_filename):
-        # case where file already exists
-        if os.path.isfile(output_filename):
-            return 'File already exists'
-        else:
-            # case where specified destination is a directory
-            if os.path.isdir(output_filename):
-                return 'Specified destination is a directory'
-            # case where specified destination is not writable
-            try:
-                open(output_filename, 'w').close()
-            except IOError:
-                return 'Specified destination is not writable'
-        return True
 
     def run_tests(self):
         '''Runs through all files in the scope

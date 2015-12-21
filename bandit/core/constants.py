@@ -14,15 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# default output text colors
-color = {
-    'DEFAULT': '\033[0m',
-    'HEADER': '\033[95m',
-    'LOW': '\033[94m',
-    'MEDIUM': '\033[93m',
-    'HIGH': '\033[91m',
-}
-
 # default plugin name pattern
 plugin_name_pattern = '*.py'
 

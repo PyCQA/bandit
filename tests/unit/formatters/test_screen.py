@@ -24,13 +24,13 @@ import bandit
 from bandit.core import config
 from bandit.core import manager
 from bandit.core import issue
-from bandit.formatters import text as b_text
+from bandit.formatters import screen
 
 
-class TextFormatterTests(testtools.TestCase):
+class ScreenFormatterTests(testtools.TestCase):
 
     def setUp(self):
-        super(TextFormatterTests, self).setUp()
+        super(ScreenFormatterTests, self).setUp()
 
 
     @mock.patch('bandit.core.issue.Issue.get_code')
@@ -39,32 +39,36 @@ class TextFormatterTests(testtools.TestCase):
         get_code.return_value = 'DDDDDDD'
         indent_val = 'CCCCCCC'
 
-        def _template(_issue, _indent_val, _code):
-            return_val = ["{}>> Issue: [{}] {}".
-                          format(_indent_val, _issue.test,
+        def _template(_issue, _indent_val, _code, _color):
+            return_val = ["{}{}>> Issue: [{}] {}".
+                          format(_indent_val, _color, _issue.test,
                                  _issue.text),
                           "{}   Severity: {}   Confidence: {}".
                           format(_indent_val, _issue.severity.capitalize(),
                                  _issue.confidence.capitalize()),
-                          "{}   Location: {}:{}".
-                          format(_indent_val, _issue.fname, _issue.lineno)]
+                          "{}   Location: {}:{}{}".
+                          format(_indent_val, _issue.fname, _issue.lineno,
+                                 screen.color['DEFAULT'])]
             if _code:
                 return_val.append("{}{}".format(_indent_val, _code))
             return '\n'.join(return_val)
 
-        issue_text = b_text._output_issue_str(issue, indent_val)
-        expected_return = _template(issue, indent_val, 'DDDDDDD')
+        issue_text = screen._output_issue_str(issue, indent_val)
+        expected_return = _template(issue, indent_val, 'DDDDDDD',
+                                    screen.color['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
-        issue_text = b_text._output_issue_str(issue, indent_val,
+        issue_text = screen._output_issue_str(issue, indent_val,
                                               show_code=False)
-        expected_return = _template(issue, indent_val, '')
+        expected_return = _template(issue, indent_val, '',
+                                    screen.color['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
         issue.lineno = ''
-        issue_text = b_text._output_issue_str(issue, indent_val,
+        issue_text = screen._output_issue_str(issue, indent_val,
                                               show_lineno=False)
-        expected_return = _template(issue, indent_val, 'DDDDDDD')
+        expected_return = _template(issue, indent_val, 'DDDDDDD',
+                                    screen.color['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
 
@@ -78,11 +82,11 @@ class TextFormatterTests(testtools.TestCase):
         self.manager.out_file = self.tmp_fname
 
         get_issue_list.return_value = OrderedDict()
-        b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
-
-        with open(self.tmp_fname) as f:
-            data = f.read()
-            self.assertIn('No issues identified.', data)
+        with mock.patch('bandit.formatters.screen.do_print') as m:
+            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                         lines=5)
+            self.assertIn('No issues identified.',
+                          '\n'.join([str(a) for a in m.call_args]))
 
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
@@ -116,9 +120,9 @@ class TextFormatterTests(testtools.TestCase):
 
         # Validate that we're outputting the correct issues
         indent_val = ' ' * 10
-        output_str_fn = 'bandit.formatters.text._output_issue_str'
+        output_str_fn = 'bandit.formatters.screen._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
-            b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
                      mock.call(issue_b, '', lines=5)]
@@ -127,20 +131,23 @@ class TextFormatterTests(testtools.TestCase):
 
         # Validate that we're outputting all of the expected fields and the
         # correct values
-        b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
-        with open(self.tmp_fname) as f:
-            data = f.read()
+        with mock.patch('bandit.formatters.screen.do_print') as m:
+            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                          lines=5)
+
+            data = '\n'.join([str(a) for a in m.call_args[0][0]])
 
             expected = 'Run started'
             self.assertIn(expected, data)
 
-            expected_items = ['Files in scope (1):\n\tbinding.py (score: ',
-                              "CONFIDENCE: 1",
-                              "SEVERITY: 1"]
+            expected_items = [
+                screen.header('Files in scope (1):'),
+                '\n\tbinding.py (score: {SEVERITY: 1, CONFIDENCE: 1})']
+
             for item in expected_items:
                 self.assertIn(item, data)
 
-            expected = 'Files excluded (1):\n\tdef.py'
+            expected = screen.header('Files excluded (1):') + '\n\tdef.py'
             self.assertIn(expected, data)
 
             expected = ('Total lines of code: 1000\n\tTotal lines skipped '
@@ -155,7 +162,8 @@ class TextFormatterTests(testtools.TestCase):
                         'Low: 1\n\t\tMedium: 1\n\t\tHigh: 1')
             self.assertIn(expected, data)
 
-            expected = 'Files skipped (1):\n\tabc.py (File is bad)'
+            expected = (screen.header('Files skipped (1):') +
+                        '\n\tabc.py (File is bad)')
             self.assertIn(expected, data)
 
 
@@ -183,9 +191,9 @@ class TextFormatterTests(testtools.TestCase):
 
         # Validate that we're outputting the correct issues
         indent_val = ' ' * 10
-        output_str_fn = 'bandit.formatters.text._output_issue_str'
+        output_str_fn = 'bandit.formatters.screen._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
-            b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
                      mock.call(issue_b, '', show_code=False, show_lineno=False),
