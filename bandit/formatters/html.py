@@ -235,7 +235,7 @@ pre {
 
 </style>
 </head>
-    """
+"""
 
     report_block = """
 <body>
@@ -249,7 +249,7 @@ pre {
 
 </body>
 </html>
-    """
+"""
 
     issue_block = """
 <span id='issue-{issue_no}'>
@@ -262,14 +262,15 @@ pre {
 {candidates}
 </div>
 </span>
-    """
+"""
 
     code_block = """
 <span id='code'>
 <pre>
 {code}
 </pre>
-</span>"""
+</span>
+"""
 
     candidate_block = """
 <span id='candidates'>
@@ -277,7 +278,7 @@ pre {
 <b>Candidates: </b>
 {candidate_list}
 </span>
-    """
+"""
 
     candidate_issue = """
 <span id='candidate'>

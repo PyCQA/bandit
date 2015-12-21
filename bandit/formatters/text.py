@@ -149,7 +149,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
     bits.append("\nTest results:")
     bits.append(get_results(manager, sev_level, conf_level, lines))
-    result = '\n'.join([str(bit) for bit in bits])
+    result = '\n'.join([str(bit) for bit in bits]) + '\n'
 
     with utils.output_file(filename, 'w') as fout:
         fout.write(result)
