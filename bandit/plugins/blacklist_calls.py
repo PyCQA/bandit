@@ -87,15 +87,16 @@ References
 import fnmatch
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
 _cached_blacklist_checks = []
 _cached_blacklist_config = None
 
 
-@takes_config
-@checks('Call')
+@test.takes_config
+@test.checks('Call')
+@test.test_id('B301')
 def blacklist_calls(context, config):
     _ensure_cache(config)
     checks = _cached_blacklist_checks

@@ -62,10 +62,11 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B601')
 def paramiko_calls(context):
     issue_text = ('Possible shell injection via Paramiko call, check inputs '
                   'are properly sanitized.')

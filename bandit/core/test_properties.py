@@ -67,6 +67,18 @@ def takes_config(*args):
         return _takes_config
 
 
+def test_id(id_val):
+    '''Test function identifier
+
+    Use this decorator before a test function indicates its simple ID
+    '''
+    def _has_id(func):
+        if not hasattr(func, "_test_id"):
+            func._test_id = id_val
+        return func
+    return _has_id
+
+
 def accepts_baseline(*args):
     """Decorator to indicate formatter accepts baseline results
 

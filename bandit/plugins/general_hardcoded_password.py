@@ -57,10 +57,11 @@ References
 
 """
 
+import ast
 import sys
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
 candidates = set(["password", "pass", "passwd", "pwd", "secret", "token",
@@ -74,7 +75,8 @@ def _report(value):
         text=("Possible hardcoded password: '%s'" % value))
 
 
-@checks('Str')
+@test.checks('Str')
+@test.test_id('B105')
 def hardcoded_password_string(context):
     node = context.node
     if isinstance(node.parent, ast.Assign):
@@ -99,7 +101,8 @@ def hardcoded_password_string(context):
                 return _report(comp.comparators[0].s)
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B106')
 def hardcoded_password_funcarg(context):
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
@@ -107,7 +110,8 @@ def hardcoded_password_funcarg(context):
             return _report(kw.value.s)
 
 
-@checks('FunctionDef')
+@test.checks('FunctionDef')
+@test.test_id('B107')
 def hardcoded_password_default(context):
     # looks for "def function(candidate='some_string')"
 

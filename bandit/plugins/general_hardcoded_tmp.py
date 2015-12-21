@@ -59,11 +59,12 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@takes_config
-@checks('Str')
+@test.takes_config
+@test.checks('Str')
+@test.test_id('B108')
 def hardcoded_tmp_directory(context, config):
     if (config is not None and 'tmp_dirs' in config):
         tmp_dirs = config['tmp_dirs']

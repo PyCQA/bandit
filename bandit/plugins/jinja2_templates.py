@@ -75,10 +75,11 @@ References
 import ast
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B701')
 def jinja2_autoescape_false(context):
     # check type just to be safe
     if type(context.call_function_name_qual) == str:

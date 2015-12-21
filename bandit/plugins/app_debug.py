@@ -52,10 +52,11 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import checks
+from bandit.core import test_properties as test
 
 
-@checks('Call')
+@test.test_id('B201')
+@test.checks('Call')
 def flask_debug_true(context):
     if context.is_module_imported_like('flask'):
         if context.call_function_name_qual.endswith('.run'):

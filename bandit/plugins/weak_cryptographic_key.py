@@ -47,7 +47,7 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
 def _classify_key_size(key_type, key_size):
@@ -110,7 +110,8 @@ def _weak_crypto_key_size_pycrypto(context):
         return _classify_key_size(key_type, key_size)
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B506')
 def weak_cryptographic_key(context):
     return (_weak_crypto_key_size_cryptography_io(context) or
             _weak_crypto_key_size_pycrypto(context))

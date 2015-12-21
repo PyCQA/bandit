@@ -53,10 +53,11 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B501')
 def request_with_no_cert_validation(context):
     http_verbs = ('get', 'options', 'head', 'post', 'put', 'patch', 'delete')
     if ('requests' in context.call_function_name_qual and

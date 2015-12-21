@@ -26,6 +26,7 @@ class Manager(object):
         self.load_plugins(plugins_namespace)
         self.plugins = list(self.plugins_mgr)
         self.plugin_names = self.plugins_mgr.names()
+        self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(

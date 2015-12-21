@@ -54,10 +54,11 @@ References
 """
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B702')
 def use_of_mako_templates(context):
     # check type just to be safe
     if type(context.call_function_name_qual) == str:

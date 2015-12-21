@@ -15,11 +15,12 @@
 # under the License.
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
-@takes_config
-@checks('Import', 'ImportFrom')
+@test.takes_config
+@test.checks('Import', 'ImportFrom')
+@test.test_id('B401')
 def blacklist_imports(context, config):
     """blacklist_imports
 
@@ -115,8 +116,9 @@ def blacklist_imports(context, config):
                     return _get_result(check, im)
 
 
-@takes_config('blacklist_imports')
-@checks('Call')
+@test.takes_config('blacklist_imports')
+@test.checks('Call')
+@test.test_id('B402')
 def blacklist_import_func(context, config):
     """blacklist_import_func
 

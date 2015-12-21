@@ -15,15 +15,16 @@
 # under the License.
 
 import bandit
-from bandit.core.test_properties import *
+from bandit.core import test_properties as test
 
 
 def get_bad_proto_versions(config):
     return config['bad_protocol_versions']
 
 
-@takes_config
-@checks('Call')
+@test.takes_config
+@test.checks('Call')
+@test.test_id('B502')
 def ssl_with_bad_version(context, config):
     """Test for SSL use with bad version used
 
@@ -132,8 +133,9 @@ def ssl_with_bad_version(context, config):
             )
 
 
-@takes_config("ssl_with_bad_version")
-@checks('FunctionDef')
+@test.takes_config("ssl_with_bad_version")
+@test.checks('FunctionDef')
+@test.test_id('B503')
 def ssl_with_bad_defaults(context, config):
     """Test for SSL use with bad defaults specified
 
@@ -193,7 +195,8 @@ def ssl_with_bad_defaults(context, config):
             )
 
 
-@checks('Call')
+@test.checks('Call')
+@test.test_id('B505')
 def ssl_with_no_version(context):
     """Test for SSL use with no version specified
 
