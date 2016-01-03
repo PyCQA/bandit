@@ -63,19 +63,19 @@ def main():
 
     # #################### Find current and parent commits ####################
     try:
-        branch = repo.active_branch
-        commits = repo.iter_commits(branch)
-
-        commit = next(commits)
+        commit = repo.commit()
         current_commit = commit.hexsha
         logger.info('Got current commit: [%s]', commit.name_rev)
 
-        commit = next(commits)
+        commit = commit.parents[0]
         parent_commit = commit.hexsha
         logger.info('Got parent commit: [%s]', commit.name_rev)
 
-    except (git.GitCommandError, StopIteration):
-        logger.error("Unable to get current branch and/or parent branch")
+    except git.GitCommandError:
+        logger.error("Unable to get current or parent commit")
+        sys.exit(2)
+    except IndexError:
+        logger.error("Parent commit not available")
         sys.exit(2)
 
     # #################### Run Bandit against both commits ####################
