@@ -236,12 +236,12 @@ def main():
                 data = bl.read()
                 b_mgr.populate_baseline(data)
         except IOError:
-            logger.warn("Could not open baseline report: %s", args.baseline)
+            logger.warning("Could not open baseline report: %s", args.baseline)
             sys.exit(2)
 
         if args.output_format not in baseline_formatters:
-            logger.warn('Baseline must be used with one of the following '
-                        'formats: ' + str(baseline_formatters))
+            logger.warning('Baseline must be used with one of the following '
+                           'formats: ' + str(baseline_formatters))
             sys.exit(2)
 
     if args.output_format != "json":

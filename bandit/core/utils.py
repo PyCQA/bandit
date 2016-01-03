@@ -321,12 +321,12 @@ def get_path_for_function(f):
     elif hasattr(f, "im_func"):
         module_name = f.im_func.__module__
     else:
-        logger.warn("Cannot resolve file where %s is defined", f)
+        logger.warning("Cannot resolve file where %s is defined", f)
         return None
 
     module = sys.modules[module_name]
     if hasattr(module, "__file__"):
         return module.__file__
     else:
-        logger.warn("Cannot resolve file path for module %s", module_name)
+        logger.warning("Cannot resolve file path for module %s", module_name)
         return None
