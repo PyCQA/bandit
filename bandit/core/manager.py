@@ -28,6 +28,7 @@ from bandit.core import meta_ast as b_meta_ast
 from bandit.core import metrics
 from bandit.core import node_visitor as b_node_visitor
 from bandit.core import test_set as b_test_set
+from bandit.core import utils
 
 
 logger = logging.getLogger(__name__)
@@ -72,9 +73,8 @@ class BanditManager():
                     profile_name, profile
                 )
             else:
-                raise RuntimeError('unable to find profile (%s) in config '
-                                   'file: %s' % (profile_name,
-                                                 self.b_conf.config_file))
+                raise utils.ProfileNotFound(self.b_conf.config_file,
+                                            profile_name)
         else:
             profile = None
 
