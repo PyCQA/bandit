@@ -67,7 +67,7 @@ class Metrics(object):
         """
         def proc(line):
             tmp = line.strip()
-            return tmp and not tmp.startswith('#')
+            return tmp and not tmp.startswith(b'#')
 
         self.current['loc'] += len(list(filter(proc, lines)))
 

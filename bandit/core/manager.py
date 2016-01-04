@@ -241,7 +241,7 @@ class BanditManager():
                     sys.stderr.write("%s.. " % count)
                     sys.stderr.flush()
             try:
-                with open(fname, 'rU') as fdata:
+                with open(fname, 'rb') as fdata:
                     try:
                         # parse the current file
                         lines = fdata.readlines()
