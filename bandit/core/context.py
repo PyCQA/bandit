@@ -291,7 +291,6 @@ class Context():
         copy to match the actual line where the match occurs.
         :call_node: the call to find the argument in
         :param argument_name: A string - name of the argument to look for
-        :return: Integer - the line number of the found argument
         '''
         for key in self.node.keywords:
             if key.arg is argument_name:
