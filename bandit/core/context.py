@@ -293,7 +293,7 @@ class Context():
         :param argument_name: A string - name of the argument to look for
         '''
         for key in self.node.keywords:
-            if key.arg is argument_name:
+            if key.arg == argument_name:
                 self._context['lineno'] = key.value.lineno
 
     def get_call_arg_at_position(self, position_num):
