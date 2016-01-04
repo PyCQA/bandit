@@ -273,7 +273,7 @@ class BanditNodeVisitor(object):
                 operator.add, self.scores[score_type], scores[score_type]
             ))
 
-    def process(self, lines):
+    def process(self, data, lines):
         '''Main process loop
 
         Build and process the AST
@@ -281,6 +281,6 @@ class BanditNodeVisitor(object):
         :return score: the aggregated score for the current file
         '''
         self.lines = lines
-        f_ast = ast.parse(b"".join(self.lines))
+        f_ast = ast.parse(data)
         self.generic_visit(f_ast)
         return self.scores
