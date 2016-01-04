@@ -225,10 +225,14 @@ def main():
         log_format = b_conf.get_option('log_format')
         _init_logger(debug, log_format=log_format)
 
-    b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
-                                    profile_name=args.profile,
-                                    verbose=args.verbose,
-                                    ignore_nosec=args.ignore_nosec)
+    try:
+        b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
+                                        profile_name=args.profile,
+                                        verbose=args.verbose,
+                                        ignore_nosec=args.ignore_nosec)
+    except utils.ProfileNotFound as e:
+        logger.error(e)
+        sys.exit(2)
 
     if args.baseline is not None:
         try:

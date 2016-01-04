@@ -26,6 +26,7 @@ from bandit.core import config
 from bandit.core import issue
 from bandit.core import constants
 from bandit.core import extension_loader
+from bandit.core import utils
 
 
 class TempFile(fixtures.Fixture):
@@ -95,11 +96,11 @@ class ManagerTests(testtools.TestCase):
             m = manager.BanditManager(config=self.config, agg_type='file',
                                       debug=False, verbose=False,
                                       profile_name='Bad')
-        except RuntimeError as e:
+        except utils.ProfileNotFound as e:
             err = str(e)
 
         self.assertTrue(err.startswith(
-            "unable to find profile (Bad) in config file:"))
+            "Unable to find profile (Bad) in config file:"))
 
     def test_matches_globlist(self):
         self.assertTrue(manager._matches_glob_list('test', ['*tes*']))

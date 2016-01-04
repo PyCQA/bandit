@@ -140,6 +140,16 @@ class ConfigFileInvalidYaml(Exception):
         super(ConfigFileInvalidYaml, self).__init__(message)
 
 
+class ProfileNotFound(Exception):
+    """Raised when chosen profile cannot be found."""
+    def __init__(self, config_file, profile):
+        self.config_file = config_file
+        self.profile = profile
+        message = 'Unable to find profile (%s) in config file: %s' % (
+            self.profile, self.config_file)
+        super(ProfileNotFound, self).__init__(message)
+
+
 def warnings_formatter(message,
                        category=UserWarning,
                        filename='',
