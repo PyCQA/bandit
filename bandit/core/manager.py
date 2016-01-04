@@ -244,10 +244,11 @@ class BanditManager():
                 with open(fname, 'rb') as fdata:
                     try:
                         # parse the current file
-                        lines = fdata.readlines()
+                        data = fdata.read()
+                        lines = data.splitlines()
                         self.metrics.begin(fname)
                         self.metrics.count_locs(lines)
-                        score = self._execute_ast_visitor(fname, lines)
+                        score = self._execute_ast_visitor(fname, data, lines)
                         self.scores.append(score)
                         self.metrics.count_issues([score, ])
                     except KeyboardInterrupt as e:
@@ -270,10 +271,11 @@ class BanditManager():
         # do final aggregation of metrics
         self.metrics.aggregate()
 
-    def _execute_ast_visitor(self, fname, lines):
+    def _execute_ast_visitor(self, fname, data, lines):
         '''Execute AST parse on each file
 
         :param fname: The name of the file being parsed
+        :param data: Original file contents
         :param lines: The lines of code to process
         :return: The accumulated test score
         '''
@@ -282,7 +284,7 @@ class BanditManager():
                                                self.b_ts, self.debug,
                                                self.ignore_nosec, self.metrics)
 
-        score = res.process(lines)
+        score = res.process(data, lines)
         self.results.extend(res.tester.results)
         return score
 
