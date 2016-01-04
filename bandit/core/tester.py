@@ -29,12 +29,13 @@ logger = logging.getLogger(__name__)
 
 
 class BanditTester():
-    def __init__(self, config, testset, debug):
+    def __init__(self, config, testset, debug, nosec_lines):
         self.config = config
         self.results = []
         self.testset = testset
         self.last_result = None
         self.debug = debug
+        self.nosec_lines = nosec_lines
 
     def run_tests(self, raw_context, checktype):
         '''Runs all tests for a certain type of check, for example
@@ -44,6 +45,7 @@ class BanditTester():
 
         :param raw_context: Raw context dictionary
         :param checktype: The type of checks to run
+        :param nosec_lines: Lines which should be skipped because of nosec
         :return: a score based on the number and type of test results
         '''
 
@@ -64,9 +66,12 @@ class BanditTester():
                     result = test(context)
 
                 # if we have a result, record it and update scores
-                if result is not None:
+                if (result is not None and
+                        result.lineno not in self.nosec_lines and
+                        temp_context['lineno'] not in self.nosec_lines):
                     result.fname = temp_context['filename']
-                    result.lineno = temp_context['lineno']
+                    if result.lineno is None:
+                        result.lineno = temp_context['lineno']
                     result.linerange = temp_context['linerange']
                     result.test = test.__name__
 

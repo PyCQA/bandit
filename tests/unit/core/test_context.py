@@ -189,14 +189,11 @@ class ContextTests(testtools.TestCase):
 
         self.assertIsNone(new_context._get_literal_value(None))
 
-    @mock.patch('bandit.core.context.Context.set_lineno_for_call_arg')
     @mock.patch('bandit.core.context.Context.call_keywords',
                 new_callable=mock.PropertyMock)
-    def test_check_call_arg_value(self, call_keywords,
-                                  set_lineno_for_call_args):
+    def test_check_call_arg_value(self, call_keywords):
         new_context = context.Context()
         call_keywords.return_value = dict(spam='eggs')
-        set_lineno_for_call_args.return_value = 42
         self.assertTrue(new_context.check_call_arg_value('spam', 'eggs'))
         self.assertTrue(new_context.check_call_arg_value('spam',
                                                          ['spam', 'eggs']))
@@ -209,18 +206,18 @@ class ContextTests(testtools.TestCase):
 
     @mock.patch('bandit.core.context.Context.node',
                 new_callable=mock.PropertyMock)
-    def test_set_lineno_for_call_arg(self, node):
+    def test_get_lineno_for_call_arg(self, node):
         expected_lineno = 42
         keyword1 = mock.Mock(arg='spam',
                              value=mock.Mock(lineno=expected_lineno))
         node.return_value = mock.Mock(keywords=[keyword1])
         new_context = context.Context()
-        new_context.set_lineno_for_call_arg('spam')
-        self.assertEqual(expected_lineno, new_context._context['lineno'])
+        actual_lineno = new_context.get_lineno_for_call_arg('spam')
+        self.assertEqual(expected_lineno, actual_lineno)
 
         new_context = context.Context()
-        new_context.set_lineno_for_call_arg('eggs')
-        self.assertNotIn('lineno', new_context._context)
+        missing_lineno = new_context.get_lineno_for_call_arg('eggs')
+        self.assertIsNone(missing_lineno)
 
     def test_get_call_arg_at_position(self):
         expected_arg = 'spam'

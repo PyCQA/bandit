@@ -63,10 +63,11 @@ def request_with_no_cert_validation(context):
     if ('requests' in context.call_function_name_qual and
             context.call_function_name in http_verbs):
         if context.check_call_arg_value('verify', 'False'):
-
-            return bandit.Issue(
+            issue = bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="Requests call with verify=False disabling SSL "
-                     "certificate checks, security issue."
+                     "certificate checks, security issue.",
+                lineno=context.get_lineno_for_call_arg('verify'),
             )
+            return issue

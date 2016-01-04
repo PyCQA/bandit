@@ -273,8 +273,6 @@ class Context():
                 argument_values = list((argument_values,))
             for val in argument_values:
                 if arg_value == val:
-                    # if matched, fix up the context lineno for reporting
-                    self.set_lineno_for_call_arg(argument_name)
                     return True
             return False
         else:
@@ -282,19 +280,17 @@ class Context():
             # eventuality
             return None
 
-    def set_lineno_for_call_arg(self, argument_name):
-        '''Updates the line number for a specific named argument
+    def get_lineno_for_call_arg(self, argument_name):
+        '''Get the line number for a specific named argument
 
-        If a call is split over multiple lines, when a keyword arg is found
-        the issue will be reported with the line number of the start of the
-        call. This function updates the line number in the current context
-        copy to match the actual line where the match occurs.
-        :call_node: the call to find the argument in
+        In case the call is split over multiple lines, get the correct one for
+        the argument.
         :param argument_name: A string - name of the argument to look for
+        :return: Integer - the line number of the found argument, or -1
         '''
         for key in self.node.keywords:
             if key.arg == argument_name:
-                self._context['lineno'] = key.value.lineno
+                return key.value.lineno
 
     def get_call_arg_at_position(self, position_num):
         '''Returns positional argument at the specified position (if it exists)

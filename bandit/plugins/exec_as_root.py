@@ -87,5 +87,6 @@ def execute_with_run_as_root_equals_true(context, config):
                 severity=bandit.LOW,
                 confidence=bandit.MEDIUM,
                 text="Execute with run_as_root=True identified, possible "
-                     "security issue."
+                     "security issue.",
+                lineno=context.get_lineno_for_call_arg('run_as_root'),
             )

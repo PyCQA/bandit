@@ -29,9 +29,9 @@ logger = logging.getLogger(__name__)
 
 class BanditNodeVisitor(object):
     def __init__(self, fname, config, metaast, testset,
-                 debug, ignore_nosec, metrics):
+                 debug, nosec_lines, metrics):
         self.debug = debug
-        self.ignore_nosec = ignore_nosec
+        self.nosec_lines = nosec_lines
         self.seen = 0
         self.scores = {
             'SEVERITY': [0] * len(constants.RANKING),
@@ -45,7 +45,7 @@ class BanditNodeVisitor(object):
         self.imports = set()
         self.import_aliases = {}
         self.tester = b_tester.BanditTester(
-            self.config, self.testset, self.debug
+            self.config, self.testset, self.debug, nosec_lines,
         )
 
         # in some cases we can't determine a qualified name
@@ -56,7 +56,6 @@ class BanditNodeVisitor(object):
                         self.fname)
             self.namespace = ""
         logger.debug('Module qualified name: %s', self.namespace)
-        self.lines = []
         self.metrics = metrics
 
     def visit_ClassDef(self, node):
@@ -194,12 +193,10 @@ class BanditNodeVisitor(object):
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
 
-            if not self.ignore_nosec:
-                if (b"# nosec" in self.lines[node.lineno - 1] or
-                        b"#nosec" in self.lines[node.lineno - 1]):
-                    logger.debug("skipped, nosec")
-                    self.metrics.note_nosec()
-                    return False
+            if node.lineno in self.nosec_lines:
+                logger.debug("skipped, nosec")
+                self.metrics.note_nosec()
+                return False
 
         self.context['node'] = node
         self.context['linerange'] = b_utils.linerange_fix(node)
@@ -273,14 +270,13 @@ class BanditNodeVisitor(object):
                 operator.add, self.scores[score_type], scores[score_type]
             ))
 
-    def process(self, data, lines):
+    def process(self, data):
         '''Main process loop
 
         Build and process the AST
         :param lines: lines code to process
         :return score: the aggregated score for the current file
         '''
-        self.lines = lines
         f_ast = ast.parse(data)
         self.generic_visit(f_ast)
         return self.scores

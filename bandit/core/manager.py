@@ -248,7 +248,15 @@ class BanditManager():
                         lines = data.splitlines()
                         self.metrics.begin(fname)
                         self.metrics.count_locs(lines)
-                        score = self._execute_ast_visitor(fname, data, lines)
+                        if self.ignore_nosec:
+                            nosec_lines = set()
+                        else:
+                            nosec_lines = set(
+                                lineno + 1 for
+                                (lineno, line) in enumerate(lines)
+                                if b'#nosec' in line or b'# nosec' in line)
+                        score = self._execute_ast_visitor(fname, data,
+                                                          nosec_lines)
                         self.scores.append(score)
                         self.metrics.count_issues([score, ])
                     except KeyboardInterrupt as e:
@@ -271,7 +279,7 @@ class BanditManager():
         # do final aggregation of metrics
         self.metrics.aggregate()
 
-    def _execute_ast_visitor(self, fname, data, lines):
+    def _execute_ast_visitor(self, fname, data, nosec_lines):
         '''Execute AST parse on each file
 
         :param fname: The name of the file being parsed
@@ -282,9 +290,9 @@ class BanditManager():
         score = []
         res = b_node_visitor.BanditNodeVisitor(fname, self.b_conf, self.b_ma,
                                                self.b_ts, self.debug,
-                                               self.ignore_nosec, self.metrics)
+                                               nosec_lines, self.metrics)
 
-        score = res.process(data, lines)
+        score = res.process(data)
         self.results.extend(res.tester.results)
         return score
 

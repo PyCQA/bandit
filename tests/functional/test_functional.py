@@ -479,6 +479,13 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('flask_debug.py', expect)
 
+    def test_nosec(self):
+        expect = {
+            'SEVERITY': {},
+            'CONFIDENCE': {}
+        }
+        self.check_example('nosec.py', expect)
+
     def test_baseline_filter(self):
         json = """{
           "results": [

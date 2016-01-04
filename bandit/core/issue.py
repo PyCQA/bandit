@@ -25,14 +25,14 @@ import linecache
 
 class Issue(object):
     def __init__(self, severity, confidence=constants.CONFIDENCE_DEFAULT,
-                 text="", ident=None):
+                 text="", ident=None, lineno=None):
         self.severity = severity
         self.confidence = confidence
         self.text = text
         self.ident = ident
         self.fname = ""
         self.test = ""
-        self.lineno = -1
+        self.lineno = lineno
         self.linerange = []
 
     def __str__(self):
