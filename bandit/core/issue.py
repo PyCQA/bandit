@@ -14,6 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from __future__ import division
+
 from bandit.core import constants
 
 from six.moves import xrange
@@ -81,11 +83,11 @@ class Issue(object):
         '''
         lines = []
         max_lines = max(max_lines, 1)
-        lmin = max(1, self.lineno - max_lines / 2)
+        lmin = max(1, self.lineno - max_lines // 2)
         lmax = lmin + len(self.linerange) + max_lines - 1
 
         tmplt = "%i\t%s" if tabbed else "%i %s"
-        for line in xrange(int(lmin), int(lmax)):
+        for line in xrange(lmin, lmax):
             text = linecache.getline(self.fname, line)
             if not len(text):
                 break
