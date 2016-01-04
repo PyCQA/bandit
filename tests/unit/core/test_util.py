@@ -25,14 +25,10 @@ import tempfile
 import testtools
 
 import six
+import six.moves.builtins as builtins
 
 from bandit.core import utils as b_utils
 
-from sys import version_info
-if version_info.major == 2:
-    import __builtin__ as builtins
-else:
-    import builtins
 
 
 def _touch(path):
