@@ -46,6 +46,57 @@ def _evaluate_shell_call(context):
         return bandit.HIGH
 
 
+def gen_config(name):
+    if name == 'shell_injection':
+        return {
+            # Start a process using the subprocess module, or one of its
+            # wrappers.
+            'subprocess':
+            ['subprocess.Popen',
+             'subprocess.call',
+             'subprocess.check_call',
+             'subprocess.check_output',
+             'utils.execute',
+             'utils.execute_with_timeout'],
+
+            # Start a process with a function vulnerable to shell injection.
+            'shell':
+            ['os.system',
+             'os.popen',
+             'os.popen2',
+             'os.popen3',
+             'os.popen4',
+             'popen2.popen2',
+             'popen2.popen3',
+             'popen2.popen4',
+             'popen2.Popen3',
+             'popen2.Popen4',
+             'commands.getoutput',
+             'commands.getstatusoutput'],
+
+            # Start a process with a function that is not vulnerable to shell
+            # injection.
+            'no_shell':
+            ['os.execl',
+             'os.execle',
+             'os.execlp',
+             'os.execlpe',
+             'os.execv',
+             'os.execve',
+             'os.execvp',
+             'os.execvpe',
+             'os.spawnl',
+             'os.spawnle',
+             'os.spawnlp',
+             'os.spawnlpe',
+             'os.spawnv',
+             'os.spawnve',
+             'os.spawnvp',
+             'os.spawnvpe',
+             'os.startfile']
+            }
+
+
 @test.takes_config('shell_injection')
 @test.checks('Call')
 @test.test_id('B602')
@@ -62,7 +113,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
     invocation is dangerous as it is vulnerable to various shell injection
     attacks. Great care should be taken to sanitize all input in order to
     mitigate this risk. Calls of this type are identified by a parameter of
-    "shell=True" being given.
+    'shell=True' being given.
 
     Additionally, this plugin scans the command string given and adjusts its
     reported severity based on how it is presented. If the command string is a
@@ -148,24 +199,24 @@ def subprocess_popen_with_shell_equals_true(context, config):
                     return bandit.Issue(
                         severity=bandit.LOW,
                         confidence=bandit.HIGH,
-                        text="subprocess call with shell=True seems safe, but "
-                             "may be changed in the future, consider "
-                             "rewriting without shell"
+                        text='subprocess call with shell=True seems safe, but '
+                             'may be changed in the future, consider '
+                             'rewriting without shell'
                     )
                 elif sev == bandit.MEDIUM:
                     return bandit.Issue(
                         severity=bandit.MEDIUM,
                         confidence=bandit.HIGH,
-                        text="call with shell=True contains special shell "
-                             "characters, consider moving extra logic into "
-                             "Python code"
+                        text='call with shell=True contains special shell '
+                             'characters, consider moving extra logic into '
+                             'Python code'
                     )
                 else:
                     return bandit.Issue(
                         severity=bandit.HIGH,
                         confidence=bandit.HIGH,
-                        text="subprocess call with shell=True identified, "
-                             "security issue."
+                        text='subprocess call with shell=True identified, '
+                             'security issue.'
                     )
 
 
@@ -243,8 +294,8 @@ def subprocess_without_shell_equals_true(context, config):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
-                text="subprocess call - check for execution of untrusted "
-                     "input."
+                text='subprocess call - check for execution of untrusted '
+                     'input.'
             )
 
 
@@ -313,20 +364,20 @@ def any_other_function_with_shell_equals_true(context, config):
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html  # noqa
     """
-    '''Alerts on any function call that includes a shell=True parameter.
+    """Alerts on any function call that includes a shell=True parameter.
 
-    Multiple "helpers" with varying names have been identified across
+    Multiple 'helpers' with varying names have been identified across
     various OpenStack projects.
 
     .. versionadded:: 0.9.0
-    '''
+    """
     if config and context.call_function_name_qual not in config['subprocess']:
         if context.check_call_arg_value('shell', 'True'):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
-                text="Function call with shell=True parameter identifed, "
-                     "possible security issue."
+                text='Function call with shell=True parameter identifed, '
+                     'possible security issue.'
                 )
 
 
@@ -410,24 +461,24 @@ def start_process_with_a_shell(context, config):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text="Starting a process with a shell: "
-                         "Seems safe, but may be changed in the future, "
-                         "consider rewriting without shell"
+                    text='Starting a process with a shell: '
+                         'Seems safe, but may be changed in the future, '
+                         'consider rewriting without shell'
                 )
             elif sev == bandit.MEDIUM:
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,
-                    text="Starting a process with a shell and special shell "
-                         "characters, consider moving extra logic into "
-                         "Python code"
+                    text='Starting a process with a shell and special shell '
+                         'characters, consider moving extra logic into '
+                         'Python code'
                 )
             else:
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.HIGH,
-                    text="Starting a process with a shell, possible injection"
-                         " detected, security issue."
+                    text='Starting a process with a shell, possible injection'
+                         ' detected, security issue.'
                 )
 
 
@@ -514,7 +565,7 @@ def start_process_with_no_shell(context, config):
         return bandit.Issue(
             severity=bandit.LOW,
             confidence=bandit.MEDIUM,
-            text="Starting a process without a shell."
+            text='Starting a process without a shell.'
         )
 
 
@@ -610,5 +661,5 @@ def start_process_with_partial_path(context, config):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text="Starting a process with a partial executable path"
+                    text='Starting a process with a partial executable path'
                 )

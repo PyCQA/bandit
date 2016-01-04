@@ -84,6 +84,11 @@ import bandit
 from bandit.core import test_properties as test
 
 
+def gen_config(name):
+    if name == 'try_except_pass':
+        return {'check_typed_exception': True}
+
+
 @test.takes_config
 @test.checks('ExceptHandler')
 @test.test_id('B110')

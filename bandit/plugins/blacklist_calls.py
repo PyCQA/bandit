@@ -91,7 +91,207 @@ from bandit.core import test_properties as test
 
 
 _cached_blacklist_checks = []
-_cached_blacklist_config = None
+_cached_blacklist_config = None  # FIXME(tkelsey): there is no point in this ..
+
+
+def _build_conf_dict(name, qualnames, message, level='MEDIUM'):
+    return {name: {'message': message, 'qualnames': qualnames, 'level': level}}
+
+
+def gen_config(name):
+    if 'blacklist_calls' == name:
+        sets = []
+
+        sets.append(_build_conf_dict(
+            'pickle',
+            ['pickle.loads',
+             'pickle.load',
+             'pickle.Unpickler',
+             'cPickle.loads',
+             'cPickle.load',
+             'cPickle.Unpickler'],
+            'Pickle library appears to be in use, possible security issue.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'marshal', ['marshal.load', 'marshal.loads'],
+            'Deserialization with the marshal module is possibly dangerous.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'md5',
+            ['hashlib.md5',
+             'Crypto.Hash.MD2.new',
+             'Crypto.Hash.MD4.new',
+             'Crypto.Hash.MD5.new',
+             'cryptography.hazmat.primitives.hashes.MD5'],
+            'Use of insecure MD2, MD4, or MD5 hash function.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'ciphers',
+            ['Crypto.Cipher.ARC2.new',
+             'Crypto.Cipher.ARC4.new',
+             'Crypto.Cipher.Blowfish.new',
+             'Crypto.Cipher.DES.new',
+             'Crypto.Cipher.XOR.new',
+             'cryptography.hazmat.primitives.ciphers.algorithms.ARC4',
+             'cryptography.hazmat.primitives.ciphers.algorithms.Blowfish',
+             'cryptography.hazmat.primitives.ciphers.algorithms.IDEA'],
+            'Use of insecure cipher {func}. Replace with a known secure'
+            ' cipher such as AES.',
+            'HIGH'
+            ))
+
+        sets.append(_build_conf_dict(
+            'cipher_modes',
+            ['cryptography.hazmat.primitives.ciphers.modes.ECB'],
+            'Use of insecure cipher mode {func}.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'mktemp_q', ['tempfile.mktemp'],
+            'Use of insecure and deprecated function (mktemp).'
+            ))
+
+        sets.append(_build_conf_dict(
+            'eval', ['eval'],
+            'Use of possibly insecure function - consider using safer '
+            'ast.literal_eval.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'mark_safe', ['mark_safe'],
+            'Use of mark_safe() may expose cross-site scripting '
+            'vulnerabilities and should be reviewed.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'httpsconnection',
+            ['httplib.HTTPSConnection',
+             'http.client.HTTPSConnection',
+             'six.moves.http_client.HTTPSConnection'],
+            'Use of HTTPSConnection does not provide security, see '
+            'https://wiki.openstack.org/wiki/OSSN/OSSN-0033'
+            ))
+
+        sets.append(_build_conf_dict(
+            'yaml_load', ['yaml.load'],
+            'Use of unsafe yaml load. Allows instantiation of arbitrary '
+            'objects. Consider yaml.safe_load().'
+            ))
+
+        sets.append(_build_conf_dict(
+            'urllib_urlopen',
+            ['urllib.urlopen',
+             'urllib.request.urlopen',
+             'urllib.urlretrieve',
+             'urllib.request.urlretrieve',
+             'urllib.URLopener',
+             'urllib.request.URLopener',
+             'urllib.FancyURLopener',
+             'urllib.request.FancyURLopener',
+             'urllib2.urlopen',
+             'urllib2.Request',
+             'six.moves.urllib.request.urlopen',
+             'six.moves.urllib.request.urlretrieve',
+             'six.moves.urllib.request.URLopener',
+             'six.moves.urllib.request.FancyURLopener'],
+            'Audit url open for permitted schemes. Allowing use of file:/ or '
+            'custom schemes is often unexpected.'
+            ))
+
+        sets.append(_build_conf_dict(
+            'random',
+            ['random.random',
+             'random.randrange',
+             'random.randint',
+             'random.choice',
+             'random.uniform',
+             'random.triangular'],
+            'Standard pseudo-random generators are not suitable for '
+            'security/cryptographic purposes.',
+            'LOW'
+            ))
+
+        sets.append(_build_conf_dict(
+            'telnetlib', ['telnetlib.*'],
+            'Telnet-related funtions are being called. Telnet is considered '
+            'insecure. Use SSH or some other encrypted protocol.',
+            'HIGH'
+            ))
+
+        # Most of this is based off of Christian Heimes' work on defusedxml:
+        #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+
+        xml_msg = ('Using {func} to parse untrusted XML data is known to be '
+                   'vulnerable to XML attacks. Replace {func} with its '
+                   'defusedxml equivalent function.')
+
+        sets.append(_build_conf_dict(
+            'xml_bad_cElementTree',
+            ['xml.etree.cElementTree.parse',
+             'xml.etree.cElementTree.iterparse',
+             'xml.etree.cElementTree.fromstring',
+             'xml.etree.cElementTree.XMLParser'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_ElementTree',
+            ['xml.etree.ElementTree.parse',
+             'xml.etree.ElementTree.iterparse',
+             'xml.etree.ElementTree.fromstring',
+             'xml.etree.ElementTree.XMLParser'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_expatreader', ['xml.sax.expatreader.create_parser'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_expatbuilder',
+            ['xml.dom.expatbuilder.parse',
+             'xml.dom.expatbuilder.parseString'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_sax',
+            ['xml.sax.parse',
+             'xml.sax.parseString',
+             'xml.sax.make_parser'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_minidom',
+            ['xml.dom.minidom.parse',
+             'xml.dom.minidom.parseString'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_pulldom',
+            ['xml.dom.pulldom.parse',
+             'xml.dom.pulldom.parseString'],
+            xml_msg
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_bad_etree',
+            ['lxml.etree.parse',
+             'lxml.etree.fromstring',
+             'lxml.etree.RestrictedElement',
+             'lxml.etree.GlobalParserTLS',
+             'lxml.etree.getDefaultParser',
+             'lxml.etree.check_docinfo'],
+            xml_msg
+            ))
+
+        return {'bad_name_sets': sets}
 
 
 @test.takes_config

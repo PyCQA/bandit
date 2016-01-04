@@ -18,6 +18,57 @@ import bandit
 from bandit.core import test_properties as test
 
 
+def _build_conf_dict(name, imports, message, level='MEDIUM'):
+    return {name: {'message': message, 'imports': imports, 'level': level}}
+
+
+def gen_config(name):
+    if 'blacklist_imports' == name:
+        sets = []
+
+        sets.append(_build_conf_dict(
+            'telnet', ['telnetlib'],
+            'A telnet-related module is being imported.  Telnet is '
+            'considered insecure. Use SSH or some other encrypted protocol.',
+            'HIGH'
+            ))
+
+        sets.append(_build_conf_dict(
+            'info_libs', ['pickle', 'cPickle', 'subprocess', 'Crypto'],
+            'Consider possible security implications associated with '
+            '{module} module.', 'LOW'
+            ))
+
+        # Most of this is based off of Christian Heimes' work on defusedxml:
+        #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+
+        sets.append(_build_conf_dict(
+            'xml_libs',
+            ['xml.etree.cElementTree',
+             'xml.etree.ElementTree',
+             'xml.sax.expatreader',
+             'xml.sax',
+             'xml.dom.expatbuilder',
+             'xml.dom.minidom',
+             'xml.dom.pulldom',
+             'lxml.etree',
+             'lxml'],
+            'Using {module} to parse untrusted XML data is known to be '
+            'vulnerable to XML attacks. Replace {module} with the equivalent '
+            'defusedxml package.', 'LOW'
+            ))
+
+        sets.append(_build_conf_dict(
+            'xml_libs_high', ['xmlrpclib'],
+            'Using {module} to parse untrusted XML data is known to be '
+            'vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() '
+            'function to monkey-patch xmlrpclib and mitigate XML '
+            'vulnerabilities.', 'HIGH'
+            ))
+
+        return {'bad_import_sets': sets}
+
+
 @test.takes_config
 @test.checks('Import', 'ImportFrom')
 @test.test_id('B401')
