@@ -67,9 +67,9 @@ class Metrics(object):
         """
         def proc(line):
             tmp = line.strip()
-            return tmp and not tmp.startswith(b'#')
+            return bool(tmp and not tmp.startswith(b'#'))
 
-        self.current['loc'] += len(list(filter(proc, lines)))
+        self.current['loc'] += sum(proc(line) for line in lines)
 
     def count_issues(self, scores):
         self.current.update(self._get_issue_counts(scores))
