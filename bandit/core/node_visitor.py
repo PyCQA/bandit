@@ -195,8 +195,8 @@ class BanditNodeVisitor(object):
             self.context['lineno'] = node.lineno
 
             if not self.ignore_nosec:
-                if ("# nosec" in self.lines[node.lineno - 1] or
-                        "#nosec" in self.lines[node.lineno - 1]):
+                if (b"# nosec" in self.lines[node.lineno - 1] or
+                        b"#nosec" in self.lines[node.lineno - 1]):
                     logger.debug("skipped, nosec")
                     self.metrics.note_nosec()
                     return False
@@ -281,6 +281,6 @@ class BanditNodeVisitor(object):
         :return score: the aggregated score for the current file
         '''
         self.lines = lines
-        f_ast = ast.parse("".join(self.lines))
+        f_ast = ast.parse(b"".join(self.lines))
         self.generic_visit(f_ast)
         return self.scores
