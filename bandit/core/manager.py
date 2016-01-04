@@ -106,7 +106,7 @@ class BanditManager():
             jdata = json.loads(data)
             items = [issue.issue_from_dict(j) for j in jdata["results"]]
         except Exception as e:
-            logger.warn("Failed to load baseline data: %s", e)
+            logger.warning("Failed to load baseline data: %s", e)
         self.baseline = items
 
     def filter_results(self, sev_filter, conf_filter):
@@ -202,8 +202,8 @@ class BanditManager():
                     files_list.update(new_files)
                     excluded_files.update(newly_excluded)
                 else:
-                    logger.warn("Skipping directory (%s), use -r flag to "
-                                "scan contents", fname)
+                    logger.warning("Skipping directory (%s), use -r flag to "
+                                   "scan contents", fname)
 
             else:
                 # if the user explicitly mentions a file on command line,
