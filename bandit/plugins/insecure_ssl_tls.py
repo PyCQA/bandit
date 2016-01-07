@@ -22,6 +22,19 @@ def get_bad_proto_versions(config):
     return config['bad_protocol_versions']
 
 
+def gen_config(name):
+    if name == 'ssl_with_bad_version':
+        return {'bad_protocol_versions':
+                ['PROTOCOL_SSLv2',
+                 'SSLv2_METHOD',
+                 'SSLv23_METHOD',
+                 'PROTOCOL_SSLv3',  # strict option
+                 'PROTOCOL_TLSv1',  # strict option
+                 'SSLv3_METHOD',    # strict option
+                 'TLSv1_METHOD']    # strict option
+                }
+
+
 @test.takes_config
 @test.checks('Call')
 @test.test_id('B502')

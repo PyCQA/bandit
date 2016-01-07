@@ -37,7 +37,7 @@ issue.
 .. code-block:: yaml
 
     hardcoded_tmp_directory:
-        tmp_dirs:  ['/tmp', '/var/tmp', '/dev/shm']
+        tmp_dirs: ['/tmp', '/var/tmp', '/dev/shm']
 
 
 Sample Output
@@ -60,6 +60,11 @@ References
 
 import bandit
 from bandit.core import test_properties as test
+
+
+def gen_config(name):
+    if name == 'hardcoded_tmp_directory':
+        return {'tmp_dirs': ['/tmp', '/var/tmp', '/dev/shm']}
 
 
 @test.takes_config

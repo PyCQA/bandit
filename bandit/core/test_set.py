@@ -17,8 +17,10 @@
 
 from collections import OrderedDict
 import copy
+import importlib
 import logging
 import sys
+import warnings
 
 from bandit.core import utils
 
@@ -120,6 +122,21 @@ class BanditTestSet():
         for plugin in extmgr.plugins:
             fn_name = plugin.name
             function = plugin.plugin
+            if hasattr(function, '_takes_config'):
+                test_config = self.config.get_option(function._takes_config)
+                if test_config is None:
+                    genner = importlib.import_module(function.__module__)
+                    if hasattr(genner, 'gen_config'):
+                        test_config = genner.gen_config(function._takes_config)
+                if test_config is None:
+                    warnings.warn(
+                        '"{0}" has been skipped due to missing config '
+                        '"{1}".'.format(function.__name__,
+                                        function._takes_config))
+                    continue
+                else:
+                    setattr(function, "_config", test_config)
+
             if hasattr(function, '_checks'):
                 for check in function._checks:
                     # if check type hasn't been encountered

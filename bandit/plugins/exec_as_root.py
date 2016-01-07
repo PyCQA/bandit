@@ -66,6 +66,16 @@ import bandit
 from bandit.core import test_properties as test
 
 
+def gen_config(name):
+    if name == 'execute_with_run_as_root_equals_true':
+        return {'function_names':
+                ['ceilometer.utils.execute',
+                 'cinder.utils.execute',
+                 'neutron.agent.linux.utils.execute',
+                 'nova.utils.execute',
+                 'nova.utils.trycmd']}
+
+
 @test.takes_config
 @test.checks('Call')
 @test.test_id('B111')

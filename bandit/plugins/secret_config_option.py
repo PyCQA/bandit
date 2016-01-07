@@ -71,6 +71,13 @@ from bandit.core import constants
 from bandit.core import test_properties as test
 
 
+def gen_config(name):
+    if name == 'password_config_option_not_marked_secret':
+        return {'function_names':
+                ['oslo.config.cfg.StrOpt',
+                 'oslo_config.cfg.StrOpt']}
+
+
 @test.takes_config
 @test.checks('Call')
 @test.test_id('B109')

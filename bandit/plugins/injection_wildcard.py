@@ -106,6 +106,10 @@ References
 
 import bandit
 from bandit.core import test_properties as test
+from bandit.plugins import injection_shell  # NOTE(tkelsey): shared config
+
+
+gen_config = injection_shell.gen_config
 
 
 @test.takes_config('shell_injection')
