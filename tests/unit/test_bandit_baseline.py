@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import bandit.bandit_baseline as baseline
+import bandit.cli.baseline as baseline
 
 import fixtures
 import os

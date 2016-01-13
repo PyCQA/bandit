@@ -4,7 +4,7 @@ import os
 import appdirs
 import testtools
 
-from bandit import bandit
+from bandit.cli import main as bandit
 from bandit.core import utils
 
 BASE_CONFIG = '/bandit.yaml'

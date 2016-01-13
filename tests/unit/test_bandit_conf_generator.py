@@ -1,4 +1,4 @@
-from bandit.bandit_config_generator import get_config_settings
+from bandit.cli.config_generator import get_config_settings
 
 import mock
 import testtools
