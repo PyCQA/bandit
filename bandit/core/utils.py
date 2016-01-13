@@ -61,7 +61,7 @@ def _get_attr_qual_name(node, aliases):
 
     :param node: AST Name or Attribute node
     :param aliases: Import aliases dictionary
-    :returns: Qualified name refered to by the attribute or name.
+    :returns: Qualified name referred to by the attribute or name.
     '''
     if type(node) == _ast.Name:
         if node.id in aliases:
