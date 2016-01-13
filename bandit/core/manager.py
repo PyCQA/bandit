@@ -65,16 +65,10 @@ class BanditManager():
         self.metrics = metrics.Metrics()
 
         # if the profile name was specified, try to find it in the config
-        if profile_name:
-            if profile_name in self.b_conf.config['profiles']:
-                profile = self.b_conf.config['profiles'][profile_name]
-                logger.debug(
-                    "read in profile '%s': %s",
-                    profile_name, profile
-                )
-            else:
-                raise utils.ProfileNotFound(self.b_conf.config_file,
-                                            profile_name)
+        if isinstance(profile_name, list):
+            profile = {'include': profile_name}
+        elif profile_name:
+            profile = self._get_profile(profile_name)
         else:
             profile = None
 
@@ -84,6 +78,14 @@ class BanditManager():
         # set the increment of after how many files to show progress
         self.progress = b_constants.progress_increment
         self.scores = []
+
+    def _get_profile(self, profile_name):
+        if profile_name not in self.b_conf.config['profiles']:
+            raise utils.ProfileNotFound(self.b_conf.config_file, profile_name)
+
+        profile = self.b_conf.config['profiles'][profile_name]
+        logger.debug("read in profile '%s': %s", profile_name, profile)
+        return profile
 
     def get_issue_list(self,
                        sev_level=b_constants.LOW,

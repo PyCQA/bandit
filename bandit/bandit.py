@@ -143,10 +143,16 @@ def main():
         help=('if omitted default locations are checked. '
               'Check documentation for searched paths')
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         '-p', '--profile', dest='profile',
         action='store', default=None, type=str,
         help='test set profile in config to use (defaults to all tests)'
+    )
+    group.add_argument(
+        '-t', '--tests', dest='tests',
+        action='store', default=None, type=str,
+        help='list of test names to run'
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
@@ -225,9 +231,11 @@ def main():
         log_format = b_conf.get_option('log_format')
         _init_logger(debug, log_format=log_format)
 
+    profile_name = args.tests.split(',') if args.tests else args.profile
+
     try:
         b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
-                                        profile_name=args.profile,
+                                        profile_name=profile_name,
                                         verbose=args.verbose,
                                         ignore_nosec=args.ignore_nosec)
     except utils.ProfileNotFound as e:

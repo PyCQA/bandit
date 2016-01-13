@@ -27,6 +27,8 @@ class Manager(object):
         self.plugins = list(self.plugins_mgr)
         self.plugin_names = self.plugins_mgr.names()
         self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
+        self.plugin_name_to_id = {
+            p.name: p.plugin._test_id for p in self.plugins}
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
@@ -46,6 +48,8 @@ class Manager(object):
             verify_requirements=False,
             )
 
+    def get_plugin_id(self, plugin_name):
+        return self.plugin_name_to_id.get(plugin_name)
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
 # once, store them on the object, and have a module global object for
