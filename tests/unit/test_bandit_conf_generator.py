@@ -1,55 +1,15 @@
-from bandit.bandit_config_generator import clean_profile
-from bandit.bandit_config_generator import disable_checkers
+from bandit.bandit_config_generator import get_config_settings
 
+import mock
 import testtools
 
-class BanditConfigGeneratorTests(testtools.TestCase):
-    def test_clean_profile(self):
-        default_config = {
-            'profiles': {
-                'All': {
-                    'include': ['checker1', 'checker2']
-                },
-                'profile-a': {
-                    'include': ['checker3']
-                }
-            }
-        }
-        expected_config = {
-            'profiles': {
-                'profile_name': {
-                    'include': ['checker1', 'checker2']
-                },
-            }
-        }
-        self.assertEqual(clean_profile(default_config, 'profile_name'),
-                         expected_config)
+import stevedore.extension
 
-    def test_disable_checkers(self):
-        config = {
-            'profiles': {
-                'All': {
-                    'include': ['checker1', 'checker2']
-                },
-                'profile-a': {
-                    'include': ['checker2', 'checker3']
-                }
-            },
-            'checker1': 'additional_config',
-            'checker2': 'additional_config'
-        }
-        expected_output = {
-            'profiles': {
-                'All': {
-                    'include': ['checker1'],
-                    'exclude': ['checker2']
-                },
-                'profile-a': {
-                    'include': ['checker3'],
-                    'exclude': ['checker2']
-                }
-            },
-            'checker1': 'additional_config'
-        }
-        self.assertEqual(disable_checkers(config, ['checker2']),
-                         expected_output)
+class BanditConfigGeneratorTests(testtools.TestCase):
+    @mock.patch('stevedore.extension.ExtensionManager',
+                spec=stevedore.extension.ExtensionManager)
+    @mock.patch('stevedore.extension.Extension',
+                spec=stevedore.extension.Extension)
+    def test_get_config_settings(self, ext_mgr, ext):
+        # TODO(tmcpeak): We need to add unit testing here
+        pass
