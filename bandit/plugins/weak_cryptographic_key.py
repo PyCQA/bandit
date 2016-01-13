@@ -111,7 +111,7 @@ def _weak_crypto_key_size_pycrypto(context):
 
 
 @test.checks('Call')
-@test.test_id('B506')
+@test.test_id('B505')
 def weak_cryptographic_key(context):
     return (_weak_crypto_key_size_cryptography_io(context) or
             _weak_crypto_key_size_pycrypto(context))
