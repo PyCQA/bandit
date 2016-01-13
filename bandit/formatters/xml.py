@@ -34,8 +34,10 @@ Sample Output
 .. versionadded:: 0.12.0
 
 """
-
+# This future import is necessary here due to the xml import below on Python
+# 2.7
 from __future__ import absolute_import
+
 import logging
 import sys
 from xml.etree import cElementTree as ET
