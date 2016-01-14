@@ -176,12 +176,6 @@ def gen_config(name):
             ))
 
         sets.append(_build_conf_dict(
-            'yaml_load', ['yaml.load'],
-            'Use of unsafe yaml load. Allows instantiation of arbitrary '
-            'objects. Consider yaml.safe_load().'
-            ))
-
-        sets.append(_build_conf_dict(
             'urllib_urlopen',
             ['urllib.urlopen',
              'urllib.request.urlopen',
