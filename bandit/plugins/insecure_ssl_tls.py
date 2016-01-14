@@ -214,7 +214,7 @@ def ssl_with_bad_defaults(context, config):
 
 
 @test.checks('Call')
-@test.test_id('B505')
+@test.test_id('B504')
 def ssl_with_no_version(context):
     """Test for SSL use with no version specified
 
