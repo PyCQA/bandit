@@ -14,9 +14,11 @@
 from __future__ import print_function
 
 import argparse
+import importlib
 import logging
 import sys
 
+from stevedore import extension
 import yaml
 
 PROG_NAME = 'bandit_conf_generator'
@@ -34,90 +36,50 @@ def init_logger():
     logger.addHandler(handler)
 
 
-def write_config_file(config, f):
-    f.write('# Generated using %s\n' % PROG_NAME)
-
-    # Start by writing profiles
-    f.write(yaml.dump({'profiles': config['profiles']},
-                      default_flow_style=False))
-
-    # Write the rest of the config.
-    for key in config:
-        if key == 'profiles':
-            continue
-        f.write('\n')
-        f.write(yaml.dump({key: config[key]}, default_flow_style=False))
-
-
-def clean_profile(config, profile_name):
-    """Remove all profiles but the most generic one.
-
-    Removes all profiles from CONFIG except the 'All' one, renamed to
-    PROFILE_NAME.
-    """
-    config['profiles'] = {
-        profile_name: config['profiles']['All']
-    }
-    return config
-
-
-def disable_checkers(config, disabled_checkers):
-    """Disable checkers specified using DISABLED_CHECKERS from CONFIG."""
-    logger.info('Disabling the following checkers: %s' %
-                ', '.join(disabled_checkers))
-    for profile in config['profiles']:
-        includes = [x for x in config['profiles'][profile]['include']
-                    if x not in disabled_checkers]
-        config['profiles'][profile]['include'] = includes
-        config['profiles'][profile]['exclude'] = disabled_checkers
-
-    for test in disabled_checkers:
-        # Some tests do not have extra configuration.
-        if config.pop(test, None) is not None:
-            logger.info('Disabled configuration for "%s"' % test)
-
-    return config
-
-
 def parse_args():
-    parser = argparse.ArgumentParser(description='Generate a bandit config')
-    parser.add_argument('--out', default='bandit.yaml',
-                        help='output file')
-    parser.add_argument('default_config_file',
-                        help='a generic config file as provided by bandit')
-    parser.add_argument('user_config_file',
-                        help='user config file')
+    parser = argparse.ArgumentParser(
+        description='Tool to display Bandit config options')
+
+    parser.add_argument('--show-defaults', dest='show_defaults',
+                        action='store_true',
+                        help='show the default settings values for each '
+                             'plugin')
+
     args = parser.parse_args()
     return args
 
 
-def read_yaml_file(filename):
-    try:
-        with open(filename) as f:
-            return yaml.safe_load(f)
-    except IOError:
-        print("Could not open %s" % filename, file=sys.stderr)
-        sys.exit(1)
+def get_config_settings():
+    """Print list of all plugins and default values of config."""
+    plugins_mgr = extension.ExtensionManager(namespace='bandit.plugins',
+                                             invoke_on_load=False,
+                                             verify_requirements=False)
+    logger.info('Successfully discovered %d plugins',
+                len(plugins_mgr.extensions))
+
+    config = {}
+
+    for plugin in plugins_mgr.extensions:
+        fn_name = plugin.name
+        function = plugin.plugin
+
+        # if a function takes config...
+        if hasattr(function, '_takes_config'):
+            fn_module = importlib.import_module(function.__module__)
+
+            # call the config generator if it exists
+            if hasattr(fn_module, 'gen_config'):
+                config[fn_name] = fn_module.gen_config(function._takes_config)
+
+    return yaml.safe_dump(config)
 
 
 def main():
     init_logger()
     args = parse_args()
 
-    default_config = read_yaml_file(args.default_config_file)
-    user_config = read_yaml_file(args.user_config_file)
-
-    config = clean_profile(default_config,
-                           user_config.get('profile_name', 'default'))
-    if 'exclude_checkers' in user_config:
-        config = disable_checkers(config, user_config['exclude_checkers'])
-
-    try:
-        with open(args.out, 'w') as f:
-            write_config_file(config, f)
-    except IOError:
-        print("Could not write to %s" % args.out, file=sys.stderr)
-        sys.exit(1)
+    if args.show_defaults:
+        print(get_config_settings())
 
     return 0
 
