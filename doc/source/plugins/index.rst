@@ -65,6 +65,23 @@ To register your plugin, you have two options:
         bandit.plugins =
             mako = bandit_mako
 
+
+Plugin ID Groupings
+-------------------
+
+=======  ===========
+ID       Description
+=======  ===========
+B1xx     misc tests
+B2xx     application/framework miss-configuration
+B3xx     blacklists (calls)
+B4xx     blacklists (imports)
+B5xx     cryptography
+B6xx     injection
+B7xx     XSS
+=======  ===========
+
+
 Complete Test Plugin Listing
 ----------------------------
 

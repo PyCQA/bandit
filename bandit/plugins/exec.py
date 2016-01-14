@@ -15,17 +15,15 @@
 # under the License.
 
 r"""
-Description
------------
+==============================
+B102: Test for the use of exec
+==============================
+
 This plugin test checks for the use of Python's `exec` method or keyword. The
 Python docs succinctly describe why the use of `exec` is risky.
 
-Config Options
---------------
-None
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Use of exec detected.
@@ -34,8 +32,8 @@ Sample Output
     1 exec("do evil")
     2 exec "do evil"
 
-References
-----------
+.. seealso::
+
  - https://docs.python.org/2.0/ref/exec.html
  - TODO: add info on exec and similar to sec best practice and link here
 

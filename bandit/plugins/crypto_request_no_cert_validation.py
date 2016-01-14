@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+=============================================
+B501: Test for missing certificate validation
+=============================================
+
 Encryption in general is typically critical to the security of many
 applications.  Using TLS can greatly increase security by guaranteeing the
 identity of the party you are communicating with.  This is accomplished by one
@@ -27,12 +29,9 @@ When request methods are used certificates are validated automatically which is
 the desired behavior.  If certificate validation is explicitly turned off
 Bandit will return a HIGH severity error.
 
-Config Options
---------------
-None
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: [request_with_no_cert_validation] Requests call with verify=False
@@ -43,10 +42,10 @@ Sample Output
     4   requests.get('https://gmail.com', verify=False)
     5   requests.post('https://gmail.com', verify=True)
 
-References
-----------
-- https://security.openstack.org/guidelines/dg_move-data-securely.html
-- https://security.openstack.org/guidelines/dg_validate-certificates.html
+.. seealso::
+
+ - https://security.openstack.org/guidelines/dg_move-data-securely.html
+ - https://security.openstack.org/guidelines/dg_validate-certificates.html
 
 .. versionadded:: 0.9.0
 

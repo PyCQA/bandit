@@ -13,8 +13,10 @@
 # under the License.
 
 r"""
-Description
------------
+====================================
+B702: Test for use of mako templates
+====================================
+
 Mako is a Python templating system often used to build web applications. It is
 the default templating system used in Pylons and Pyramid. Unlike Jinja2 (an
 alternative templating system), Mako has no environment wide variable escaping
@@ -23,12 +25,8 @@ before use to prevent possible vulnerabilities to Cross Site Scripting (XSS)
 attacks.
 
 
-Config Options
---------------
-None
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Mako templates allow HTML/JS rendering by default and are
@@ -42,12 +40,12 @@ Sample Output
     11  template.Template("hern")
 
 
-References
-----------
-- http://www.makotemplates.org/
-- https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
-- https://security.openstack.org
-- https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
+.. seealso::
+
+ - http://www.makotemplates.org/
+ - https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
+ - https://security.openstack.org
+ - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
 
 .. versionadded:: 0.10.0
 

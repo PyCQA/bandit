@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+============================
+B101: Test for use of assert
+============================
+
 This plugin test checks for the use of the Python ``assert`` keyword. It was
 discovered that some projects used assert to enforce interface constraints.
 However, assert is removed with compiling to optimised byte code (python -o
@@ -27,12 +29,8 @@ Please see
 https://docs.python.org/2/reference/simple_stmts.html#the-assert-statement for
 more info on ``assert``
 
-Config Options
---------------
-None
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Use of assert detected. The enclosed code will be removed when
@@ -42,8 +40,8 @@ Sample Output
     1 assert logged_in
     2 display_assets()
 
-References
-----------
+.. seealso::
+
  - https://bugs.launchpad.net/juniperopenstack/+bug/1456193
  - https://bugs.launchpad.net/heat/+bug/1397883
  - https://docs.python.org/2/reference/simple_stmts.html#the-assert-statement

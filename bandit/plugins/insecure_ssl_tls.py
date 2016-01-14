@@ -39,7 +39,7 @@ def gen_config(name):
 @test.checks('Call')
 @test.test_id('B502')
 def ssl_with_bad_version(context, config):
-    """Test for SSL use with bad version used
+    """**B502: Test for SSL use with bad version used**
 
     Several highly publicized exploitable flaws have been discovered
     in all versions of SSL and early versions of TLS. It is strongly
@@ -80,7 +80,7 @@ def ssl_with_bad_version(context, config):
     ``OP_NO_SSLv3`` flags for this purpose.
 
 
-    Config Options:
+    **Config Options:**
 
     .. code-block:: yaml
 
@@ -95,7 +95,7 @@ def ssl_with_bad_version(context, config):
                 - TLSv1_METHOD    # strict option
 
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -107,12 +107,12 @@ def ssl_with_bad_version(context, config):
         13  ssl.wrap_socket(ssl_version=ssl.PROTOCOL_SSLv3)
         14  ssl.wrap_socket(ssl_version=ssl.PROTOCOL_TLSv1)
 
-    References:
+    .. seealso::
 
-    - http://heartbleed.com/
-    - https://poodlebleed.com/
-    - https://security.openstack.org/
-    - https://security.openstack.org/guidelines/dg_move-data-securely.html
+     - http://heartbleed.com/
+     - https://poodlebleed.com/
+     - https://security.openstack.org/
+     - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
     """
@@ -155,7 +155,7 @@ def ssl_with_bad_version(context, config):
 @test.checks('FunctionDef')
 @test.test_id('B503')
 def ssl_with_bad_defaults(context, config):
-    """Test for SSL use with bad defaults specified
+    """**B503: Test for SSL use with bad defaults specified**
 
     This plugin is part of a family of tests that detect the use of known bad
     versions of SSL/TLS, please see :doc:`../plugins/ssl_with_bad_version` for
@@ -171,14 +171,13 @@ def ssl_with_bad_defaults(context, config):
     - :doc:`../plugins/ssl_with_bad_version`
     - :doc:`../plugins/ssl_with_no_version`
 
-
-    Config Options:
+    **Config Options:**
 
     This test shares the configuration provided for the standard
     :doc:`../plugins/ssl_with_bad_version` test, please refer to its
     documentation.
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -190,12 +189,12 @@ def ssl_with_bad_defaults(context, config):
         28  def open_ssl_socket(version=SSL.SSLv2_METHOD):
         29      pass
 
-    References:
+    .. seealso::
 
-    - http://heartbleed.com/
-    - https://poodlebleed.com/
-    - https://security.openstack.org/
-    - https://security.openstack.org/guidelines/dg_move-data-securely.html
+     - http://heartbleed.com/
+     - https://poodlebleed.com/
+     - https://security.openstack.org/
+     - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
     """
@@ -216,7 +215,7 @@ def ssl_with_bad_defaults(context, config):
 @test.checks('Call')
 @test.test_id('B504')
 def ssl_with_no_version(context):
-    """Test for SSL use with no version specified
+    """**B504: Test for SSL use with no version specified**
 
     This plugin is part of a family of tests that detect the use of known bad
     versions of SSL/TLS, please see :doc:`../plugins/ssl_with_bad_version` for
@@ -232,14 +231,13 @@ def ssl_with_no_version(context):
     - :doc:`../plugins/ssl_with_bad_version`
     - :doc:`../plugins/ssl_with_bad_defaults`
 
-
-    Config Options:
+    **Config Options:**
 
     This test shares the configuration provided for the standard
     :doc:`../plugins/ssl_with_bad_version` test, please refer to its
     documentation.
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -252,12 +250,12 @@ def ssl_with_no_version(context):
         23  ssl.wrap_socket()
         24
 
-    References:
+    .. seealso::
 
-    - http://heartbleed.com/
-    - https://poodlebleed.com/
-    - https://security.openstack.org/
-    - https://security.openstack.org/guidelines/dg_move-data-securely.html
+     - http://heartbleed.com/
+     - https://poodlebleed.com/
+     - https://security.openstack.org/
+     - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
     """

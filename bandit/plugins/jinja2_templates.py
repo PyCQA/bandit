@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+==========================================
+B701: Test for not auto escaping in jinja2
+==========================================
+
 Jinja2 is a Python HTML templating system. It is typically used to build web
 applications, though appears in other places well, notably the Ansible
 automation system. When configuring the Jinja2 environment, the option to use
@@ -29,13 +31,7 @@ Unfortunately, autoescaping is False by default. Thus this plugin test will
 warn on omission of an autoescape setting, as well as an explicit setting of
 false. A HIGH severity warning is generated in either of these scenarios.
 
-Config Options
---------------
-None
-
-
-Sample Output
--------------
+:Example:
 
 .. code-block:: none
 
@@ -60,13 +56,13 @@ Sample Output
     17
 
 
-References
-----------
-- https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
-- https://realpython.com/blog/python/primer-on-jinja-templating/
-- http://jinja.pocoo.org/docs/dev/api/#autoescaping
-- https://security.openstack.org
-- https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
+.. seealso::
+
+ - https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
+ - https://realpython.com/blog/python/primer-on-jinja-templating/
+ - http://jinja.pocoo.org/docs/dev/api/#autoescaping
+ - https://security.openstack.org
+ - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
 
 .. versionadded:: 0.10.0
 

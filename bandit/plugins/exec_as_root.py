@@ -13,8 +13,10 @@
 #  under the License.
 
 r"""
-Description
------------
+==================================================
+B111: Test for the use of rootwrap running as root
+==================================================
+
 Running commands as root dramatically increase their potential risk. Running
 commands with restricted user privileges provides defense in depth against
 command injection attacks, or developer and configuration error. This plugin
@@ -22,8 +24,8 @@ test checks for specific methods being called with a keyword parameter
 `run_as_root` set to True, a common OpenStack idiom.
 
 
-Config Options
---------------
+**Config Options:**
+
 This test plugin takes a similarly named configuration block,
 `execute_with_run_as_root_equals_true`, providing a list, `function_names`, of
 function names. A call to any of these named functions will be checked for a
@@ -41,8 +43,8 @@ issue.
             - nova.utils.trycmd
 
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: Execute with run_as_root=True identified, possible security
@@ -53,8 +55,8 @@ Sample Output
     26  nova_utils.trycmd('gcc --version', run_as_root=True)
     27
 
-References
-----------
+.. seealso::
+
  - https://security.openstack.org/guidelines/dg_rootwrap-recommendations-and-plans.html  # noqa
  - https://security.openstack.org/guidelines/dg_use-oslo-rootwrap-securely.html
 

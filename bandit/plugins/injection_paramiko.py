@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+==============================================
+B601: Test for shell injection within Paramiko
+==============================================
+
 Paramiko is a Python library designed to work with the SSH2 protocol for secure
 (encrypted and authenticated) connections to remote machines. It is intended to
 run commands on a remote host. These commands are run within a shell on the
@@ -25,13 +27,8 @@ reports a MEDIUM issue when it detects the use of Paramiko's "exec_command" or
 "invoke_shell" methods advising the user to check inputs are correctly
 sanitized.
 
+:Example:
 
-Config Options
---------------
-None
-
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Possible shell injection via Paramiko call, check inputs are
@@ -50,12 +47,11 @@ Sample Output
     10   SSHClient.invoke_shell('something; bad; here\n')
     11
 
-References
-----------
+.. seealso::
 
-- https://security.openstack.org
-- https://github.com/paramiko/paramiko
-- https://www.owasp.org/index.php/Command_Injection
+ - https://security.openstack.org
+ - https://github.com/paramiko/paramiko
+ - https://www.owasp.org/index.php/Command_Injection
 
 .. versionadded:: 0.12.0
 
