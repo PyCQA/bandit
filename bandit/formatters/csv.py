@@ -30,8 +30,10 @@ Sample Output
 .. versionadded:: 0.11.0
 
 """
-
+# Necessary for this formatter to work when imported on Python 2. Importing
+# the standard library's csv module conflicts with the name of this module.
 from __future__ import absolute_import
+
 import csv
 import logging
 

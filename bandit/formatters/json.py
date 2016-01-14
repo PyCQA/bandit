@@ -86,8 +86,10 @@ Sample Output
 .. versionadded:: 0.10.0
 
 """
-
+# Necessary so we can import the standard library json module while continuing
+# to name this file json.py. (Python 2 only)
 from __future__ import absolute_import
+
 import datetime
 import json
 import logging
