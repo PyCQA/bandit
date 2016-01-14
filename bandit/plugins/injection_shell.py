@@ -101,7 +101,7 @@ def gen_config(name):
 @test.checks('Call')
 @test.test_id('B602')
 def subprocess_popen_with_shell_equals_true(context, config):
-    """subprocess_popen_with_shell_equals_true
+    """**B602: Test for use of popen with shell equals true**
 
     Python possesses many mechanisms to invoke an external executable. However,
     doing so may present a security issue if appropriate care is not taken to
@@ -133,7 +133,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
     - :doc:`../plugins/start_process_with_a_shell`
     - :doc:`../plugins/start_process_with_partial_path`
 
-    Config Options:
+    **Config Options:**
 
     This plugin test shares a configuration with others in the same family,
     namely `shell_injection`. This configuration is divided up into three
@@ -155,7 +155,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
                 - subprocess.call
 
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -182,12 +182,12 @@ def subprocess_popen_with_shell_equals_true(context, config):
         27  subprocess.Popen('/bin/ls %s' % ('something',), shell=True)
         28  subprocess.Popen('/bin/ls {}'.format('something'), shell=True)
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
-    - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
-    - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
-    - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
+     - https://security.openstack.org
+     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
 
     .. versionadded:: 0.9.0
     """
@@ -227,7 +227,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
 @test.checks('Call')
 @test.test_id('B603')
 def subprocess_without_shell_equals_true(context, config):
-    """subprocess_without_shell_equals_true
+    """**B603: Test for use of subprocess with shell equals true**
 
     Python possesses many mechanisms to invoke an external executable. However,
     doing so may present a security issue if appropriate care is not taken to
@@ -251,7 +251,7 @@ def subprocess_without_shell_equals_true(context, config):
     - :doc:`../plugins/start_process_with_a_shell`
     - :doc:`../plugins/start_process_with_partial_path`
 
-    Config Options:
+    **Config Options:**
 
     This plugin test shares a configuration with others in the same family,
     namely `shell_injection`. This configuration is divided up into three
@@ -271,8 +271,7 @@ def subprocess_without_shell_equals_true(context, config):
                 - subprocess.Popen
                 - subprocess.call
 
-
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -283,12 +282,12 @@ def subprocess_without_shell_equals_true(context, config):
         23    subprocess.check_output(['/bin/ls', '-l'])
         24
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
-    - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
-    - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
-    - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://security.openstack.org
+     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
+     - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.9.0
     """
@@ -307,7 +306,7 @@ def subprocess_without_shell_equals_true(context, config):
 @test.checks('Call')
 @test.test_id('B604')
 def any_other_function_with_shell_equals_true(context, config):
-    """any_other_function_with_shell_equals_true
+    """**B604: Test for any function with shell equals true**
 
     Python possesses many mechanisms to invoke an external executable. However,
     doing so may present a security issue if appropriate care is not taken to
@@ -329,7 +328,7 @@ def any_other_function_with_shell_equals_true(context, config):
     - :doc:`../plugins/start_process_with_a_shell`
     - :doc:`../plugins/start_process_with_partial_path`
 
-    Config Options:
+    **Config Options:**
 
     This plugin test shares a configuration with others in the same family,
     namely `shell_injection`. This configuration is divided up into three
@@ -351,7 +350,7 @@ def any_other_function_with_shell_equals_true(context, config):
                          utils.execute, utils.execute_with_timeout]
 
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -363,15 +362,10 @@ def any_other_function_with_shell_equals_true(context, config):
         9 Popen('/bin/gcc --version', shell=True)
         10
 
-    References:
+    .. seealso::
 
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html  # noqa
-    """
-    """Alerts on any function call that includes a shell=True parameter.
-
-    Multiple 'helpers' with varying names have been identified across
-    various OpenStack projects.
 
     .. versionadded:: 0.9.0
     """
@@ -390,7 +384,7 @@ def any_other_function_with_shell_equals_true(context, config):
 @test.checks('Call')
 @test.test_id('B605')
 def start_process_with_a_shell(context, config):
-    """start_process_with_a_shell
+    """**B605: Test for starting a process with a shell**
 
     Python possesses many mechanisms to invoke an external executable. However,
     doing so may present a security issue if appropriate care is not taken to
@@ -413,7 +407,7 @@ def start_process_with_a_shell(context, config):
     - :doc:`../plugins/start_process_with_partial_path`
     - :doc:`../plugins/subprocess_popen_with_shell_equals_true`
 
-    Config Options:
+    **Config Options:**
 
     This plugin test shares a configuration with others in the same family,
     namely `shell_injection`. This configuration is divided up into three
@@ -440,7 +434,7 @@ def start_process_with_a_shell(context, config):
                 - commands.getoutput
                 - commands.getstatusoutput
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -450,12 +444,12 @@ def start_process_with_a_shell(context, config):
         2
         3   os.system('/bin/echo hi')
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
-    - https://docs.python.org/2/library/os.html#os.system
-    - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
-    - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://security.openstack.org
+     - https://docs.python.org/2/library/os.html#os.system
+     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.10.0
     """
@@ -491,7 +485,7 @@ def start_process_with_a_shell(context, config):
 @test.checks('Call')
 @test.test_id('B606')
 def start_process_with_no_shell(context, config):
-    """start_process_with_no_shell
+    """**B606: Test for starting a process with no shell**
 
     Python possesses many mechanisms to invoke an external executable. However,
     doing so may present a security issue if appropriate care is not taken to
@@ -512,7 +506,7 @@ def start_process_with_no_shell(context, config):
     - :doc:`../plugins/start_process_with_partial_path`
     - :doc:`../plugins/subprocess_popen_with_shell_equals_true`
 
-    Config Options:
+    **Config Options:**
 
     This plugin test shares a configuration with others in the same family,
     namely `shell_injection`. This configuration is divided up into three
@@ -544,7 +538,7 @@ def start_process_with_no_shell(context, config):
                 - os.spawnvpe
                 - os.startfile
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -556,12 +550,12 @@ def start_process_with_no_shell(context, config):
         8   os.spawnve(mode, path, args, env)
         9   os.spawnvp(mode, file, args)
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
-    - https://docs.python.org/2/library/os.html#os.system
-    - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
-    - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://security.openstack.org
+     - https://docs.python.org/2/library/os.html#os.system
+     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.10.0
     """
@@ -578,7 +572,7 @@ def start_process_with_no_shell(context, config):
 @test.checks('Call')
 @test.test_id('B607')
 def start_process_with_partial_path(context, config):
-    """start_process_with_partial_path
+    """**B607: Test for starting a process with a partial path**
 
     Python possesses many mechanisms to invoke an external executable. If the
     desired executable path is not fully qualified relative to the filesystem
@@ -597,7 +591,7 @@ def start_process_with_partial_path(context, config):
     looking for paths that do not start at the filesystem root, that is, do not
     have a leading '/' character.
 
-    Config Options:
+    **Config Options:**
 
     This plugin test shares a configuration with others in the same family,
     namely `shell_injection`. This configuration is divided up into three
@@ -632,7 +626,7 @@ def start_process_with_partial_path(context, config):
                 - os.execle
 
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -642,10 +636,10 @@ def start_process_with_partial_path(context, config):
         2    from subprocess import Popen as pop
         3    pop('gcc --version', shell=False)
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
-    - https://docs.python.org/2/library/os.html#process-management
+     - https://security.openstack.org
+     - https://docs.python.org/2/library/os.html#process-management
 
     .. versionadded:: 0.13.0
     """

@@ -73,7 +73,7 @@ def gen_config(name):
 @test.checks('Import', 'ImportFrom')
 @test.test_id('B401')
 def blacklist_imports(context, config):
-    """blacklist_imports
+    """**B401: Test for blacklisted imports**
 
     A number of Python modules are known to provide collections of
     functionality with potential security implications. The blacklist imports
@@ -102,7 +102,7 @@ def blacklist_imports(context, config):
 
     Due to the nature of the test, confidence is always reported as HIGH
 
-    Config Options:
+    **Config Options:**
 
     .. code-block:: yaml
 
@@ -126,7 +126,7 @@ def blacklist_imports(context, config):
                     level: LOW
 
 
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -149,9 +149,9 @@ def blacklist_imports(context, config):
         21  xml.sax.parseString(xmlString, ExampleContentHandler())
         22  xml.sax.parse('notaxmlfilethatexists.xml', ExampleContentHandler())
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
+     - https://security.openstack.org
 
     .. versionadded:: 0.9.0
     """
@@ -171,7 +171,7 @@ def blacklist_imports(context, config):
 @test.checks('Call')
 @test.test_id('B402')
 def blacklist_import_func(context, config):
-    """blacklist_import_func
+    """**B402: Test for blacklisted import functions**
 
     This test is in all ways identical blacklist_imports. However, it
     is designed to catch modules that have been imported using Python's special
@@ -186,8 +186,7 @@ def blacklist_import_func(context, config):
     This test shares the configuration provided for the standard
     blacklist_imports test.
 
-
-    Sample Output:
+    :Example:
 
     .. code-block:: none
 
@@ -211,9 +210,9 @@ def blacklist_import_func(context, config):
         22  xml.sax.parse('notaxmlfilethatexists.xml', ExampleContentHandler())
 
 
-    References:
+    .. seealso::
 
-    - https://security.openstack.org
+     - https://security.openstack.org
 
     .. versionadded:: 0.9.0
     """

@@ -13,8 +13,10 @@
 #  under the License.
 
 r"""
-Description
------------
+===============================================================
+B109: Test for a password based config option not marked secret
+===============================================================
+
 Passwords are sensitive and must be protected appropriately. In OpenStack
 Oslo there is an option to mark options "secret" which will ensure that they
 are not logged. This plugin detects usages of oslo configuration functions
@@ -26,8 +28,9 @@ If such a value is found a MEDIUM severity error is generated. If 'False' or
 Bandit can't determine the value of secret it will return a LOW confidence
 issue.
 
-Config Options
---------------
+
+**Config Options:**
+
 .. code-block:: yaml
 
     password_config_option_not_marked_secret:
@@ -35,8 +38,8 @@ Config Options
             - oslo.config.cfg.StrOpt
             - oslo_config.cfg.StrOpt
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: [password_config_option_not_marked_secret] oslo config option
@@ -58,9 +61,9 @@ Sample Output
     22                  help="LDAP bind user password"),
     23       cfg.StrOpt('ldap_password_attribute',
 
-References
-----------
-- https://security.openstack.org/guidelines/dg_protect-sensitive-data-in-files.html  # noqa
+.. seealso::
+
+ - https://security.openstack.org/guidelines/dg_protect-sensitive-data-in-files.html  # noqa
 
 .. versionadded:: 0.10.0
 

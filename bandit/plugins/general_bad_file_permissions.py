@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+==================================================
+B103: Test for setting permissive file permissions
+==================================================
+
 POSIX based operating systems utilize a permissions model to protect access to
 parts of the file system. This model supports three roles "owner", "group"
 and "world" each role may have a combination of "read", "write" or "execute"
@@ -27,12 +29,8 @@ to set particularly permissive control flags. A MEDIUM warning is generated if
 a file is set to group executable and a HIGH warning is reported if a file is
 set world writable. Warnings are given with HIGH confidence.
 
-Config Options
---------------
-None
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Probable insecure usage of temp file/directory.
@@ -49,11 +47,11 @@ Sample Output
     17  os.chmod(key_file, 0o777)
     18
 
-References
-----------
-- https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html  # noqa
-- https://en.wikipedia.org/wiki/File_system_permissions
-- https://security.openstack.org
+.. seealso::
+
+ - https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html  # noqa
+ - https://en.wikipedia.org/wiki/File_system_permissions
+ - https://security.openstack.org
 
 .. versionadded:: 0.9.0
 

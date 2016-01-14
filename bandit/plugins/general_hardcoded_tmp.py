@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+===================================================
+B108: Test for insecure usage of tmp file/directory
+===================================================
+
 Safely creating a temporary file or directory means following a number of rules
 (see the references for more details). This plugin test looks for strings
 starting with (configurable) commonly used temporary paths, for example:
@@ -26,8 +28,8 @@ starting with (configurable) commonly used temporary paths, for example:
  - /dev/shm
  - etc
 
-Config Options
---------------
+**Config Options:**
+
 This test plugin takes a similarly named config block,
 `hardcoded_tmp_directory`. The config block provides a Python list, `tmp_dirs`,
 that lists string fragments indicating possible temporary file paths. Any
@@ -40,8 +42,8 @@ issue.
         tmp_dirs: ['/tmp', '/var/tmp', '/dev/shm']
 
 
-Sample Output
--------------
+:Example:
+
 .. code-block: none
 
     >> Issue: Probable insecure usage of temp file/directory.
@@ -50,8 +52,8 @@ Sample Output
     1 f = open('/tmp/abc', 'w')
     2 f.write('def')
 
-References
-----------
+.. seealso::
+
  - https://security.openstack.org/guidelines/dg_using-temporary-files-securely.html  # noqa
 
 .. versionadded:: 0.9.0

@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+=========================================
+B110: Test for a pass in the except block
+=========================================
+
 Errors in Python code bases are typically communicated using ``Exceptions``.
 An exception object is 'raised' in the event of an error and can be 'caught' at
 a later point in the program, typically some error handling or logging action
@@ -51,16 +53,16 @@ would not generate a warning if the configuration option
     except ZeroDivisionError:
       pass
 
-Config Options
---------------
+**Config Options:**
+
 .. code-block:: yaml
 
     try_except_pass:
       check_typed_exception: True
 
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: Try, Except, Pass detected.
@@ -70,9 +72,9 @@ Sample Output
     4    except:
     5        pass
 
-References
-----------
-- https://security.openstack.org
+.. seealso::
+
+ - https://security.openstack.org
 
 .. versionadded:: 0.13.0
 

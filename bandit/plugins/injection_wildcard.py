@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+========================================
+B609: Test for use of wildcard injection
+========================================
+
 Python provides a number of methods that emulate the behavior of standard Linux
 command line utilities. Like their Linux counterparts, these commands may take
 a wildcard "\*" character in place of a file system path. This is interpreted
@@ -40,8 +42,8 @@ As well as any method configured in the shell or subprocess injection test
 configurations.
 
 
-Config Options
---------------
+**Config Options:**
+
 This plugin test shares a configuration with others in the same family, namely
 `shell_injection`. This configuration is divided up into three sections,
 `subprocess`, `shell` and `no_shell`. They each list Python calls that spawn
@@ -75,8 +77,8 @@ methods are fully qualified and de-aliased prior to checking.
             - os.execle
 
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: Possible wildcard injection in call: subprocess.Popen
@@ -94,11 +96,11 @@ Sample Output
     12   subp.Popen("/bin/chmod *")
 
 
-References
-----------
-- https://security.openstack.org
-- https://en.wikipedia.org/wiki/Wildcard_character
-- http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
+.. seealso::
+
+ - https://security.openstack.org
+ - https://en.wikipedia.org/wiki/Wildcard_character
+ - http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
 
 .. versionadded:: 0.9.0
 

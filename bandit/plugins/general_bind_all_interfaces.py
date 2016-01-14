@@ -15,19 +15,17 @@
 # under the License.
 
 r"""
-Description
------------
+========================================
+B104: Test for binding to all interfaces
+========================================
+
 Binding to all network interfaces can potentially open up a service to traffic
 on unintended interfaces, that may not be properly documented or secured. This
 plugin test looks for a string pattern "0.0.0.0" that may indicate a hardcoded
 binding to all network interfaces.
 
-Config Options
---------------
-None
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Possible binding to all interfaces.
@@ -37,8 +35,8 @@ Sample Output
     4   s.bind(('0.0.0.0', 31137))
     5   s.bind(('192.168.0.1', 8080))
 
-References
-----------
+.. seealso::
+
  - __TODO__ : add best practice info on binding to all interfaces, and link
    here.
 

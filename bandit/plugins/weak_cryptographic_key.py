@@ -13,20 +13,18 @@
 #  under the License.
 
 r"""
-Description
------------
+=========================================
+B505: Test for weak cryptographic key use
+=========================================
+
 As computational power increases, so does the ability to break ciphers with
 smaller key lengths. The recommended key length size is 2048 and higher. 1024
 bits and below are now considered breakable. This plugin test checks for use
 of any key less than 2048 bits and returns a high severity error if lower than
 1024 and a medium severity error greater than 1024 but less than 2048.
 
-Config Options
---------------
-None
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: DSA key sizes below 1024 bits are considered breakable.
@@ -37,8 +35,8 @@ Sample Output
     37                           backends.default_backend())
     38  rsa.generate_private_key(3,
 
-References
-----------
+.. seealso::
+
  - http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf
  - https://security.openstack.org/guidelines/dg_strong-crypto.html
 

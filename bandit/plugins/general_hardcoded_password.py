@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+==========================================
+B105: Test for use of hard-coded passwords
+==========================================
+
 The use of hard-coded passwords increases the possibility of password guessing
 tremendously. This plugin test looks for all string literals and checks to see
 if they exist in a list of likely default passwords. If they are found in the
@@ -24,8 +26,8 @@ list, a LOW severity issue is reported.
 
 Note: this test is very noisy and likely to result in many false positives.
 
-Config Options
---------------
+**Config Options:**
+
 This plugin test takes a similarly named config block, `hardcoded_password`.
 Here a path, `word_list`, can be given to indicate where the default password
 word list file may be found.
@@ -38,8 +40,8 @@ word list file may be found.
         word_list: "%(site_data_dir)s/wordlist/default-passwords"
 
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: Possible hardcoded password '(root)'
@@ -49,9 +51,9 @@ Sample Output
     5     if password == "root":
     6         print("OK, logged in")
 
-References
-----------
-- https://www.owasp.org/index.php/Use_of_hard-coded_password
+.. seealso::
+
+ - https://www.owasp.org/index.php/Use_of_hard-coded_password
 
 .. versionadded:: 0.9.0
 

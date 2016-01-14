@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+============================
+B608: Test for SQL injection
+============================
+
 An SQL injection attack consists of insertion or "injection" of a SQL query via
 the input data given to an application. It is a very common attack vector. This
 plugin test looks for strings that resemble SQL statements that are involved in
@@ -35,13 +37,9 @@ If so, a MEDIUM issue is reported. For example:
 
  - cursor.execute("SELECT %s FROM derp;" % var)
 
-Config Options
---------------
-None
 
+:Example:
 
-Sample Output
--------------
 .. code-block:: none
 
     >> Issue: Possible SQL injection vector through string-based query
@@ -52,10 +50,10 @@ Sample Output
     4 query = "UPDATE foo SET value = 'b' WHERE id = '%s'" % identifier
     5
 
-References
-----------
-- https://www.owasp.org/index.php/SQL_Injection
-- https://security.openstack.org/guidelines/dg_parameterize-database-queries.html  # noqa
+.. seealso::
+
+ - https://www.owasp.org/index.php/SQL_Injection
+ - https://security.openstack.org/guidelines/dg_parameterize-database-queries.html  # noqa
 
 .. versionadded:: 0.9.0
 

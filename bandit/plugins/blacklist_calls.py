@@ -15,8 +15,10 @@
 # under the License.
 
 r"""
-Description
------------
+=================================
+B301: Test for black listed calls
+=================================
+
 A number of Python methods and functions are known to have potential security
 implications. The blacklist calls plugin test is designed to detect the use of
 these methods by scanning code for method calls and checking for their presence
@@ -41,8 +43,8 @@ in the provided output message, to be replaced with the actual method name.
 
 Due to the nature of the test, confidence is always reported as HIGH
 
-Config Options
---------------
+**Config Options:**
+
 .. code-block:: yaml
 
     blacklist_calls:
@@ -64,8 +66,8 @@ Config Options
                     Deserialization with the {func} is possibly dangerous.
                 level: LOW
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
       >> Issue: Pickle library appears to be in use, possible security issue.
@@ -76,9 +78,9 @@ Sample Output
       20  print(cPickle.loads(serialized))
       21
 
-References
-----------
-- https://security.openstack.org
+.. seealso::
+
+ - https://security.openstack.org
 
 .. versionadded:: 0.9.0
 
