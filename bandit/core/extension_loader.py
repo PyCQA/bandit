@@ -12,6 +12,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from __future__ import print_function
+
+import sys
+
 from stevedore import extension
 
 
@@ -20,15 +24,7 @@ class Manager(object):
                  plugins_namespace='bandit.plugins'):
         # Cache the extension managers, loaded extensions, and extension names
         self.load_formatters(formatters_namespace)
-        self.formatters = list(self.formatters_mgr)
-        self.formatter_names = self.formatters_mgr.names()
-
         self.load_plugins(plugins_namespace)
-        self.plugins = list(self.plugins_mgr)
-        self.plugin_names = self.plugins_mgr.names()
-        self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
-        self.plugin_name_to_id = {
-            p.name: p.plugin._test_id for p in self.plugins}
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
@@ -39,6 +35,8 @@ class Manager(object):
             # needs to start up.
             verify_requirements=False,
             )
+        self.formatters = list(self.formatters_mgr)
+        self.formatter_names = self.formatters_mgr.names()
 
     def load_plugins(self, plugins_namespace):
         # See comments in load_formatters for parameter explanations
@@ -47,6 +45,20 @@ class Manager(object):
             invoke_on_load=False,
             verify_requirements=False,
             )
+
+        def test_has_id(plugin):
+            if not hasattr(plugin.plugin, "_test_id"):
+                # logger not setup yet, so using print
+                print("WARNING: Test '%s' has no ID, skipping." % plugin.name,
+                      file=sys.stderr)
+                return False
+            return True
+
+        self.plugins = list(filter(test_has_id, list(self.plugins_mgr)))
+        self.plugin_names = [plugin.name for plugin in self.plugins]
+        self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
+        self.plugin_name_to_id = {
+            p.name: p.plugin._test_id for p in self.plugins}
 
     def get_plugin_id(self, plugin_name):
         return self.plugin_name_to_id.get(plugin_name)
