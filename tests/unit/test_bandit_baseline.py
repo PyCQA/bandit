@@ -96,3 +96,33 @@ class BanditBaselineToolTests(testtools.TestCase):
 
             self.assertEqual(subprocess.call(baseline_command),
                              branch['expected_return'])
+
+    def test_main_non_repo(self):
+        repo_dir = self.useFixture(fixtures.TempDir()).path
+        os.chdir(repo_dir)
+
+        # assert the system exits with code 2
+        self.assertRaisesRegex(SystemExit, '2', baseline.main)
+
+    def test_main_no_commit(self):
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        # assert the system exist with code 2
+        self.assertRaisesRegex(SystemExit, '2', baseline.main)
+
+    def test_init_logger(self):
+        baseline.init_logger()
+        logger = baseline.logger
+
+        # verify that logger was initialized
+        self.assertIsNotNone(logger)
+
+    def test_initialize_no_repo(self):
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(repo_directory)
+        return_value = baseline.initialize()
+        self.assertEquals(return_value, (None, None, None))
