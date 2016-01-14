@@ -88,8 +88,7 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
         self.assertEqual(m.agg_type, 'file')
-        self.assertTrue(self.manager.has_tests)
-
+        self.assertTrue(m.has_tests)
 
     def test_create_manager_with_profile_bad(self):
         try:
@@ -101,6 +100,39 @@ class ManagerTests(testtools.TestCase):
 
         self.assertTrue(err.startswith(
             "Unable to find profile (Bad) in config file:"))
+
+    def test_create_manager_with_test_id_list(self):
+        # make sure we can create a manager
+        m = manager.BanditManager(config=self.config, agg_type='file',
+                                  debug=False, verbose=False,
+                                  profile_name=['B108','B501'])
+
+        self.assertEqual(m.debug, False)
+        self.assertEqual(m.verbose, False)
+        self.assertEqual(m.agg_type, 'file')
+        self.assertTrue(m.has_tests)
+
+    def test_create_manager_with_test_name_list(self):
+        # make sure we can create a manager
+        m = manager.BanditManager(config=self.config, agg_type='file',
+                                  debug=False, verbose=False,
+                                  profile_name=['exec_used','paramiko_calls'])
+
+        self.assertEqual(m.debug, False)
+        self.assertEqual(m.verbose, False)
+        self.assertEqual(m.agg_type, 'file')
+        self.assertTrue(m.has_tests)
+
+    def test_create_manager_with_invalid_test_list(self):
+        # make sure we can create a manager
+        m = manager.BanditManager(config=self.config, agg_type='file',
+                                  debug=False, verbose=False,
+                                  profile_name=['bogus'])
+
+        self.assertEqual(m.debug, False)
+        self.assertEqual(m.verbose, False)
+        self.assertEqual(m.agg_type, 'file')
+        self.assertFalse(m.has_tests)
 
     def test_matches_globlist(self):
         self.assertTrue(manager._matches_glob_list('test', ['*tes*']))
@@ -126,7 +158,6 @@ class ManagerTests(testtools.TestCase):
         self.assertTrue(b)
         self.assertFalse(c)
         self.assertFalse(d)
-
 
     @mock.patch('os.walk')
     def test_get_files_from_dir(self, os_walk):

@@ -88,19 +88,23 @@ class BanditTestSet():
         # copy of tests dictionary for removing tests from
         temp_dict = copy.deepcopy(self.tests)
 
+        extmgr = self._get_extension_manager()
+
         # if the include list is empty, we don't have to do anything, if it
         # isn't, we need to remove all tests except the ones in the list
         if include_list:
             for check_type in self.tests:
                 for test_name in self.tests[check_type]:
-                    if test_name not in include_list:
+                    if ((test_name not in include_list and
+                         extmgr.get_plugin_id(test_name) not in include_list)):
                         del temp_dict[check_type][test_name]
 
         # remove the items specified in exclude list
         if exclude_list:
             for check_type in self.tests:
                 for test_name in self.tests[check_type]:
-                    if test_name in exclude_list:
+                    if ((test_name in exclude_list or
+                         extmgr.get_plugin_id(test_name) in exclude_list)):
                         del temp_dict[check_type][test_name]
 
         # copy tests back over from temp copy
@@ -114,7 +118,7 @@ class BanditTestSet():
         return extension_loader.MANAGER
 
     def load_tests(self, filter=None):
-        '''Loads all tests in the plugins directory into testsdictionary.'''
+        '''Loads all tests in the plugins directory into tests dictionary.'''
         self.tests = dict()
 
         extmgr = self._get_extension_manager()
@@ -177,4 +181,7 @@ class BanditTestSet():
 
     @property
     def has_tests(self):
-        return bool(self.tests)
+        result = False
+        for check_type in self.tests:
+            result = result or self.tests[check_type]
+        return result
