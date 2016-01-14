@@ -15,15 +15,15 @@
 
 from collections import OrderedDict
 import os
-import mock
 import tempfile
 
+import mock
 import testtools
 
 import bandit
 from bandit.core import config
-from bandit.core import manager
 from bandit.core import issue
+from bandit.core import manager
 from bandit.formatters import text as b_text
 
 
@@ -31,7 +31,6 @@ class TextFormatterTests(testtools.TestCase):
 
     def setUp(self):
         super(TextFormatterTests, self).setUp()
-
 
     @mock.patch('bandit.core.issue.Issue.get_code')
     def test_output_issue(self, get_code):
@@ -67,7 +66,6 @@ class TextFormatterTests(testtools.TestCase):
         expected_return = _template(issue, indent_val, 'DDDDDDD')
         self.assertEqual(expected_return, issue_text)
 
-
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_no_issues(self, get_issue_list):
         cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
@@ -78,12 +76,12 @@ class TextFormatterTests(testtools.TestCase):
         self.manager.out_file = self.tmp_fname
 
         get_issue_list.return_value = OrderedDict()
-        b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+        b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                      lines=5)
 
         with open(self.tmp_fname) as f:
             data = f.read()
             self.assertIn('No issues identified.', data)
-
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_nobaseline(self, get_issue_list):
@@ -115,10 +113,10 @@ class TextFormatterTests(testtools.TestCase):
                                                      (category, level)] = 1
 
         # Validate that we're outputting the correct issues
-        indent_val = ' ' * 10
         output_str_fn = 'bandit.formatters.text._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
-            b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+            b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                          lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
                      mock.call(issue_b, '', lines=5)]
@@ -127,7 +125,8 @@ class TextFormatterTests(testtools.TestCase):
 
         # Validate that we're outputting all of the expected fields and the
         # correct values
-        b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+        b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                      lines=5)
         with open(self.tmp_fname) as f:
             data = f.read()
 
@@ -158,7 +157,6 @@ class TextFormatterTests(testtools.TestCase):
             expected = 'Files skipped (1):\n\tabc.py (File is bad)'
             self.assertIn(expected, data)
 
-
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_baseline(self, get_issue_list):
         cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
@@ -179,16 +177,19 @@ class TextFormatterTests(testtools.TestCase):
         issue_z.fname = 'z'
 
         get_issue_list.return_value = OrderedDict([(issue_a, [issue_x]),
-                                                   (issue_b, [issue_y, issue_z])])
+                                                   (issue_b, [issue_y,
+                                                    issue_z])])
 
         # Validate that we're outputting the correct issues
         indent_val = ' ' * 10
         output_str_fn = 'bandit.formatters.text._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
-            b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+            b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                          lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
-                     mock.call(issue_b, '', show_code=False, show_lineno=False),
+                     mock.call(issue_b, '', show_code=False,
+                               show_lineno=False),
                      mock.call(issue_y, indent_val, lines=5),
                      mock.call(issue_z, indent_val, lines=5)]
 

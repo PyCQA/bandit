@@ -22,9 +22,10 @@ import testtools
 
 import bandit
 from bandit.core import config
-from bandit.core import manager
 from bandit.core import issue
+from bandit.core import manager
 from bandit.formatters import xml as b_xml
+
 
 class XmlFormatterTests(testtools.TestCase):
 
@@ -39,7 +40,7 @@ class XmlFormatterTests(testtools.TestCase):
                         'linerange': [4]}
         self.check_name = 'hardcoded_bind_all_interfaces'
         self.issue = issue.Issue(bandit.MEDIUM, bandit.MEDIUM,
-                      'Possible binding to all interfaces.')
+                                 'Possible binding to all interfaces.')
         self.manager.out_file = self.tmp_fname
 
         self.issue.fname = self.context['filename']
@@ -57,14 +58,15 @@ class XmlFormatterTests(testtools.TestCase):
             for dc in map(self._xml_to_dict, children):
                 for k, v in six.iteritems(dc):
                     dd[k].append(v)
-            d = {t.tag: {k:v[0] if len(v) == 1 else v for k, v in six.iteritems(dd)}}
+            d = {t.tag: {k: v[0] if len(v) == 1 else v
+                         for k, v in six.iteritems(dd)}}
         if t.attrib:
             d[t.tag].update(('@' + k, v) for k, v in six.iteritems(t.attrib))
         if t.text:
             text = t.text.strip()
             if children or t.attrib:
                 if text:
-                  d[t.tag]['#text'] = text
+                    d[t.tag]['#text'] = text
             else:
                 d[t.tag] = text
         return d
@@ -76,8 +78,9 @@ class XmlFormatterTests(testtools.TestCase):
         with open(self.tmp_fname) as f:
             data = self._xml_to_dict(ET.XML(f.read()))
             self.assertEqual(self.tmp_fname,
-                data['testsuite']['testcase']['@classname'])
-            self.assertEqual(self.issue.text,
+                             data['testsuite']['testcase']['@classname'])
+            self.assertEqual(
+                self.issue.text,
                 data['testsuite']['testcase']['error']['@message'])
             self.assertEqual(self.check_name,
-                data['testsuite']['testcase']['@name'])
+                             data['testsuite']['testcase']['@name'])

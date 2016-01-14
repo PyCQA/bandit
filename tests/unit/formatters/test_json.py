@@ -19,12 +19,13 @@ import tempfile
 import testtools
 
 import bandit
-from bandit.core import constants
 from bandit.core import config
+from bandit.core import constants
+from bandit.core import issue
 from bandit.core import manager
 from bandit.core import metrics
-from bandit.core import issue
 from bandit.formatters import json as b_json
+
 
 class JsonFormatterTests(testtools.TestCase):
 
@@ -39,7 +40,7 @@ class JsonFormatterTests(testtools.TestCase):
                         'linerange': [4]}
         self.check_name = 'hardcoded_bind_all_interfaces'
         self.issue = issue.Issue(bandit.MEDIUM, bandit.MEDIUM,
-                      'Possible binding to all interfaces.')
+                                 'Possible binding to all interfaces.')
         self.manager.out_file = self.tmp_fname
 
         self.issue.fname = self.context['filename']
@@ -50,7 +51,7 @@ class JsonFormatterTests(testtools.TestCase):
         self.manager.results.append(self.issue)
         self.manager.metrics = metrics.Metrics()
 
-        #mock up the metrics
+        # mock up the metrics
         for key in ['_totals', 'binding.py']:
             self.manager.metrics.data[key] = {'loc': 4, 'nosec': 2}
             for (criteria, default) in constants.CRITERIA:

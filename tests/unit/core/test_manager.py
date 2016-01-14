@@ -14,18 +14,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import fixtures
-import mock
-import six
 import os
 import tempfile
+
+import fixtures
+import mock
 import testtools
 
-from bandit.core import manager
 from bandit.core import config
-from bandit.core import issue
 from bandit.core import constants
-from bandit.core import extension_loader
+from bandit.core import issue
+from bandit.core import manager
 from bandit.core import utils
 
 
@@ -92,9 +91,9 @@ class ManagerTests(testtools.TestCase):
 
     def test_create_manager_with_profile_bad(self):
         try:
-            m = manager.BanditManager(config=self.config, agg_type='file',
-                                      debug=False, verbose=False,
-                                      profile_name='Bad')
+            manager.BanditManager(config=self.config, agg_type='file',
+                                  debug=False, verbose=False,
+                                  profile_name='Bad')
         except utils.ProfileNotFound as e:
             err = str(e)
 
@@ -105,7 +104,7 @@ class ManagerTests(testtools.TestCase):
         # make sure we can create a manager
         m = manager.BanditManager(config=self.config, agg_type='file',
                                   debug=False, verbose=False,
-                                  profile_name=['B108','B501'])
+                                  profile_name=['B108', 'B501'])
 
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
@@ -116,7 +115,7 @@ class ManagerTests(testtools.TestCase):
         # make sure we can create a manager
         m = manager.BanditManager(config=self.config, agg_type='file',
                                   debug=False, verbose=False,
-                                  profile_name=['exec_used','paramiko_calls'])
+                                  profile_name=['exec_used', 'paramiko_calls'])
 
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
@@ -178,10 +177,10 @@ class ManagerTests(testtools.TestCase):
         self.manager.results = (
             [issue.Issue(severity=l, confidence=l) for l in levels])
 
-        r = [self.manager.results_count(sev_filter=l, conf_filter=l) \
-                for l in levels]
+        r = [self.manager.results_count(sev_filter=l, conf_filter=l)
+             for l in levels]
 
-        self.assertEqual([3,2,1], r)
+        self.assertEqual([3, 2, 1], r)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_recurse_skip(self, isdir):
@@ -236,20 +235,22 @@ class ManagerTests(testtools.TestCase):
         issue_c.fname = 'file1.py'
 
         # issue c is in results, not in baseline
-        self.assertEqual([issue_c],
-                         manager._compare_baseline_results(
-                             [issue_a, issue_b],
-                             [issue_a, issue_b, issue_c]))
+        self.assertEqual(
+            [issue_c],
+            manager._compare_baseline_results([issue_a, issue_b],
+                                              [issue_a, issue_b, issue_c]))
 
         # baseline and results are the same
-        self.assertEqual([],
-                         manager._compare_baseline_results([issue_a, issue_b, issue_c],
-                                                           [issue_a, issue_b, issue_c]))
+        self.assertEqual(
+            [],
+            manager._compare_baseline_results([issue_a, issue_b, issue_c],
+                                              [issue_a, issue_b, issue_c]))
 
         # results are better than baseline
-        self.assertEqual([],
-                         manager._compare_baseline_results([issue_a, issue_b, issue_c],
-                                                           [issue_a, issue_b]))
+        self.assertEqual(
+            [],
+            manager._compare_baseline_results([issue_a, issue_b, issue_c],
+                                              [issue_a, issue_b]))
 
     def test_find_candidate_matches(self):
         issue_a = self._get_issue_instance()
@@ -260,19 +261,20 @@ class ManagerTests(testtools.TestCase):
 
         # issue a and b are the same, both should be returned as candidates
         self.assertEqual({issue_a: [issue_a, issue_b]},
-                         manager._find_candidate_matches([issue_a], [issue_a, issue_b]))
+                         manager._find_candidate_matches([issue_a],
+                                                         [issue_a, issue_b]))
 
         # issue a and c are different, only a should be returned
         self.assertEqual({issue_a: [issue_a]},
-                         manager._find_candidate_matches([issue_a], [issue_a, issue_c]))
+                         manager._find_candidate_matches([issue_a],
+                                                         [issue_a, issue_c]))
 
         # c doesn't match a, empty list should be returned
         self.assertEqual({issue_a: []},
                          manager._find_candidate_matches([issue_a], [issue_c]))
 
         # a and b match, a and b should both return a and b candidates
-        self.assertEqual({issue_a: [issue_a, issue_b],
-                          issue_b: [issue_a, issue_b]},
-
-                         manager._find_candidate_matches([issue_a, issue_b],
-                                                         [issue_a, issue_b, issue_c]))
+        self.assertEqual(
+            {issue_a: [issue_a, issue_b], issue_b: [issue_a, issue_b]},
+            manager._find_candidate_matches([issue_a, issue_b],
+                                            [issue_a, issue_b, issue_c]))

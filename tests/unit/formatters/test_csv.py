@@ -21,9 +21,10 @@ import testtools
 
 import bandit
 from bandit.core import config
-from bandit.core import manager
 from bandit.core import issue
+from bandit.core import manager
 from bandit.formatters import csv as b_csv
+
 
 class CsvFormatterTests(testtools.TestCase):
 
@@ -38,7 +39,7 @@ class CsvFormatterTests(testtools.TestCase):
                         'linerange': [4]}
         self.check_name = 'hardcoded_bind_all_interfaces'
         self.issue = issue.Issue(bandit.MEDIUM, bandit.MEDIUM,
-                      'Possible binding to all interfaces.')
+                                 'Possible binding to all interfaces.')
         self.manager.out_file = self.tmp_fname
 
         self.issue.fname = self.context['filename']

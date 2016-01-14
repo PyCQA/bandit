@@ -15,15 +15,15 @@
 
 from collections import OrderedDict
 import os
-import mock
 import tempfile
 
+import mock
 import testtools
 
 import bandit
 from bandit.core import config
-from bandit.core import manager
 from bandit.core import issue
+from bandit.core import manager
 from bandit.formatters import screen
 
 
@@ -31,7 +31,6 @@ class ScreenFormatterTests(testtools.TestCase):
 
     def setUp(self):
         super(ScreenFormatterTests, self).setUp()
-
 
     @mock.patch('bandit.core.issue.Issue.get_code')
     def test_output_issue(self, get_code):
@@ -71,7 +70,6 @@ class ScreenFormatterTests(testtools.TestCase):
                                     screen.color['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
-
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_no_issues(self, get_issue_list):
         cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
@@ -84,10 +82,9 @@ class ScreenFormatterTests(testtools.TestCase):
         get_issue_list.return_value = OrderedDict()
         with mock.patch('bandit.formatters.screen.do_print') as m:
             screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
-                         lines=5)
+                          lines=5)
             self.assertIn('No issues identified.',
                           '\n'.join([str(a) for a in m.call_args]))
-
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_nobaseline(self, get_issue_list):
@@ -119,10 +116,10 @@ class ScreenFormatterTests(testtools.TestCase):
                                                      (category, level)] = 1
 
         # Validate that we're outputting the correct issues
-        indent_val = ' ' * 10
         output_str_fn = 'bandit.formatters.screen._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
-            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                          lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
                      mock.call(issue_b, '', lines=5)]
@@ -166,7 +163,6 @@ class ScreenFormatterTests(testtools.TestCase):
                         '\n\tabc.py (File is bad)')
             self.assertIn(expected, data)
 
-
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_baseline(self, get_issue_list):
         cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
@@ -187,16 +183,19 @@ class ScreenFormatterTests(testtools.TestCase):
         issue_z.fname = 'z'
 
         get_issue_list.return_value = OrderedDict([(issue_a, [issue_x]),
-                                                   (issue_b, [issue_y, issue_z])])
+                                                   (issue_b, [issue_y,
+                                                              issue_z])])
 
         # Validate that we're outputting the correct issues
         indent_val = ' ' * 10
         output_str_fn = 'bandit.formatters.screen._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
-            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW, lines=5)
+            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+                          lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
-                     mock.call(issue_b, '', show_code=False, show_lineno=False),
+                     mock.call(issue_b, '', show_code=False,
+                               show_lineno=False),
                      mock.call(issue_y, indent_val, lines=5),
                      mock.call(issue_z, indent_val, lines=5)]
 

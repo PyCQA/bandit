@@ -14,14 +14,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import bandit.cli.baseline as baseline
-
-import fixtures
 import os
 import subprocess
+
+import fixtures
+import git
 import testtools
 
-import git
+import bandit.cli.baseline as baseline
+
 
 config = """
 include:
@@ -39,6 +40,7 @@ shell_injection:
     shell:
         - os.system
 """
+
 
 class BanditBaselineToolTests(testtools.TestCase):
 
@@ -125,4 +127,4 @@ class BanditBaselineToolTests(testtools.TestCase):
         repo_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(repo_directory)
         return_value = baseline.initialize()
-        self.assertEquals(return_value, (None, None, None))
+        self.assertEqual(return_value, (None, None, None))

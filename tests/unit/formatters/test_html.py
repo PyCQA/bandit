@@ -23,8 +23,8 @@ import testtools
 
 import bandit
 from bandit.core import config
-from bandit.core import manager
 from bandit.core import issue
+from bandit.core import manager
 from bandit.formatters import html as b_html
 
 
@@ -76,7 +76,8 @@ class HtmlFormatterTests(testtools.TestCase):
 
         issue_y = _get_issue_instance()
 
-        get_issue_list.return_value = OrderedDict([(issue_a, [issue_x, issue_y]),
+        get_issue_list.return_value = OrderedDict([(issue_a, [issue_x,
+                                                              issue_y]),
                                                    (issue_b, [issue_x]),
                                                    (issue_c, [issue_y])])
 

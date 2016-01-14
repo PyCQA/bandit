@@ -12,14 +12,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-
-import logging
 import os
 import tempfile
 import uuid
 
 import fixtures
-import mock
 import testtools
 
 from bandit.core import config

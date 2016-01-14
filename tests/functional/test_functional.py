@@ -16,8 +16,6 @@
 
 import os
 
-import inspect
-
 import six
 import testtools
 
@@ -33,7 +31,9 @@ cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
 
 class FunctionalTests(testtools.TestCase):
 
-    '''This set of tests runs bandit against each example file in turn
+    '''Functional tests for bandit test plugins.
+
+    This set of tests runs bandit against each example file in turn
     and records the score returned. This is compared to a known good value.
     When new tests are added to an example the expected result should be
     adjusted to match.
@@ -156,7 +156,7 @@ class FunctionalTests(testtools.TestCase):
         self.check_example('hardcoded-passwords.py', expect)
 
     def test_hardcoded_tmp(self):
-        '''Test for hard-coded /tmp, /var/tmp, /dev/shm'''
+        '''Test for hard-coded /tmp, /var/tmp, /dev/shm.'''
         expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'MEDIUM': 3}}
         self.check_example('hardcoded-tmp.py', expect)
 
@@ -251,7 +251,7 @@ class FunctionalTests(testtools.TestCase):
         '''Test for the `pickle` module.'''
         expect = {
             'SEVERITY': {'LOW': 2, 'MEDIUM': 6},
-            'CONFIDENCE': {'HIGH': 8 }
+            'CONFIDENCE': {'HIGH': 8}
         }
         self.check_example('pickle_deserialize.py', expect)
 
@@ -276,7 +276,7 @@ class FunctionalTests(testtools.TestCase):
         self.check_example('skip.py', expect)
 
     def test_ignore_skip(self):
-        ''' Test --ignore-nosec flag.'''
+        '''Test --ignore-nosec flag.'''
         expect = {'SEVERITY': {'LOW': 7}, 'CONFIDENCE': {'HIGH': 7}}
         self.check_example('skip.py', expect, ignore_nosec=True)
 
@@ -319,7 +319,7 @@ class FunctionalTests(testtools.TestCase):
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
         expect = {
-            'SEVERITY': {'HIGH': 4, 'MEDIUM':4, 'LOW': 6},
+            'SEVERITY': {'HIGH': 4, 'MEDIUM': 4, 'LOW': 6},
             'CONFIDENCE': {'MEDIUM': 5, 'HIGH': 9}
         }
         self.check_example('wildcard-injection.py', expect)
@@ -333,7 +333,7 @@ class FunctionalTests(testtools.TestCase):
         '''Test jinja templating for potential XSS bugs.'''
         expect = {
             'SEVERITY': {'HIGH': 4},
-            'CONFIDENCE': {'HIGH': 3, 'MEDIUM':1}
+            'CONFIDENCE': {'HIGH': 3, 'MEDIUM': 1}
         }
         self.check_example('jinja2_templating.py', expect)
 
@@ -424,12 +424,12 @@ class FunctionalTests(testtools.TestCase):
     def test_metric_gathering(self):
         expect = {
             'nosec': 2, 'loc': 7,
-            'issues': { 'CONFIDENCE': {'HIGH': 5}, 'SEVERITY': {'LOW': 5} }
+            'issues': {'CONFIDENCE': {'HIGH': 5}, 'SEVERITY': {'LOW': 5}}
         }
         self.check_metrics('skip.py', expect)
         expect = {
             'nosec': 0, 'loc': 4,
-            'issues': { 'CONFIDENCE': {'HIGH': 2}, 'SEVERITY': {'LOW': 2} }
+            'issues': {'CONFIDENCE': {'HIGH': 2}, 'SEVERITY': {'LOW': 2}}
         }
         self.check_metrics('imports.py', expect)
 
@@ -459,7 +459,7 @@ class FunctionalTests(testtools.TestCase):
         self.assertEqual(list(range(1, 3)), issues[0].linerange)
         self.assertIn('subprocess', issues[0].get_code())
         self.assertEqual(5, issues[1].lineno)
-        self.assertEqual(list(range(3, 6+1)), issues[1].linerange)
+        self.assertEqual(list(range(3, 6 + 1)), issues[1].linerange)
         self.assertIn('shell=True', issues[1].get_code())
 
     def test_code_line_numbers(self):
@@ -468,9 +468,9 @@ class FunctionalTests(testtools.TestCase):
 
         code_lines = issues[0].get_code().splitlines()
         lineno = issues[0].lineno
-        self.assertEqual("%i " % (lineno-1), code_lines[0][:2])
+        self.assertEqual("%i " % (lineno - 1), code_lines[0][:2])
         self.assertEqual("%i " % (lineno), code_lines[1][:2])
-        self.assertEqual("%i " % (lineno+1), code_lines[2][:2])
+        self.assertEqual("%i " % (lineno + 1), code_lines[2][:2])
 
     def test_flask_debug_true(self):
         expect = {
@@ -487,6 +487,9 @@ class FunctionalTests(testtools.TestCase):
         self.check_example('nosec.py', expect)
 
     def test_baseline_filter(self):
+        issue_text = ('A Flask app appears to be run with debug=True, which '
+                      'exposes the Werkzeug debugger and allows the execution '
+                      'of arbitrary code.')
         json = """{
           "results": [
             {
@@ -494,7 +497,7 @@ class FunctionalTests(testtools.TestCase):
               "filename": "%s/examples/flask_debug.py",
               "issue_confidence": "MEDIUM",
               "issue_severity": "HIGH",
-              "issue_text": "A Flask app appears to be run with debug=True, which exposes the Werkzeug debugger and allows the execution of arbitrary code.",
+              "issue_text": "%s",
               "line_number": 10,
               "line_range": [
                 10
@@ -503,7 +506,7 @@ class FunctionalTests(testtools.TestCase):
             }
           ]
         }
-        """ % os.getcwd()
+        """ % (os.getcwd(), issue_text)
 
         self.b_mgr.populate_baseline(json)
         self.run_example('flask_debug.py')
