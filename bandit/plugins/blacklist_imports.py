@@ -34,6 +34,13 @@ def gen_config(name):
             ))
 
         sets.append(_build_conf_dict(
+            'ftp', ['ftplib'],
+            'A FTP-related module is being imported.  FTP is considered '
+            'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
+            'HIGH'
+            ))
+
+        sets.append(_build_conf_dict(
             'info_libs', ['pickle', 'cPickle', 'subprocess', 'Crypto'],
             'Consider possible security implications associated with '
             '{module} module.', 'LOW'
