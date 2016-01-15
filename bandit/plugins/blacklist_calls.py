@@ -217,6 +217,13 @@ def gen_config(name):
             'HIGH'
             ))
 
+        sets.append(_build_conf_dict(
+            'ftplib', ['ftplib.*'],
+            'FTP-related funtions are being called. FTP is considered '
+            'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
+            'HIGH'
+            ))
+
         # Most of this is based off of Christian Heimes' work on defusedxml:
         #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
 
