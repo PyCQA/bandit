@@ -502,7 +502,8 @@ class FunctionalTests(testtools.TestCase):
               "line_range": [
                 10
               ],
-              "test_name": "flask_debug_true"
+              "test_name": "flask_debug_true",
+              "test_id": "B201"
             }
           ]
         }

@@ -32,18 +32,21 @@ class Issue(object):
         self.ident = ident
         self.fname = ""
         self.test = ""
+        self.test_id = ""
         self.lineno = lineno
         self.linerange = []
 
     def __str__(self):
-        return "Issue: '%s' from %s: Severity: %s Confidence: %s at %s:%i" % (
-            self.text, (self.ident or self.test), self.severity,
-            self.confidence, self.fname, self.lineno)
+        return ("Issue: '%s' from %s:%s: Severity: %s Confidence: "
+                "%s at %s:%i") % (self.text, self.test_id,
+                                  (self.ident or self.test), self.severity,
+                                  self.confidence, self.fname, self.lineno)
 
     def __eq__(self, other):
         # if the issue text, severity, confidence, and filename match, it's
         # the same issue from our perspective
-        match_types = ['text', 'severity', 'confidence', 'fname', 'test']
+        match_types = ['text', 'severity', 'confidence', 'fname', 'test',
+                       'test_id']
         return all(getattr(self, field) == getattr(other, field)
                    for field in match_types)
 
@@ -99,6 +102,7 @@ class Issue(object):
         out = {
             'filename': self.fname,
             'test_name': self.test,
+            'test_id': self.test_id,
             'issue_severity': self.severity,
             'issue_confidence': self.confidence,
             'issue_text': self.text,
@@ -117,6 +121,7 @@ class Issue(object):
         self.confidence = data["issue_confidence"]
         self.text = data["issue_text"]
         self.test = data["test_name"]
+        self.test_id = data["test_id"]
         self.lineno = data["line_number"]
         self.linerange = data["line_range"]
 

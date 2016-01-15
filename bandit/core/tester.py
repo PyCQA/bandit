@@ -74,6 +74,7 @@ class BanditTester():
                         result.lineno = temp_context['lineno']
                     result.linerange = temp_context['linerange']
                     result.test = test.__name__
+                    result.test_id = test._test_id
 
                     self.results.append(result)
 

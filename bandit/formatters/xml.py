@@ -25,9 +25,9 @@ Sample Output
     <testsuite name="bandit" tests="1"><testcase
     classname="examples/yaml_load.py" name="blacklist_calls"><error
     message="Use of unsafe yaml load. Allows instantiation of arbitrary
-    objects. Consider yaml.safe_load().&#10;" type="MEDIUM">Severity: MEDIUM
-    Confidence: HIGH Use of unsafe yaml load. Allows instantiation of arbitrary
-    objects. Consider yaml.safe_load().
+    objects. Consider yaml.safe_load().&#10;" type="MEDIUM">Test ID: B301
+    Severity: MEDIUM Confidence: HIGH Use of unsafe yaml load. Allows
+    instantiation of arbitrary objects. Consider yaml.safe_load().
 
     Location examples/yaml_load.py:5</error></testcase></testsuite>
 
@@ -65,12 +65,10 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
         testcase = ET.SubElement(root, 'testcase',
                                  classname=issue.fname, name=test)
 
-        text = 'Severity: %s Confidence: %s\n%s\nLocation %s:%s'
-        text = text % (
-            issue.severity, issue.confidence,
-            issue.text, issue.fname, issue.lineno)
-        ET.SubElement(testcase, 'error',
-                      type=issue.severity,
+        text = 'Test ID: %s Severity: %s Confidence: %s\n%s\nLocation %s:%s'
+        text = text % (issue.test_id, issue.severity, issue.confidence,
+                       issue.text, issue.fname, issue.lineno)
+        ET.SubElement(testcase, 'error', type=issue.severity,
                       message=issue.text).text = text
 
     tree = ET.ElementTree(root)

@@ -63,7 +63,8 @@ Sample Output
           "line_range": [
             5
           ],
-          "test_name": "blacklist_calls"
+          "test_name": "blacklist_calls",
+          "test_id": "B301"
         }
       ],
       "stats": [
