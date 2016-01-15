@@ -19,6 +19,7 @@ import subprocess
 
 import fixtures
 import git
+from mock import patch
 import testtools
 
 import bandit.cli.baseline as baseline
@@ -44,7 +45,26 @@ shell_injection:
 
 class BanditBaselineToolTests(testtools.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        # Set up prior to running test class
+        # read in content used for temporary file contents
+        with open('examples/mktemp.py') as fd:
+            cls.temp_file_contents = fd.read()
+
+    def setUp(self):
+        # Set up prior to run each test case
+        super(BanditBaselineToolTests, self).setUp()
+        self.current_directory = os.getcwd()
+
+    def tearDown(self):
+        # Tear down after running each test case
+        super(BanditBaselineToolTests, self).tearDown()
+        os.chdir(self.current_directory)
+
     def test_bandit_baseline(self):
+        # Tests running bandit via the CLI (baseline) with benign and malicious
+        # content
         repo_directory = self.useFixture(fixtures.TempDir()).path
 
         # get benign and findings examples
@@ -100,23 +120,28 @@ class BanditBaselineToolTests(testtools.TestCase):
                              branch['expected_return'])
 
     def test_main_non_repo(self):
+        # Test that bandit gracefully exits when there is no git repository
+        # when calling main
         repo_dir = self.useFixture(fixtures.TempDir()).path
         os.chdir(repo_dir)
 
         # assert the system exits with code 2
         self.assertRaisesRegex(SystemExit, '2', baseline.main)
 
-    def test_main_no_commit(self):
+    def test_main_no_parent_commit(self):
+        # Test that bandit exits when there is no parent commit detected when
+        # calling main
         repo_directory = self.useFixture(fixtures.TempDir()).path
 
         git_repo = git.Repo.init(repo_directory)
         git_repo.index.commit('Initial Commit')
         os.chdir(repo_directory)
 
-        # assert the system exist with code 2
+        # assert the system exits with code 2
         self.assertRaisesRegex(SystemExit, '2', baseline.main)
 
     def test_init_logger(self):
+        # Test whether the logger was initialized when calling init_logger
         baseline.init_logger()
         logger = baseline.logger
 
@@ -124,7 +149,83 @@ class BanditBaselineToolTests(testtools.TestCase):
         self.assertIsNotNone(logger)
 
     def test_initialize_no_repo(self):
+        # Test that bandit does not run when there is no current git
+        # repository when calling initialize
         repo_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(repo_directory)
+
         return_value = baseline.initialize()
+
+        # assert bandit did not run due to no git repo
+        self.assertEqual(return_value, (None, None, None))
+
+    def test_initialize_dirty_repo(self):
+        # Test that bandit does not run when the current git repository is
+        # 'dirty' when calling the initialize method
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        # make the git repo 'dirty'
+        with open('dirty_file.py', 'wt') as fd:
+            fd.write(self.temp_file_contents)
+        git_repo.index.add(['dirty_file.py'])
+
+        return_value = baseline.initialize()
+
+        # assert bandit did not run due to dirty repo
+        self.assertEqual(return_value, (None, None, None))
+
+    @patch('sys.argv', ['bandit', '-f', 'txt', 'test'])
+    def test_initialize_existing_report_file(self):
+        # Test that bandit does not run when the output file exists (and the
+        # provided output format does not match the default format) when
+        # calling the initialize method
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        # create an existing version of output report file
+        existing_report = "{}.{}".format(baseline.report_basename, 'txt')
+        with open(existing_report, 'wt') as fd:
+            fd.write(self.temp_file_contents)
+
+        return_value = baseline.initialize()
+
+        # assert bandit did not run due to existing report file
+        self.assertEqual(return_value, (None, None, None))
+
+    @patch('bandit.cli.baseline.bandit_args', ['-o',
+           'bandit_baseline_result'])
+    def test_initialize_with_output_argument(self):
+        # Test that bandit does not run when the '-o' (output) argument is
+        # specified
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        return_value = baseline.initialize()
+
+        # assert bandit did not run due to provided -o (--ouput) argument
+        self.assertEqual(return_value, (None, None, None))
+
+    def test_initialize_existing_temp_file(self):
+        # Test that bandit does not run when the temporary output file exists
+        # when calling the initialize method
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        # create an existing version of temporary output file
+        existing_temp_file = baseline.baseline_tmp_file
+        with open(existing_temp_file, 'wt') as fd:
+            fd.write(self.temp_file_contents)
+
+        return_value = baseline.initialize()
+
+        # assert bandit did not run due to existing temporary report file
         self.assertEqual(return_value, (None, None, None))
