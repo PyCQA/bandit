@@ -18,10 +18,12 @@ B505: Test for weak cryptographic key use
 =========================================
 
 As computational power increases, so does the ability to break ciphers with
-smaller key lengths. The recommended key length size is 2048 and higher. 1024
-bits and below are now considered breakable. This plugin test checks for use
-of any key less than 2048 bits and returns a high severity error if lower than
-1024 and a medium severity error greater than 1024 but less than 2048.
+smaller key lengths. The recommended key length size for RSA and DSA algorithms
+is 2048 and higher. 1024 bits and below are now considered breakable. EC key
+length sizes are recommended to be 224 and higher with 160 and below considered
+breakable. This plugin test checks for use of any key less than those limits
+and returns a high severity error if lower than the lower threshold and a
+medium severity error for those lower than the higher threshold.
 
 :Example:
 
