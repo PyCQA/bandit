@@ -61,9 +61,9 @@ Usage::
 
     $ bandit -h
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
-                  [-p PROFILE] [-l] [-i] [-f {csv,html,json,txt,xml}]
-                  [-o OUTPUT_FILE] [-v] [-d] [--ignore-nosec] [-x EXCLUDED_PATHS]
-                  [-b BASELINE]
+                  [-p PROFILE | -t TESTS | -s SKIPS] [-l] [-i]
+                  [-f {csv,html,json,screen,txt,xml}] [-o OUTPUT_FILE] [-v] [-d]
+                  [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
                   targets [targets ...]
 
     Bandit - a Python source code analyzer.
@@ -86,13 +86,17 @@ Usage::
       -p PROFILE, --profile PROFILE
                             test set profile in config to use (defaults to all
                             tests)
+      -t TESTS, --tests TESTS
+                            list of test names to run
+      -s SKIPS, --skip SKIPS
+                            list of test names to skip
       -l, --level           results severity filter. Show only issues of a given
                             severity level or higher. -l for LOW, -ll for MEDIUM,
                             -lll for HIGH
       -i, --confidence      confidence results filter, show only issues of this
                             level or higher. -i for LOW, -ii for MEDIUM, -iii for
                             HIGH
-      -f {csv,html,json,txt,xml}, --format {csv,html,json,txt,xml}
+      -f {csv,html,json,screen,txt,xml}, --format {csv,html,json,screen,txt,xml}
                             specify output format
       -o OUTPUT_FILE, --output OUTPUT_FILE
                             write report to filename
@@ -100,47 +104,48 @@ Usage::
                             files
       -d, --debug           turn on debug mode
       --ignore-nosec        do not skip lines with # nosec comments
-      -x, --exclude EXCLUDED_PATHS
+      -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
                             Comma separated list of paths to exclude from scan.
                             Note that these are in addition to the excluded paths
                             provided in the config file.
       -b BASELINE, --baseline BASELINE
                             Path to a baseline report, in JSON format. Note:
                             baseline reports must be output in one of the
-                            following formats: ['txt', 'html']
+                            following formats: ['screen', 'html', 'txt']
 
     The following plugin suites were discovered and loaded:
-      any_other_function_with_shell_equals_true
-      assert_used
-      blacklist_calls
-      blacklist_import_func
-      blacklist_imports
-      exec_used
-      execute_with_run_as_root_equals_true
-      flask_debug_true
-      hardcoded_bind_all_interfaces
-      hardcoded_password_default
-      hardcoded_password_funcarg
-      hardcoded_password_string
-      hardcoded_sql_expressions
-      hardcoded_tmp_directory
-      jinja2_autoescape_false
-      linux_commands_wildcard_injection
-      paramiko_calls
-      password_config_option_not_marked_secret
-      request_with_no_cert_validation
-      set_bad_file_permissions
-      ssl_with_bad_defaults
-      ssl_with_bad_version
-      ssl_with_no_version
-      start_process_with_a_shell
-      start_process_with_no_shell
-      start_process_with_partial_path
-      subprocess_popen_with_shell_equals_true
-      subprocess_without_shell_equals_true
-      try_except_pass
-      use_of_mako_templates
-      weak_cryptographic_key
+      B101  assert_used
+      B102  exec_used
+      B103  set_bad_file_permissions
+      B104  hardcoded_bind_all_interfaces
+      B105  hardcoded_password_string
+      B106  hardcoded_password_funcarg
+      B107  hardcoded_password_default
+      B108  hardcoded_tmp_directory
+      B109  password_config_option_not_marked_secret
+      B110  try_except_pass
+      B111  execute_with_run_as_root_equals_true
+      B201  flask_debug_true
+      B301  blacklist_calls
+      B401  blacklist_imports
+      B402  blacklist_import_func
+      B501  request_with_no_cert_validation
+      B502  ssl_with_bad_version
+      B503  ssl_with_bad_defaults
+      B504  ssl_with_no_version
+      B505  weak_cryptographic_key
+      B506  yaml_load
+      B601  paramiko_calls
+      B602  subprocess_popen_with_shell_equals_true
+      B603  subprocess_without_shell_equals_true
+      B604  any_other_function_with_shell_equals_true
+      B605  start_process_with_a_shell
+      B606  start_process_with_no_shell
+      B607  start_process_with_partial_path
+      B608  hardcoded_sql_expressions
+      B609  linux_commands_wildcard_injection
+      B701  jinja2_autoescape_false
+      B702  use_of_mako_templates
 
 
 Configuration
