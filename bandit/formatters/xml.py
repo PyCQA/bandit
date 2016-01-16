@@ -13,12 +13,14 @@
 # under the License.
 
 r"""
-Description
------------
+=============
+XML Formatter
+=============
+
 This formatter outputs the issues as XML.
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: xml
 
     <?xml version='1.0' encoding='utf-8'?>

@@ -13,12 +13,14 @@
 # under the License.
 
 r"""
-Description
------------
+=============
+CSV Formatter
+=============
+
 This formatter outputs the issues in a comma separated values format.
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     filename,test_name,test_id,issue_severity,issue_confidence,issue_text,

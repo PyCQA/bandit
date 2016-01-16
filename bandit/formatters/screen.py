@@ -13,6 +13,30 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+r"""
+================
+Screen formatter
+================
+
+This formatter outputs the issues as color coded text.
+
+:Example:
+
+.. code-block:: none
+
+    >> Issue: [B301:blacklist_calls] Use of unsafe yaml load. Allows
+       instantiation of arbitrary objects. Consider yaml.safe_load().
+
+       Severity: Medium   Confidence: High
+       Location: examples/yaml_load.py:5
+    4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
+    5       y = yaml.load(ystr)
+    6       yaml.dump(y)
+
+.. versionadded:: 0.9.0
+
+"""
+
 from __future__ import print_function
 
 import datetime

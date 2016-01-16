@@ -14,12 +14,14 @@
 # under the License.
 
 r"""
-Description
------------
+==============
+Text Formatter
+==============
+
 This formatter outputs the issues as plain text.
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: none
 
     >> Issue: [B301:blacklist_calls] Use of unsafe yaml load. Allows

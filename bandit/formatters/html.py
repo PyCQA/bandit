@@ -14,12 +14,14 @@
 #  under the License.
 
 r"""
-Description
------------
+==============
+HTML formatter
+==============
+
 This formatter outputs the issues as HTML.
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: html
 
     <!DOCTYPE html>
