@@ -22,6 +22,8 @@ import logging
 import sys
 import warnings
 
+from bandit.core import blacklisting
+from bandit.core import extension_loader
 from bandit.core import utils
 
 
@@ -36,6 +38,11 @@ class BanditTestSet():
         self.config = config
         filter_list = self._filter_list_from_config(profile=profile)
         self.load_tests(filter=filter_list)
+
+        # load blacklists
+        for key in extension_loader.MANAGER.blacklist.keys():
+            value = self.tests.setdefault(key, {})
+            value["blacklist"] = blacklisting.blacklist
 
     def _filter_list_from_config(self, profile=None):
         # will create an (include,exclude) list tuple from a specified name
