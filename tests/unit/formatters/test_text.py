@@ -39,8 +39,8 @@ class TextFormatterTests(testtools.TestCase):
         indent_val = 'CCCCCCC'
 
         def _template(_issue, _indent_val, _code):
-            return_val = ["{}>> Issue: [{}] {}".
-                          format(_indent_val, _issue.test,
+            return_val = ["{}>> Issue: [{}:{}] {}".
+                          format(_indent_val, _issue.test_id, _issue.test,
                                  _issue.text),
                           "{}   Severity: {}   Confidence: {}".
                           format(_indent_val, _issue.severity.capitalize(),

@@ -22,8 +22,8 @@ Sample Output
 -------------
 .. code-block:: none
 
-    >> Issue: [blacklist_calls] Use of unsafe yaml load. Allows instantiation
-       of arbitrary objects. Consider yaml.safe_load().
+    >> Issue: [B301:blacklist_calls] Use of unsafe yaml load. Allows
+       instantiation of arbitrary objects. Consider yaml.safe_load().
 
        Severity: Medium   Confidence: High
        Location: examples/yaml_load.py:5
@@ -75,8 +75,8 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
                       lines=-1):
     # returns a list of lines that should be added to the existing lines list
     bits = []
-    bits.append("%s>> Issue: [%s] %s" % (
-        indent, issue.test, issue.text))
+    bits.append("%s>> Issue: [%s:%s] %s" % (
+        indent, issue.test_id, issue.test, issue.text))
 
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))

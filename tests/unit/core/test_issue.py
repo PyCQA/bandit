@@ -30,7 +30,7 @@ class IssueTests(testtools.TestCase):
     def test_issue_str(self):
         test_issue = _get_issue_instance()
         self.assertEqual(
-            ("Issue: 'Test issue' from bandit_plugin: Severity: MEDIUM "
+            ("Issue: 'Test issue' from B999:bandit_plugin: Severity: MEDIUM "
              "Confidence: MEDIUM at code.py:1"),
             str(test_issue)
         )
@@ -41,6 +41,7 @@ class IssueTests(testtools.TestCase):
         self.assertIsInstance(test_issue_dict, dict)
         self.assertEqual(test_issue_dict['filename'], 'code.py')
         self.assertEqual(test_issue_dict['test_name'], 'bandit_plugin')
+        self.assertEqual(test_issue_dict['test_id'], 'B999')
         self.assertEqual(test_issue_dict['issue_severity'], 'MEDIUM')
         self.assertEqual(test_issue_dict['issue_confidence'], 'MEDIUM')
         self.assertEqual(test_issue_dict['issue_text'], 'Test issue')
@@ -118,5 +119,6 @@ def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
     new_issue = issue.Issue(severity, confidence, 'Test issue')
     new_issue.fname = 'code.py'
     new_issue.test = 'bandit_plugin'
+    new_issue.test_id = 'B999'
     new_issue.lineno = 1
     return new_issue
