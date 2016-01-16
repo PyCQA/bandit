@@ -13,12 +13,14 @@
 # under the License.
 
 r"""
-Description
------------
+==============
+JSON formatter
+==============
+
 This formatter outputs the issues in JSON.
 
-Sample Output
--------------
+:Example:
+
 .. code-block:: javascript
 
     {
