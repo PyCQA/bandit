@@ -240,7 +240,7 @@ def main():
         all_set = set(extension_mgr.plugins_by_id)
         if not test_set.issubset(all_set):
             unknown_tests = ','.join(test_set - all_set)
-            logger.error("Unknown test ids in test list: %s", unknown_tests)
+            logger.error("Unknown test ID(s) in test list: %s", unknown_tests)
             sys.exit(2)
         profile_name = test_list
     elif args.skips:
@@ -249,7 +249,7 @@ def main():
         all_set = set(extension_mgr.plugins_by_id)
         if not skip_set.issubset(all_set):
             unknown_tests = ','.join(skip_set - all_set)
-            logger.error("Unknown test ids in skip list: %s", unknown_tests)
+            logger.error("Unknown test ID(s) in skip list: %s", unknown_tests)
             sys.exit(2)
         profile_name = list(all_set - skip_set)
     else:
