@@ -39,7 +39,7 @@ if [[ $clone -eq 1 ]] ; then
     git clone $REPO_ROOT/$org/$project --depth=1
 fi
 
-pushd $project
+pushd $projectdir
     set +e
     # --notest allows us to create the tox-managed virtualenv without
     # running any tests.
