@@ -128,6 +128,25 @@ class BanditBaselineToolTests(testtools.TestCase):
         # assert the system exits with code 2
         self.assertRaisesRegex(SystemExit, '2', baseline.main)
 
+    def test_main_git_command_failure(self):
+        # Test that bandit does not run when the Git command fails
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        additional_content = 'additional_file.py'
+        with open(additional_content, 'wt') as fd:
+            fd.write(self.temp_file_contents)
+        git_repo.index.add([additional_content])
+        git_repo.index.commit('Additional Content')
+
+        with patch('git.Repo.commit') as mock_git_repo_commit:
+            mock_git_repo_commit.side_effect = git.exc.GitCommandError('', '')
+
+            # assert the system exits with code 2
+            self.assertRaisesRegex(SystemExit, '2', baseline.main)
+
     def test_main_no_parent_commit(self):
         # Test that bandit exits when there is no parent commit detected when
         # calling main
@@ -158,6 +177,27 @@ class BanditBaselineToolTests(testtools.TestCase):
 
         # assert bandit did not run due to no git repo
         self.assertEqual(return_value, (None, None, None))
+
+    def test_initialize_git_command_failure(self):
+        # Test that bandit does not run when the Git command fails
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        additional_content = 'additional_file.py'
+        with open(additional_content, 'wt') as fd:
+            fd.write(self.temp_file_contents)
+        git_repo.index.add([additional_content])
+        git_repo.index.commit('Additional Content')
+
+        with patch('git.Repo') as mock_git_repo:
+            mock_git_repo.side_effect = git.exc.GitCommandNotFound
+
+            return_value = baseline.initialize()
+
+            # assert bandit did not run due to git command failure
+            self.assertEqual(return_value, (None, None, None))
 
     def test_initialize_dirty_repo(self):
         # Test that bandit does not run when the current git repository is
