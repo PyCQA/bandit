@@ -131,7 +131,6 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
         self.assertEqual(m.agg_type, 'file')
-        self.assertFalse(m.has_tests)
 
     def test_matches_globlist(self):
         self.assertTrue(manager._matches_glob_list('test', ['*tes*']))

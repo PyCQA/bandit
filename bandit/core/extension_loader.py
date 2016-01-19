@@ -16,15 +16,18 @@ from __future__ import print_function
 
 import sys
 
+import six
 from stevedore import extension
 
 
 class Manager(object):
     def __init__(self, formatters_namespace='bandit.formatters',
-                 plugins_namespace='bandit.plugins'):
+                 plugins_namespace='bandit.plugins',
+                 blacklists_namespace='bandit.blacklists'):
         # Cache the extension managers, loaded extensions, and extension names
         self.load_formatters(formatters_namespace)
         self.load_plugins(plugins_namespace)
+        self.load_blacklists(blacklists_namespace)
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
@@ -62,6 +65,18 @@ class Manager(object):
 
     def get_plugin_id(self, plugin_name):
         return self.plugin_name_to_id.get(plugin_name)
+
+    def load_blacklists(self, blacklist_namespace):
+        self.blacklists_mgr = extension.ExtensionManager(
+            namespace=blacklist_namespace,
+            invoke_on_load=False,
+            verify_requirements=False,
+            )
+        self.blacklist = {}
+        blacklist = list(self.blacklists_mgr)
+        for item in blacklist:
+            for key, val in six.iteritems(item.plugin()):
+                self.blacklist.setdefault(key, []).extend(val)
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
 # once, store them on the object, and have a module global object for
