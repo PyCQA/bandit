@@ -175,4 +175,4 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
 
     if filename is not None:
         logger.info(("Screen formatter output was not written to file: %s"
-                     ", consdier '-f txt'") % filename)
+                     ", consider '-f txt'") % filename)
