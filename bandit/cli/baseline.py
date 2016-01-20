@@ -110,7 +110,7 @@ def main():
                 return_code = e.returncode
             else:
                 return_code = 0
-            output = output.decode('utf-8')  # subprocess returns bytes
+                output = output.decode('utf-8')  # subprocess returns bytes
 
             if return_code not in [0, 1]:
                 logger.error("Error running command: %s\nOutput: %s\n",

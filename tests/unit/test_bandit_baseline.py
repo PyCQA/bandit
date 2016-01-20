@@ -159,6 +159,31 @@ class BanditBaselineToolTests(testtools.TestCase):
         # assert the system exits with code 2
         self.assertRaisesRegex(SystemExit, '2', baseline.main)
 
+    def test_main_subprocess_error(self):
+        # Test that bandit handles a CalledProcessError when attempting to run
+        # bandit baseline via a subprocess
+        repo_directory = self.useFixture(fixtures.TempDir()).path
+
+        git_repo = git.Repo.init(repo_directory)
+        git_repo.index.commit('Initial Commit')
+        os.chdir(repo_directory)
+
+        additional_content = 'additional_file.py'
+        with open(additional_content, 'wt') as fd:
+            fd.write(self.temp_file_contents)
+        git_repo.index.add([additional_content])
+        git_repo.index.commit('Additional Content')
+
+        with patch('subprocess.check_output') as mock_subprocess_check_output:
+            mock_bandit_cmd = 'bandit_mock -b temp_file.txt'
+            mock_subprocess_check_output.side_effect = (
+                subprocess.CalledProcessError('3', mock_bandit_cmd)
+            )
+
+            # assert the system exits with code 3 (returned from
+            # CalledProcessError)
+            self.assertRaisesRegex(SystemExit, '3', baseline.main)
+
     def test_init_logger(self):
         # Test whether the logger was initialized when calling init_logger
         baseline.init_logger()
