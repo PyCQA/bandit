@@ -27,7 +27,7 @@ configuration section might look like the following:
       check_typed_exception: True
 
 The specific content of the configuration block is determined by the plugin
-test itself. See the `plugin test list <tests/index.html>`_ for complete
+test itself. See the `plugin test list <plugins/index.html>`_ for complete
 information on configuring each one.
 
 Test Profiles
