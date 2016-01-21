@@ -1,5 +1,5 @@
-Welcome to Bandits's developer documentation!
-==============================================
+Welcome to Bandit's developer documentation!
+============================================
 
 Bandit is a tool designed to find common security issues in Python code. To do
 this, Bandit processes each file, builds an AST from it, and runs appropriate
