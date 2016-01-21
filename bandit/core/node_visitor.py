@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor(object):
-    def __init__(self, fname, config, metaast, testset,
+    def __init__(self, fname, metaast, testset,
                  debug, nosec_lines, metrics):
         self.debug = debug
         self.nosec_lines = nosec_lines
@@ -39,14 +39,12 @@ class BanditNodeVisitor(object):
         }
         self.depth = 0
         self.fname = fname
-        self.config = config
         self.metaast = metaast
         self.testset = testset
         self.imports = set()
         self.import_aliases = {}
         self.tester = b_tester.BanditTester(
-            self.config, self.testset, self.debug, nosec_lines,
-        )
+            self.testset, self.debug, nosec_lines)
 
         # in some cases we can't determine a qualified name
         try:

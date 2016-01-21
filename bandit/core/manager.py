@@ -72,8 +72,7 @@ class BanditManager():
         else:
             profile = None
 
-        self.b_ts = b_test_set.BanditTestSet(config=self.b_conf,
-                                             profile=profile)
+        self.b_ts = b_test_set.BanditTestSet(config, profile)
 
         # set the increment of after how many files to show progress
         self.progress = b_constants.progress_increment
@@ -91,10 +90,6 @@ class BanditManager():
                        sev_level=b_constants.LOW,
                        conf_level=b_constants.LOW):
         return self.filter_results(sev_level, conf_level)
-
-    @property
-    def has_tests(self):
-        return self.b_ts.has_tests
 
     def populate_baseline(self, data):
         '''Populate a baseline set of issues from a JSON report
@@ -290,7 +285,7 @@ class BanditManager():
         :return: The accumulated test score
         '''
         score = []
-        res = b_node_visitor.BanditNodeVisitor(fname, self.b_conf, self.b_ma,
+        res = b_node_visitor.BanditNodeVisitor(fname, self.b_ma,
                                                self.b_ts, self.debug,
                                                nosec_lines, self.metrics)
 

@@ -18,8 +18,6 @@ import copy
 import logging
 import warnings
 
-import six
-
 from bandit.core import constants
 from bandit.core import context as b_context
 from bandit.core import utils
@@ -29,8 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 class BanditTester():
-    def __init__(self, config, testset, debug, nosec_lines):
-        self.config = config
+    def __init__(self, testset, debug, nosec_lines):
         self.results = []
         self.testset = testset
         self.last_result = None
@@ -55,7 +52,8 @@ class BanditTester():
         }
 
         tests = self.testset.get_tests(checktype)
-        for name, test in six.iteritems(tests):
+        for test in tests:
+            name = test.__name__
             # execute test with the an instance of the context class
             temp_context = copy.copy(raw_context)
             context = b_context.Context(temp_context)
@@ -73,7 +71,7 @@ class BanditTester():
                     if result.lineno is None:
                         result.lineno = temp_context['lineno']
                     result.linerange = temp_context['linerange']
-                    result.test = test.__name__
+                    result.test = name
                     if result.test_id == "":
                         result.test_id = test._test_id
 
