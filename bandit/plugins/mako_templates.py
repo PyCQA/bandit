@@ -43,7 +43,7 @@ attacks.
 .. seealso::
 
  - http://www.makotemplates.org/
- - https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)
+ - `OWASP XSS <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>`_
  - https://security.openstack.org
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
 
