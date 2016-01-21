@@ -31,14 +31,16 @@ def report_issue(check, name):
 def blacklist(context):
     blacklists = extension_loader.MANAGER.blacklist
     node_type = context.node.__class__.__name__
-    if node_type not in blacklists:
-        return
 
     if node_type == 'Call':
         func = context.node.func
         if isinstance(func, ast.Name) and func.id == '__import__':
             if len(context.node.args):
-                name = context.node.args[0].s
+                if isinstance(context.node.args[0], ast.Str):
+                    name = context.node.args[0].s
+                else:
+                    # TODO(??): import through a variable, need symbol tab
+                    name = "UNKNOWN"
             else:
                 name = ""  # handle '__import__()'
         else:
