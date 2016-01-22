@@ -73,7 +73,7 @@ Plugin ID Groupings
 ID       Description
 =======  ===========
 B1xx     misc tests
-B2xx     application/framework miss-configuration
+B2xx     application/framework misconfiguration
 B3xx     blacklists (calls)
 B4xx     blacklists (imports)
 B5xx     cryptography
