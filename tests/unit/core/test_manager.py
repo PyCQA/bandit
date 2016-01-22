@@ -76,7 +76,6 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(self.manager.debug, False)
         self.assertEqual(self.manager.verbose, False)
         self.assertEqual(self.manager.agg_type, 'file')
-        self.assertTrue(self.manager.has_tests)
 
     def test_create_manager_with_profile(self):
         # make sure we can create a manager
@@ -87,7 +86,6 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
         self.assertEqual(m.agg_type, 'file')
-        self.assertTrue(m.has_tests)
 
     def test_create_manager_with_profile_bad(self):
         try:
@@ -109,7 +107,6 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
         self.assertEqual(m.agg_type, 'file')
-        self.assertTrue(m.has_tests)
 
     def test_create_manager_with_test_name_list(self):
         # make sure we can create a manager
@@ -120,7 +117,6 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
         self.assertEqual(m.agg_type, 'file')
-        self.assertTrue(m.has_tests)
 
     def test_create_manager_with_invalid_test_list(self):
         # make sure we can create a manager

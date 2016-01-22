@@ -416,7 +416,8 @@ class FunctionalTests(testtools.TestCase):
 
         self.check_example('try_except_pass.py', expect)
 
-        test = self.b_mgr.b_ts.tests['ExceptHandler']['try_except_pass']
+        test = next((x for x in self.b_mgr.b_ts.tests['ExceptHandler']
+                     if x.__name__ == 'try_except_pass'))
         test._config = {'check_typed_exception': False}
         expect = {'SEVERITY': {'LOW': 2},
                   'CONFIDENCE': {'HIGH': 2}}

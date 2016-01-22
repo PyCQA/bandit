@@ -347,12 +347,6 @@ def main():
         logger.info("running on Python %d.%d.%d", sys.version_info.major,
                     sys.version_info.minor, sys.version_info.micro)
 
-    # no point running if there are no tests available
-    if not b_mgr.has_tests:
-        logger.error('Could not find any tests to apply, please check '
-                     'the configuration.')
-        sys.exit(2)
-
     # initiate file discovery step within Bandit Manager
     b_mgr.discover_files(args.targets, args.recursive, args.excluded_paths)
 

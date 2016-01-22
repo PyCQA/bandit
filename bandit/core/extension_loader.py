@@ -32,17 +32,13 @@ class Manager(object):
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
             namespace=formatters_namespace,
-            # We don't want to call the formatter when we load it.
             invoke_on_load=False,
-            # We don't care if the extension doesn't have the dependencies it
-            # needs to start up.
             verify_requirements=False,
             )
         self.formatters = list(self.formatters_mgr)
         self.formatter_names = self.formatters_mgr.names()
 
     def load_plugins(self, plugins_namespace):
-        # See comments in load_formatters for parameter explanations
         self.plugins_mgr = extension.ExtensionManager(
             namespace=plugins_namespace,
             invoke_on_load=False,
@@ -60,11 +56,12 @@ class Manager(object):
         self.plugins = list(filter(test_has_id, list(self.plugins_mgr)))
         self.plugin_names = [plugin.name for plugin in self.plugins]
         self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
-        self.plugin_name_to_id = {
-            p.name: p.plugin._test_id for p in self.plugins}
+        self.plugins_by_name = {p.name: p for p in self.plugins}
 
     def get_plugin_id(self, plugin_name):
-        return self.plugin_name_to_id.get(plugin_name)
+        if plugin_name in self.plugins_by_name:
+            return self.plugins_by_name[plugin_name].plugin._test_id
+        return None
 
     def load_blacklists(self, blacklist_namespace):
         self.blacklists_mgr = extension.ExtensionManager(
