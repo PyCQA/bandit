@@ -271,6 +271,23 @@ class UtilTests(testtools.TestCase):
         self.assertEqual('deep value 2', b_utils.deepgetattr(a, 'b.c.d2'))
         self.assertRaises(AttributeError, b_utils.deepgetattr, a.b, 'z')
 
+    def test_parse_ini_file(self):
+
+        tests = [{'content': "[bandit]\nexclude=/abc,/def",
+                  'expected': {'exclude': '/abc,/def'}},
+
+                 {'content': '[Blabla]\nsomething=something',
+                  'expected': None}]
+
+        with tempfile.NamedTemporaryFile('r+') as t:
+            for test in tests:
+                f = open(t.name, 'w')
+                f.write(test['content'])
+                f.close()
+
+                self.assertEqual(b_utils.parse_ini_file(t.name),
+                                 test['expected'])
+
     @mock.patch('os.path.isdir')
     def test_check_output_destination_dir(self, isdir):
         isdir.return_value = True
