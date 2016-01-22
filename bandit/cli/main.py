@@ -14,6 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import argparse
+import fnmatch
 import logging
 import os
 import sys
@@ -58,9 +59,52 @@ def _init_logger(debug=False, log_format=None):
     logger.debug("logging initialized")
 
 
+def _get_options_from_ini(ini_path, target):
+    """Return a dictionary of config options or None if we can't load any."""
+    ini_file = None
+
+    if ini_path:
+        ini_file = ini_path
+    else:
+        bandit_files = []
+
+        for t in target:
+            for root, dirnames, filenames in os.walk(t):
+                for filename in fnmatch.filter(filenames, '.bandit'):
+                    bandit_files.append(os.path.join(root, filename))
+
+        if len(bandit_files) > 1:
+            logger.error('Multiple .bandit files found - scan separately or '
+                         'choose one with --ini\n\t%s',
+                         ', '.join(bandit_files))
+            sys.exit(2)
+
+        elif len(bandit_files) == 1:
+            ini_file = bandit_files[0]
+            logger.info('Found project level .bandit file: %s',
+                        bandit_files[0])
+
+    if ini_file:
+        return utils.parse_ini_file(ini_file)
+    else:
+        return None
+
+
 def _init_extensions():
     from bandit.core import extension_loader as ext_loader
     return ext_loader.MANAGER
+
+
+def _log_option_source(arg_val, ini_val, option_name):
+    """It's useful to show the source of each option."""
+    if arg_val:
+        logger.info("Using command line arg for %s", option_name)
+        return arg_val
+    elif ini_val:
+        logger.info("Using .bandit arg for %s", option_name)
+        return ini_val
+    else:
+        return None
 
 
 def _running_under_virtualenv():
@@ -202,6 +246,11 @@ def main():
                            'Note: baseline reports must be output in one of '
                            'the following formats: ' + str(baseline_formatters)
     )
+    parser.add_argument(
+        '--ini', dest='ini_path', action='store', default=None,
+        help='Path to a .bandit file which supplies command line arguments to '
+             'Bandit.'
+    )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
     parser.set_defaults(ignore_nosec=False)
@@ -228,6 +277,21 @@ def main():
     except (utils.ConfigFileUnopenable, utils.ConfigFileInvalidYaml) as e:
         logger.error('%s', e)
         sys.exit(2)
+
+    # Handle .bandit files in projects to pass cmdline args from file
+    ini_options = _get_options_from_ini(args.ini_path, args.targets)
+    if ini_options:
+        # prefer command line, then ini file
+        args.excluded_paths = _log_option_source(args.excluded_paths,
+                                                 ini_options.get('exclude'),
+                                                 'excluded paths')
+
+        args.skips = _log_option_source(args.skips, ini_options.get('skips'),
+                                        'skipped tests')
+
+        args.tests = _log_option_source(args.tests, ini_options.get('tests'),
+                                        'selected tests')
+        # TODO(tmcpeak): any other useful options to pass from .bandit?
 
     # if the log format string was set in the options, reinitialize
     if b_conf.get_option('log_format'):

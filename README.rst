@@ -112,6 +112,8 @@ Usage::
                             Path to a baseline report, in JSON format. Note:
                             baseline reports must be output in one of the
                             following formats: ['screen', 'html', 'txt']
+      --ini INI_PATH        Path to a .bandit file which supplies command line
+                            arguments to Bandit.
 
     The following plugin suites were discovered and loaded:
       B101  assert_used
@@ -177,6 +179,29 @@ Mac OSX:
  - /usr/local/etc/bandit/bandit.yaml
  - <path to venv>/bandit/config/bandit.yaml (if running within virtualenv)
 
+Per Project Command Line Args
+-----------------------------
+Projects may include a `.bandit` file that specifies command line arguments
+that should be supplied for that project.  The currently supported arguments
+are:
+
+ - exclude: comma separated list of excluded paths
+ - skips: comma separated list of tests to skip
+ - tests: comma separated list of tests to run
+
+To use this, put a .bandit file in your project's directory.  For example:
+
+::
+
+   [bandit]
+   exclude: /test
+
+::
+
+   [bandit]
+   tests: B101,B102,B301
+
+
 Exclusions
 ----------
 In the event that a line of code triggers a Bandit issue, but that the line
@@ -227,6 +252,7 @@ To write a test:
    that it detects the vulnerability.  Consider variations on how this
    vulnerability might present itself and extend the example file and the test
    function accordingly.
+
 
 Extending Bandit
 ----------------

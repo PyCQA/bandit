@@ -21,6 +21,10 @@ import logging
 import os.path
 import sys
 
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 logger = logging.getLogger(__name__)
 
@@ -340,3 +344,16 @@ def get_path_for_function(f):
     else:
         logger.warning("Cannot resolve file path for module %s", module_name)
         return None
+
+
+def parse_ini_file(f_loc):
+    config = configparser.ConfigParser()
+    try:
+        config.read(f_loc)
+        return {k: v for k, v in config.items('bandit')}
+
+    except (configparser.Error, KeyError, TypeError):
+        logger.warning("Unable to parse config file %s or missing [bandit] "
+                       "section", f_loc)
+
+    return None
