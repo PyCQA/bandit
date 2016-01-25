@@ -350,6 +350,10 @@ def main():
     # initiate file discovery step within Bandit Manager
     b_mgr.discover_files(args.targets, args.recursive, args.excluded_paths)
 
+    if not b_mgr.b_ts.tests:
+        logger.error('No tests would be run, please check the profile.')
+        sys.exit(2)
+
     # initiate execution of tests within Bandit Manager
     b_mgr.run_tests()
     logger.debug(b_mgr.b_ma)

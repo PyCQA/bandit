@@ -27,14 +27,17 @@ logger = logging.getLogger(__name__)
 
 class BanditTestSet():
     def __init__(self, config, profile=None):
-        self.plugins = extension_loader.MANAGER.plugins
+        self.plugins = self._load_builtins()
+        self.plugins.extend(extension_loader.MANAGER.plugins)
+
         if profile is not None:
-            inc = profile.get('include') or []
-            exc = profile.get('exclude') or []
-            if len(inc):
+            inc = profile.get('include') or None
+            exc = profile.get('exclude') or None
+
+            if inc is not None:
                 self.plugins = [p for p in self.plugins if p.name in inc]
 
-            if len(exc):
+            if exc is not None:
                 self.plugins = [p for p in self.plugins if p.name not in exc]
 
         self._load_tests(config, self.plugins)
@@ -55,11 +58,21 @@ class BanditTestSet():
                 logger.debug('added function %s (%s) targetting %s',
                              plugin.name, plugin.plugin._test_id, check)
 
-        # load blacklists
-        # TODO(??): blacklists can now be filtered
-        # TODO(??): blacklist items can be fillered
-        for key in extension_loader.MANAGER.blacklist.keys():
-            self.tests.setdefault(key, []).append(blacklisting.blacklist)
+    def _load_builtins(self):
+        '''loads up out builtin functions, so they can be filtered.'''
+        class Wrapper:
+            def __init__(self, name, plugin):
+                self.name = name
+                self.plugin = plugin
+
+        # TODO(tkelsey): filter out blacklist items by profile
+
+        # this dresses up the blacklist to look like a plugin, but the
+        # 'checks' data comes from the blacklist information.
+        setattr(blacklisting.blacklist, "_test_id", 'B001')
+        setattr(blacklisting.blacklist, "_checks",
+                extension_loader.MANAGER.blacklist.keys())
+        return [Wrapper('blacklist', blacklisting.blacklist)]
 
     def get_tests(self, checktype):
         '''Returns all tests that are of type checktype
