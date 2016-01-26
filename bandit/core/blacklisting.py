@@ -17,7 +17,6 @@
 import ast
 import fnmatch
 
-from bandit.core import extension_loader
 from bandit.core import issue
 
 
@@ -28,8 +27,8 @@ def report_issue(check, name):
         ident=name, test_id=check["id"])
 
 
-def blacklist(context):
-    blacklists = extension_loader.MANAGER.blacklist
+def blacklist(context, config):
+    blacklists = config
     node_type = context.node.__class__.__name__
 
     if node_type == 'Call':

@@ -70,7 +70,7 @@ class BanditManager():
         elif profile_name:
             profile = self._get_profile(profile_name)
         else:
-            profile = None
+            profile = {}
 
         self.b_ts = b_test_set.BanditTestSet(config, profile)
 
