@@ -2,3 +2,4 @@
 host=review.openstack.org
 port=29418
 project=openstack/bandit.git
+defaultbranch=stable/0.17.0
