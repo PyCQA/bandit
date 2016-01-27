@@ -273,11 +273,6 @@ def main():
                                                  ini_options.get('exclude'),
                                                  'excluded paths')
 
-        args.skips = _log_option_source(args.skips, ini_options.get('skips'),
-                                        'skipped tests')
-
-        args.tests = _log_option_source(args.tests, ini_options.get('tests'),
-                                        'selected tests')
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
     # if the log format string was set in the options, reinitialize
