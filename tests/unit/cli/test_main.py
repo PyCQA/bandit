@@ -16,9 +16,16 @@ import logging
 import os
 
 import fixtures
+from mock import patch
 import testtools
 
 from bandit.cli import main as bandit
+from bandit.core import extension_loader as ext_loader
+from bandit.core import utils
+
+bandit_config_content = """
+[bandit]
+"""
 
 
 class BanditCLIMainLoggerTests(testtools.TestCase):
@@ -41,12 +48,12 @@ class BanditCLIMainLoggerTests(testtools.TestCase):
 
         self.assertIsNotNone(self.logger)
         self.assertNotEqual(self.logger.handlers, [])
-        self.assertEqual(self.logger.level, logging.INFO)
+        self.assertEqual(logging.INFO, self.logger.level)
 
     def test_init_logger_debug_mode(self):
         # Test that the logger's level was set at 'DEBUG'
         bandit._init_logger(True)
-        self.assertEqual(self.logger.level, logging.DEBUG)
+        self.assertEqual(logging.DEBUG, self.logger.level)
 
 
 class BanditCLIMainTests(testtools.TestCase):
@@ -79,10 +86,72 @@ class BanditCLIMainTests(testtools.TestCase):
         bandit_config_two = os.path.join(target_directory, second_config,
                                          '.bandit')
         bandit_files = [bandit_config_one, bandit_config_two]
-        with open('examples/nonsense.py') as fd:
-            nonsense_file_contents = fd.read()
         for bandit_file in bandit_files:
             with open(bandit_file, 'wt') as fd:
-                fd.write(nonsense_file_contents)
+                fd.write(bandit_config_content)
         self.assertRaisesRegex(SystemExit, '2', bandit._get_options_from_ini,
                                None, [target_directory])
+
+    def test_init_extensions(self):
+        # Test that an extension loader manager is returned
+        self.assertEqual(ext_loader.MANAGER, bandit._init_extensions())
+
+    def test_log_option_source_arg_val(self):
+        # Test that the command argument value is returned when provided
+        arg_val = 'file'
+        ini_val = 'vuln'
+        option_name = 'aggregate'
+        self.assertEqual(arg_val, bandit._log_option_source(arg_val, ini_val,
+                         option_name))
+
+    def test_log_option_source_ini_value(self):
+        # Test that the ini value is returned when no command argument is
+        # provided
+        ini_val = 'vuln'
+        option_name = 'aggregate'
+        self.assertEqual(ini_val, bandit._log_option_source(None, ini_val,
+                         option_name))
+
+    def test_log_option_source_no_values(self):
+        # Test that None is returned when no command arguement or ini value are
+        # provided
+        option_name = 'aggregate'
+        self.assertIsNone(bandit._log_option_source(None, None, option_name))
+
+    @patch('sys.argv', ['bandit', 'test'])
+    def test_main_no_config(self):
+        # Test that bandit exits when a config file cannot be found, raising a
+        # NoConfigFileFound error
+        with patch('bandit.cli.main._find_config') as mock_find_config:
+            mock_find_config.side_effect = utils.NoConfigFileFound('')
+            # assert a SystemExit with code 2
+            self.assertRaisesRegex(SystemExit, '2', bandit.main)
+
+
+class BanditCLIMainFindConfigTests(testtools.TestCase):
+
+    def setUp(self):
+        super(BanditCLIMainFindConfigTests, self).setUp()
+        self.current_directory = os.getcwd()
+
+    def tearDown(self):
+        super(BanditCLIMainFindConfigTests, self).tearDown()
+        os.chdir(self.current_directory)
+
+    def test_find_config_no_config(self):
+        # Test that a utils.NoConfigFileFound error is raised when no config
+        # file is found
+        with patch('os.path.isfile') as mock_os_path_isfile:
+            # patch to make sure no config files can be found
+            mock_os_path_isfile.return_value = False
+            self.assertRaises(utils.NoConfigFileFound, bandit._find_config)
+
+    def test_find_config_local_config(self):
+        # Test that when a config file is found is current directory, it is
+        # used as the config file
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(temp_directory)
+        local_config = "./bandit.yaml"
+        with open(local_config, 'wt') as fd:
+            fd.write(bandit_config_content)
+        self.assertEqual(local_config, bandit._find_config())
