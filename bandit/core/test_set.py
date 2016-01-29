@@ -39,12 +39,8 @@ class BanditTestSet():
     def _get_filter(self, config, profile):
         extman = extension_loader.MANAGER
 
-        def _get_id(value):
-            # Convert any names to IDs, any encountered IDs are unchanged
-            return extman.get_plugin_id(value) or value
-
-        inc = set(_get_id(i) for i in profile.get('include', []))
-        exc = set(_get_id(e) for e in profile.get('exclude', []))
+        inc = set(profile.get('include', []))
+        exc = set(profile.get('exclude', []))
 
         if inc:
             filtered = inc

@@ -72,16 +72,6 @@ class BanditTesSetTests(testtools.TestCase):
         ts = test_set.BanditTestSet(self.config)
         self.assertEqual(len(ts.get_tests('Str')), 1)
 
-    def test_profile_include_name(self):
-        profile = {'include': ['test_plugin']}
-        ts = test_set.BanditTestSet(self.config, profile)
-        self.assertEqual(len(ts.get_tests('Str')), 1)
-
-    def test_profile_exclude_name(self):
-        profile = {'exclude': ['test_plugin']}
-        ts = test_set.BanditTestSet(self.config, profile)
-        self.assertEqual(len(ts.get_tests('Str')), 0)
-
     def test_profile_include_id(self):
         profile = {'include': ['B000']}
         ts = test_set.BanditTestSet(self.config, profile)
