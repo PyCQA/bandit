@@ -18,29 +18,74 @@
 import importlib
 import logging
 
+import six
+
 from bandit.core import blacklisting
 from bandit.core import extension_loader
 
 
 logger = logging.getLogger(__name__)
 
+# These IDs are for bandit built-in tests
+builtins = [
+    'B001'  # Built-in blacklist test
+    ]
+
 
 class BanditTestSet():
-    def __init__(self, config, profile=None):
-        self.plugins = self._load_builtins()
-        self.plugins.extend(extension_loader.MANAGER.plugins)
-
-        if profile is not None:
-            inc = profile.get('include') or None
-            exc = profile.get('exclude') or None
-
-            if inc is not None:
-                self.plugins = [p for p in self.plugins if p.name in inc]
-
-            if exc is not None:
-                self.plugins = [p for p in self.plugins if p.name not in exc]
-
+    def __init__(self, config, profile={}):
+        extman = extension_loader.MANAGER
+        filtering = self._get_filter(profile)
+        self.plugins = [p for p in extman.plugins
+                        if p.plugin._test_id in filtering]
+        self.plugins.extend(self._load_builtins(filtering))
         self._load_tests(config, self.plugins)
+
+    def _get_filter(self, profile):
+        extman = extension_loader.MANAGER
+
+        def _get_id(value):
+            # Convert any names to IDs, any encountered IDs are unchanged
+            return extman.get_plugin_id(value) or value
+
+        inc = set(_get_id(i) for i in profile.get('include', []))
+        exc = set(_get_id(e) for e in profile.get('exclude', []))
+
+        if inc:
+            filtered = inc
+        else:
+            filtered = set(extman.plugins_by_id.keys())
+            filtered.update(builtins)
+            for node, tests in six.iteritems(extman.blacklist):
+                filtered.update(t['id'] for t in tests)
+        return filtered - exc
+
+    def _load_builtins(self, filtering):
+        '''loads up out builtin functions, so they can be filtered.'''
+        class Wrapper:
+            def __init__(self, name, plugin):
+                self.name = name
+                self.plugin = plugin
+
+        results = []
+
+        if 'B001' in filtering:
+            extman = extension_loader.MANAGER
+            blacklist = {}  # filter out blacklist data items
+            for node, tests in six.iteritems(extman.blacklist):
+                values = [t for t in tests if t['id'] in filtering]
+                if values:
+                    blacklist[node] = values
+
+            # this dresses up the blacklist to look like a plugin, but the
+            # '_checks' data comes from the blacklist information.
+            # '_config' is the filtered blacklist data set.
+            setattr(blacklisting.blacklist, "_test_id", 'B001')
+            setattr(blacklisting.blacklist, "_checks", blacklist.keys())
+            setattr(blacklisting.blacklist, "_config", blacklist)
+            results.append(Wrapper('blacklist', blacklisting.blacklist))
+
+        return results
 
     def _load_tests(self, config, plugins):
         '''Builds a dict mapping tests to node types.'''
@@ -57,22 +102,6 @@ class BanditTestSet():
                 self.tests.setdefault(check, []).append(plugin.plugin)
                 logger.debug('added function %s (%s) targetting %s',
                              plugin.name, plugin.plugin._test_id, check)
-
-    def _load_builtins(self):
-        '''loads up out builtin functions, so they can be filtered.'''
-        class Wrapper:
-            def __init__(self, name, plugin):
-                self.name = name
-                self.plugin = plugin
-
-        # TODO(tkelsey): filter out blacklist items by profile
-
-        # this dresses up the blacklist to look like a plugin, but the
-        # 'checks' data comes from the blacklist information.
-        setattr(blacklisting.blacklist, "_test_id", 'B001')
-        setattr(blacklisting.blacklist, "_checks",
-                extension_loader.MANAGER.blacklist.keys())
-        return [Wrapper('blacklist', blacklisting.blacklist)]
 
     def get_tests(self, checktype):
         '''Returns all tests that are of type checktype
