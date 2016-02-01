@@ -27,6 +27,23 @@ bandit_config_content = """
 [bandit]
 """
 
+bandit_baseline_content = """{
+    "results": [
+        {
+            "code": "some test code",
+            "filename": "test_example.py",
+            "issue_severity": "low",
+            "issue_confidence": "low",
+            "issue_text": "test_issue",
+            "test_name": "some_test",
+            "test_id": "x",
+            "line_number": "n",
+            "line_range": "n-m"
+        }
+    ]
+}
+"""
+
 
 class BanditCLIMainLoggerTests(testtools.TestCase):
 
@@ -57,6 +74,14 @@ class BanditCLIMainLoggerTests(testtools.TestCase):
 
 
 class BanditCLIMainTests(testtools.TestCase):
+
+    def setUp(self):
+        super(BanditCLIMainTests, self).setUp()
+        self.current_directory = os.getcwd()
+
+    def tearDown(self):
+        super(BanditCLIMainTests, self).tearDown()
+        os.chdir(self.current_directory)
 
     def test_get_options_from_ini_no_ini_path_no_target(self):
         # Test that no config options are loaded when no ini path or target
@@ -126,6 +151,67 @@ class BanditCLIMainTests(testtools.TestCase):
             mock_find_config.side_effect = utils.NoConfigFileFound('')
             # assert a SystemExit with code 2
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
+
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    def test_main_config_unopenable(self):
+        # Test that bandit exits when a config file cannot be opened
+        with patch('bandit.core.config.__init__') as mock_bandit_config:
+            mock_bandit_config.side_effect = utils.ConfigFileUnopenable('')
+            # assert a SystemExit with code 2
+            self.assertRaisesRegex(SystemExit, '2', bandit.main)
+
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    def test_main_invalid_config(self):
+        # Test that bandit exits when a config file contains invalid YAML
+        # content
+        with patch('bandit.core.config.BanditConfig.__init__'
+                   ) as mock_bandit_config:
+            mock_bandit_config.side_effect = utils.ConfigFileInvalidYaml('')
+            # assert a SystemExit with code 2
+            self.assertRaisesRegex(SystemExit, '2', bandit.main)
+
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    def test_main_profile_not_found(self):
+        # Test that bandit exits when a test profile is not found
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(temp_directory)
+        with open('bandit.yaml', 'wt') as fd:
+            fd.write(bandit_config_content)
+        with patch('bandit.core.manager.BanditManager.__init__'
+                   ) as mock_bandit_mgr:
+            mock_bandit_mgr.side_effect = utils.ProfileNotFound('', '')
+            # assert a SystemExit with code 2
+            self.assertRaisesRegex(SystemExit, '2', bandit.main)
+
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-b', 'base.json',
+           'test'])
+    def test_main_baseline_ioerror(self):
+        # Test that bandit exits when encountering an IOError while reading
+        # baseline data
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(temp_directory)
+        with open('bandit.yaml', 'wt') as fd:
+            fd.write(bandit_config_content)
+        with open('base.json', 'wt') as fd:
+            fd.write(bandit_baseline_content)
+        with patch('bandit.core.manager.BanditManager.populate_baseline'
+                   ) as mock_mgr_pop_bl:
+            mock_mgr_pop_bl.side_effect = IOError
+            # assert a SystemExit with code 2
+            self.assertRaisesRegex(SystemExit, '2', bandit.main)
+
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-b', 'base.json',
+           '-f', 'csv', 'test'])
+    def test_main_invalid_output_format(self):
+        # Test that bandit exits when an invalid output format is selected
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(temp_directory)
+        with open('bandit.yaml', 'wt') as fd:
+            fd.write(bandit_config_content)
+        with open('base.json', 'wt') as fd:
+            fd.write(bandit_baseline_content)
+        # assert a SystemExit with code 2
+        self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
 
 class BanditCLIMainFindConfigTests(testtools.TestCase):
