@@ -1,6 +1,22 @@
 Bandit
 ======
 
+.. image:: https://img.shields.io/pypi/v/bandit.svg
+    :target: https://pypi.python.org/pypi/bandit/
+    :alt: Latest Version
+
+.. image:: https://img.shields.io/pypi/pyversions/bandit.svg
+    :target: https://pypi.python.org/pypi/bandit/
+    :alt: Python Versions
+
+.. image:: https://img.shields.io/pypi/format/bandit.svg
+    :target: https://pypi.python.org/pypi/bandit/
+    :alt: Format
+
+.. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
+    :target: https://git.openstack.org/cgit/openstack/bandit/plain/LICENSE
+    :alt: License
+
 A security linter from OpenStack Security
 
 * Free software: Apache license
