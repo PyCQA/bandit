@@ -14,6 +14,7 @@
 
 import os
 import tempfile
+import textwrap
 import uuid
 
 import fixtures
@@ -81,10 +82,12 @@ class TestGetOption(testtools.TestCase):
         self.example_key = uuid.uuid4().hex
         self.example_subkey = uuid.uuid4().hex
         self.example_subvalue = uuid.uuid4().hex
-        sample_yaml = """
-%s:
-    %s: %s
-""" % (self.example_key, self.example_subkey, self.example_subvalue)
+        sample_yaml = textwrap.dedent("""
+            %s:
+                %s: %s
+            """ % (self.example_key, self.example_subkey,
+                   self.example_subvalue))
+
         f = self.useFixture(TempFile(sample_yaml))
 
         self.b_config = config.BanditConfig(f.name)
@@ -114,3 +117,103 @@ class TestGetSetting(testtools.TestCase):
 
         sample_setting_name = uuid.uuid4().hex
         self.assertIsNone(self.b_config.get_setting(sample_setting_name))
+
+
+class TestConfigCompat(testtools.TestCase):
+    sample_yaml = textwrap.dedent("""
+        profiles:
+            test_1:
+                include:
+                    - any_other_function_with_shell_equals_true
+                    - assert_used
+                exclude:
+
+            test_2:
+                include:
+                    - blacklist_calls
+
+            test_3:
+                include:
+                    - blacklist_imports
+
+            test_4:
+                exclude:
+                    - assert_used
+
+            test_5:
+                exclude:
+                    - blacklist_calls
+                    - blacklist_imports
+
+        blacklist_calls:
+            bad_name_sets:
+                - pickle:
+                    qualnames: [pickle.loads]
+                    message: "{func} library appears to be in use."
+
+        blacklist_imports:
+            bad_import_sets:
+                - telnet:
+                    imports: [telnetlib]
+                    level: HIGH
+                    message: "{module} is considered insecure."
+        """)
+
+    def setUp(self):
+        super(TestConfigCompat, self).setUp()
+        f = self.useFixture(TempFile(self.sample_yaml))
+        self.config = config.BanditConfig(f.name)
+
+    def test_converted_include(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_1']
+        data = {'blacklist': {},
+                'exclude': set(),
+                'include': set(['B101', 'B604'])}
+
+        self.assertEqual(data, test)
+
+    def test_converted_exclude(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_4']
+
+        self.assertEqual(set(['B101']), test['exclude'])
+
+    def test_converted_blacklist_call_data(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_2']
+        data = {'Call': [{'imports': ['telnetlib'],
+                          'level': 'HIGH',
+                          'message': '{name} is considered insecure.',
+                          'name': 'telnet'}]}
+
+        self.assertEqual(data, test['blacklist'])
+
+    def test_converted_blacklist_import_data(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_3']
+        data = [{'message': '{name} library appears to be in use.',
+                 'name': 'pickle',
+                 'qualnames': ['pickle.loads']}]
+
+        self.assertEqual(data, test['blacklist']['Call'])
+        self.assertEqual(data, test['blacklist']['Import'])
+        self.assertEqual(data, test['blacklist']['ImportFrom'])
+
+    def test_converted_blacklist_call_test(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_2']
+
+        self.assertEqual(set(['B001']), test['include'])
+
+    def test_converted_blacklist_import_test(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_3']
+
+        self.assertEqual(set(['B001']), test['include'])
+
+    def test_converted_exclude_blacklist(self):
+        profiles = self.config.get_option('profiles')
+        test = profiles['test_5']
+
+        self.assertEqual(set(['B001']), test['exclude'])
