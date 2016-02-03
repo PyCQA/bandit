@@ -13,6 +13,9 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+
+import pbr.version
+
 from bandit.core import config  # noqa
 from bandit.core import context  # noqa
 from bandit.core import manager  # noqa
@@ -24,3 +27,5 @@ from bandit.core import utils  # noqa
 from bandit.core.constants import *  # noqa
 from bandit.core.issue import *  # noqa
 from bandit.core.test_properties import *  # noqa
+
+__version__ = pbr.version.VersionInfo('bandit').version_string()

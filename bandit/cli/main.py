@@ -23,6 +23,7 @@ import sysconfig
 import appdirs
 import six
 
+import bandit
 from bandit.core import config as b_config
 from bandit.core import constants
 from bandit.core import manager as b_manager
@@ -250,6 +251,10 @@ def main():
         '--ini', dest='ini_path', action='store', default=None,
         help='Path to a .bandit file which supplies command line arguments to '
              'Bandit.'
+    )
+    parser.add_argument(
+        '--version', action='version',
+        version='%(prog)s {version}'.format(version=bandit.__version__)
     )
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
