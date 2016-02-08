@@ -14,6 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import logging
+
 import mock
 from stevedore import extension
 import testtools
@@ -32,6 +34,28 @@ def _test_plugin(context, conf):
     pass
 
 
+class BanditConfigGeneratorLoggerTests(testtools.TestCase):
+
+    def setUp(self):
+        super(BanditConfigGeneratorLoggerTests, self).setUp()
+        self.logger = logging.getLogger(config_generator.__name__)
+        self.original_logger_handlers = self.logger.handlers
+        self.original_logger_level = self.logger.level
+        self.logger.handlers = []
+
+    def tearDown(self):
+        super(BanditConfigGeneratorLoggerTests, self).tearDown()
+        self.logger.handlers = self.original_logger_handlers
+        self.logger.level = self.original_logger_level
+
+    def test_init_logger(self):
+        # Test that a logger was properly initialized
+        config_generator.init_logger()
+        self.assertIsNotNone(self.logger)
+        self.assertNotEqual([], self.logger.handlers)
+        self.assertEqual(logging.INFO, self.logger.level)
+
+
 class BanditConfigGeneratorTests(testtools.TestCase):
     def _make_test_manager(self, plugin):
         return extension.ExtensionManager.make_test_instance(
@@ -48,6 +72,38 @@ class BanditConfigGeneratorTests(testtools.TestCase):
         super(BanditConfigGeneratorTests, self).tearDown()
         self.patchExtMan.stop()
 
+    @mock.patch('sys.argv', ['bandit-config-generator'])
+    def test_parse_args_no_defaults(self):
+        # Test that the config generator does not show default plugin settings
+        return_value = config_generator.parse_args()
+        self.assertFalse(return_value.show_defaults)
+
+    @mock.patch('sys.argv', ['bandit-config-generator', '--show-defaults'])
+    def test_parse_args_show_defaults(self):
+        # Test that the config generator does show default plugin settings
+        return_value = config_generator.parse_args()
+        self.assertTrue(return_value.show_defaults)
+
     def test_get_config_settings(self):
         settings = config_generator.get_config_settings()
         self.assertEqual(settings, "test: {test: test data}\n")
+
+    @mock.patch('sys.argv', ['bandit-config-generator', '--show-defaults'])
+    def test_main_show_defaults(self):
+        # Test that the config generator does show defaults and returns 0
+        with mock.patch('bandit.cli.config_generator.get_config_settings'
+                        ) as mock_config_settings:
+            return_value = config_generator.main()
+            # The get_config_settings function should have been called
+            self.assertTrue(mock_config_settings.called)
+            self.assertEqual(0, return_value)
+
+    @mock.patch('sys.argv', ['bandit-config-generator'])
+    def test_main_no_defaults(self):
+        # Test that the config generator does not show defaults and returns 0
+        with mock.patch('bandit.cli.config_generator.get_config_settings'
+                        ) as mock_config_settings:
+            return_value = config_generator.main()
+            # The get_config_settings function should not have been called
+            self.assertFalse(mock_config_settings.called)
+            self.assertEqual(0, return_value)
