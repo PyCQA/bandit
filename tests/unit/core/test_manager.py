@@ -167,6 +167,42 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(exc, set(['/a/c.ww']))
         self.assertEqual(inc, set(['/a/a.py', '/a/b.py']))
 
+    def test_populate_baseline_success(self):
+        # Test populate_baseline with valid JSON
+        baseline_data = """{
+            "results": [
+                {
+                    "code": "test code",
+                    "filename": "example_file.py",
+                    "issue_severity": "low",
+                    "issue_confidence": "low",
+                    "issue_text": "test issue",
+                    "test_name": "some_test",
+                    "test_id": "x",
+                    "line_number": "n",
+                    "line_range": "n-m"
+                }
+            ]
+        }
+        """
+        issue_dictionary = {"code": "test code", "filename": "example_file.py",
+                            "issue_severity": "low", "issue_confidence": "low",
+                            "issue_text": "test issue", "test_name":
+                            "some_test", "test_id": "x", "line_number": "n",
+                            "line_range": "n-m"}
+        baseline_items = [issue.issue_from_dict(issue_dictionary)]
+        self.manager.populate_baseline(baseline_data)
+        self.assertEqual(baseline_items, self.manager.baseline)
+
+    @mock.patch('logging.Logger.warning')
+    def test_populate_baseline_invalid_json(self, mock_logger_warning):
+        # Test populate_baseline with invalid JSON content
+        baseline_data = """{"data": "bad"}"""
+        self.manager.populate_baseline(baseline_data)
+        # Default value for manager.baseline is []
+        self.assertEqual([], self.manager.baseline)
+        self.assertTrue(mock_logger_warning.called)
+
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = (
@@ -176,6 +212,31 @@ class ManagerTests(testtools.TestCase):
              for l in levels]
 
         self.assertEqual([3, 2, 1], r)
+
+    def test_output_results_invalid_format(self):
+        # Test that output_results succeeds given an invalid format
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        lines = 5
+        sev_level = constants.LOW
+        conf_level = constants.LOW
+        output_filename = os.path.join(temp_directory, "_temp_output")
+        output_format = "invalid"
+
+        self.manager.output_results(lines, sev_level, conf_level,
+                                    output_filename, output_format)
+        self.assertFalse(os.path.isfile(output_filename))
+
+    def test_output_results_valid_format(self):
+        # Test that output_results succeeds given a valid format
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        lines = 5
+        sev_level = constants.LOW
+        conf_level = constants.LOW
+        output_filename = os.path.join(temp_directory, "_temp_output.txt")
+        output_format = "txt"
+        self.manager.output_results(lines, sev_level, conf_level,
+                                    output_filename, output_format)
+        self.assertTrue(os.path.isfile(output_filename))
 
     @mock.patch('os.path.isdir')
     def test_discover_files_recurse_skip(self, isdir):
@@ -218,6 +279,31 @@ class ManagerTests(testtools.TestCase):
             self.manager.discover_files(['thing'], True)
             self.assertEqual(self.manager.files_list, ['thing'])
             self.assertEqual(self.manager.excluded_files, [])
+
+    def test_run_tests_keyboardinterrupt(self):
+        # Test that bandit manager exits when there is a keyboard interrupt
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        some_file = os.path.join(temp_directory, 'some_code_file.py')
+        with open(some_file, 'wt') as fd:
+            fd.write('some_code = x + 1')
+        self.manager.files_list = [some_file]
+        with mock.patch('bandit.core.metrics.Metrics.count_issues'
+                        ) as mock_count_issues:
+            mock_count_issues.side_effect = KeyboardInterrupt
+            # assert a SystemExit with code 2
+            self.assertRaisesRegex(SystemExit, '2', self.manager.run_tests)
+
+    def test_run_tests_ioerror(self):
+        # Test that a file name is skipped and added to the manager.skipped
+        # list when there is an IOError attempting to open/read the file
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        no_such_file = os.path.join(temp_directory, 'no_such_file.py')
+        self.manager.files_list = [no_such_file]
+        self.manager.run_tests()
+        # since the file name and the IOError.strerror text are added to
+        # manager.skipped, we convert skipped to str to find just the file name
+        # since IOError is not constant
+        self.assertIn(no_such_file, str(self.manager.skipped))
 
     def test_compare_baseline(self):
         issue_a = self._get_issue_instance()
