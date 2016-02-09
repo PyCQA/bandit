@@ -16,9 +16,11 @@
 
 import logging
 
+import six
 import yaml
 
 from bandit.core import constants
+from bandit.core import extension_loader
 from bandit.core import utils
 
 
@@ -26,6 +28,11 @@ logger = logging.getLogger(__name__)
 
 
 class BanditConfig():
+    # These IDs are for bandit built in tests
+    builtin = [
+        'B001'  # Built in blacklist test
+        ]
+
     def __init__(self, config_file):
         '''Attempt to initialize a config dictionary from a yaml file.
 
@@ -38,7 +45,6 @@ class BanditConfig():
             be parsed.
 
         '''
-
         self.config_file = config_file
         try:
             f = open(config_file, 'r')
@@ -49,6 +55,10 @@ class BanditConfig():
             self._config = yaml.safe_load(f)
         except yaml.YAMLError:
             raise utils.ConfigFileInvalidYaml(config_file)
+
+        if self._config:
+            self.convert_legacy_config()
+            self.validate_profiles()
 
         self._init_settings()
 
@@ -103,3 +113,101 @@ class BanditConfig():
         if self.get_option('plugin_name_pattern'):
             plugin_name_pattern = self.get_option('plugin_name_pattern')
         self._settings['plugin_name_pattern'] = plugin_name_pattern
+
+    def convert_legacy_config(self):
+        updated_profiles = self.convert_names_to_ids()
+        bad_calls, bad_imports = self.convert_legacy_blacklist_data()
+
+        if updated_profiles:
+            self.convert_legacy_blacklist_tests(updated_profiles,
+                                                bad_calls, bad_imports)
+            self._config['profiles'] = updated_profiles
+
+    def convert_names_to_ids(self):
+        '''Convert test names to IDs, unknown names are left unchanged.'''
+        extman = extension_loader.MANAGER
+
+        updated_profiles = {}
+        for name, profile in six.iteritems(self.get_option('profiles') or {}):
+            # NOTE(tkelsey): cant use default of get() because value is
+            # sometimes explicity 'None', for example when the list if given in
+            # yaml but not populated with any values.
+            include = set((extman.get_plugin_id(i) or i)
+                          for i in (profile.get('include') or []))
+            exclude = set((extman.get_plugin_id(i) or i)
+                          for i in (profile.get('exclude') or []))
+            updated_profiles[name] = {'include': include, 'exclude': exclude}
+        return updated_profiles
+
+    def convert_legacy_blacklist_data(self):
+        '''Detect legacy blacklist data and convert it to new format.'''
+        bad_calls_list = []
+        bad_imports_list = []
+
+        bad_calls = self.get_option('blacklist_calls') or {}
+        bad_calls = bad_calls.get('bad_name_sets', {})
+        for item in bad_calls:
+            for key, val in six.iteritems(item):
+                val['name'] = key
+                val['message'] = val['message'].replace('{func}', '{name}')
+                bad_calls_list.append(val)
+
+        bad_imports = self.get_option('blacklist_imports') or {}
+        bad_imports = bad_imports.get('bad_import_sets', {})
+        for item in bad_imports:
+            for key, val in six.iteritems(item):
+                val['name'] = key
+                val['message'] = val['message'].replace('{module}', '{name}')
+                bad_imports_list.append(val)
+
+        if bad_imports_list or bad_calls_list:
+            logger.warning('Legacy blacklist data found in config, '
+                           'overriding data plugins')
+        return bad_calls_list, bad_imports_list
+
+    def convert_legacy_blacklist_tests(self, profiles, bad_imports, bad_calls):
+        '''Detect old blacklist tests, convert to use new builtin.'''
+        def _clean_set(name, data):
+            if name in data:
+                data.remove(name)
+                data.add('B001')
+
+        for name, profile in six.iteritems(profiles):
+            blacklist = {}
+            include = profile['include']
+            exclude = profile['exclude']
+
+            name = 'blacklist_calls'
+            if name in include and name not in exclude:
+                blacklist.setdefault('Call', []).extend(bad_calls)
+
+            _clean_set(name, include)
+            _clean_set(name, exclude)
+
+            name = 'blacklist_imports'
+            if name in include and name not in exclude:
+                blacklist.setdefault('Import', []).extend(bad_imports)
+                blacklist.setdefault('ImportFrom', []).extend(bad_imports)
+                blacklist.setdefault('Call', []).extend(bad_imports)
+
+            _clean_set(name, include)
+            _clean_set(name, exclude)
+            _clean_set('blacklist_import_func', include)
+            _clean_set('blacklist_import_func', exclude)
+
+            profile['blacklist'] = blacklist
+
+    def validate_profiles(self):
+        '''Validate that everything in the configured profiles looks good.'''
+        extman = extension_loader.MANAGER
+
+        for name, profile in six.iteritems(self._config.get('profiles', {})):
+            for inc in profile['include']:
+                if inc not in extman.plugins_by_id and inc not in self.builtin:
+                    logger.warning('Unknown Test found in profile %s: %s',
+                                   name, inc)
+
+            for exc in profile['exclude']:
+                if exc not in extman.plugins_by_id and exc not in self.builtin:
+                    logger.warning('Unknown Test found in profile %s: %s',
+                                   name, exc)

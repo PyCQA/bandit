@@ -26,22 +26,17 @@ from bandit.core import extension_loader
 
 logger = logging.getLogger(__name__)
 
-# These IDs are for bandit built-in tests
-builtins = [
-    'B001'  # Built-in blacklist test
-    ]
-
 
 class BanditTestSet():
     def __init__(self, config, profile={}):
         extman = extension_loader.MANAGER
-        filtering = self._get_filter(profile)
+        filtering = self._get_filter(config, profile)
         self.plugins = [p for p in extman.plugins
                         if p.plugin._test_id in filtering]
-        self.plugins.extend(self._load_builtins(filtering))
+        self.plugins.extend(self._load_builtins(filtering, profile))
         self._load_tests(config, self.plugins)
 
-    def _get_filter(self, profile):
+    def _get_filter(self, config, profile):
         extman = extension_loader.MANAGER
 
         def _get_id(value):
@@ -55,13 +50,14 @@ class BanditTestSet():
             filtered = inc
         else:
             filtered = set(extman.plugins_by_id.keys())
-            filtered.update(builtins)
+            filtered.update(config.builtin)
             for node, tests in six.iteritems(extman.blacklist):
                 filtered.update(t['id'] for t in tests)
         return filtered - exc
 
-    def _load_builtins(self, filtering):
-        '''loads up out builtin functions, so they can be filtered.'''
+    def _load_builtins(self, filtering, profile):
+        '''loads up builtin functions, so they can be filtered.'''
+
         class Wrapper:
             def __init__(self, name, plugin):
                 self.name = name
@@ -71,15 +67,17 @@ class BanditTestSet():
 
         if 'B001' in filtering:
             extman = extension_loader.MANAGER
-            blacklist = {}  # filter out blacklist data items
-            for node, tests in six.iteritems(extman.blacklist):
-                values = [t for t in tests if t['id'] in filtering]
-                if values:
-                    blacklist[node] = values
+            blacklist = profile.get('blacklist')
+            if not blacklist:  # not overriden by legacy data
+                blacklist = {}
+                for node, tests in six.iteritems(extman.blacklist):
+                    values = [t for t in tests if t['id'] in filtering]
+                    if values:
+                        blacklist[node] = values
 
-            # this dresses up the blacklist to look like a plugin, but the
-            # '_checks' data comes from the blacklist information.
-            # '_config' is the filtered blacklist data set.
+            # this dresses up the blacklist to look like a plugin, but
+            # the '_checks' data comes from the blacklist information.
+            # the '_config' is the filtered blacklist data set.
             setattr(blacklisting.blacklist, "_test_id", 'B001')
             setattr(blacklisting.blacklist, "_checks", blacklist.keys())
             setattr(blacklisting.blacklist, "_config", blacklist)
