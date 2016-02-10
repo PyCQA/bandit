@@ -109,7 +109,8 @@ class TestGetOption(testtools.TestCase):
 class TestGetSetting(testtools.TestCase):
     def setUp(self):
         super(TestGetSetting, self).setUp()
-        f = self.useFixture(TempFile())
+        test_yaml = 'key: value'
+        f = self.useFixture(TempFile(test_yaml))
         self.b_config = config.BanditConfig(f.name)
 
     def test_not_exist(self):

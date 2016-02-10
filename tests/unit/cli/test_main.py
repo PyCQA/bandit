@@ -156,15 +156,6 @@ class BanditCLIMainTests(testtools.TestCase):
         option_name = 'aggregate'
         self.assertIsNone(bandit._log_option_source(None, None, option_name))
 
-    @patch('sys.argv', ['bandit', 'test'])
-    def test_main_no_config(self):
-        # Test that bandit exits when a config file cannot be found, raising a
-        # NoConfigFileFound error
-        with patch('bandit.cli.main._find_config') as mock_find_config:
-            mock_find_config.side_effect = utils.NoConfigFileFound('')
-            # assert a SystemExit with code 2
-            self.assertRaisesRegex(SystemExit, '2', bandit.main)
-
     @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
     def test_main_config_unopenable(self):
         # Test that bandit exits when a config file cannot be opened
@@ -299,32 +290,3 @@ class BanditCLIMainTests(testtools.TestCase):
             mock_mgr_results_ct.return_value = 0
             # assert a SystemExit with code 0
             self.assertRaisesRegex(SystemExit, '0', bandit.main)
-
-
-class BanditCLIMainFindConfigTests(testtools.TestCase):
-
-    def setUp(self):
-        super(BanditCLIMainFindConfigTests, self).setUp()
-        self.current_directory = os.getcwd()
-
-    def tearDown(self):
-        super(BanditCLIMainFindConfigTests, self).tearDown()
-        os.chdir(self.current_directory)
-
-    def test_find_config_no_config(self):
-        # Test that a utils.NoConfigFileFound error is raised when no config
-        # file is found
-        with patch('os.path.isfile') as mock_os_path_isfile:
-            # patch to make sure no config files can be found
-            mock_os_path_isfile.return_value = False
-            self.assertRaises(utils.NoConfigFileFound, bandit._find_config)
-
-    def test_find_config_local_config(self):
-        # Test that when a config file is found is current directory, it is
-        # used as the config file
-        temp_directory = self.useFixture(fixtures.TempDir()).path
-        os.chdir(temp_directory)
-        local_config = "./bandit.yaml"
-        with open(local_config, 'wt') as fd:
-            fd.write(bandit_config_content)
-        self.assertEqual(local_config, bandit._find_config())

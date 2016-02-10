@@ -98,8 +98,8 @@ Usage::
                             max number of code lines to display for each issue
                             identified
       -c CONFIG_FILE, --configfile CONFIG_FILE
-                            if omitted default locations are checked. Check
-                            documentation for searched paths
+                            optional config file to use for selecting plugins and
+                            overriding defaults
       -p PROFILE, --profile PROFILE
                             test set profile in config to use (defaults to all
                             tests)
@@ -193,32 +193,12 @@ Usage::
 
 Configuration
 -------------
-The Bandit config file is used to set several things, including:
- - profiles - defines group of tests which should or shouldn't be run
+An optional config file may be supplied and may include:
+ - lists of tests which should or shouldn't be run
  - exclude_dirs - sections of the path, that if matched, will be excluded from
    scanning
- - plugin configs - used to tune plugins, for example: by tuning
-   blacklist_imports, you can set which imports should be flagged
- - other - plugins directory, included file types, shell display
-   colors, etc.
-
-Bandit requires a config file which can be specified on the command line via
--c/--configfile.  If this is not provided Bandit will search for a default
-config file (bandit.yaml) in the following preference order:
-
-GNU/Linux:
- - ./bandit.yaml
- - ~/.config/bandit/bandit.yaml
- - /etc/bandit/bandit.yaml
- - /usr/local/etc/bandit/bandit.yaml
- - <path to venv>/etc/bandit/bandit.yaml (if running within virtualenv)
-
-Mac OSX:
- - ./bandit.yaml
- - /Users/${USER}/Library/Application Support/bandit/bandit.yaml
- - /Library/Application Support/bandit/bandit.yaml
- - /usr/local/etc/bandit/bandit.yaml
- - <path to venv>/bandit/config/bandit.yaml (if running within virtualenv)
+ - overridden plugin settings - may provide different settings for some
+   plugins
 
 Per Project Command Line Args
 -----------------------------

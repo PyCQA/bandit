@@ -121,13 +121,6 @@ class InvalidModulePath(Exception):
     pass
 
 
-class NoConfigFileFound(Exception):
-    def __init__(self, config_locations):
-        message = ("no config found - tried: " +
-                   ", ".join(config_locations))
-        super(NoConfigFileFound, self).__init__(message)
-
-
 class ConfigFileUnopenable(Exception):
     """Raised when the config file cannot be opened."""
     def __init__(self, config_file):

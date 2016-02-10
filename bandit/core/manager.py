@@ -79,7 +79,9 @@ class BanditManager():
         self.scores = []
 
     def _get_profile(self, profile_name):
-        if profile_name not in self.b_conf.config['profiles']:
+        if(not self.b_conf.get_option('profiles') or
+           profile_name not in self.b_conf.config['profiles']):
+
             raise utils.ProfileNotFound(self.b_conf.config_file, profile_name)
 
         profile = self.b_conf.config['profiles'][profile_name]
