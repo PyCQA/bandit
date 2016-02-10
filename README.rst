@@ -144,9 +144,32 @@ Usage::
       B110  try_except_pass
       B111  execute_with_run_as_root_equals_true
       B201  flask_debug_true
-      B301  blacklist_calls
-      B401  blacklist_imports
-      B402  blacklist_import_func
+      B301  pickle
+      B302  marshal
+      B303  md5
+      B304  ciphers
+      B305  cipher_modes
+      B306  mktemp_q
+      B307  eval
+      B308  mark_safe
+      B309  httpsconnection
+      B310  urllib_urlopen
+      B311  random
+      B312  telnetlib
+      B313  xml_bad_cElementTree
+      B314  xml_bad_ElementTree
+      B315  xml_bad_expatreader
+      B316  xml_bad_expatbuilder
+      B317  xml_bad_sax
+      B318  xml_bad_minidom
+      B319  xml_bad_pulldom
+      B320  xml_bad_etree
+      B321  ftplib
+      B401  telnet
+      B402  ftp
+      B403  info_libs
+      B404  xml_libs
+      B405  xml_libs_high
       B501  request_with_no_cert_validation
       B502  ssl_with_bad_version
       B503  ssl_with_bad_defaults

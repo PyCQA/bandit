@@ -262,8 +262,12 @@ def main():
 
     plugin_info = ["%s\t%s" % (a[0], a[1].name) for a in
                    six.iteritems(extension_mgr.plugins_by_id)]
+    blacklist_info = []
+    for a in six.iteritems(extension_mgr.blacklist):
+        for b in a[1]:
+            blacklist_info.append('%s\t%s' % (b['id'], b['name']))
 
-    plugin_list = '\n\t'.join(sorted(plugin_info))
+    plugin_list = '\n\t'.join(sorted(set(plugin_info + blacklist_info)))
     parser.epilog = ('The following plugin suites were discovered and'
                      ' loaded:\n\t{0}\n'.format(plugin_list))
 
