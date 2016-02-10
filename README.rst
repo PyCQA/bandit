@@ -128,7 +128,7 @@ Usage::
       -b BASELINE, --baseline BASELINE
                             Path to a baseline report, in JSON format. Note:
                             baseline reports must be output in one of the
-                            following formats: ['html', 'screen', 'txt']
+                            following formats: ['html', 'json', 'screen', 'txt']
       --ini INI_PATH        Path to a .bandit file which supplies command line
                             arguments to Bandit.
       --version             show program's version number and exit
