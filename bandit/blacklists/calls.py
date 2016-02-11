@@ -14,6 +14,254 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+r"""
+====================================================
+Blacklist various Python calls known to be dangerous
+====================================================
+
+This balcklist data checks for a number of Python calls known to have possible
+security implications. The following blacklist tests are run against any
+function calls encoutered in the scanned code base, triggered by encoutering
+ast.Call nodes.
+
+B301: pickle
+------------
+
+Pickle library appears to be in use, possible security issue.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B301 | pickle              | - pickle.loads                     | Medium    |
+|      |                     | - pickle.load                      |           |
+|      |                     | - pickle.Unpickler                 |           |
+|      |                     | - cPickle.loads                    |           |
+|      |                     | - cPickle.load                     |           |
+|      |                     | - cPickle.Unpickler                |           |
++------+---------------------+------------------------------------+-----------+
+
+B302: marshal
+-------------
+
+Deserialization with the marshal module is possibly dangerous.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B302 | marshal             | - marshal.load                     | Medium    |
+|      |                     | - marshal.loads                    |           |
++------+---------------------+------------------------------------+-----------+
+
+B303: md5
+---------
+
+Use of insecure MD2, MD4, or MD5 hash function.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B303 | md5                 | - hashlib.md5                      | Medium    |
+|      |                     | - Crypto.Hash.MD2.new              |           |
+|      |                     | - Crypto.Hash.MD4.new              |           |
+|      |                     | - Crypto.Hash.MD5.new              |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .hashes.MD5                      |           |
++------+---------------------+------------------------------------+-----------+
+
+B304 - B305: ciphers and modes
+------------------------------
+
+Use of insecure cipher or cipher mode. Replace with a known secure cipher such
+as AES.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B304 | ciphers             | - Crypto.Cipher.ARC2.new           | High      |
+|      |                     | - Crypto.Cipher.ARC4.new           |           |
+|      |                     | - Crypto.Cipher.Blowfish.new       |           |
+|      |                     | - Crypto.Cipher.DES.new            |           |
+|      |                     | - Crypto.Cipher.XOR.new            |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.ARC4         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.Blowfish     |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.IDEA         |           |
++------+---------------------+------------------------------------+-----------+
+| B305 | cipher_modes        | - cryptography.hazmat.primitives   | Medium    |
+|      |                     |   .ciphers.modes.ECB               |           |
++------+---------------------+------------------------------------+-----------+
+
+B306: mktemp_q
+--------------
+
+Use of insecure and deprecated function (mktemp).
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B306 | mktemp_q            | - tempfile.mktemp                  | Medium    |
++------+---------------------+------------------------------------+-----------+
+
+B307: eval
+----------
+
+Use of possibly insecure function - consider using safer ast.literal_eval.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B307 | eval                | - eval                             | Medium    |
++------+---------------------+------------------------------------+-----------+
+
+B308: mark_safe
+---------------
+
+Use of mark_safe() may expose cross-site scripting vulnerabilities and should
+be reviewed.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B308 | mark_safe           | - mark_safe                        | Medium    |
++------+---------------------+------------------------------------+-----------+
+
+B309: httpsconnection
+---------------------
+
+Use of HTTPSConnection does not provide security, see
+https://wiki.openstack.org/wiki/OSSN/OSSN-0033
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B309 | httpsconnection     | - mark_safe                        | Medium    |
+|      |                     | - httplib.HTTPSConnection          |           |
+|      |                     | - http.client.HTTPSConnection      |           |
+|      |                     | - six.moves.http_client            |           |
+|      |                     |   .HTTPSConnection                 |           |
++------+---------------------+------------------------------------+-----------+
+
+B310: urllib_urlopen
+--------------------
+
+Audit url open for permitted schemes. Allowing use of 'file:'' or custom
+schemes is often unexpected.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B310 | urllib_urlopen      | - urllib.urlopen                   | Medium    |
+|      |                     | - urllib.request.urlopen           |           |
+|      |                     | - urllib.urlretrieve               |           |
+|      |                     | - urllib.request.urlretrieve       |           |
+|      |                     | - urllib.URLopener                 |           |
+|      |                     | - urllib.request.URLopener         |           |
+|      |                     | - urllib.FancyURLopener            |           |
+|      |                     | - urllib.request.FancyURLopener    |           |
+|      |                     | - urllib2.urlopen                  |           |
+|      |                     | - urllib2.Reques                   |           |
+|      |                     | - six.moves.urllib.request.urlopen |           |
+|      |                     | - six.moves.urllib.request         |           |
+|      |                     |   .urlretrieve                     |           |
+|      |                     | - six.moves.urllib.request         |           |
+|      |                     |   .URLopener                       |           |
+|      |                     | - six.moves.urllib.request         |           |
+|      |                     |   .FancyURLopener                  |           |
++------+---------------------+------------------------------------+-----------+
+
+B311: random
+------------
+
+Standard pseudo-random generators are not suitable for security/cryptographic
+purposes.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B311 | random              | - random.random                    | Low       |
+|      |                     | - random.randrange                 |           |
+|      |                     | - random.randint                   |           |
+|      |                     | - random.choice                    |           |
+|      |                     | - random.uniform                   |           |
+|      |                     | - random.triangular                |           |
++------+---------------------+------------------------------------+-----------+
+
+B312: telnetlib
+---------------
+
+Telnet-related funtions are being called. Telnet is considered insecure. Use
+SSH or some other encrypted protocol.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B312 | telnetlib           | - telnetlib.\*                     | High      |
++------+---------------------+------------------------------------+-----------+
+
+B313 - B320: XML
+----------------
+
+Most of this is based off of Christian Heimes' work on defusedxml:
+https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+
+Using various XLM methods to parse untrusted XML data is known to be vulnerable
+to XML attacks. Methods should be replaced with their defusedxml equivalents.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B313 | xml_bad_cElementTree| - xml.etree.cElementTree.parse     | Medium    |
+|      |                     | - xml.etree.cElementTree.iterparse |           |
+|      |                     | - xml.etree.cElementTree.fromstring|           |
+|      |                     | - xml.etree.cElementTree.XMLParser |           |
++------+---------------------+------------------------------------+-----------+
+| B314 | xml_bad_ElementTree | - xml.etree.ElementTree.parse      | Medium    |
+|      |                     | - xml.etree.ElementTree.iterparse  |           |
+|      |                     | - xml.etree.ElementTree.fromstring |           |
+|      |                     | - xml.etree.ElementTree.XMLParser  |           |
++------+---------------------+------------------------------------+-----------+
+| B315 | xml_bad_expatreader | - xml.sax.expatreader.create_parser| Medium    |
++------+---------------------+------------------------------------+-----------+
+| B316 | xml_bad_expatbuilder| - xml.dom.expatbuilder.parse       | Medium    |
+|      |                     | - xml.dom.expatbuilder.parseString |           |
++------+---------------------+------------------------------------+-----------+
+| B317 | xml_bad_sax         | - xml.sax.parse                    | Medium    |
+|      |                     | - xml.sax.parseString              |           |
+|      |                     | - xml.sax.make_parser              |           |
++------+---------------------+------------------------------------+-----------+
+| B318 | xml_bad_minidom     | - xml.dom.minidom.parse            | Medium    |
+|      |                     | - xml.dom.minidom.parseString      |           |
++------+---------------------+------------------------------------+-----------+
+| B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
+|      |                     | - xml.dom.pulldom.parseString      |           |
++------+---------------------+------------------------------------+-----------+
+| B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
+|      |                     | - xml.dom.pulldom.parseString      |           |
++------+---------------------+------------------------------------+-----------+
+| B320 | xml_bad_etree       | - lxml.etree.parse                 | Medium    |
+|      |                     | - lxml.etree.fromstring            |           |
+|      |                     | - lxml.etree.RestrictedElement     |           |
+|      |                     | - lxml.etree.GlobalParserTLS       |           |
+|      |                     | - lxml.etree.getDefaultParser      |           |
+|      |                     | - lxml.etree.check_docinfo         |           |
++------+---------------------+------------------------------------+-----------+
+
+B321: ftplib
+------------
+
+FTP-related funtions are being called. FTP is considered insecure. Use
+SSH/SFTP/SCP or some other encrypted protocol.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B321 | ftplib              | - ftplib.\*                        | High      |
++------+---------------------+------------------------------------+-----------+
+
+"""
+
 from bandit.blacklists import utils
 
 
