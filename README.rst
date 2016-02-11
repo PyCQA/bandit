@@ -80,6 +80,7 @@ Usage::
                   [-p PROFILE | -t TESTS | -s SKIPS] [-l] [-i]
                   [-f {csv,html,json,screen,txt,xml}] [-o OUTPUT_FILE] [-v] [-d]
                   [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
+                  [--ini INI_PATH] [--version]
                   targets [targets ...]
 
     Bandit - a Python source code analyzer.
@@ -127,9 +128,10 @@ Usage::
       -b BASELINE, --baseline BASELINE
                             Path to a baseline report, in JSON format. Note:
                             baseline reports must be output in one of the
-                            following formats: ['screen', 'html', 'txt']
+                            following formats: ['html', 'screen', 'txt']
       --ini INI_PATH        Path to a .bandit file which supplies command line
                             arguments to Bandit.
+      --version             show program's version number and exit
 
     The following plugin suites were discovered and loaded:
       B101  assert_used
