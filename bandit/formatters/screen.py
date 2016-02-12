@@ -103,7 +103,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         bits.extend([indent + l for l in
                      issue.get_code(lines, True).split('\n')])
 
-    return '\n'.join([str(bit) for bit in bits])
+    return '\n'.join([bit for bit in bits])
 
 
 def get_results(manager, sev_level, conf_level, lines):
@@ -133,12 +133,13 @@ def get_results(manager, sev_level, conf_level, lines):
                                               lines=lines))
                 bits.append('\n')
         bits.append(u'-' * 50)
-    return '\n'.join([str(bit) for bit in bits])
+
+    return '\n'.join([bit for bit in bits])
 
 
 def do_print(bits):
     # needed so we can mock this stuff
-    print('\n'.join([str(bit) for bit in bits]))
+    print('\n'.join([bit for bit in bits]))
 
 
 @accepts_baseline

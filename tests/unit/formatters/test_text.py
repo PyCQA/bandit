@@ -115,6 +115,8 @@ class TextFormatterTests(testtools.TestCase):
         # Validate that we're outputting the correct issues
         output_str_fn = 'bandit.formatters.text._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
+            output_str.return_value = 'ISSUE_OUTPUT_TEXT'
+
             b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
                           lines=5)
 
@@ -184,6 +186,8 @@ class TextFormatterTests(testtools.TestCase):
         indent_val = ' ' * 10
         output_str_fn = 'bandit.formatters.text._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
+            output_str.return_value = 'ISSUE_OUTPUT_TEXT'
+
             b_text.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
                           lines=5)
 

@@ -58,7 +58,7 @@ def get_verbose_details(manager):
                  in zip(manager.files_list, manager.scores)])
     bits.append(u'Files excluded (%i):' % len(manager.excluded_files))
     bits.extend([u"\t%s" % fname for fname in manager.excluded_files])
-    return '\n'.join([str(bit) for bit in bits])
+    return '\n'.join([bit for bit in bits])
 
 
 def get_metrics(manager):
@@ -70,7 +70,7 @@ def get_metrics(manager):
             bits.append("\t\t%s: %s" % (
                 rank.capitalize(),
                 manager.metrics.data['_totals']['%s.%s' % (criteria, rank)]))
-    return '\n'.join([str(bit) for bit in bits])
+    return '\n'.join([bit for bit in bits])
 
 
 def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
@@ -90,7 +90,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         bits.extend([indent + l for l in
                      issue.get_code(lines, True).split('\n')])
 
-    return '\n'.join([str(bit) for bit in bits])
+    return '\n'.join([bit for bit in bits])
 
 
 def get_results(manager, sev_level, conf_level, lines):
@@ -120,7 +120,7 @@ def get_results(manager, sev_level, conf_level, lines):
                                               lines=lines))
                 bits.append('\n')
         bits.append(u'-' * 50)
-    return '\n'.join([str(bit) for bit in bits])
+    return '\n'.join([bit for bit in bits])
 
 
 @accepts_baseline
@@ -151,7 +151,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
     bits.append("\nTest results:")
     bits.append(get_results(manager, sev_level, conf_level, lines))
-    result = '\n'.join([str(bit) for bit in bits]) + '\n'
+    result = '\n'.join([bit for bit in bits]) + '\n'
 
     with utils.output_file(filename, 'w') as fout:
         fout.write(result)

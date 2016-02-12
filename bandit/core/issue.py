@@ -15,6 +15,7 @@
 # under the License.
 
 from __future__ import division
+from __future__ import unicode_literals
 
 from bandit.core import constants
 
@@ -92,6 +93,7 @@ class Issue(object):
         tmplt = "%i\t%s" if tabbed else "%i %s"
         for line in xrange(lmin, lmax):
             text = linecache.getline(self.fname, line)
+
             if not len(text):
                 break
             lines.append(tmplt % (line, text))

@@ -165,7 +165,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     :param lines: Number of lines to report, -1 for all
     """
 
-    header_block = """
+    header_block = u"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -240,7 +240,7 @@ pre {
 </head>
 """
 
-    report_block = """
+    report_block = u"""
 <body>
 {metrics}
 {skipped}
@@ -254,7 +254,7 @@ pre {
 </html>
 """
 
-    issue_block = """
+    issue_block = u"""
 <span id='issue-{issue_no}'>
 <div class='issue-block {issue_class}'>
     <b>{test_name}: </b> {test_text}<br>
@@ -268,7 +268,7 @@ pre {
 </span>
 """
 
-    code_block = """
+    code_block = u"""
 <span id='code'>
 <pre>
 {code}
@@ -276,7 +276,7 @@ pre {
 </span>
 """
 
-    candidate_block = """
+    candidate_block = u"""
 <span id='candidates'>
 <br>
 <b>Candidates: </b>
@@ -284,7 +284,7 @@ pre {
 </span>
 """
 
-    candidate_issue = """
+    candidate_issue = u"""
 <span id='candidate'>
 <div class='candidate-issues'>
 <pre>{code}</pre>
@@ -292,7 +292,7 @@ pre {
 </span>
 """
 
-    skipped_block = """
+    skipped_block = u"""
 <br>
 <span id='skipped'>
 <div class='bordered-box'>
@@ -302,7 +302,7 @@ pre {
 </span>
 """
 
-    metrics_block = """
+    metrics_block = u"""
 <span id='metrics'>
     <div class='metrics-box bordered-box'>
         <div class='metrics-title'>
