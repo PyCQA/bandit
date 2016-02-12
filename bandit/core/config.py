@@ -158,6 +158,8 @@ class BanditConfig():
             for key, val in six.iteritems(item):
                 val['name'] = key
                 val['message'] = val['message'].replace('{module}', '{name}')
+                val['qualnames'] = val['imports']
+                del val['imports']
                 bad_imports_list.append(val)
 
         if bad_imports_list or bad_calls_list:

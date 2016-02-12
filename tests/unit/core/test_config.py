@@ -182,7 +182,7 @@ class TestConfigCompat(testtools.TestCase):
     def test_converted_blacklist_call_data(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_2']
-        data = {'Call': [{'imports': ['telnetlib'],
+        data = {'Call': [{'qualnames': ['telnetlib'],
                           'level': 'HIGH',
                           'message': '{name} is considered insecure.',
                           'name': 'telnet'}]}
