@@ -41,7 +41,7 @@ default_output_format = 'terminal'
 logger = logging.getLogger(__name__)
 repo = None
 report_basename = 'bandit_baseline_result'
-valid_baseline_formats = ['txt', 'html']
+valid_baseline_formats = ['txt', 'html', 'json']
 
 
 def main():

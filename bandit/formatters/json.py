@@ -101,11 +101,13 @@ from operator import itemgetter
 import six
 
 from bandit.core import constants
+from bandit.core.test_properties import accepts_baseline
 from bandit.core import utils
 
 logger = logging.getLogger(__name__)
 
 
+@accepts_baseline
 def report(manager, filename, sev_level, conf_level, lines=-1):
     '''''Prints issues in JSON format
 
@@ -144,7 +146,18 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     results = manager.get_issue_list(sev_level=sev_level,
                                      conf_level=conf_level)
 
-    collector = [r.as_dict() for r in results]
+    baseline = not isinstance(results, list)
+
+    if baseline:
+        collector = []
+        for r in results:
+            d = r.as_dict()
+            if len(results[r]) > 1:
+                d['candidates'] = [c.as_dict() for c in results[r]]
+            collector.append(d)
+
+    else:
+        collector = [r.as_dict() for r in results]
 
     if manager.agg_type == 'vuln':
         machine_output['results'] = sorted(collector,
