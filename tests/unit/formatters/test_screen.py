@@ -118,6 +118,8 @@ class ScreenFormatterTests(testtools.TestCase):
         # Validate that we're outputting the correct issues
         output_str_fn = 'bandit.formatters.screen._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
+            output_str.return_value = 'ISSUE_OUTPUT_TEXT'
+
             screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
                           lines=5)
 
@@ -190,6 +192,8 @@ class ScreenFormatterTests(testtools.TestCase):
         indent_val = ' ' * 10
         output_str_fn = 'bandit.formatters.screen._output_issue_str'
         with mock.patch(output_str_fn) as output_str:
+            output_str.return_value = 'ISSUE_OUTPUT_TEXT'
+
             screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
                           lines=5)
 
