@@ -350,3 +350,15 @@ def parse_ini_file(f_loc):
                        "section", f_loc)
 
     return None
+
+
+def check_ast_node(name):
+    'Check if the given name is that of a valid AST node.'
+    try:
+        node = getattr(ast, name)
+        if issubclass(node, ast.AST):
+            return name
+    except AttributeError:  # nosec(tkelsey): catching expected exception
+        pass
+
+    raise TypeError("Error: %s is not a valid node type in AST" % name)

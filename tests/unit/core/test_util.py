@@ -317,3 +317,13 @@ class UtilTests(testtools.TestCase):
                     pass
 
             self.assertRaises(IOError, _b_tester, 'derp', 'r')
+
+    def test_check_ast_node_good(self):
+        node = b_utils.check_ast_node("Call")
+        self.assertEqual("Call", node)
+
+    def test_check_ast_node_bad_node(self):
+        self.assertRaises(TypeError, b_utils.check_ast_node, 'Derp')
+
+    def test_check_ast_node_bad_type(self):
+        self.assertRaises(TypeError, b_utils.check_ast_node, 'walk')

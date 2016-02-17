@@ -19,6 +19,8 @@ import sys
 import six
 from stevedore import extension
 
+from bandit.core import utils
+
 
 class Manager(object):
     # These IDs are for bandit built in tests
@@ -77,7 +79,8 @@ class Manager(object):
         self.blacklist = {}
         blacklist = list(self.blacklists_mgr)
         for item in blacklist:
-            for key, val in six.iteritems(item.plugin()):
+            for key, val in item.plugin().items():
+                utils.check_ast_node(key)
                 self.blacklist.setdefault(key, []).extend(val)
 
         self.blacklist_by_id = {}
@@ -91,15 +94,15 @@ class Manager(object):
         '''Validate that everything in the configured profiles looks good.'''
         for inc in profile['include']:
             if not self.check_id(inc):
-                raise ValueError('Unknown Test found in profile: %s' % inc)
+                raise ValueError('Unknown test found in profile: %s' % inc)
 
         for exc in profile['exclude']:
             if not self.check_id(exc):
-                raise ValueError('Unknown Test found in profile: %s' % exc)
+                raise ValueError('Unknown test found in profile: %s' % exc)
 
         union = set(profile['include']) & set(profile['exclude'])
         if len(union) > 0:
-            raise ValueError('None exclusive include/excule test sets: %s' %
+            raise ValueError('Non-exclusive include/exclude test sets: %s' %
                              union)
 
     def check_id(self, test):
