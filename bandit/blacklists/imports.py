@@ -14,6 +14,81 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+r"""
+======================================================
+Blacklist various Python imports known to be dangerous
+======================================================
+
+This blacklist data checks for a number of Python modules known to have
+possible security implications. The following blacklist tests are run against
+any import statements or calls encountered in the scanned code base.
+
+B401: telnet
+------------
+
+A telnet-related module is being imported. Telnet is considered insecure. Use
+SSH or some other encrypted protocol.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B401 | telnet              | - telnetlib                        | high      |
++------+---------------------+------------------------------------+-----------+
+
+B402: ftplib
+------------
+A FTP-related module is being imported.  FTP is considered insecure. Use
+SSH/SFTP/SCP or some other encrypted protocol.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B402 | ftp                 | - ftplib                           | high      |
++------+---------------------+------------------------------------+-----------+
+
+B403: info_libs
+---------------
+
+Consider possible security implications associated with these modules.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B403 | info_libs           | - pickle                           | low       |
+|      |                     | - cPickle                          |           |
+|      |                     | - subprocess                       |           |
+|      |                     | - Crypto                           |           |
++------+---------------------+------------------------------------+-----------+
+
+B404 - B405: XML
+----------------
+
+Most of this is based off of Christian Heimes' work on defusedxml:
+https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
+XMLRPC is particularly dangerous as it is also concerned with communicating
+data over a network. Use defused.xmlrpc.monkey_patch() function to monkey-patch
+xmlrpclib and mitigate remote XML attacks.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B404 | xml_libs            | - xml.etree.cElementTree           | low       |
+|      |                     | - xml.etree.ElementTree            |           |
+|      |                     | - xml.sax                          |           |
+|      |                     | - xml.dom.expatbuilder             |           |
+|      |                     | - xml.dom.minidom                  |           |
+|      |                     | - xml.dom.pulldom                  |           |
+|      |                     | - xml.dom.expatbuilder             |           |
+|      |                     | - lxml                             |           |
++------+---------------------+------------------------------------+-----------+
+| B405 | xml_libs_high       | - xmlrpclib                        | high      |
++------+---------------------+------------------------------------+-----------+
+
+"""
 
 from bandit.blacklists import utils
 
@@ -58,12 +133,10 @@ def gen_blacklist():
         'xml_libs', 'B404',
         ['xml.etree.cElementTree',
          'xml.etree.ElementTree',
-         'xml.sax.expatreader',
          'xml.sax',
          'xml.dom.expatbuilder',
          'xml.dom.minidom',
          'xml.dom.pulldom',
-         'lxml.etree',
          'lxml'],
         'Using {name} to parse untrusted XML data is known to be '
         'vulnerable to XML attacks. Replace {name} with the equivalent '
