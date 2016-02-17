@@ -94,6 +94,9 @@ class Issue(object):
         for line in xrange(lmin, lmax):
             text = linecache.getline(self.fname, line)
 
+            if isinstance(text, bytes):
+                text = text.decode('utf-8')
+
             if not len(text):
                 break
             lines.append(tmplt % (line, text))
