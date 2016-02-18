@@ -14,6 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import mock
 import testtools
 
 import bandit
@@ -113,6 +114,16 @@ class IssueTests(testtools.TestCase):
 
         # line number doesn't match but should pass because we don't test that
         self.assertEqual(issue_a, issue_h)
+
+    @mock.patch('linecache.getline')
+    def test_get_code(self, getline):
+        getline.return_value = b'\x08\x30'
+        new_issue = issue.Issue(bandit.MEDIUM, lineno=1)
+
+        try:
+            new_issue.get_code()
+        except UnicodeDecodeError:
+            self.fail('Bytes not properly decoded in issue.get_code()')
 
 
 def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
