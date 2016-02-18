@@ -22,9 +22,9 @@ from bandit.core import issue
 
 def report_issue(check, name):
     return issue.Issue(
-        severity=check['level'], confidence='HIGH',
+        severity=check.get('level', 'MEDIUM'), confidence='HIGH',
         text=check['message'].replace('{name}', name),
-        ident=name, test_id=check["id"])
+        ident=name, test_id=check.get("id", 'LEGACY'))
 
 
 def blacklist(context, config):

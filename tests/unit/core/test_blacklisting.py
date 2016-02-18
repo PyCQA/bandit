@@ -1,0 +1,43 @@
+# -*- coding:utf-8 -*-
+#
+# Copyright 2016 Hewlett-Packard Development Company, L.P.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+from bandit.core import blacklisting
+
+import testtools
+
+
+class BlacklistingTests(testtools.TestCase):
+    def test_report_issue(self):
+        data = {'level': 'HIGH', 'message': 'test {name}', 'id': 'B000'}
+
+        issue = blacklisting.report_issue(data, 'name')
+        issue_dict = issue.as_dict(with_code=False)
+        self.assertIsInstance(issue_dict, dict)
+        self.assertEqual('B000', issue_dict['test_id'])
+        self.assertEqual('HIGH', issue_dict['issue_severity'])
+        self.assertEqual('HIGH', issue_dict['issue_confidence'])
+        self.assertEqual('test name', issue_dict['issue_text'])
+
+    def test_report_issue_defaults(self):
+        data = {'message': 'test {name}'}
+
+        issue = blacklisting.report_issue(data, 'name')
+        issue_dict = issue.as_dict(with_code=False)
+        self.assertIsInstance(issue_dict, dict)
+        self.assertEqual('LEGACY', issue_dict['test_id'])
+        self.assertEqual('MEDIUM', issue_dict['issue_severity'])
+        self.assertEqual('HIGH', issue_dict['issue_confidence'])
+        self.assertEqual('test name', issue_dict['issue_text'])
