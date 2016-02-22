@@ -258,7 +258,7 @@ pre {
 <span id='issue-{issue_no}'>
 <div class='issue-block {issue_class}'>
     <b>{test_name}: </b> {test_text}<br>
-    <b>Test ID: {test_id}: </b> {test_id}<br>
+    <b>Test ID:</b> {test_id}<br>
     <b>Severity: </b>{severity}<br />
     <b>Confidence: </b>{confidence}</br />
     <b>File: </b><a href='{path}' target='_blank'>{path}</a> <br />
