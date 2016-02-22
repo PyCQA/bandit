@@ -36,8 +36,8 @@ profiles:
             - start_process_with_a_shell
 
 shell_injection:
-    subprocess:
-
+    subprocess: []
+    no_shell: []
     shell:
         - os.system
 """
@@ -102,7 +102,8 @@ class BanditBaselineToolTests(testtools.TestCase):
                                'benign_two.py'],
                      'expected_return': 0}]
 
-        baseline_command = ['bandit-baseline', '-r', '.', '-p', 'test']
+        baseline_command = ['bandit-baseline', '-c', 'bandit.yaml', '-r', '.',
+                            '-p', 'test']
 
         for branch in branches:
             branch['branch'] = git_repo.create_head(branch['name'])

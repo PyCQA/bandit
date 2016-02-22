@@ -18,9 +18,7 @@ import fnmatch
 import logging
 import os
 import sys
-import sysconfig
 
-import appdirs
 import six
 
 import bandit
@@ -115,40 +113,10 @@ def _running_under_virtualenv():
         return True
 
 
-def _find_config():
-    # prefer config file in the following order:
-    # 1) current directory, 2) user home directory, 3) bundled config
-    config_dirs = (
-        ['.'] + [appdirs.user_config_dir("bandit")] +
-        appdirs.site_config_dir("bandit", multipath=True).split(':'))
-    if _running_under_virtualenv():
-        config_dirs.append(os.path.join(sys.prefix, 'etc', 'bandit'))
-        config_dirs.append(
-            os.path.join(sysconfig.get_paths().get('purelib', ''),
-                         'bandit', 'config'))
-    config_locations = [os.path.join(s, BASE_CONFIG) for s in config_dirs]
-
-    # pip on Mac installs to the following path, but appdirs expects to
-    # follow Mac's BPFileSystem spec which doesn't include this path so
-    # we'll insert it. Issue raised as http://git.io/vOreU
-    mac_pip_cfg_path = "/usr/local/etc/bandit/bandit.yaml"
-    if mac_pip_cfg_path not in config_locations:
-        config_locations.append(mac_pip_cfg_path)
-
-    for config_file in config_locations:
-        if os.path.isfile(config_file):
-            return config_file  # Found a valid config
-    else:
-        # Failed to find any config, raise an error.
-        raise utils.NoConfigFileFound(config_locations)
-
-
 def main():
     # bring our logging stuff up as early as possible
     debug = ('-d' in sys.argv or '--debug' in sys.argv)
     _init_logger(debug)
-    # By default path would be /etx/xdg/bandit, we want system paths
-    os.environ['XDG_CONFIG_DIRS'] = '/etc:/usr/local/etc'
     extension_mgr = _init_extensions()
 
     baseline_formatters = [f.name for f in filter(lambda x:
@@ -183,8 +151,8 @@ def main():
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
         action='store', default=None, type=str,
-        help=('if omitted default locations are checked. '
-              'Check documentation for searched paths')
+        help=('optional config file to use for selecting plugins and '
+              'overriding defaults')
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -274,16 +242,9 @@ def main():
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
-    config_file = args.config_file
-    if not config_file:
-        try:
-            config_file = _find_config()
-        except utils.NoConfigFileFound as e:
-            logger.error(e)
-            sys.exit(2)
 
     try:
-        b_conf = b_config.BanditConfig(config_file)
+        b_conf = b_config.BanditConfig(config_file=args.config_file)
     except (utils.ConfigFileUnopenable, utils.ConfigFileInvalidYaml) as e:
         logger.error('%s', e)
         sys.exit(2)
@@ -353,7 +314,9 @@ def main():
             sys.exit(2)
 
     if args.output_format != "json":
-        logger.info("using config: %s", config_file)
+        if args.config_file:
+            logger.info("using config: %s", args.config_file)
+
         logger.info("running on Python %d.%d.%d", sys.version_info.major,
                     sys.version_info.minor, sys.version_info.micro)
 

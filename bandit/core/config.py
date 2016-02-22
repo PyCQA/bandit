@@ -33,7 +33,7 @@ class BanditConfig():
         'B001'  # Built in blacklist test
         ]
 
-    def __init__(self, config_file):
+    def __init__(self, config_file=None):
         '''Attempt to initialize a config dictionary from a yaml file.
 
         Error out if loading the yaml file fails for any reason.
@@ -46,20 +46,31 @@ class BanditConfig():
 
         '''
         self.config_file = config_file
-        try:
-            f = open(config_file, 'r')
-        except IOError:
-            raise utils.ConfigFileUnopenable(config_file)
+        self._config = {}
 
-        try:
-            self._config = yaml.safe_load(f)
-        except yaml.YAMLError:
-            raise utils.ConfigFileInvalidYaml(config_file)
+        if config_file:
+            try:
+                f = open(config_file, 'r')
+            except IOError:
+                raise utils.ConfigFileUnopenable(config_file)
 
-        if self._config:
+            try:
+                self._config = yaml.safe_load(f)
+            except yaml.YAMLError:
+                raise utils.ConfigFileInvalidYaml(config_file)
+
+            # valid config must be a dict
+            if not isinstance(self._config, dict):
+                raise utils.ConfigFileInvalidYaml(config_file)
+
             self.convert_legacy_config()
-            self.validate_profiles()
 
+        else:
+            # use sane defaults
+            self._config['plugin_name_pattern'] = '*.py'
+            self._config['include'] = ['*.py', '*.pyw']
+
+        self.validate_profiles()
         self._init_settings()
 
     def get_option(self, option_string):
