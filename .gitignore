@@ -9,7 +9,7 @@ venv*
 .testrepository
 build/*
 cover/*
-.coverage
+.coverage*
 doc/build/*
 ChangeLog
 doc/source/api
