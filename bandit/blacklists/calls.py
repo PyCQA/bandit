@@ -161,7 +161,7 @@ schemes is often unexpected.
 |      |                     | - urllib.FancyURLopener            |           |
 |      |                     | - urllib.request.FancyURLopener    |           |
 |      |                     | - urllib2.urlopen                  |           |
-|      |                     | - urllib2.Reques                   |           |
+|      |                     | - urllib2.Request                  |           |
 |      |                     | - six.moves.urllib.request.urlopen |           |
 |      |                     | - six.moves.urllib.request         |           |
 |      |                     |   .urlretrieve                     |           |
