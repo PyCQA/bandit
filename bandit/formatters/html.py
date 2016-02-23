@@ -148,6 +148,7 @@ This formatter outputs the issues as HTML.
 
 import logging
 
+from bandit.core import docs_utils
 from bandit.core.test_properties import accepts_baseline
 from bandit.core import utils
 
@@ -262,6 +263,7 @@ pre {
     <b>Severity: </b>{severity}<br />
     <b>Confidence: </b>{confidence}</br />
     <b>File: </b><a href='{path}' target='_blank'>{path}</a> <br />
+    <b>More info: </b><a href='{url}' target='_blank'>{url}</a><br />
 {code}
 {candidates}
 </div>
@@ -344,6 +346,7 @@ pre {
 
             candidates = candidate_block.format(candidate_list=candidates_str)
 
+        url = docs_utils.get_url(issue.test_id)
         results_str += issue_block.format(issue_no=index,
                                           issue_class='issue-sev-{}'.
                                           format(issue.severity.lower()),
@@ -353,7 +356,8 @@ pre {
                                           severity=issue.severity,
                                           confidence=issue.confidence,
                                           path=issue.fname, code=code,
-                                          candidates=candidates)
+                                          candidates=candidates,
+                                          url=url)
 
     # build the metrics string to insert in the report
     metrics_summary = metrics_block.format(
