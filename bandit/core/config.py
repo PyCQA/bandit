@@ -28,11 +28,6 @@ logger = logging.getLogger(__name__)
 
 
 class BanditConfig():
-    # These IDs are for bandit built in tests
-    builtin = [
-        'B001'  # Built in blacklist test
-        ]
-
     def __init__(self, config_file=None):
         '''Attempt to initialize a config dictionary from a yaml file.
 
@@ -70,7 +65,6 @@ class BanditConfig():
             self._config['plugin_name_pattern'] = '*.py'
             self._config['include'] = ['*.py', '*.pyw']
 
-        self.validate_profiles()
         self._init_settings()
 
     def get_option(self, option_string):
@@ -209,18 +203,3 @@ class BanditConfig():
             _clean_set('blacklist_import_func', exclude)
 
             profile['blacklist'] = blacklist
-
-    def validate_profiles(self):
-        '''Validate that everything in the configured profiles looks good.'''
-        extman = extension_loader.MANAGER
-
-        for name, profile in six.iteritems(self._config.get('profiles', {})):
-            for inc in profile['include']:
-                if inc not in extman.plugins_by_id and inc not in self.builtin:
-                    logger.warning('Unknown Test found in profile %s: %s',
-                                   name, inc)
-
-            for exc in profile['exclude']:
-                if exc not in extman.plugins_by_id and exc not in self.builtin:
-                    logger.warning('Unknown Test found in profile %s: %s',
-                                   name, exc)

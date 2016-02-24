@@ -46,7 +46,7 @@ class BanditTestSet():
             filtered = inc
         else:
             filtered = set(extman.plugins_by_id.keys())
-            filtered.update(config.builtin)
+            filtered.update(extman.builtin)
             for node, tests in six.iteritems(extman.blacklist):
                 filtered.update(t['id'] for t in tests)
         return filtered - exc

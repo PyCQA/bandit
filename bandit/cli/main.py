@@ -113,6 +113,20 @@ def _running_under_virtualenv():
         return True
 
 
+def _get_profile(config, profile_name, config_path):
+    profile = {}
+    if profile_name:
+        profiles = config.get_option('profiles') or {}
+        profile = profiles.get(profile_name)
+        if profile is None:
+            raise utils.ProfileNotFound(config_path, profile_name)
+
+    if profile:
+        logger.debug("read in profile '%s': %s", profile_name, profile)
+
+    return profile
+
+
 def main():
     # bring our logging stuff up as early as possible
     debug = ('-d' in sys.argv or '--debug' in sys.argv)
@@ -246,7 +260,7 @@ def main():
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
     except (utils.ConfigFileUnopenable, utils.ConfigFileInvalidYaml) as e:
-        logger.error('%s', e)
+        logger.error(e)
         sys.exit(2)
 
     # Handle .bandit files in projects to pass cmdline args from file
@@ -269,35 +283,20 @@ def main():
         log_format = b_conf.get_option('log_format')
         _init_logger(debug, log_format=log_format)
 
-    if args.tests:
-        test_list = args.tests.split(',')
-        test_set = set(test_list)
-        all_set = set(extension_mgr.plugins_by_id)
-        if not test_set.issubset(all_set):
-            unknown_tests = ','.join(test_set - all_set)
-            logger.error("Unknown test ID(s) in test list: %s", unknown_tests)
-            sys.exit(2)
-        profile_name = test_list
-    elif args.skips:
-        skip_list = args.skips.split(',')
-        skip_set = set(skip_list)
-        all_set = set(extension_mgr.plugins_by_id)
-        if not skip_set.issubset(all_set):
-            unknown_tests = ','.join(skip_set - all_set)
-            logger.error("Unknown test ID(s) in skip list: %s", unknown_tests)
-            sys.exit(2)
-        profile_name = list(all_set - skip_set)
-    else:
-        profile_name = args.profile
-
     try:
-        b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
-                                        profile_name=profile_name,
-                                        verbose=args.verbose,
-                                        ignore_nosec=args.ignore_nosec)
-    except utils.ProfileNotFound as e:
+        profile = _get_profile(b_conf, args.profile, args.config_file)
+        if not profile:
+            profile = {'include': args.tests.split(',') if args.tests else [],
+                       'exclude': args.skips.split(',') if args.skips else []}
+        extension_mgr.validate_profile(profile)
+
+    except (utils.ProfileNotFound, ValueError) as e:
         logger.error(e)
         sys.exit(2)
+
+    b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
+                                    profile=profile, verbose=args.verbose,
+                                    ignore_nosec=args.ignore_nosec)
 
     if args.baseline is not None:
         try:

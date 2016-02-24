@@ -19,7 +19,6 @@ from stevedore import extension
 import testtools
 
 from bandit.blacklists import utils
-from bandit.core import config
 from bandit.core import extension_loader
 from bandit.core import test_properties as test
 from bandit.core import test_set
@@ -60,7 +59,6 @@ class BanditTesSetTests(testtools.TestCase):
         self.old_ext_man = extension_loader.MANAGER
         extension_loader.MANAGER = extension_loader.Manager()
         self.config = mock.MagicMock()
-        self.config.builtin = config.BanditConfig.builtin
         self.config.get_setting.return_value = None
 
     def tearDown(self):

@@ -21,6 +21,11 @@ from stevedore import extension
 
 
 class Manager(object):
+    # These IDs are for bandit built in tests
+    builtin = [
+        'B001'  # Built in blacklist test
+        ]
+
     def __init__(self, formatters_namespace='bandit.formatters',
                  plugins_namespace='bandit.plugins',
                  blacklists_namespace='bandit.blacklists'):
@@ -74,6 +79,35 @@ class Manager(object):
         for item in blacklist:
             for key, val in six.iteritems(item.plugin()):
                 self.blacklist.setdefault(key, []).extend(val)
+
+        self.blacklist_by_id = {}
+        self.blacklist_by_name = {}
+        for val in six.itervalues(self.blacklist):
+            for b in val:
+                self.blacklist_by_id[b['id']] = b
+                self.blacklist_by_name[b['name']] = b
+
+    def validate_profile(self, profile):
+        '''Validate that everything in the configured profiles looks good.'''
+        def _check(test):
+            return (
+                test not in self.plugins_by_id and
+                test not in self.blacklist_by_id and
+                test not in self.builtin)
+
+        for inc in profile['include']:
+            if _check(inc):
+                raise ValueError('Unknown Test found in profile: %s' % inc)
+
+        for exc in profile['exclude']:
+            if _check(exc):
+                raise ValueError('Unknown Test found in profile: %s' % exc)
+
+        union = set(profile['include']) & set(profile['exclude'])
+        if len(union) > 0:
+            raise ValueError('None exclusive include/excule test sets: %s' %
+                             union)
+
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
 # once, store them on the object, and have a module global object for

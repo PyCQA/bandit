@@ -15,7 +15,6 @@
 # under the License.
 
 import os
-import tempfile
 
 import fixtures
 import mock
@@ -25,24 +24,6 @@ from bandit.core import config
 from bandit.core import constants
 from bandit.core import issue
 from bandit.core import manager
-from bandit.core import utils
-
-
-class TempFile(fixtures.Fixture):
-    def __init__(self, contents=None):
-        super(TempFile, self).__init__()
-        self.contents = contents
-
-    def setUp(self):
-        super(TempFile, self).setUp()
-
-        with tempfile.NamedTemporaryFile(mode='wt', delete=False) as f:
-            if self.contents:
-                f.write(self.contents)
-
-        self.addCleanup(os.unlink, f.name)
-
-        self.name = f.name
 
 
 class ManagerTests(testtools.TestCase):
@@ -56,20 +37,16 @@ class ManagerTests(testtools.TestCase):
 
     def setUp(self):
         super(ManagerTests, self).setUp()
-        contents = """
-            profiles:
-                Test:
-                    include:
-                        - any_other_function_with_shell_equals_true
-                        - assert_used
-        """
-        f = self.useFixture(TempFile(contents))
-        self.config = config.BanditConfig(f.name)
+        self.profile = {}
+        self.profile['include'] = {
+            'any_other_function_with_shell_equals_true',
+            'assert_used'}
+
+        self.config = config.BanditConfig()
         self.manager = manager.BanditManager(config=self.config,
                                              agg_type='file',
                                              debug=False,
-                                             verbose=False,
-                                             profile_name=None)
+                                             verbose=False)
 
     def test_create_manager(self):
         # make sure we can create a manager
@@ -81,48 +58,7 @@ class ManagerTests(testtools.TestCase):
         # make sure we can create a manager
         m = manager.BanditManager(config=self.config, agg_type='file',
                                   debug=False, verbose=False,
-                                  profile_name='Test')
-
-        self.assertEqual(m.debug, False)
-        self.assertEqual(m.verbose, False)
-        self.assertEqual(m.agg_type, 'file')
-
-    def test_create_manager_with_profile_bad(self):
-        try:
-            manager.BanditManager(config=self.config, agg_type='file',
-                                  debug=False, verbose=False,
-                                  profile_name='Bad')
-        except utils.ProfileNotFound as e:
-            err = str(e)
-
-        self.assertTrue(err.startswith(
-            "Unable to find profile (Bad) in config file:"))
-
-    def test_create_manager_with_test_id_list(self):
-        # make sure we can create a manager
-        m = manager.BanditManager(config=self.config, agg_type='file',
-                                  debug=False, verbose=False,
-                                  profile_name=['B108', 'B501'])
-
-        self.assertEqual(m.debug, False)
-        self.assertEqual(m.verbose, False)
-        self.assertEqual(m.agg_type, 'file')
-
-    def test_create_manager_with_test_name_list(self):
-        # make sure we can create a manager
-        m = manager.BanditManager(config=self.config, agg_type='file',
-                                  debug=False, verbose=False,
-                                  profile_name=['exec_used', 'paramiko_calls'])
-
-        self.assertEqual(m.debug, False)
-        self.assertEqual(m.verbose, False)
-        self.assertEqual(m.agg_type, 'file')
-
-    def test_create_manager_with_invalid_test_list(self):
-        # make sure we can create a manager
-        m = manager.BanditManager(config=self.config, agg_type='file',
-                                  debug=False, verbose=False,
-                                  profile_name=['bogus'])
+                                  profile=self.profile)
 
         self.assertEqual(m.debug, False)
         self.assertEqual(m.verbose, False)
@@ -269,7 +205,8 @@ class ManagerTests(testtools.TestCase):
         with mock.patch.object(manager, '_is_file_included') as m:
             self.manager.discover_files(['a', 'b', 'c'], True,
                                         excluded_paths='a,b')
-            m.assert_called_with('c', ['*.py'], ['a', 'b'], enforce_glob=False)
+            m.assert_called_with('c', ['*.py', '*.pyw'], ['a', 'b'],
+                                 enforce_glob=False)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_include(self, isdir):

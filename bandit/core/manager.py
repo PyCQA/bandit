@@ -28,7 +28,6 @@ from bandit.core import meta_ast as b_meta_ast
 from bandit.core import metrics
 from bandit.core import node_visitor as b_node_visitor
 from bandit.core import test_set as b_test_set
-from bandit.core import utils
 
 
 logger = logging.getLogger(__name__)
@@ -39,7 +38,7 @@ class BanditManager():
     scope = []
 
     def __init__(self, config, agg_type, debug=False, verbose=False,
-                 profile_name=None, ignore_nosec=False):
+                 profile={}, ignore_nosec=False):
         '''Get logger, config, AST handler, and result store ready
 
         :param config: config options object
@@ -63,30 +62,11 @@ class BanditManager():
         self.baseline = []
         self.agg_type = agg_type
         self.metrics = metrics.Metrics()
-
-        # if the profile name was specified, try to find it in the config
-        if isinstance(profile_name, list):
-            profile = {'include': profile_name}
-        elif profile_name:
-            profile = self._get_profile(profile_name)
-        else:
-            profile = {}
-
         self.b_ts = b_test_set.BanditTestSet(config, profile)
 
         # set the increment of after how many files to show progress
         self.progress = b_constants.progress_increment
         self.scores = []
-
-    def _get_profile(self, profile_name):
-        if(not self.b_conf.get_option('profiles') or
-           profile_name not in self.b_conf.config['profiles']):
-
-            raise utils.ProfileNotFound(self.b_conf.config_file, profile_name)
-
-        profile = self.b_conf.config['profiles'][profile_name]
-        logger.debug("read in profile '%s': %s", profile_name, profile)
-        return profile
 
     def get_issue_list(self,
                        sev_level=b_constants.LOW,
