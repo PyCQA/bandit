@@ -50,7 +50,7 @@ logger = logging.getLogger(__name__)
 
 
 def report(manager, filename, sev_level, conf_level, lines=-1):
-    '''Prints issues in XML formt
+    '''Prints issues in XML format
 
     :param manager: the bandit manager object
     :param filename: The output file name, or None for stdout
