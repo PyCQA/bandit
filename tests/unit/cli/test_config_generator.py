@@ -84,6 +84,12 @@ class BanditConfigGeneratorTests(testtools.TestCase):
         return_value = config_generator.parse_args()
         self.assertTrue(return_value.show_defaults)
 
+    @mock.patch('sys.argv', ['bandit-config-generator', '--out', 'dummyfile'])
+    def test_parse_args_out_file(self):
+        # Test config generator get proper output file when specified
+        return_value = config_generator.parse_args()
+        self.assertEqual('dummyfile', return_value.output_file)
+
     def test_get_config_settings(self):
         settings = config_generator.get_config_settings()
         self.assertEqual(settings, "test: {test: test data}\n")
@@ -96,14 +102,4 @@ class BanditConfigGeneratorTests(testtools.TestCase):
             return_value = config_generator.main()
             # The get_config_settings function should have been called
             self.assertTrue(mock_config_settings.called)
-            self.assertEqual(0, return_value)
-
-    @mock.patch('sys.argv', ['bandit-config-generator'])
-    def test_main_no_defaults(self):
-        # Test that the config generator does not show defaults and returns 0
-        with mock.patch('bandit.cli.config_generator.get_config_settings'
-                        ) as mock_config_settings:
-            return_value = config_generator.main()
-            # The get_config_settings function should not have been called
-            self.assertFalse(mock_config_settings.called)
             self.assertEqual(0, return_value)

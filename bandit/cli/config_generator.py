@@ -16,6 +16,7 @@ from __future__ import print_function
 import argparse
 import importlib
 import logging
+import os
 import sys
 
 from stevedore import extension
@@ -25,10 +26,26 @@ PROG_NAME = 'bandit_conf_generator'
 logger = logging.getLogger(__name__)
 
 
+template = """
+### profile may optionally select or skip tests
+
+# (optional) list included tests here:
+# tests: B101,B102
+
+# (optional) list skipped tests here:
+# skip: B201, B202
+
+
+### override settings - used to set settings for plugins to non-default values
+
+{settings}
+"""
+
+
 def init_logger():
     logger.handlers = []
     log_level = logging.INFO
-    log_format_string = "[bandit-config-generator] %(message)s"
+    log_format_string = "[%(levelname)5s]: %(message)s"
     logging.captureWarnings(True)
     logger.setLevel(log_level)
     handler = logging.StreamHandler(sys.stdout)
@@ -37,13 +54,28 @@ def init_logger():
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Tool to display Bandit config options')
+    help_description = """Bandit Config Generator
 
-    parser.add_argument('--show-defaults', dest='show_defaults',
+    This tool is used to generate an optional profile.  The profile may be used
+    to include or skip tests and override values for plugins.
+
+    When used to store an output profile, this tool will output a template that
+    includes all plugins and their default settings.  Any settings which aren't
+    being overridden can be safely removed from the profile and default values
+    will be used.  Bandit will prefer settings from the profile over the built
+    in values."""
+
+    parser = argparse.ArgumentParser(
+        description=help_description,
+        formatter_class=argparse.RawTextHelpFormatter)
+
+    parser.add_argument('-s', '--show-defaults', dest='show_defaults',
                         action='store_true',
                         help='show the default settings values for each '
-                             'plugin')
+                             'plugin but do not output a profile')
+    parser.add_argument('-o', '--out', dest='output_file',
+                        action='store',
+                        help='output file to save profile')
 
     args = parser.parse_args()
     return args
@@ -78,8 +110,26 @@ def main():
     init_logger()
     args = parse_args()
 
+    yaml_settings = get_config_settings()
+
     if args.show_defaults:
-        print(get_config_settings())
+        print(yaml_settings)
+
+    if args.output_file:
+        if os.path.exists(os.path.abspath(args.output_file)):
+            logger.error("File %s already exists, exiting", args.output_file)
+            sys.exit(2)
+
+        try:
+            with open(args.output_file, 'w') as f:
+                contents = template.format(settings=yaml_settings)
+                f.write(contents)
+
+        except IOError:
+            logger.error("Unable to open %s for writing", args.output_file)
+
+        else:
+            logger.info("Successfully wrote profile: %s", args.output_file)
 
     return 0
 
