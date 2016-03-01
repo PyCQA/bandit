@@ -19,22 +19,22 @@ import logging
 import os
 import sys
 
-from stevedore import extension
 import yaml
+
+from bandit.core import extension_loader
 
 PROG_NAME = 'bandit_conf_generator'
 logger = logging.getLogger(__name__)
 
 
 template = """
-### profile may optionally select or skip tests
+### config may optionally select or skip tests
 
 # (optional) list included tests here:
-# tests: B101,B102
+{test}
 
 # (optional) list skipped tests here:
-# skip: B201, B202
-
+{skip}
 
 ### override settings - used to set settings for plugins to non-default values
 
@@ -69,29 +69,28 @@ def parse_args():
         description=help_description,
         formatter_class=argparse.RawTextHelpFormatter)
 
-    parser.add_argument('-s', '--show-defaults', dest='show_defaults',
+    parser.add_argument('--show-defaults', dest='show_defaults',
                         action='store_true',
                         help='show the default settings values for each '
                              'plugin but do not output a profile')
     parser.add_argument('-o', '--out', dest='output_file',
                         action='store',
                         help='output file to save profile')
-
+    parser.add_argument(
+        '-t', '--tests', dest='tests',
+        action='store', default=None, type=str,
+        help='list of test names to run')
+    parser.add_argument(
+        '-s', '--skip', dest='skips',
+        action='store', default=None, type=str,
+        help='list of test names to skip')
     args = parser.parse_args()
     return args
 
 
 def get_config_settings():
-    """Print list of all plugins and default values of config."""
-    plugins_mgr = extension.ExtensionManager(namespace='bandit.plugins',
-                                             invoke_on_load=False,
-                                             verify_requirements=False)
-    logger.info('Successfully discovered %d plugins',
-                len(plugins_mgr.extensions))
-
     config = {}
-
-    for plugin in plugins_mgr.extensions:
+    for plugin in extension_loader.MANAGER.plugins:
         fn_name = plugin.name
         function = plugin.plugin
 
@@ -122,11 +121,28 @@ def main():
 
         try:
             with open(args.output_file, 'w') as f:
-                contents = template.format(settings=yaml_settings)
+                skips = args.skips.split(',') if args.skips else []
+                tests = args.tests.split(',') if args.tests else []
+
+                for skip in skips:
+                    if not extension_loader.MANAGER.check_id(skip):
+                        raise RuntimeError('unknown ID in skips: %s' % skip)
+
+                for test in tests:
+                    if not extension_loader.MANAGER.check_id(test):
+                        raise RuntimeError('unknown ID in tests: %s' % test)
+
+                contents = template.format(
+                    settings=yaml_settings,
+                    skip='skips: ' + str(skips) if skips else '',
+                    test='tests: ' + str(tests) if tests else '')
                 f.write(contents)
 
         except IOError:
             logger.error("Unable to open %s for writing", args.output_file)
+
+        except Exception as e:
+            logger.error("Error: %s", e)
 
         else:
             logger.info("Successfully wrote profile: %s", args.output_file)

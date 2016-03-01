@@ -45,13 +45,13 @@ def test_plugin():
             'Calls': sets}
 
 
-class BanditTesSetTests(testtools.TestCase):
+class BanditTestSetTests(testtools.TestCase):
     def _make_test_manager(self, plugin):
         return extension.ExtensionManager.make_test_instance(
             [extension.Extension('test_plugin', None, test_plugin, None)])
 
     def setUp(self):
-        super(BanditTesSetTests, self).setUp()
+        super(BanditTestSetTests, self).setUp()
         mngr = self._make_test_manager(mock.MagicMock)
         self.patchExtMan = mock.patch('stevedore.extension.ExtensionManager')
         self.mockExtMan = self.patchExtMan.start()
@@ -63,7 +63,7 @@ class BanditTesSetTests(testtools.TestCase):
 
     def tearDown(self):
         self.patchExtMan.stop()
-        super(BanditTesSetTests, self).tearDown()
+        super(BanditTestSetTests, self).tearDown()
         extension_loader.MANAGER = self.old_ext_man
 
     def test_has_defaults(self):

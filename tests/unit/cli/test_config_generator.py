@@ -14,13 +14,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import importlib
 import logging
 
 import mock
-from stevedore import extension
 import testtools
+import yaml
 
 from bandit.cli import config_generator
+from bandit.core import extension_loader
 from bandit.core import test_properties as test
 
 
@@ -57,21 +59,6 @@ class BanditConfigGeneratorLoggerTests(testtools.TestCase):
 
 
 class BanditConfigGeneratorTests(testtools.TestCase):
-    def _make_test_manager(self, plugin):
-        return extension.ExtensionManager.make_test_instance(
-            [extension.Extension('test', None, _test_plugin, None)])
-
-    def setUp(self):
-        mngr = self._make_test_manager(mock.MagicMock)
-        self.patchExtMan = mock.patch('stevedore.extension.ExtensionManager')
-        self.mockExtMan = self.patchExtMan.start()
-        self.mockExtMan.return_value = mngr
-        super(BanditConfigGeneratorTests, self).setUp()
-
-    def tearDown(self):
-        super(BanditConfigGeneratorTests, self).tearDown()
-        self.patchExtMan.stop()
-
     @mock.patch('sys.argv', ['bandit-config-generator'])
     def test_parse_args_no_defaults(self):
         # Test that the config generator does not show default plugin settings
@@ -91,8 +78,15 @@ class BanditConfigGeneratorTests(testtools.TestCase):
         self.assertEqual('dummyfile', return_value.output_file)
 
     def test_get_config_settings(self):
+        config = {}
+        for plugin in extension_loader.MANAGER.plugins:
+            function = plugin.plugin
+            if hasattr(plugin.plugin, '_takes_config'):
+                module = importlib.import_module(function.__module__)
+                config[plugin.name] = module.gen_config(
+                    function._takes_config)
         settings = config_generator.get_config_settings()
-        self.assertEqual(settings, "test: {test: test data}\n")
+        self.assertEqual(yaml.safe_dump(config), settings)
 
     @mock.patch('sys.argv', ['bandit-config-generator', '--show-defaults'])
     def test_main_show_defaults(self):

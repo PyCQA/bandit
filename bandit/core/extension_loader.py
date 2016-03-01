@@ -89,18 +89,12 @@ class Manager(object):
 
     def validate_profile(self, profile):
         '''Validate that everything in the configured profiles looks good.'''
-        def _check(test):
-            return (
-                test not in self.plugins_by_id and
-                test not in self.blacklist_by_id and
-                test not in self.builtin)
-
         for inc in profile['include']:
-            if _check(inc):
+            if not self.check_id(inc):
                 raise ValueError('Unknown Test found in profile: %s' % inc)
 
         for exc in profile['exclude']:
-            if _check(exc):
+            if not self.check_id(exc):
                 raise ValueError('Unknown Test found in profile: %s' % exc)
 
         union = set(profile['include']) & set(profile['exclude'])
@@ -108,6 +102,11 @@ class Manager(object):
             raise ValueError('None exclusive include/excule test sets: %s' %
                              union)
 
+    def check_id(self, test):
+        return (
+            test in self.plugins_by_id or
+            test in self.blacklist_by_id or
+            test in self.builtin)
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
 # once, store them on the object, and have a module global object for
