@@ -154,7 +154,7 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     result = '\n'.join([bit for bit in bits]) + '\n'
 
     with utils.output_file(filename, 'w') as fout:
-        fout.write(result)
+        fout.write(str(result.encode('utf-8')))
 
     if filename is not None:
         logger.info("Text output written to file: %s", filename)

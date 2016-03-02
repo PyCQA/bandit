@@ -132,32 +132,26 @@ class TextFormatterTests(testtools.TestCase):
         with open(self.tmp_fname) as f:
             data = f.read()
 
-            expected = 'Run started'
-            self.assertIn(expected, data)
-
-            expected_items = ['Files in scope (1):\n\tbinding.py (score: ',
+            expected_items = ['Run started',
+                              'Files in scope (1)',
+                              'binding.py (score: ',
                               "CONFIDENCE: 1",
-                              "SEVERITY: 1"]
+                              "SEVERITY: 1",
+                              'Files excluded (1):',
+                              'def.py',
+                              'Undefined: 1',
+                              'Low: 1',
+                              'Medium: 1',
+                              'High: 1',
+                              'Total lines skipped ',
+                              '(#nosec): 50',
+                              'Total issues (by severity)',
+                              'Total issues (by confidence)',
+                              'Files skipped (1)',
+                              'abc.py (File is bad)'
+                              ]
             for item in expected_items:
                 self.assertIn(item, data)
-
-            expected = 'Files excluded (1):\n\tdef.py'
-            self.assertIn(expected, data)
-
-            expected = ('Total lines of code: 1000\n\tTotal lines skipped '
-                        '(#nosec): 50')
-            self.assertIn(expected, data)
-
-            expected = ('Total issues (by severity):\n\t\tUndefined: 1\n\t\t'
-                        'Low: 1\n\t\tMedium: 1\n\t\tHigh: 1')
-            self.assertIn(expected, data)
-
-            expected = ('Total issues (by confidence):\n\t\tUndefined: 1\n\t\t'
-                        'Low: 1\n\t\tMedium: 1\n\t\tHigh: 1')
-            self.assertIn(expected, data)
-
-            expected = 'Files skipped (1):\n\tabc.py (File is bad)'
-            self.assertIn(expected, data)
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_baseline(self, get_issue_list):

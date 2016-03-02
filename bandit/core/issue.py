@@ -29,6 +29,8 @@ class Issue(object):
                  text="", ident=None, lineno=None, test_id=""):
         self.severity = severity
         self.confidence = confidence
+        if isinstance(text, bytes):
+            text = text.decode('utf-8')
         self.text = text
         self.ident = ident
         self.fname = ""
@@ -110,7 +112,7 @@ class Issue(object):
             'test_id': self.test_id,
             'issue_severity': self.severity,
             'issue_confidence': self.confidence,
-            'issue_text': self.text,
+            'issue_text': self.text.encode('utf-8').decode('utf-8'),
             'line_number': self.lineno,
             'line_range': self.linerange,
             }

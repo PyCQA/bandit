@@ -366,8 +366,8 @@ pre {
                                           results=results_str)
 
     with utils.output_file(filename, 'w') as fout:
-        fout.write(header_block)
-        fout.write(report_contents)
+        fout.write(str(header_block.encode('utf-8')))
+        fout.write(str(report_contents.encode('utf-8')))
 
     if filename is not None:
         logger.info("HTML output written to file: %s" % filename)
