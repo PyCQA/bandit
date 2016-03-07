@@ -15,6 +15,7 @@
 # under the License.
 
 import os
+import sys
 
 import fixtures
 import mock
@@ -157,10 +158,12 @@ class ManagerTests(testtools.TestCase):
         conf_level = constants.LOW
         output_filename = os.path.join(temp_directory, "_temp_output")
         output_format = "invalid"
-
         self.manager.output_results(lines, sev_level, conf_level,
                                     output_filename, output_format)
-        self.assertFalse(os.path.isfile(output_filename))
+        if sys.stdout.isatty():
+            self.assertFalse(os.path.isfile(output_filename))
+        else:
+            self.assertTrue(os.path.isfile(output_filename))
 
     def test_output_results_valid_format(self):
         # Test that output_results succeeds given a valid format
