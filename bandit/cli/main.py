@@ -120,11 +120,18 @@ def _get_profile(config, profile_name, config_path):
         profile = profiles.get(profile_name)
         if profile is None:
             raise utils.ProfileNotFound(config_path, profile_name)
-
-    if profile:
-        logger.debug("read in profile '%s': %s", profile_name, profile)
-
+        logger.debug("read in legacy profile '%s': %s", profile_name, profile)
+    else:
+        profile['include'] = set(config.get_option('tests') or [])
+        profile['exclude'] = set(config.get_option('skips') or [])
     return profile
+
+
+def _log_info(args, profile):
+    logger.info("profile include tests: %s", profile['include'])
+    logger.info("profile exculde tests: %s", profile['exclude'])
+    logger.info("cli include tests: %s", args.tests)
+    logger.info("cli exculde tests: %s", args.skips)
 
 
 def main():
@@ -168,21 +175,20 @@ def main():
         help=('optional config file to use for selecting plugins and '
               'overriding defaults')
     )
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
+    parser.add_argument(
         '-p', '--profile', dest='profile',
         action='store', default=None, type=str,
         help='test set profile in config to use (defaults to all tests)'
     )
-    group.add_argument(
+    parser.add_argument(
         '-t', '--tests', dest='tests',
         action='store', default=None, type=str,
-        help='list of test names to run'
+        help='comma separated list of test IDs to run'
     )
-    group.add_argument(
+    parser.add_argument(
         '-s', '--skip', dest='skips',
         action='store', default=None, type=str,
-        help='list of test names to skip'
+        help='comma separated list of test IDs to skip'
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
@@ -286,15 +292,15 @@ def main():
 
     try:
         profile = _get_profile(b_conf, args.profile, args.config_file)
-        if not profile:
-            profile = {'include': args.tests.split(',') if args.tests else [],
-                       'exclude': args.skips.split(',') if args.skips else []}
+        profile['include'].update(args.tests.split(',') if args.tests else [])
+        profile['exclude'].update(args.skips.split(',') if args.skips else [])
         extension_mgr.validate_profile(profile)
 
     except (utils.ProfileNotFound, ValueError) as e:
         logger.error(e)
         sys.exit(2)
 
+    _log_info(args, profile)
     b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
                                     profile=profile, verbose=args.verbose,
                                     ignore_nosec=args.ignore_nosec)
