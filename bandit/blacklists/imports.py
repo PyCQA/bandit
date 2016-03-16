@@ -57,7 +57,6 @@ Consider possible security implications associated with these modules.
 | B403 | info_libs           | - pickle                           | low       |
 |      |                     | - cPickle                          |           |
 |      |                     | - subprocess                       |           |
-|      |                     | - Crypto                           |           |
 +------+---------------------+------------------------------------+-----------+
 
 B404 - B405: XML
@@ -121,7 +120,7 @@ def gen_blacklist():
         ))
 
     sets.append(utils.build_conf_dict(
-        'info_libs', 'B403', ['pickle', 'cPickle', 'subprocess', 'Crypto'],
+        'info_libs', 'B403', ['pickle', 'cPickle', 'subprocess'],
         'Consider possible security implications associated with '
         '{name} module.', 'LOW'
         ))
