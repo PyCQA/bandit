@@ -129,9 +129,9 @@ def _get_profile(config, profile_name, config_path):
 
 def _log_info(args, profile):
     logger.info("profile include tests: %s", profile['include'])
-    logger.info("profile exculde tests: %s", profile['exclude'])
+    logger.info("profile exclude tests: %s", profile['exclude'])
     logger.info("cli include tests: %s", args.tests)
-    logger.info("cli exculde tests: %s", args.skips)
+    logger.info("cli exclude tests: %s", args.skips)
 
 
 def main():
