@@ -234,10 +234,8 @@ def main():
     )
     parser.add_argument(
         '-b', '--baseline', dest='baseline', action='store',
-        default=None, help=('Path to a baseline report, in JSON format. '
-                            'Note: baseline reports must be output in one of '
-                            'the following formats: ' +
-                            str(sorted(baseline_formatters)))
+        default=None, help=('Path to a baseline report. Only JSON formatted '
+                            'files are accepted.')
     )
     parser.add_argument(
         '--ini', dest='ini_path', action='store', default=None,
