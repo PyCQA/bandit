@@ -128,8 +128,10 @@ def _get_profile(config, profile_name, config_path):
 
 
 def _log_info(args, profile):
-    logger.info("profile include tests: %s", profile['include'])
-    logger.info("profile exclude tests: %s", profile['exclude'])
+    inc = ",".join([t for t in profile['include']]) or "None"
+    exc = ",".join([t for t in profile['exclude']]) or "None"
+    logger.info("profile include tests: %s", inc)
+    logger.info("profile exclude tests: %s", exc)
     logger.info("cli include tests: %s", args.tests)
     logger.info("cli exclude tests: %s", args.skips)
 
@@ -292,6 +294,8 @@ def main():
 
     try:
         profile = _get_profile(b_conf, args.profile, args.config_file)
+        _log_info(args, profile)
+
         profile['include'].update(args.tests.split(',') if args.tests else [])
         profile['exclude'].update(args.skips.split(',') if args.skips else [])
         extension_mgr.validate_profile(profile)
@@ -300,7 +304,6 @@ def main():
         logger.error(e)
         sys.exit(2)
 
-    _log_info(args, profile)
     b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
                                     profile=profile, verbose=args.verbose,
                                     ignore_nosec=args.ignore_nosec)
