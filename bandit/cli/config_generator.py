@@ -19,6 +19,7 @@ import logging
 import os
 import sys
 
+import six
 import yaml
 
 from bandit.core import extension_loader
@@ -28,15 +29,31 @@ logger = logging.getLogger(__name__)
 
 
 template = """
-### config may optionally select or skip tests
+### Bandit config file generated from:
+# '{cli}'
 
-# (optional) list included tests here:
+### This config may optionally select a subset of tests to run or skip by
+### filling out the 'tests' and 'skips' lists given below. If no tests are
+### specified for inclusion then it is assumed all tests are desired. The skips
+### set will remove specific tests from the include set. This can be controlled
+### using the -t/-s CLI options. Note that the same test ID should not appear
+### in both 'tests' and 'skips', this would be nonsensical and is detected by
+### Bandit at runtime.
+
+# Available tests:
+{test_list}
+
+# (optional) list included test IDs here, eg '[B101, B406]':
 {test}
 
-# (optional) list skipped tests here:
+# (optional) list skipped test IDs here, eg '[B101, B406]':
 {skip}
 
-### override settings - used to set settings for plugins to non-default values
+### (optional) plugin settings - some test plugins require configuration data
+### that may be given here, per-plugin. All bandit test plugins have a built in
+### set of sensible defaults and these will be used if no configuration is
+### provided. It is not necessary to provide settings for every (or any) plugin
+### if the defaults are acceptable.
 
 {settings}
 """
@@ -132,10 +149,21 @@ def main():
                     if not extension_loader.MANAGER.check_id(test):
                         raise RuntimeError('unknown ID in tests: %s' % test)
 
+                tpl = "# {0} : {1}"
+                test_list = [tpl.format(t.plugin._test_id, t.name)
+                             for t in extension_loader.MANAGER.plugins]
+
+                test_list.extend([tpl.format(k, v['name'])
+                                  for k, v in six.iteritems(
+                                  extension_loader.MANAGER.blacklist_by_id)])
+                test_list.sort()
+
                 contents = template.format(
+                    cli=" ".join(sys.argv),
                     settings=yaml_settings,
-                    skip='skips: ' + str(skips) if skips else '',
-                    test='tests: ' + str(tests) if tests else '')
+                    test_list="\n".join(test_list),
+                    skip='skips: ' + str(skips) if skips else 'skips:',
+                    test='tests: ' + str(tests) if tests else 'tests:')
                 f.write(contents)
 
         except IOError:
