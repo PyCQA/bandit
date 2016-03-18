@@ -166,11 +166,17 @@ Usage::
       B319  xml_bad_pulldom
       B320  xml_bad_etree
       B321  ftplib
-      B401  telnet
-      B402  ftp
-      B403  info_libs
-      B404  xml_libs
-      B405  xml_libs_high
+      B401  import_telnetlib
+      B402  import_ftplib
+      B403  import_pickle
+      B404  import_subprocess
+      B405  import_xml_etree
+      B406  import_xml_sax
+      B407  import_xml_expat
+      B408  import_xml_minidom
+      B409  import_xml_pulldom
+      B410  import_lxml
+      B411  import_xmlrpclib
       B501  request_with_no_cert_validation
       B502  ssl_with_bad_version
       B503  ssl_with_bad_defaults

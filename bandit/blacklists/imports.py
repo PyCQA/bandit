@@ -23,8 +23,11 @@ This blacklist data checks for a number of Python modules known to have
 possible security implications. The following blacklist tests are run against
 any import statements or calls encountered in the scanned code base.
 
-B401: telnet
-------------
+Note that the XML rules listed here are mostly based off of Christian Heimes'
+work on defusedxml: https://pypi.python.org/pypi/defusedxml
+
+B401: import_telnetlib
+----------------------
 
 A telnet-related module is being imported. Telnet is considered insecure. Use
 SSH or some other encrypted protocol.
@@ -32,41 +35,120 @@ SSH or some other encrypted protocol.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B401 | telnet              | - telnetlib                        | high      |
+| B401 | import_telnetlib    | - telnetlib                        | high      |
 +------+---------------------+------------------------------------+-----------+
 
-B402: ftplib
-------------
+B402: import_ftplib
+-------------------
 A FTP-related module is being imported.  FTP is considered insecure. Use
 SSH/SFTP/SCP or some other encrypted protocol.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B402 | ftp                 | - ftplib                           | high      |
+| B402 | inport_ftplib       | - ftplib                           | high      |
 +------+---------------------+------------------------------------+-----------+
 
-B403: info_libs
----------------
+B403: import_pickle
+-------------------
 
 Consider possible security implications associated with these modules.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B403 | info_libs           | - pickle                           | low       |
+| B403 | import_pickle       | - pickle                           | low       |
 |      |                     | - cPickle                          |           |
-|      |                     | - subprocess                       |           |
 +------+---------------------+------------------------------------+-----------+
 
-B404 - B405: XML
-----------------
+B404: import_subprocess
+-----------------------
 
-Most of this is based off of Christian Heimes' work on defusedxml:
-https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+Consider possible security implications associated with these modules.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B404 | import_subprocess   | - subprocess                       | low       |
++------+---------------------+------------------------------------+-----------+
+
+
+B405: import_xml_etree
+----------------------
 
 Using various methods to parse untrusted XML data is known to be vulnerable to
 XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B405 | import_xml_etree    | - xml.etree.cElementTree           | low       |
+|      |                     | - xml.etree.ElementTree            |           |
++------+---------------------+------------------------------------+-----------+
+
+B406: import_xml_sax
+--------------------
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B406 | import_xml_sax      | - xml.sax                          | low       |
++------+---------------------+------------------------------------+-----------+
+
+B407: import_xml_expat
+----------------------
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B407 | import_xml_expat    | - xml.dom.expatbuilder             | low       |
++------+---------------------+------------------------------------+-----------+
+
+B408: import_xml_minidom
+------------------------
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B408 | import_xml_minidom  | - xml.dom.minidom                  | low       |
++------+---------------------+------------------------------------+-----------+
+
+B409: import_xml_pulldom
+------------------------
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B409 | import_xml_pulldom  | - xml.dom.pulldom                  | low       |
++------+---------------------+------------------------------------+-----------+
+
+B410: import_lxml
+-----------------
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B410 | import_lxml         | - lxml                             | low       |
++------+---------------------+------------------------------------+-----------+
+
+B411: import_xmlrpclib
+----------------------
 
 XMLRPC is particularly dangerous as it is also concerned with communicating
 data over a network. Use defused.xmlrpc.monkey_patch() function to monkey-patch
@@ -75,16 +157,7 @@ xmlrpclib and mitigate remote XML attacks.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B404 | xml_libs            | - xml.etree.cElementTree           | low       |
-|      |                     | - xml.etree.ElementTree            |           |
-|      |                     | - xml.sax                          |           |
-|      |                     | - xml.dom.expatbuilder             |           |
-|      |                     | - xml.dom.minidom                  |           |
-|      |                     | - xml.dom.pulldom                  |           |
-|      |                     | - xml.dom.expatbuilder             |           |
-|      |                     | - lxml                             |           |
-+------+---------------------+------------------------------------+-----------+
-| B405 | xml_libs_high       | - xmlrpclib                        | high      |
+| B411 | import_xmlrpclib    | - xmlrpclib                        | high      |
 +------+---------------------+------------------------------------+-----------+
 
 """
@@ -106,21 +179,27 @@ def gen_blacklist():
 
     sets = []
     sets.append(utils.build_conf_dict(
-        'telnet', 'B401', ['telnetlib'],
+        'import_telnetlib', 'B401', ['telnetlib'],
         'A telnet-related module is being imported.  Telnet is '
         'considered insecure. Use SSH or some other encrypted protocol.',
         'HIGH'
         ))
 
     sets.append(utils.build_conf_dict(
-        'ftp', 'B402', ['ftplib'],
+        'import_ftplib', 'B402', ['ftplib'],
         'A FTP-related module is being imported.  FTP is considered '
         'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
         'HIGH'
         ))
 
     sets.append(utils.build_conf_dict(
-        'info_libs', 'B403', ['pickle', 'cPickle', 'subprocess'],
+        'import_pickle', 'B403', ['pickle', 'cPickle'],
+        'Consider possible security implications associated with '
+        '{name} module.', 'LOW'
+        ))
+
+    sets.append(utils.build_conf_dict(
+        'import_subprocess', 'B404', ['subprocess'],
         'Consider possible security implications associated with '
         '{name} module.', 'LOW'
         ))
@@ -128,26 +207,34 @@ def gen_blacklist():
     # Most of this is based off of Christian Heimes' work on defusedxml:
     #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
 
-    sets.append(utils.build_conf_dict(
-        'xml_libs', 'B404',
-        ['xml.etree.cElementTree',
-         'xml.etree.ElementTree',
-         'xml.sax',
-         'xml.dom.expatbuilder',
-         'xml.dom.minidom',
-         'xml.dom.pulldom',
-         'lxml'],
-        'Using {name} to parse untrusted XML data is known to be '
-        'vulnerable to XML attacks. Replace {name} with the equivalent '
-        'defusedxml package.', 'LOW'
-        ))
+    xml_msg = ('Using {name} to parse untrusted XML data is known to be '
+               'vulnerable to XML attacks. Replace {name} with the equivalent '
+               'defusedxml package.')
 
     sets.append(utils.build_conf_dict(
-        'xml_libs_high', 'B405', ['xmlrpclib'],
+        'import_xml_etree', 'B405',
+        ['xml.etree.cElementTree', 'xml.etree.ElementTree'], xml_msg, 'LOW'))
+
+    sets.append(utils.build_conf_dict(
+        'import_xml_sax', 'B406', ['xml.sax'], xml_msg, 'LOW'))
+
+    sets.append(utils.build_conf_dict(
+        'import_xml_expat', 'B407', ['xml.dom.expatbuilder'], xml_msg, 'LOW'))
+
+    sets.append(utils.build_conf_dict(
+        'import_xml_minidom', 'B408', ['xml.dom.minidom'], xml_msg, 'LOW'))
+
+    sets.append(utils.build_conf_dict(
+        'import_xml_pulldom', 'B409', ['xml.dom.pulldom'], xml_msg, 'LOW'))
+
+    sets.append(utils.build_conf_dict(
+        'import_lxml', 'B410', ['lxml'], xml_msg, 'LOW'))
+
+    sets.append(utils.build_conf_dict(
+        'import_xmlrpclib', 'B411', ['xmlrpclib'],
         'Using {name} to parse untrusted XML data is known to be '
         'vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() '
         'function to monkey-patch xmlrpclib and mitigate XML '
-        'vulnerabilities.', 'HIGH'
-        ))
+        'vulnerabilities.', 'HIGH'))
 
     return {'Import': sets, 'ImportFrom': sets, 'Call': sets}
