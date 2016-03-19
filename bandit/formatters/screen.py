@@ -161,6 +161,9 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     if manager.verbose:
         bits.append(get_verbose_details(manager))
 
+    bits.append(header("\nTest results:"))
+    bits.append(get_results(manager, sev_level, conf_level, lines))
+    bits.append(header("\nCode scanned:"))
     bits.append('\tTotal lines of code: %i' %
                 (manager.metrics.data['_totals']['loc']))
 
@@ -170,8 +173,6 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     bits.append(get_metrics(manager))
     bits.append(header("Files skipped (%i):", len(manager.skipped)))
     bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
-    bits.append(header("\nTest results:"))
-    bits.append(get_results(manager, sev_level, conf_level, lines))
     do_print(bits)
 
     if filename is not None:
