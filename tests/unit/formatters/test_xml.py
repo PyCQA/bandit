@@ -13,7 +13,6 @@
 #  under the License.
 
 from collections import defaultdict
-import os
 import tempfile
 from xml.etree import cElementTree as ET
 
@@ -31,8 +30,7 @@ class XmlFormatterTests(testtools.TestCase):
 
     def setUp(self):
         super(XmlFormatterTests, self).setUp()
-        cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-        conf = config.BanditConfig(cfg_file)
+        conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, 'file')
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.context = {'filename': self.tmp_fname,

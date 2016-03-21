@@ -121,20 +121,12 @@ class InvalidModulePath(Exception):
     pass
 
 
-class ConfigFileUnopenable(Exception):
-    """Raised when the config file cannot be opened."""
-    def __init__(self, config_file):
+class ConfigError(Exception):
+    """Raised when the config file fails validation."""
+    def __init__(self, message, config_file):
         self.config_file = config_file
-        message = 'Could not open config file: %s' % self.config_file
-        super(ConfigFileUnopenable, self).__init__(message)
-
-
-class ConfigFileInvalidYaml(Exception):
-    """Raised when the config file YAML cannot be parsed."""
-    def __init__(self, config_file):
-        self.config_file = config_file
-        message = 'Invalid config file specified: %s' % self.config_file
-        super(ConfigFileInvalidYaml, self).__init__(message)
+        self.message = "{0} : {1}".format(config_file, message)
+        super(ConfigError, self).__init__(self.message)
 
 
 class ProfileNotFound(Exception):

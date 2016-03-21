@@ -13,7 +13,6 @@
 #  under the License.
 
 import csv
-import os
 import tempfile
 
 import six
@@ -30,8 +29,7 @@ class CsvFormatterTests(testtools.TestCase):
 
     def setUp(self):
         super(CsvFormatterTests, self).setUp()
-        cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-        conf = config.BanditConfig(cfg_file)
+        conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, 'file')
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.context = {'filename': self.tmp_fname,

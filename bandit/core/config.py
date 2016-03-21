@@ -34,11 +34,8 @@ class BanditConfig():
         Error out if loading the yaml file fails for any reason.
         :param config_file: The Bandit yaml config file
 
-        :raises bandit.utils.ConfigFileUnopenable: If the config file cannot be
-            opened.
-        :raises bandit.utils.ConfigFileInvalidYaml: If the config file cannot
-            be parsed.
-
+        :raises bandit.utils.ConfigError: If the config is invalid or
+            unreadable.
         '''
         self.config_file = config_file
         self._config = {}
@@ -47,16 +44,18 @@ class BanditConfig():
             try:
                 f = open(config_file, 'r')
             except IOError:
-                raise utils.ConfigFileUnopenable(config_file)
+                raise utils.ConfigError("Could not read config file.",
+                                        config_file)
 
             try:
                 self._config = yaml.safe_load(f)
+                self.validate(config_file)
             except yaml.YAMLError:
-                raise utils.ConfigFileInvalidYaml(config_file)
+                raise utils.ConfigError("Error parsing file.", config_file)
 
             # valid config must be a dict
             if not isinstance(self._config, dict):
-                raise utils.ConfigFileInvalidYaml(config_file)
+                raise utils.ConfigError("Error parsing file.", config_file)
 
             self.convert_legacy_config()
 
@@ -202,4 +201,43 @@ class BanditConfig():
             _clean_set('blacklist_import_func', include)
             _clean_set('blacklist_import_func', exclude)
 
+            # This can happen with a legacy config that includes
+            # blacklist_calls but exclude blacklist_imports for example
+            if 'B001' in include and 'B001' in exclude:
+                exclude.remove('B001')
+
             profile['blacklist'] = blacklist
+
+    def validate(self, path):
+        '''Validate the config data.'''
+        legacy = False
+        message = ("Config file has an include or exclude reference "
+                   "to legacy test '{0}' but no configuration data for "
+                   "it. Configuration data is required for this test. "
+                   "Please consider switching to the new config file "
+                   "format, the tool 'bandit-config-generator' can help "
+                   "you with this.")
+
+        def _test(key, block, exclude, include):
+            if key in exclude or key in include:
+                if self._config.get(block) is None:
+                    raise utils.ConfigError(message.format(key), path)
+
+        if 'profiles' in self._config:
+            legacy = True
+            for profile in self._config['profiles'].values():
+                inc = profile.get('include') or set()
+                exc = profile.get('exclude') or set()
+
+                _test('blacklist_imports', 'blacklist_imports', inc, exc)
+                _test('blacklist_import_func', 'blacklist_imports', inc, exc)
+                _test('blacklist_calls', 'blacklist_calls', inc, exc)
+
+        # show deprecation message
+        if legacy:
+            logger.warn("Config file '%s' contains deprecated legacy "
+                        "config data. Please consider upgrading to "
+                        "the new config format. The tool "
+                        "'bandit-config-generator' can help you with "
+                        "this. Support for legacy configs will be removed "
+                        "in a future bandit version.", path)

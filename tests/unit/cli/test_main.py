@@ -160,7 +160,7 @@ class BanditCLIMainTests(testtools.TestCase):
     def test_main_config_unopenable(self):
         # Test that bandit exits when a config file cannot be opened
         with patch('bandit.core.config.__init__') as mock_bandit_config:
-            mock_bandit_config.side_effect = utils.ConfigFileUnopenable('')
+            mock_bandit_config.side_effect = utils.ConfigError('', '')
             # assert a SystemExit with code 2
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
@@ -170,7 +170,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # content
         with patch('bandit.core.config.BanditConfig.__init__'
                    ) as mock_bandit_config:
-            mock_bandit_config.side_effect = utils.ConfigFileInvalidYaml('')
+            mock_bandit_config.side_effect = utils.ConfigError('', '')
             # assert a SystemExit with code 2
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
