@@ -100,7 +100,7 @@ def coverage_zuul(conf_zuul):
         project_name = project['name']
         for test_type in bandit_tests.keys():
             for test in project.get(test_type, []):
-                if test.endswith('bandit'):
+                if str(test).endswith('bandit'):
                     voting = bandit_jobs.get(test, False)
                     bandit_tests[test_type].add((project_name, voting))
     # output results
