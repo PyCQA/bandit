@@ -406,6 +406,21 @@ class FunctionalTests(testtools.TestCase):
 
         self.check_example('partial_path_process.py', expect)
 
+    def test_try_except_continue(self):
+        '''Test try, except, continue detection.'''
+        expect = {'SEVERITY': {'LOW': 3},
+                  'CONFIDENCE': {'HIGH': 3}}
+
+        self.check_example('try_except_continue.py', expect)
+
+        test = next((x for x in self.b_mgr.b_ts.tests['ExceptHandler']
+                    if x.__name__ == 'try_except_continue'))
+        test._config = {'check_typed_exception': False}
+        expect = {'SEVERITY': {'LOW': 2},
+                  'CONFIDENCE': {'HIGH': 2}}
+
+        self.check_example('try_except_continue.py', expect)
+
     def test_try_except_pass(self):
         '''Test try, except pass detection.'''
         expect = {'SEVERITY': {'LOW': 3},

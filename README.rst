@@ -144,6 +144,7 @@ Usage::
       B109  password_config_option_not_marked_secret
       B110  try_except_pass
       B111  execute_with_run_as_root_equals_true
+      B112  try_except_continue
       B201  flask_debug_true
       B301  pickle
       B302  marshal
