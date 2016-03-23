@@ -1,6 +1,6 @@
--------------------------------
-start_process_with_partial_path
--------------------------------
+-------------------------------------
+B607: start_process_with_partial_path
+-------------------------------------
 
 .. currentmodule:: bandit.plugins.injection_shell
 

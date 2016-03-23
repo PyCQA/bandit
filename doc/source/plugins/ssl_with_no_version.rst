@@ -1,6 +1,6 @@
--------------------
-ssl_with_no_version
--------------------
+-------------------------
+B504: ssl_with_no_version
+-------------------------
 
 .. currentmodule:: bandit.plugins.insecure_ssl_tls
 

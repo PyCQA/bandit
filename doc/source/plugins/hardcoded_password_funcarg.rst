@@ -1,6 +1,6 @@
---------------------------
-hardcoded_password_funcarg
---------------------------
+--------------------------------
+B106: hardcoded_password_funcarg
+--------------------------------
 
 .. currentmodule:: bandit.plugins.general_hardcoded_password
 

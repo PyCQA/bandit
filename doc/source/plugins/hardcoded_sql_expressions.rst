@@ -1,5 +1,5 @@
--------------------------
-hardcoded_sql_expressions
--------------------------
+-------------------------------
+B608: hardcoded_sql_expressions
+-------------------------------
 
 .. automodule:: bandit.plugins.injection_sql

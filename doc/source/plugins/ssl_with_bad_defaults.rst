@@ -1,6 +1,6 @@
----------------------
-ssl_with_bad_defaults
----------------------
+---------------------------
+B502: ssl_with_bad_defaults
+---------------------------
 
 .. currentmodule:: bandit.plugins.insecure_ssl_tls
 

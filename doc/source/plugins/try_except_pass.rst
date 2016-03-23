@@ -1,5 +1,5 @@
----------------
-try_except_pass
----------------
+---------------------
+B110: try_except_pass
+---------------------
 
 .. automodule:: bandit.plugins.try_except_pass
