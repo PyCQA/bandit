@@ -83,56 +83,52 @@ Usage::
                   [--ini INI_PATH] [--version]
                   targets [targets ...]
 
-    Bandit - a Python source code analyzer.
+    Bandit - a Python source code security analyzer
 
     positional arguments:
       targets               source file(s) or directory(s) to be tested
 
     optional arguments:
       -h, --help            show this help message and exit
-      -r, --recursive       process files in subdirectories
+      -r, --recursive       find and process files in subdirectories
       -a {file,vuln}, --aggregate {file,vuln}
-                            group results by vulnerability type or file it occurs
-                            in
+                            aggregate output by vulnerability (default) or by
+                            filename
       -n CONTEXT_LINES, --number CONTEXT_LINES
-                            max number of code lines to display for each issue
-                            identified
+                            maximum number of code lines to output for each issue
       -c CONFIG_FILE, --configfile CONFIG_FILE
                             optional config file to use for selecting plugins and
                             overriding defaults
       -p PROFILE, --profile PROFILE
-                            test set profile in config to use (defaults to all
-                            tests)
+                            profile to use (defaults to executing all tests)
       -t TESTS, --tests TESTS
-                            comma separated list of test IDs to run
+                            comma-separated list of test IDs to run
       -s SKIPS, --skip SKIPS
-                            comma separated list of test IDs to skip
-      -l, --level           results severity filter. Show only issues of a given
-                            severity level or higher. -l for LOW, -ll for MEDIUM,
-                            -lll for HIGH
-      -i, --confidence      confidence results filter, show only issues of this
-                            level or higher. -i for LOW, -ii for MEDIUM, -iii for
-                            HIGH
+                            comma-separated list of test IDs to skip
+      -l, --level           report only issues of a given severity level or higher
+                            (-l for LOW, -ll for MEDIUM, -lll for HIGH)
+      -i, --confidence      report only issues of a given confidence level or
+                            higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
       -f {csv,html,json,screen,txt,xml}, --format {csv,html,json,screen,txt,xml}
                             specify output format
       -o OUTPUT_FILE, --output OUTPUT_FILE
                             write report to filename
-      -v, --verbose         show extra information like excluded and included
+      -v, --verbose         output extra information like excluded and included
                             files
       -d, --debug           turn on debug mode
       --ignore-nosec        do not skip lines with # nosec comments
       -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
-                            Comma separated list of paths to exclude from scan.
-                            Note that these are in addition to the excluded paths
-                            provided in the config file.
+                            comma-separated list of paths to exclude from scan
+                            (note that these are in addition to the excluded paths
+                            provided in the config file)
       -b BASELINE, --baseline BASELINE
-                            Path to a baseline report. Only JSON formatted files
-                            are accepted.
-      --ini INI_PATH        Path to a .bandit file which supplies command line
-                            arguments to Bandit.
+                            path of a baseline report to compare against (only
+                            JSON-formatted files are accepted)
+      --ini INI_PATH        path to a .bandit file that supplies command line
+                            arguments
       --version             show program's version number and exit
 
-    The following plugin suites were discovered and loaded:
+    The following tests were discovered and loaded:
       B101  assert_used
       B102  exec_used
       B103  set_bad_file_permissions

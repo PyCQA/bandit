@@ -57,11 +57,13 @@ class RuntimeTests(testtools.TestCase):
     def test_help_arg(self):
         (retcode, output) = self._test_runtime(['bandit', '-h'])
         self.assertEqual(0, retcode)
-        self.assertIn("Bandit - a Python source code analyzer.", output)
+        self.assertIn(
+            "Bandit - a Python source code security analyzer", output
+        )
         self.assertIn("usage: bandit [-h]", output)
         self.assertIn("positional arguments:", output)
         self.assertIn("optional arguments:", output)
-        self.assertIn("plugin suites were discovered and loaded:", output)
+        self.assertIn("tests were discovered and loaded:", output)
 
     def test_help_in_readme(self):
         replace_list = [' ', '\t']

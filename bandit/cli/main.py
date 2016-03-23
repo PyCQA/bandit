@@ -149,7 +149,7 @@ def main():
 
     # now do normal startup
     parser = argparse.ArgumentParser(
-        description='Bandit - a Python source code analyzer.',
+        description='Bandit - a Python source code security analyzer',
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
@@ -158,51 +158,49 @@ def main():
     )
     parser.add_argument(
         '-r', '--recursive', dest='recursive',
-        action='store_true', help='process files in subdirectories'
+        action='store_true', help='find and process files in subdirectories'
     )
     parser.add_argument(
         '-a', '--aggregate', dest='agg_type',
         action='store', default='file', type=str,
         choices=['file', 'vuln'],
-        help='group results by vulnerability type or file it occurs in'
+        help='aggregate output by vulnerability (default) or by filename'
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
         action='store', default=3, type=int,
-        help='max number of code lines to display for each issue identified'
+        help='maximum number of code lines to output for each issue'
     )
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
         action='store', default=None, type=str,
-        help=('optional config file to use for selecting plugins and '
-              'overriding defaults')
+        help='optional config file to use for selecting plugins and '
+             'overriding defaults'
     )
     parser.add_argument(
         '-p', '--profile', dest='profile',
         action='store', default=None, type=str,
-        help='test set profile in config to use (defaults to all tests)'
+        help='profile to use (defaults to executing all tests)'
     )
     parser.add_argument(
         '-t', '--tests', dest='tests',
         action='store', default=None, type=str,
-        help='comma separated list of test IDs to run'
+        help='comma-separated list of test IDs to run'
     )
     parser.add_argument(
         '-s', '--skip', dest='skips',
         action='store', default=None, type=str,
-        help='comma separated list of test IDs to skip'
+        help='comma-separated list of test IDs to skip'
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
-        default=1, help=('results severity filter. Show only issues of a given'
-                         ' severity level or higher. -l for LOW,'
-                         ' -ll for MEDIUM, -lll for HIGH')
+        default=1, help='report only issues of a given severity level or '
+                        'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
     )
     parser.add_argument(
         '-i', '--confidence', dest='confidence', action='count',
-        default=1, help='confidence results filter, show only issues of this '
-                        'level or higher. -i for LOW, -ii for MEDIUM, '
-                        '-iii for HIGH'
+        default=1, help='report only issues of a given confidence level or '
+                        'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
     )
     output_format = 'screen' if sys.stdout.isatty() else 'txt'
     parser.add_argument(
@@ -216,7 +214,7 @@ def main():
     )
     parser.add_argument(
         '-v', '--verbose', dest='verbose', action='store_true',
-        help='show extra information like excluded and included files'
+        help='output extra information like excluded and included files'
     )
     parser.add_argument(
         '-d', '--debug', dest='debug', action='store_true',
@@ -228,19 +226,18 @@ def main():
     )
     parser.add_argument(
         '-x', '--exclude', dest='excluded_paths', action='store',
-        default='', help='Comma separated list of paths to exclude from scan. '
-                         'Note that these are in addition to the excluded '
-                         'paths provided in the config file.'
+        default='', help='comma-separated list of paths to exclude from scan '
+                         '(note that these are in addition to the excluded '
+                         'paths provided in the config file)'
     )
     parser.add_argument(
         '-b', '--baseline', dest='baseline', action='store',
-        default=None, help=('Path to a baseline report. Only JSON formatted '
-                            'files are accepted.')
+        default=None, help='path of a baseline report to compare against '
+                           '(only JSON-formatted files are accepted)'
     )
     parser.add_argument(
         '--ini', dest='ini_path', action='store', default=None,
-        help='Path to a .bandit file which supplies command line arguments to '
-             'Bandit.'
+        help='path to a .bandit file that supplies command line arguments'
     )
     parser.add_argument(
         '--version', action='version',
@@ -258,7 +255,7 @@ def main():
             blacklist_info.append('%s\t%s' % (b['id'], b['name']))
 
     plugin_list = '\n\t'.join(sorted(set(plugin_info + blacklist_info)))
-    parser.epilog = ('The following plugin suites were discovered and'
+    parser.epilog = ('The following tests were discovered and'
                      ' loaded:\n\t{0}\n'.format(plugin_list))
 
     # setup work - parse arguments, and initialize BanditManager
