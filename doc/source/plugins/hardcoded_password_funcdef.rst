@@ -1,6 +1,6 @@
---------------------------
-hardcoded_password_default
---------------------------
+--------------------------------
+B107: hardcoded_password_default
+--------------------------------
 
 .. currentmodule:: bandit.plugins.general_hardcoded_password
 

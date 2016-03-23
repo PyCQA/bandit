@@ -1,5 +1,5 @@
------------------------
-jinja2_autoescape_false
------------------------
+-----------------------------
+B701: jinja2_autoescape_false
+-----------------------------
 
 .. automodule:: bandit.plugins.jinja2_templates

@@ -1,6 +1,6 @@
---------------------
-ssl_with_bad_version
---------------------
+--------------------------
+B503: ssl_with_bad_version
+--------------------------
 
 .. currentmodule:: bandit.plugins.insecure_ssl_tls
 
