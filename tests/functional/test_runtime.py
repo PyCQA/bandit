@@ -34,10 +34,6 @@ class RuntimeTests(testtools.TestCase):
         return (retcode, stdout.decode('utf-8'))
 
     def _test_example(self, cmdlist, targets):
-        cmdlist.extend([
-            '-c',
-            os.path.join(os.getcwd(), 'bandit', 'config', 'bandit.yaml')
-        ])
         for t in targets:
             cmdlist.append(os.path.join(os.getcwd(), 'examples', t))
         return self._test_runtime(cmdlist)
@@ -56,7 +52,7 @@ class RuntimeTests(testtools.TestCase):
             'bandit', '-c', 'nonexistent.yml', 'xx.py'
         ])
         self.assertEqual(2, retcode)
-        self.assertIn("Could not open config file: nonexistent.yml", output)
+        self.assertIn("nonexistent.yml : Could not read config file.", output)
 
     def test_help_arg(self):
         (retcode, output) = self._test_runtime(['bandit', '-h'])

@@ -14,7 +14,6 @@
 #  under the License.
 
 from collections import OrderedDict
-import os
 import tempfile
 
 import mock
@@ -68,8 +67,7 @@ class TextFormatterTests(testtools.TestCase):
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_no_issues(self, get_issue_list):
-        cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-        conf = config.BanditConfig(cfg_file)
+        conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, 'file')
 
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
@@ -85,8 +83,7 @@ class TextFormatterTests(testtools.TestCase):
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_nobaseline(self, get_issue_list):
-        cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-        conf = config.BanditConfig(cfg_file)
+        conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, 'file')
 
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
@@ -155,8 +152,7 @@ class TextFormatterTests(testtools.TestCase):
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
     def test_report_baseline(self, get_issue_list):
-        cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-        conf = config.BanditConfig(cfg_file)
+        conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, 'file')
 
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()

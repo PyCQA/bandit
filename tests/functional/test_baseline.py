@@ -50,8 +50,7 @@ class BaselineFunctionalTests(testtools.TestCase):
     def setUp(self):
         super(BaselineFunctionalTests, self).setUp()
         self.examples_path = 'examples'
-        config_path = os.path.join('bandit', 'config', 'bandit.yaml')
-        self.baseline_commands = ['bandit', '-r', '-c', config_path]
+        self.baseline_commands = ['bandit', '-r']
         self.baseline_report_file = "baseline_report.json"
 
     def _run_bandit_baseline(self, target_directory, baseline_file):

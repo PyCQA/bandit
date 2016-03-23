@@ -266,7 +266,7 @@ def main():
 
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
-    except (utils.ConfigFileUnopenable, utils.ConfigFileInvalidYaml) as e:
+    except utils.ConfigError as e:
         logger.error(e)
         sys.exit(2)
 

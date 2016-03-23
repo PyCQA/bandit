@@ -26,9 +26,6 @@ from bandit.core import metrics
 from bandit.core import test_set as b_test_set
 
 
-cfg_file = os.path.join(os.getcwd(), 'bandit/config/bandit.yaml')
-
-
 class FunctionalTests(testtools.TestCase):
 
     '''Functional tests for bandit test plugins.
@@ -45,7 +42,7 @@ class FunctionalTests(testtools.TestCase):
         # them up here for the testing environment.
         #
         path = os.path.join(os.getcwd(), 'bandit', 'plugins')
-        b_conf = b_config.BanditConfig(cfg_file)
+        b_conf = b_config.BanditConfig()
         self.b_mgr = b_manager.BanditManager(b_conf, 'file')
         self.b_mgr.b_conf._settings['plugins_dir'] = path
         self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf)

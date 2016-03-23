@@ -18,6 +18,7 @@ import textwrap
 import uuid
 
 import fixtures
+import mock
 import testtools
 
 from bandit.core import config
@@ -61,7 +62,7 @@ class TestInit(testtools.TestCase):
         # When the config file doesn't exist, ConfigFileUnopenable is raised.
 
         cfg_file = os.path.join(os.getcwd(), 'notafile')
-        self.assertRaisesRegex(utils.ConfigFileUnopenable, cfg_file,
+        self.assertRaisesRegex(utils.ConfigError, cfg_file,
                                config.BanditConfig, cfg_file)
 
     def test_yaml_invalid(self):
@@ -72,7 +73,7 @@ class TestInit(testtools.TestCase):
         invalid_yaml = '- [ something'
         f = self.useFixture(TempFile(invalid_yaml))
         self.assertRaisesRegex(
-            utils.ConfigFileInvalidYaml, f.name, config.BanditConfig, f.name)
+            utils.ConfigError, f.name, config.BanditConfig, f.name)
 
 
 class TestGetOption(testtools.TestCase):
@@ -144,6 +145,13 @@ class TestConfigCompat(testtools.TestCase):
             test_5:
                 exclude:
                     - blacklist_calls
+                    - blacklist_imports
+
+            test_6:
+                include:
+                    - blacklist_calls
+
+                exclude:
                     - blacklist_imports
 
         blacklist_calls:
@@ -218,3 +226,39 @@ class TestConfigCompat(testtools.TestCase):
         test = profiles['test_5']
 
         self.assertEqual(set(['B001']), test['exclude'])
+
+    def test_deprecation_message(self):
+        msg = ("Config file '%s' contains deprecated legacy config data. "
+               "Please consider upgrading to the new config format. The tool "
+               "'bandit-config-generator' can help you with this. Support for "
+               "legacy configs will be removed in a future bandit version.")
+
+        with mock.patch('bandit.core.config.logger.warn') as m:
+            self.config._config = {"profiles": {}}
+            self.config.validate('')
+            self.assertEqual((msg, ''), m.call_args_list[0][0])
+
+    def test_blacklist_error(self):
+        msg = (" : Config file has an include or exclude reference to legacy "
+               "test '%s' but no configuration data for it. Configuration "
+               "data is required for this test. Please consider switching to "
+               "the new config file format, the tool "
+               "'bandit-config-generator' can help you with this.")
+
+        for name in ["blacklist_call",
+                     "blacklist_imports",
+                     "blacklist_imports_func"]:
+
+            self.config._config = (
+                {"profiles": {"test": {"include": [name]}}})
+            try:
+                self.config.validate('')
+            except utils.ConfigError as e:
+                self.assertEqual(msg % name, e.message)
+
+    def test_bad_yaml(self):
+        f = self.useFixture(TempFile("[]"))
+        try:
+            self.config = config.BanditConfig(f.name)
+        except utils.ConfigError as e:
+            self.assertTrue("Error parsing file." in e.message)
