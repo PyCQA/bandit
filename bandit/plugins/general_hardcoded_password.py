@@ -14,51 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-r"""
-==========================================
-B105: Test for use of hard-coded passwords
-==========================================
-
-The use of hard-coded passwords increases the possibility of password guessing
-tremendously. This plugin test looks for all string literals and checks to see
-if they exist in a list of likely default passwords. If they are found in the
-list, a LOW severity issue is reported.
-
-Note: this test is very noisy and likely to result in many false positives.
-
-**Config Options:**
-
-This plugin test takes a similarly named config block, `hardcoded_password`.
-Here a path, `word_list`, can be given to indicate where the default password
-word list file may be found.
-
-.. code-block:: yaml
-
-    hardcoded_password:
-        # Support for full path, relative path and special "%(site_data_dir)s"
-        # substitution (/usr/{local}/share)
-        word_list: "%(site_data_dir)s/wordlist/default-passwords"
-
-
-:Example:
-
-.. code-block:: none
-
-    >> Issue: Possible hardcoded password '(root)'
-       Severity: Low   Confidence: Low
-       Location: ./examples/hardcoded-passwords.py:5
-    4 def someFunction2(password):
-    5     if password == "root":
-    6         print("OK, logged in")
-
-.. seealso::
-
- - https://www.owasp.org/index.php/Use_of_hard-coded_password
-
-.. versionadded:: 0.9.0
-
-"""
-
 import ast
 import sys
 
@@ -80,6 +35,51 @@ def _report(value):
 @test.checks('Str')
 @test.test_id('B105')
 def hardcoded_password_string(context):
+    """**B105: Test for use of hard-coded password strings**
+
+    The use of hard-coded passwords increases the possibility of password
+    guessing tremendously. This plugin test looks for all string literals and
+    checks the following conditions:
+
+    - assigned to a variable that looks like a password
+    - assigned to a dict key that looks like a password
+    - used in a comparison with a variable that looks like a password
+
+    Variables are considered to look like a password if they have match any one
+    of:
+
+    - "password"
+    - "pass"
+    - "passwd"
+    - "pwd"
+    - "secret"
+    - "token"
+    - "secrete"
+
+    Note: this can be noisy and may generate false positives.
+
+    **Config Options:**
+
+    None
+
+    :Example:
+
+    .. code-block:: none
+
+        >> Issue: Possible hardcoded password '(root)'
+           Severity: Low   Confidence: Low
+           Location: ./examples/hardcoded-passwords.py:5
+        4 def someFunction2(password):
+        5     if password == "root":
+        6         print("OK, logged in")
+
+    .. seealso::
+
+        - https://www.owasp.org/index.php/Use_of_hard-coded_password
+
+    .. versionadded:: 0.9.0
+
+    """
     node = context.node
     if isinstance(node.parent, ast.Assign):
         # looks for "candidate='some_string'"
@@ -106,6 +106,48 @@ def hardcoded_password_string(context):
 @test.checks('Call')
 @test.test_id('B106')
 def hardcoded_password_funcarg(context):
+    """**B106: Test for use of hard-coded password function arguments**
+
+    The use of hard-coded passwords increases the possibility of password
+    guessing tremendously. This plugin test looks for all function calls being
+    passed a keyword argument that is a string literal. It checks that the
+    assigned local variable does not look like a password.
+
+    Variables are considered to look like a password if they have match any one
+    of:
+
+    - "password"
+    - "pass"
+    - "passwd"
+    - "pwd"
+    - "secret"
+    - "token"
+    - "secrete"
+
+    Note: this can be noisy and may generate false positives.
+
+    **Config Options:**
+
+    None
+
+    :Example:
+
+    .. code-block:: none
+
+        >> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded
+        password: 'blerg'
+           Severity: Low   Confidence: Medium
+           Location: ./examples/hardcoded-passwords.py:16
+        15
+        16    doLogin(password="blerg")
+
+    .. seealso::
+
+        - https://www.owasp.org/index.php/Use_of_hard-coded_password
+
+    .. versionadded:: 0.9.0
+
+    """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
         if isinstance(kw.value, ast.Str) and kw.arg in candidates:
@@ -115,6 +157,49 @@ def hardcoded_password_funcarg(context):
 @test.checks('FunctionDef')
 @test.test_id('B107')
 def hardcoded_password_default(context):
+    """**B107: Test for use of hard-coded password argument defaults**
+
+    The use of hard-coded passwords increases the possibility of password
+    guessing tremendously. This plugin test looks for all function definitions
+    that specify a default string literal for some argument. It checks that
+    the argument does not look like a password.
+
+    Variables are considered to look like a password if they have match any one
+    of:
+
+    - "password"
+    - "pass"
+    - "passwd"
+    - "pwd"
+    - "secret"
+    - "token"
+    - "secrete"
+
+    Note: this can be noisy and may generate false positives.
+
+    **Config Options:**
+
+    None
+
+    :Example:
+
+    .. code-block:: none
+
+        >> Issue: [B107:hardcoded_password_default] Possible hardcoded
+        password: 'Admin'
+           Severity: Low   Confidence: Medium
+           Location: ./examples/hardcoded-passwords.py:1
+
+        1    def someFunction(user, password="Admin"):
+        2      print("Hi " + user)
+
+    .. seealso::
+
+        - https://www.owasp.org/index.php/Use_of_hard-coded_password
+
+    .. versionadded:: 0.9.0
+
+    """
     # looks for "def function(candidate='some_string')"
 
     # this pads the list of default values with "None" if nothing is given
