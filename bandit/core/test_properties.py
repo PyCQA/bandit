@@ -13,9 +13,10 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-import ast
+
 import logging
 
+from bandit.core import utils
 
 logger = logging.getLogger(__name__)
 
@@ -25,20 +26,8 @@ def checks(*args):
     def wrapper(func):
         if not hasattr(func, "_checks"):
             func._checks = []
-        for a in args:
-            try:
-                holder = getattr(ast, a)
-            except AttributeError:
-                raise TypeError(
-                    "Error: %s is not a valid node type in AST" % a
-                )
-            else:
-                if holder and issubclass(holder, ast.AST):
-                    func._checks.append(a)
-                else:
-                    raise TypeError(
-                        "Error: %s is not a valid node type in AST" % a
-                    )
+        func._checks.extend(utils.check_ast_node(a) for a in args)
+
         logger.debug('checks() decorator executed')
         logger.debug('  func._checks: %s', func._checks)
         return func

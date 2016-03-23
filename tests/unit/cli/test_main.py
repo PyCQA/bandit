@@ -190,7 +190,7 @@ class BanditCLIMainTests(testtools.TestCase):
                 # SystemExit with code 2 when test not found in profile
                 self.assertRaisesRegex(SystemExit, '2', bandit.main)
                 self.assertEqual(str(err_mock.call_args[0][0]),
-                                 'Unknown Test found in profile: some_test')
+                                 'Unknown test found in profile: some_test')
 
     @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-t', 'badID', 'test'])
     def test_main_unknown_tests(self):
