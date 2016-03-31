@@ -99,7 +99,7 @@ def try_except_pass(context, config):
     if len(node.body) == 1:
         if (not config['check_typed_exception'] and
            node.type is not None and
-           node.type.id != 'Exception'):
+           getattr(node.type, 'id', None) != 'Exception'):
                 return
 
         if isinstance(node.body[0], ast.Pass):
