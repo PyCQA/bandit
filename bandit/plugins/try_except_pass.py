@@ -88,7 +88,7 @@ from bandit.core import test_properties as test
 
 def gen_config(name):
     if name == 'try_except_pass':
-        return {'check_typed_exception': True}
+        return {'check_typed_exception': False}
 
 
 @test.takes_config
