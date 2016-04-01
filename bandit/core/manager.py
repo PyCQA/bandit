@@ -144,9 +144,9 @@ class BanditManager():
                         sev_level=sev_level, conf_level=conf_level,
                         lines=lines)
 
-        except Exception:
-            raise RuntimeError("Unable to output report using '%s' formatter."
-                               % output_format)
+        except Exception as e:
+            raise RuntimeError("Unable to output report using '%s' formatter: "
+                               "%s" % (output_format, str(e)))
 
     def discover_files(self, targets, recursive=False, excluded_paths=''):
         '''Add tests directly and from a directory to the test set

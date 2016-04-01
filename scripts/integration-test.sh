@@ -40,7 +40,6 @@ if [[ $clone -eq 1 ]] ; then
 fi
 
 pushd $projectdir
-    set +e
     # --notest allows us to create the tox-managed virtualenv without
     # running any tests.
     tox -e bandit --notest
