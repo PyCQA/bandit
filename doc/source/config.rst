@@ -2,17 +2,68 @@ Configuration
 =============
 Bandit is designed to be configurable and cover a wide range of needs, it may
 be used as either a local developer utility or as part of a full CI/CD
-pipeline. To provide for these various usage scenarios Bandit can be configured
-via the 'bandit.yaml' file. Here we can choose the specific test plugins to
-run, the test parameters, and the desired output report format. These choices
-may be grouped into configuration profiles that can be selected at run time.
+pipeline. To provide for these various usage scenarios bandit can be configured
+via a `YAML <http://yaml.org/>`_ file. This file is completely optional and in
+many cases not needed, it may be specified on the command line by using `-c`.
 
-Upon startup, unless given a specific path via the command line ``-c`` option,
-Bandit will search for a configuration file in the following locations:
+A bandit configuration file may choose the specific test plugins to run and
+override the default configurations of those tests. An example config might
+look like the following:
 
- #. Current directory
- #. User home directory (usually ~/.config/ )
- #. Bundled config (the bandit library config, normally site-packages)
+.. code-block:: yaml
+
+  ### profile may optionally select or skip tests
+
+  # (optional) list included tests here:
+  tests: ['B201', 'B301']
+
+  # (optional) list skipped tests here:
+  skips: ['B101', 'B601']
+
+  ### override settings - used to set settings for plugins to non-default values
+
+  any_other_function_with_shell_equals_true:
+    no_shell: [os.execl, os.execle, os.execlp, os.execlpe, os.execv, os.execve,
+      os.execvp, os.execvpe, os.spawnl, os.spawnle, os.spawnlp, os.spawnlpe,
+      os.spawnv, os.spawnve, os.spawnvp, os.spawnvpe, os.startfile]
+    shell: [os.system, os.popen, os.popen2, os.popen3, os.popen4,
+      popen2.popen2, popen2.popen3, popen2.popen4, popen2.Popen3,
+      popen2.Popen4, commands.getoutput,  commands.getstatusoutput]
+    subprocess: [subprocess.Popen, subprocess.call, subprocess.check_call,
+      subprocess.check_output,
+      utils.execute, utils.execute_with_timeout]
+
+If you require several sets of tests for specific tasks, then you should create
+several config files and pick from them using `-c`. If you only wish to control
+the specific tests that are to be run (and not their parameters) then using
+`-s` or `-t` on the command line may be more appropriate.
+
+Skipping Tests
+--------------
+The bandit config may contain optional lists of test IDs to either include
+(`tests`) or exclude (`skips`). These lists are equivalent to using `-t` and
+`-s` on the command line. If only `tests` is given then bandit will include
+only those tests, effectively excluding all other tests. If only `skips`
+is given then bandit will include all tests not in the skips list. If both are
+given then bandit will include only tests in `tests` and then remove `skips`
+from that set. It is an error to include the same test ID in both `tests` and
+`skips`.
+
+Note that command line options `-t`/`-s` can still be used in conjunction with
+`tests` and `skips` given in a config. The result is to concatenate `-t` with
+`tests` and likewise for `-s` and `skips` before working out the tests to run.
+
+Generating a Config
+-------------------
+Bandit ships the tool `bandit-config-generator` designed to take the leg work
+out of configuration. This tool can generate a configuration file
+automatically. The generated configuration will include default config blocks
+for all detected test and blacklist plugins. This data can then be deleted or
+edited as needed to produce a minimal config as desired. The config generator
+supports `-t` and `-s` command line options to specify a list of test IDs that
+should be included or excluded respectively. If no options are given then the
+generated config will not include `tests` or `skips` sections (but will provide
+a complete list of all test IDs for reference when editing).
 
 Configuring Test Plugins
 ------------------------
@@ -29,100 +80,3 @@ configuration section might look like the following:
 The specific content of the configuration block is determined by the plugin
 test itself. See the `plugin test list <plugins/index.html>`_ for complete
 information on configuring each one.
-
-Test Profiles
--------------
-Bandit defaults to running all available test plugins. However, this behavior
-can be overridden by grouping tests into named sets, known as profiles, and
-specifying a profile using the ``-p`` command line option. When running with a
-profile only those tests explicitly listed in the chosen profile will be run.
-To define a profile set, create a named entry under the 'profiles' section of
-the config. For example the following defines two profiles, ``XSS`` and
-``SqlInjection``.
-
-.. code-block:: yaml
-
-    profiles:
-      XSS:
-        include:
-          - jinja2_autoescape_false
-          - use_of_mako_templates
-
-      SqlInjection:
-        include:
-          - hardcoded_sql_expressions
-
-Again, test plugins are referred to using their method name. Thus in the above
-example we create two profiles, the first running 'jinja2_autoescape_false' and
-'use_of_mako_templates' and the second running just 'hardcoded_sql_expressions'.
-
-
-Report Format Plugins
----------------------
-In order to integrate with various CI/CD pipelines, Bandit provides a facility
-to build pluggable output formatters. A well written formatter should respect
-all of the report configuration options given here, however they may also
-expose their own specific configuration choices. Please see the `complete list
-of formatters <formatters/index.html>`_ for details.
-
-+---------------+------------------------------------------------------------+
-| Option        | Description                                                |
-+===============+============================================================+
-| TBD           |                                                            |
-+---------------+------------------------------------------------------------+
-
-
-Misc Options
-------------
-The following miscellaneous options are available:
-
-+---------------------+------------------------------------------------------+
-| Option              | Description                                          |
-+=====================+======================================================+
-| include             | Globs of files which should be analyzed,             |
-|                     | typically this will be '\*.py' and '\*.pyw'.         |
-+---------------------+------------------------------------------------------+
-| exclude_dirs        | A list of strings, which if found in the path will   |
-|                     | cause files to be excluded.                          |
-+---------------------+------------------------------------------------------+
-| show_progress_every | Optionally show progress every X files.              |
-|                     | If not given it will default to 50 files.            |
-+---------------------+------------------------------------------------------+
-| log_format          | Optional log format string, if not given defaults    |
-|                     | to ``"[%(module)s]\\t%(levelname)s\\t%(message)s"``. |
-+---------------------+------------------------------------------------------+
-| output_colors       | Optional terminal escape sequences to display colors,|
-|                     | if not given defaults will be used.                  |
-+---------------------+------------------------------------------------------+
-
-Generating a default configuration
-----------------------------------
-Some users might want to use a 'generic' configuration for bandit. Using
-'bandit-config-generator', it is possible to generate such a configuration
-without writing a whole bandit.yaml. Instead, one can write a minimal
-configuration file (named 'minimal.yaml', for instance) that looks like
-this:
-
-.. code-block:: yaml
-
-    profile_name: my-bandit-config
-    exclude_checkers: [assert_used, try_except_pass]
-
-Then, it is possible to call 'bandit-config-generator' to generate a valid
-configuration:
-
-.. code-block:: bash
-
-    bandit-config-generator --out my-bandit.yaml bandit.yaml minimal.yaml
-
-Where 'bandit.yaml' is the full configuration example provided by bandit.
-
-The following options are available:
-
-+---------------------+------------------------------------------------------+
-| Option              | Description                                          |
-+=====================+======================================================+
-| profile_name        | The name of the profile that will be generated.      |
-+---------------------+------------------------------------------------------+
-| exclude_checkers    | A list of checkers to disable.                       |
-+---------------------+------------------------------------------------------+
