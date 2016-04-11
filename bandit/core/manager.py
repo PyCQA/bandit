@@ -20,6 +20,7 @@ import json
 import logging
 import os
 import sys
+import traceback
 
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
@@ -240,12 +241,30 @@ class BanditManager():
                         self.metrics.count_issues([score, ])
                     except KeyboardInterrupt as e:
                         sys.exit(2)
+                    except SyntaxError as e:
+                        self.skipped.append((
+                            fname,
+                            "syntax error while parsing AST from file"
+                        ))
+                        new_files_list.remove(fname)
+                    except Exception as e:
+                        logger.error(
+                            "Exception occurred when executing tests against "
+                            "{0}. Run \"bandit --debug {0}\" to see the full "
+                            "traceback.".format(fname)
+                        )
+                        self.skipped.append(
+                            (fname, 'exception while scanning file')
+                        )
+                        new_files_list.remove(fname)
+                        logger.debug("  Exception string: %s", e)
+                        logger.debug(
+                            "  Exception traceback: %s",
+                            traceback.format_exc()
+                        )
+                        continue
             except IOError as e:
                 self.skipped.append((fname, e.strerror))
-                new_files_list.remove(fname)
-            except SyntaxError as e:
-                self.skipped.append(
-                    (fname, "syntax error while parsing AST from file"))
                 new_files_list.remove(fname)
 
         if len(self.files_list) > self.progress:
