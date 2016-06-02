@@ -38,7 +38,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bandit'
-copyright = u'2015, OpenStack Foundation'
+copyright = u'2016, OpenStack Foundation'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -51,6 +51,16 @@ add_module_names = True
 pygments_style = 'sphinx'
 
 modindex_common_prefix = ['bandit.']
+
+ #-- Options for man page output --------------------------------------------
+
+# Grouping the document tree for man pages.
+# List of tuples 'sourcefile', 'target', u'title', u'Authors name', 'manual'
+
+man_pages = [
+    ('man/bandit', 'bandit', u'Python source code security analyzer',
+     [u'OpenStack Security Group'], 1)
+]
 
 # -- Options for HTML output --------------------------------------------------
 
