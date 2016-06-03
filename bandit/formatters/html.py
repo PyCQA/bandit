@@ -147,20 +147,20 @@ This formatter outputs the issues as HTML.
 """
 
 import logging
+import sys
 
 from bandit.core import docs_utils
 from bandit.core.test_properties import accepts_baseline
-from bandit.core import utils
 
 logger = logging.getLogger(__name__)
 
 
 @accepts_baseline
-def report(manager, filename, sev_level, conf_level, lines=-1):
-    """Writes issues to 'filename' in HTML format
+def report(manager, fileobj, sev_level, conf_level, lines=-1):
+    """Writes issues to 'fileobj' in HTML format
 
     :param manager: the bandit manager object
-    :param filename: output file name
+    :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
@@ -369,9 +369,9 @@ pre {
                                           skipped=skipped_text,
                                           results=results_str)
 
-    with utils.output_file(filename, 'w') as fout:
-        fout.write(str(header_block.encode('utf-8')))
-        fout.write(str(report_contents.encode('utf-8')))
+    with fileobj:
+        fileobj.write(str(header_block.encode('utf-8')))
+        fileobj.write(str(report_contents.encode('utf-8')))
 
-    if filename is not None:
-        logger.info("HTML output written to file: %s" % filename)
+    if fileobj.name != sys.stdout.name:
+        logger.info("HTML output written to file: %s" % fileobj.name)

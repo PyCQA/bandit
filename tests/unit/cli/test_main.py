@@ -256,7 +256,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # assert a SystemExit with code 2
         self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o', 'output'])
     def test_main_exit_with_results(self):
         # Test that bandit exits when there are results
         temp_directory = self.useFixture(fixtures.TempDir()).path
@@ -269,7 +269,7 @@ class BanditCLIMainTests(testtools.TestCase):
             # assert a SystemExit with code 1
             self.assertRaisesRegex(SystemExit, '1', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o', 'output'])
     def test_main_exit_with_no_results(self):
         # Test that bandit exits when there are no results
         temp_directory = self.useFixture(fixtures.TempDir()).path

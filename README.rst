@@ -78,7 +78,7 @@ Usage::
     $ bandit -h
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
                   [-p PROFILE] [-t TESTS] [-s SKIPS] [-l] [-i]
-                  [-f {csv,html,json,screen,txt,xml}] [-o OUTPUT_FILE] [-v] [-d]
+                  [-f {csv,html,json,screen,txt,xml}] [-o [OUTPUT_FILE]] [-v] [-d]
                   [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
                   [--ini INI_PATH] [--version]
                   targets [targets ...]
@@ -111,7 +111,7 @@ Usage::
                             higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
       -f {csv,html,json,screen,txt,xml}, --format {csv,html,json,screen,txt,xml}
                             specify output format
-      -o OUTPUT_FILE, --output OUTPUT_FILE
+      -o [OUTPUT_FILE], --output [OUTPUT_FILE]
                             write report to filename
       -v, --verbose         output extra information like excluded and included
                             files

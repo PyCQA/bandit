@@ -209,8 +209,9 @@ def main():
         choices=sorted(extension_mgr.formatter_names)
     )
     parser.add_argument(
-        '-o', '--output', dest='output_file', action='store',
-        default=None, help='write report to filename'
+        '-o', '--output', dest='output_file', action='store', nargs='?',
+        type=argparse.FileType('w'), default=sys.stdout,
+        help='write report to filename'
     )
     parser.add_argument(
         '-v', '--verbose', dest='verbose', action='store_true',

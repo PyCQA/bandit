@@ -48,7 +48,8 @@ class CsvFormatterTests(testtools.TestCase):
         self.manager.results.append(self.issue)
 
     def test_report(self):
-        b_csv.report(self.manager, self.tmp_fname, self.issue.severity,
+        tmp_file = open(self.tmp_fname, 'w')
+        b_csv.report(self.manager, tmp_file, self.issue.severity,
                      self.issue.confidence)
 
         with open(self.tmp_fname) as f:

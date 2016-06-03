@@ -49,11 +49,11 @@ import six
 logger = logging.getLogger(__name__)
 
 
-def report(manager, filename, sev_level, conf_level, lines=-1):
+def report(manager, fileobj, sev_level, conf_level, lines=-1):
     '''Prints issues in XML format
 
     :param manager: the bandit manager object
-    :param filename: The output file name, or None for stdout
+    :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
@@ -75,14 +75,17 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
 
     tree = ET.ElementTree(root)
 
-    if six.PY2:
-        outfile = sys.stdout
-    else:
-        outfile = sys.stdout.buffer
-    if filename is not None:
-        outfile = open(filename, "wb")
+    if fileobj.name == sys.stdout.name:
+        if six.PY2:
+            fileobj = sys.stdout
+        else:
+            fileobj = sys.stdout.buffer
+    elif fileobj.mode == 'w':
+        fileobj.close()
+        fileobj = open(fileobj.name, "wb")
 
-    tree.write(outfile, encoding='utf-8', xml_declaration=True)
+    with fileobj:
+        tree.write(fileobj, encoding='utf-8', xml_declaration=True)
 
-    if filename is not None:
-        logger.info("XML output written to file: %s" % filename)
+    if fileobj.name != sys.stdout.name:
+        logger.info("XML output written to file: %s" % fileobj.name)

@@ -21,8 +21,6 @@ import shutil
 import sys
 import tempfile
 
-import mock
-import six.moves.builtins as builtins
 import testtools
 
 from bandit.core import utils as b_utils
@@ -295,28 +293,6 @@ class UtilTests(testtools.TestCase):
 
                 self.assertEqual(b_utils.parse_ini_file(t.name),
                                  test['expected'])
-
-    @mock.patch('os.path.isdir')
-    def test_check_output_destination_dir(self, isdir):
-        isdir.return_value = True
-
-        def _b_tester(a, b):
-            with b_utils.output_file(a, b):
-                pass
-
-        self.assertRaises(RuntimeError, _b_tester, 'derp', 'r')
-
-    @mock.patch('os.path.isdir')
-    def test_check_output_destination_bad(self, isdir):
-        with mock.patch.object(builtins, 'open') as b_open:
-            isdir.return_value = False
-            b_open.side_effect = IOError()
-
-            def _b_tester(a, b):
-                with b_utils.output_file(a, b):
-                    pass
-
-            self.assertRaises(IOError, _b_tester, 'derp', 'r')
 
     def test_check_ast_node_good(self):
         node = b_utils.check_ast_node("Call")

@@ -75,7 +75,8 @@ class JsonFormatterTests(testtools.TestCase):
         get_issue_list.return_value = OrderedDict([(self.issue,
                                                     self.candidates)])
 
-        b_json.report(self.manager, self.tmp_fname, self.issue.severity,
+        tmp_file = open(self.tmp_fname, 'w')
+        b_json.report(self.manager, tmp_file, self.issue.severity,
                       self.issue.confidence)
 
         with open(self.tmp_fname) as f:

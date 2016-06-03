@@ -16,7 +16,6 @@
 
 import _ast
 import ast
-import contextlib
 import logging
 import os.path
 import sys
@@ -30,22 +29,6 @@ logger = logging.getLogger(__name__)
 
 
 """Various helper functions."""
-
-
-@contextlib.contextmanager
-def output_file(filename, filemode):
-    try:
-        out = sys.stdout
-        if filename is not None:
-            if os.path.isdir(filename):
-                raise RuntimeError('Specified destination is a directory')
-            out = open(filename, filemode)
-        yield out
-    except Exception:
-        raise
-    finally:
-        if out is not sys.stdout:
-            out.close()
 
 
 def _get_attr_qual_name(node, aliases):

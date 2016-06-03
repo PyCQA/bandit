@@ -79,7 +79,8 @@ class ScreenFormatterTests(testtools.TestCase):
 
         get_issue_list.return_value = OrderedDict()
         with mock.patch('bandit.formatters.screen.do_print') as m:
-            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+            tmp_file = open(self.tmp_fname, 'w')
+            screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
                           lines=5)
             self.assertIn('No issues identified.',
                           '\n'.join([str(a) for a in m.call_args]))
@@ -117,7 +118,8 @@ class ScreenFormatterTests(testtools.TestCase):
         with mock.patch(output_str_fn) as output_str:
             output_str.return_value = 'ISSUE_OUTPUT_TEXT'
 
-            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+            tmp_file = open(self.tmp_fname, 'w')
+            screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
                           lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
@@ -128,7 +130,8 @@ class ScreenFormatterTests(testtools.TestCase):
         # Validate that we're outputting all of the expected fields and the
         # correct values
         with mock.patch('bandit.formatters.screen.do_print') as m:
-            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+            tmp_file = open(self.tmp_fname, 'w')
+            screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
                           lines=5)
 
             data = '\n'.join([str(a) for a in m.call_args[0][0]])
@@ -190,7 +193,8 @@ class ScreenFormatterTests(testtools.TestCase):
         with mock.patch(output_str_fn) as output_str:
             output_str.return_value = 'ISSUE_OUTPUT_TEXT'
 
-            screen.report(self.manager, self.tmp_fname, bandit.LOW, bandit.LOW,
+            tmp_file = open(self.tmp_fname, 'w')
+            screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
                           lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),

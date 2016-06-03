@@ -10,11 +10,10 @@ Example Formatter
 
 .. code-block:: python
 
-    def report(manager, filename, sev_level, conf_level, lines=-1,
-               out_format='bson'):
+    def report(manager, fileobj, sev_level, conf_level, lines=-1):
         result = bson.dumps(issues)
-        with utils.output_file(filename, 'w') as fout:
-            fout.write(result)
+        with fileobj:
+            fileobj.write(result)
 
 To register your plugin, you have two options:
 

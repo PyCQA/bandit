@@ -41,6 +41,7 @@ from __future__ import print_function
 
 import datetime
 import logging
+import sys
 
 from bandit.core import constants
 from bandit.core.test_properties import accepts_baseline
@@ -143,13 +144,13 @@ def do_print(bits):
 
 
 @accepts_baseline
-def report(manager, filename, sev_level, conf_level, lines=-1):
+def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """Prints discovered issues formatted for screen reading
 
     This makes use of VT100 terminal codes for colored text.
 
     :param manager: the bandit manager object
-    :param filename: The output file name, or None for stdout
+    :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
@@ -175,6 +176,6 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
     do_print(bits)
 
-    if filename is not None:
+    if fileobj.name != sys.stdout.name:
         logger.info(("Screen formatter output was not written to file: %s"
-                     ", consider '-f txt'") % filename)
+                     ", consider '-f txt'") % fileobj.name)

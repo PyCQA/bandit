@@ -41,10 +41,10 @@ from __future__ import print_function
 
 import datetime
 import logging
+import sys
 
 from bandit.core import constants
 from bandit.core.test_properties import accepts_baseline
-from bandit.core import utils
 
 logger = logging.getLogger(__name__)
 
@@ -124,11 +124,11 @@ def get_results(manager, sev_level, conf_level, lines):
 
 
 @accepts_baseline
-def report(manager, filename, sev_level, conf_level, lines=-1):
+def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """Prints discovered issues in the text format
 
     :param manager: the bandit manager object
-    :param filename: The output file name, or None for stdout
+    :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
@@ -154,8 +154,8 @@ def report(manager, filename, sev_level, conf_level, lines=-1):
     bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
     result = '\n'.join([bit for bit in bits]) + '\n'
 
-    with utils.output_file(filename, 'w') as fout:
-        fout.write(str(result.encode('utf-8')))
+    with fileobj:
+        fileobj.write(str(result.encode('utf-8')))
 
-    if filename is not None:
-        logger.info("Text output written to file: %s", filename)
+    if fileobj.name != sys.stdout.name:
+        logger.info("Text output written to file: %s", fileobj.name)
