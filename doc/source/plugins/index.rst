@@ -30,6 +30,19 @@ To write a test:
    vulnerability might present itself and extend the example file and the test
    function accordingly.
 
+Config Generation
+-----------------
+In Bandit 1.0+ config files are no longer required.  Plugins are expected to
+declare all required parameters by implementing `gen_config`.  If your plugin
+requires parameters, use `gen_config` to declare parameter names and default
+values as follows:
+
+.. code-block:: python
+
+    def gen_config(name):
+        if name == 'try_except_continue':
+            return {'check_typed_exception': False}
+
 
 Example Test Plugin
 -------------------
