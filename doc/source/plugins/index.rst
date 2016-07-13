@@ -32,16 +32,31 @@ To write a test:
 
 Config Generation
 -----------------
-In Bandit 1.0+ config files are no longer required.  Plugins are expected to
-declare all required parameters by implementing `gen_config`.  If your plugin
-requires parameters, use `gen_config` to declare parameter names and default
-values as follows:
+In Bandit 1.0+ config files are optional. Plugins that need config settings are
+required to implement a module global `gen_config` function. This function is
+called with a single parameter, the test plugin name. It should return a
+dictionary with keys being the config option names and values being the default
+settings for each option. An example `gen_config` might look like the following:
 
 .. code-block:: python
 
     def gen_config(name):
         if name == 'try_except_continue':
             return {'check_typed_exception': False}
+
+
+When no config file is specified, or when the chosen file has no section
+pertaining to a given plugin, `gen_config` will be called to provide defaults.
+
+The config file generation tool `bandit-config-generator` will also call
+`gen_config` on all discovered plugins to produce template config blocks. If
+the defaults are acceptable then these blocks may be deleted to create a
+minimal configuration, or otherwise edited as needed. The above example would
+produce the following config snippet.
+
+.. code-block:: yaml
+
+    try_except_continue: {check_typed_exception: false}
 
 
 Example Test Plugin
