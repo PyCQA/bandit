@@ -191,7 +191,7 @@ purposes.
 B312: telnetlib
 ---------------
 
-Telnet-related funtions are being called. Telnet is considered insecure. Use
+Telnet-related functions are being called. Telnet is considered insecure. Use
 SSH or some other encrypted protocol.
 
 +------+---------------------+------------------------------------+-----------+

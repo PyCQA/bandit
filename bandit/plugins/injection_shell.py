@@ -374,7 +374,7 @@ def any_other_function_with_shell_equals_true(context, config):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
-                text='Function call with shell=True parameter identifed, '
+                text='Function call with shell=True parameter identified, '
                      'possible security issue.',
                 lineno=context.get_lineno_for_call_arg('shell'),
                 )

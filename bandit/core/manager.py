@@ -45,7 +45,7 @@ class BanditManager():
         :param config: config options object
         :type config: bandit.core.BanditConfig
         :param agg_type: aggregation type
-        :param debug: Whether to show debug messsages or not
+        :param debug: Whether to show debug messages or not
         :param verbose: Whether to show verbose output
         :param profile_name: Optional name of profile to use (from cmd line)
         :param ignore_nosec: Whether to ignore #nosec or not
