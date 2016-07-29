@@ -160,6 +160,20 @@ xmlrpclib and mitigate remote XML attacks.
 | B411 | import_xmlrpclib    | - xmlrpclib                        | high      |
 +------+---------------------+------------------------------------+-----------+
 
+B412: import_httpoxy
+--------------------
+httpoxy is a set of vulnerabilities that affect application code running in
+CGI, or CGI-like environments. The use of CGI for web applications should be
+avoided to prevent this class of attack. More details are available
+at https://httpoxy.org/.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B412 | import_httpoxy      | - wsgiref.handlers.CGIHandler      | high      |
+|      |                     | - twisted.web.twcgi.CGIScript      |           |
++------+---------------------+------------------------------------+-----------+
+
 """
 
 from bandit.blacklists import utils
@@ -236,5 +250,13 @@ def gen_blacklist():
         'vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() '
         'function to monkey-patch xmlrpclib and mitigate XML '
         'vulnerabilities.', 'HIGH'))
+
+    sets.append(utils.build_conf_dict(
+        'import_httpoxy', 'B412',
+        ['wsgiref.handlers.CGIHandler', 'twisted.web.twcgi.CGIScript',
+         'twisted.web.twcgi.CGIDirectory'],
+        'Consider possible security implications associated with '
+        '{name} module.', 'HIGH'
+        ))
 
     return {'Import': sets, 'ImportFrom': sets, 'Call': sets}

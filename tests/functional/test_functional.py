@@ -387,6 +387,14 @@ class FunctionalTests(testtools.TestCase):
                   'CONFIDENCE': {'HIGH': 2, 'MEDIUM': 6}}
         self.check_example('xml_sax.py', expect)
 
+    def test_httpoxy(self):
+        '''Test httpoxy vulnerability.'''
+        expect = {'SEVERITY': {'HIGH': 1},
+                  'CONFIDENCE': {'HIGH': 1}}
+        self.check_example('httpoxy_cgihandler.py', expect)
+        self.check_example('httpoxy_twisted_script.py', expect)
+        self.check_example('httpoxy_twisted_directory.py', expect)
+
     def test_asserts(self):
         '''Test catching the use of assert.'''
         expect = {'SEVERITY': {'LOW': 1},

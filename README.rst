@@ -174,6 +174,7 @@ Usage::
       B409  import_xml_pulldom
       B410  import_lxml
       B411  import_xmlrpclib
+      B412  import_httpoxy
       B501  request_with_no_cert_validation
       B502  ssl_with_bad_version
       B503  ssl_with_bad_defaults
