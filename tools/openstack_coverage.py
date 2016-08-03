@@ -214,7 +214,7 @@ def run_bandit(source_dir):
         fail_results_dir = os.path.abspath('fail_results')
         os.mkdir(fail_results_dir)
     except OSError:
-        print ("Unable to make results directory")
+        print("Unable to make results directory")
 
     os.chdir(source_dir)
 
