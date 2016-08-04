@@ -1,7 +1,7 @@
 ''' Example dangerous usage of urllib[2] opener functions
 
 The urllib and urllib2 opener functions and object can open http, ftp,
-and file urls. Often, the abilit to open file urls is overlooked leading
+and file urls. Often, the ability to open file urls is overlooked leading
 to code that can unexpectedly open files on the local server. This
 could be used by an attacker to leak information about the server.
 '''

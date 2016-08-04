@@ -17,7 +17,7 @@ opts = [
 # Incorrect: password not marked secret
 ldap_opts = [
     cfg.StrOpt('ldap_user',
-               help="LDAP ubind ser name"),
+               help="LDAP bind user name"),
     cfg.StrOpt('ldap_password',
                help="LDAP bind user password"),
     cfg.StrOpt('ldap_password_attribute',

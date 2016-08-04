@@ -1,7 +1,7 @@
 import paramiko
 
 # this is not safe
-paramiko.exec_command('something; reallly; unsafe')
+paramiko.exec_command('something; really; unsafe')
 
 # this is safe
 paramiko.connect('somehost')
