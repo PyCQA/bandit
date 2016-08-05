@@ -60,7 +60,7 @@ class Issue(object):
         return id(self)
 
     def filter(self, severity, confidence):
-        '''Utilty to filter on confidence and severity
+        '''Utility to filter on confidence and severity
 
         This function determines whether an issue should be included by
         comparing the severity and confidence rating of the issue to minimum

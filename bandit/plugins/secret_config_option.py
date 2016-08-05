@@ -53,7 +53,7 @@ issue.
     15   ]
 
     >> Issue: [password_config_option_not_marked_secret] oslo config option not
-    marked secret=True identifed, security issue.
+    marked secret=True identified, security issue.
        Severity: Medium   Confidence: Medium
        Location: examples/secret-config-option.py:21
     20                  help="LDAP ubind ser name"),
@@ -100,7 +100,7 @@ def password_config_option_not_marked_secret(context, config):
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
                 text="oslo config option not marked secret=True "
-                     "identifed, security issue.",
+                     "identified, security issue.",
                 lineno=context.get_lineno_for_call_arg('secret'),
             )
         # Checks whether secret is not True, for example when its set to a
