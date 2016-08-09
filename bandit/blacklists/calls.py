@@ -251,7 +251,7 @@ to XML attacks. Methods should be replaced with their defusedxml equivalents.
 B321: ftplib
 ------------
 
-FTP-related funtions are being called. FTP is considered insecure. Use
+FTP-related functions are being called. FTP is considered insecure. Use
 SSH/SFTP/SCP or some other encrypted protocol.
 
 +------+---------------------+------------------------------------+-----------+
@@ -386,7 +386,7 @@ def gen_blacklist():
 
     sets.append(utils.build_conf_dict(
         'telnetlib', 'B312', ['telnetlib.*'],
-        'Telnet-related funtions are being called. Telnet is considered '
+        'Telnet-related functions are being called. Telnet is considered '
         'insecure. Use SSH or some other encrypted protocol.',
         'HIGH'
         ))
@@ -465,7 +465,7 @@ def gen_blacklist():
 
     sets.append(utils.build_conf_dict(
         'ftplib', 'B321', ['ftplib.*'],
-        'FTP-related funtions are being called. FTP is considered '
+        'FTP-related functions are being called. FTP is considered '
         'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
         'HIGH'
         ))

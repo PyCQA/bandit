@@ -248,7 +248,7 @@ def concat_string(node, stop=None):
     '''Builds a string from a ast.BinOp chain.
 
     This will build a string from a series of ast.Str nodes wrapped in
-    ast.BinOp nodes. Somthing like "a" + "b" + "c" or "a %s" % val etc.
+    ast.BinOp nodes. Something like "a" + "b" + "c" or "a %s" % val etc.
     The provided node can be any participant in the BinOp chain.
 
     :param node: (ast.Str or ast.BinOp) The node to process
