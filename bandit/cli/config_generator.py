@@ -102,6 +102,11 @@ def parse_args():
         action='store', default=None, type=str,
         help='list of test names to skip')
     args = parser.parse_args()
+
+    if not args.output_file and not args.show_defaults:
+        parser.print_help()
+        parser.exit(1)
+
     return args
 
 
