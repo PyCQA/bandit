@@ -128,6 +128,26 @@ class HtmlFormatterTests(testtools.TestCase):
             self.assertIn('CCCCCCC', issue1.text)
             self.assertIn('abc.py', issue1.text)
 
+    @mock.patch('bandit.core.issue.Issue.get_code')
+    @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
+    def test_escaping(self, get_issue_list, get_code):
+        self.manager.metrics.data['_totals'] = {'loc': 1000, 'nosec': 50}
+        marker = '<tag in code>'
+
+        issue_a = _get_issue_instance()
+        issue_x = _get_issue_instance()
+        get_code.return_value = marker
+
+        get_issue_list.return_value = {issue_a: [issue_x]}
+
+        tmp_file = open(self.tmp_fname, 'w')
+        b_html.report(
+            self.manager, tmp_file, bandit.LOW, bandit.LOW)
+
+        with open(self.tmp_fname) as f:
+            contents = f.read()
+        self.assertNotIn(marker, contents)
+
 
 def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
     new_issue = issue.Issue(severity, confidence, 'Test issue')
