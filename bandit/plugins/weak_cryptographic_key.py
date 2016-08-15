@@ -51,6 +51,10 @@ from bandit.core import test_properties as test
 
 
 def _classify_key_size(key_type, key_size):
+    if isinstance(key_size, str):
+        # size provided via a variable - can't process it at the moment
+        return
+
     key_sizes = {
         'DSA': [(1024, bandit.HIGH), (2048, bandit.MEDIUM)],
         'RSA': [(1024, bandit.HIGH), (2048, bandit.MEDIUM)],

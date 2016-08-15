@@ -45,3 +45,8 @@ rsa.generate_private_key(3,
                          backends.default_backend())
 DSA.generate(512)
 RSA.generate(512)
+
+# Don't crash when the size is variable
+rsa.generate_private_key(public_exponent=65537,
+                         key_size=some_key_size,
+                         backend=backends.default_backend())
