@@ -61,9 +61,8 @@ class BanditConfigGeneratorLoggerTests(testtools.TestCase):
 class BanditConfigGeneratorTests(testtools.TestCase):
     @mock.patch('sys.argv', ['bandit-config-generator'])
     def test_parse_args_no_defaults(self):
-        # Test that the config generator does not show default plugin settings
-        return_value = config_generator.parse_args()
-        self.assertFalse(return_value.show_defaults)
+        # Without arguments, the generator should just show help and exit
+        self.assertRaises(SystemExit, config_generator.parse_args)
 
     @mock.patch('sys.argv', ['bandit-config-generator', '--show-defaults'])
     def test_parse_args_show_defaults(self):
