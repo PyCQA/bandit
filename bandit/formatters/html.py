@@ -152,6 +152,7 @@ import sys
 
 from bandit.core import docs_utils
 from bandit.core import test_properties
+from bandit.formatters import utils
 
 LOG = logging.getLogger(__name__)
 
@@ -372,8 +373,9 @@ pre {
                                           results=results_str)
 
     with fileobj:
-        fileobj.write(str(header_block.encode('utf-8')))
-        fileobj.write(str(report_contents.encode('utf-8')))
+        wrapped_file = utils.wrap_file_object(fileobj)
+        wrapped_file.write(utils.convert_file_contents(header_block))
+        wrapped_file.write(utils.convert_file_contents(report_contents))
 
     if fileobj.name != sys.stdout.name:
         LOG.info("HTML output written to file: %s", fileobj.name)
