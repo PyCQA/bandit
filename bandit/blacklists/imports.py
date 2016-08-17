@@ -77,7 +77,8 @@ B405: import_xml_etree
 ----------------------
 
 Using various methods to parse untrusted XML data is known to be vulnerable to
-XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package,
+or make sure defusedxml.defuse_stdlib() is called.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
@@ -90,7 +91,8 @@ B406: import_xml_sax
 --------------------
 
 Using various methods to parse untrusted XML data is known to be vulnerable to
-XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package,
+or make sure defusedxml.defuse_stdlib() is called.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
@@ -102,7 +104,8 @@ B407: import_xml_expat
 ----------------------
 
 Using various methods to parse untrusted XML data is known to be vulnerable to
-XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package,
+or make sure defusedxml.defuse_stdlib() is called.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
@@ -114,7 +117,8 @@ B408: import_xml_minidom
 ------------------------
 
 Using various methods to parse untrusted XML data is known to be vulnerable to
-XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package,
+or make sure defusedxml.defuse_stdlib() is called.
 
 
 +------+---------------------+------------------------------------+-----------+
@@ -127,7 +131,8 @@ B409: import_xml_pulldom
 ------------------------
 
 Using various methods to parse untrusted XML data is known to be vulnerable to
-XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package,
+or make sure defusedxml.defuse_stdlib() is called.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
@@ -223,7 +228,11 @@ def gen_blacklist():
 
     xml_msg = ('Using {name} to parse untrusted XML data is known to be '
                'vulnerable to XML attacks. Replace {name} with the equivalent '
-               'defusedxml package.')
+               'defusedxml package, or make sure defusedxml.defuse_stdlib() '
+               'is called.')
+    lxml_msg = ('Using {name} to parse untrusted XML data is known to be '
+                'vulnerable to XML attacks. Replace {name} with the '
+                'equivalent defusedxml package.')
 
     sets.append(utils.build_conf_dict(
         'import_xml_etree', 'B405',
@@ -242,7 +251,7 @@ def gen_blacklist():
         'import_xml_pulldom', 'B409', ['xml.dom.pulldom'], xml_msg, 'LOW'))
 
     sets.append(utils.build_conf_dict(
-        'import_lxml', 'B410', ['lxml'], xml_msg, 'LOW'))
+        'import_lxml', 'B410', ['lxml'], lxml_msg, 'LOW'))
 
     sets.append(utils.build_conf_dict(
         'import_xmlrpclib', 'B411', ['xmlrpclib'],

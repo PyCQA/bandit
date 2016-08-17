@@ -396,7 +396,8 @@ def gen_blacklist():
 
     xml_msg = ('Using {name} to parse untrusted XML data is known to be '
                'vulnerable to XML attacks. Replace {name} with its '
-               'defusedxml equivalent function.')
+               'defusedxml equivalent function or make sure '
+               'defusedxml.defuse_stdlib() is called')
 
     sets.append(utils.build_conf_dict(
         'xml_bad_cElementTree', 'B313',
@@ -458,7 +459,9 @@ def gen_blacklist():
          'lxml.etree.GlobalParserTLS',
          'lxml.etree.getDefaultParser',
          'lxml.etree.check_docinfo'],
-        xml_msg
+        ('Using {name} to parse untrusted XML data is known to be '
+         'vulnerable to XML attacks. Replace {name} with its '
+         'defusedxml equivalent function.')
         ))
 
     # end of XML tests
