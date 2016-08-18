@@ -117,8 +117,8 @@ class BanditBaselineToolTests(testtools.TestCase):
             git_repo.index.add(branch['files'])
             git_repo.index.commit(branch['name'])
 
-            self.assertEqual(subprocess.call(baseline_command),
-                             branch['expected_return'])
+            self.assertEqual(branch['expected_return'],
+                             subprocess.call(baseline_command))
 
     def test_main_non_repo(self):
         # Test that bandit gracefully exits when there is no git repository
@@ -202,7 +202,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         return_value = baseline.initialize()
 
         # assert bandit did not run due to no git repo
-        self.assertEqual(return_value, (None, None, None))
+        self.assertEqual((None, None, None), return_value)
 
     def test_initialize_git_command_failure(self):
         # Test that bandit does not run when the Git command fails
@@ -223,7 +223,7 @@ class BanditBaselineToolTests(testtools.TestCase):
             return_value = baseline.initialize()
 
             # assert bandit did not run due to git command failure
-            self.assertEqual(return_value, (None, None, None))
+            self.assertEqual((None, None, None), return_value)
 
     def test_initialize_dirty_repo(self):
         # Test that bandit does not run when the current git repository is
@@ -241,7 +241,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         return_value = baseline.initialize()
 
         # assert bandit did not run due to dirty repo
-        self.assertEqual(return_value, (None, None, None))
+        self.assertEqual((None, None, None), return_value)
 
     @patch('sys.argv', ['bandit', '-f', 'txt', 'test'])
     def test_initialize_existing_report_file(self):
@@ -261,7 +261,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         return_value = baseline.initialize()
 
         # assert bandit did not run due to existing report file
-        self.assertEqual(return_value, (None, None, None))
+        self.assertEqual((None, None, None), return_value)
 
     @patch('bandit.cli.baseline.bandit_args', ['-o',
            'bandit_baseline_result'])
@@ -276,7 +276,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         return_value = baseline.initialize()
 
         # assert bandit did not run due to provided -o (--ouput) argument
-        self.assertEqual(return_value, (None, None, None))
+        self.assertEqual((None, None, None), return_value)
 
     def test_initialize_existing_temp_file(self):
         # Test that bandit does not run when the temporary output file exists
@@ -294,4 +294,4 @@ class BanditBaselineToolTests(testtools.TestCase):
         return_value = baseline.initialize()
 
         # assert bandit did not run due to existing temporary report file
-        self.assertEqual(return_value, (None, None, None))
+        self.assertEqual((None, None, None), return_value)

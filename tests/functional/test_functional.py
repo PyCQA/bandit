@@ -530,5 +530,5 @@ class FunctionalTests(testtools.TestCase):
 
         self.b_mgr.populate_baseline(json)
         self.run_example('flask_debug.py')
-        self.assertEqual(len(self.b_mgr.baseline), 1)
-        self.assertEqual(self.b_mgr.get_issue_list(), {})
+        self.assertEqual(1, len(self.b_mgr.baseline))
+        self.assertEqual({}, self.b_mgr.get_issue_list())

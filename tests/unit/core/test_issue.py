@@ -40,14 +40,14 @@ class IssueTests(testtools.TestCase):
         test_issue = _get_issue_instance()
         test_issue_dict = test_issue.as_dict(with_code=False)
         self.assertIsInstance(test_issue_dict, dict)
-        self.assertEqual(test_issue_dict['filename'], 'code.py')
-        self.assertEqual(test_issue_dict['test_name'], 'bandit_plugin')
-        self.assertEqual(test_issue_dict['test_id'], 'B999')
-        self.assertEqual(test_issue_dict['issue_severity'], 'MEDIUM')
-        self.assertEqual(test_issue_dict['issue_confidence'], 'MEDIUM')
-        self.assertEqual(test_issue_dict['issue_text'], 'Test issue')
-        self.assertEqual(test_issue_dict['line_number'], 1)
-        self.assertEqual(test_issue_dict['line_range'], [])
+        self.assertEqual('code.py', test_issue_dict['filename'])
+        self.assertEqual('bandit_plugin', test_issue_dict['test_name'])
+        self.assertEqual('B999', test_issue_dict['test_id'])
+        self.assertEqual('MEDIUM', test_issue_dict['issue_severity'])
+        self.assertEqual('MEDIUM', test_issue_dict['issue_confidence'])
+        self.assertEqual('Test issue', test_issue_dict['issue_text'])
+        self.assertEqual(1, test_issue_dict['line_number'])
+        self.assertEqual([], test_issue_dict['line_range'])
 
     def test_issue_filter_severity(self):
         levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
