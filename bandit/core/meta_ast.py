@@ -15,7 +15,7 @@
 # under the License.
 
 
-from collections import OrderedDict
+import collections
 import logging
 
 
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 class BanditMetaAst():
 
-    nodes = OrderedDict()
+    nodes = collections.OrderedDict()
 
     def add_node(self, node, parent_id, depth):
         '''Add a node to the AST node collection

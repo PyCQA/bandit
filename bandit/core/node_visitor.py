@@ -21,7 +21,6 @@ import operator
 from bandit.core import constants
 from bandit.core import tester as b_tester
 from bandit.core import utils as b_utils
-from bandit.core.utils import InvalidModulePath
 
 
 logger = logging.getLogger(__name__)
@@ -49,7 +48,7 @@ class BanditNodeVisitor(object):
         # in some cases we can't determine a qualified name
         try:
             self.namespace = b_utils.get_module_qualname_from_path(fname)
-        except InvalidModulePath:
+        except b_utils.InvalidModulePath:
             logger.info('Unable to find qualified name for module: %s',
                         self.fname)
             self.namespace = ""

@@ -12,7 +12,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-from collections import OrderedDict
+import collections
 import json
 import tempfile
 
@@ -72,8 +72,8 @@ class JsonFormatterTests(testtools.TestCase):
         self.manager.scores = [{'SEVERITY': [0] * len(constants.RANKING),
                                 'CONFIDENCE': [0] * len(constants.RANKING)}]
 
-        get_issue_list.return_value = OrderedDict([(self.issue,
-                                                    self.candidates)])
+        get_issue_list.return_value = collections.OrderedDict(
+            [(self.issue, self.candidates)])
 
         tmp_file = open(self.tmp_fname, 'w')
         b_json.report(self.manager, tmp_file, self.issue.severity,

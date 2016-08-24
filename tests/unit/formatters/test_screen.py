@@ -13,7 +13,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-from collections import OrderedDict
+import collections
 import tempfile
 
 import mock
@@ -77,7 +77,7 @@ class ScreenFormatterTests(testtools.TestCase):
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
 
-        get_issue_list.return_value = OrderedDict()
+        get_issue_list.return_value = collections.OrderedDict()
         with mock.patch('bandit.formatters.screen.do_print') as m:
             tmp_file = open(self.tmp_fname, 'w')
             screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
@@ -183,9 +183,8 @@ class ScreenFormatterTests(testtools.TestCase):
         issue_z = _get_issue_instance()
         issue_z.fname = 'z'
 
-        get_issue_list.return_value = OrderedDict([(issue_a, [issue_x]),
-                                                   (issue_b, [issue_y,
-                                                              issue_z])])
+        get_issue_list.return_value = collections.OrderedDict(
+            [(issue_a, [issue_x]), (issue_b, [issue_y, issue_z])])
 
         # Validate that we're outputting the correct issues
         indent_val = ' ' * 10

@@ -13,10 +13,10 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-from collections import OrderedDict
+import collections
 import tempfile
 
-from bs4 import BeautifulSoup
+import bs4
 import mock
 import testtools
 
@@ -46,7 +46,7 @@ class HtmlFormatterTests(testtools.TestCase):
             self.manager, tmp_file, bandit.LOW, bandit.LOW)
 
         with open(self.tmp_fname) as f:
-            soup = BeautifulSoup(f.read(), 'html.parser')
+            soup = bs4.BeautifulSoup(f.read(), 'html.parser')
             skipped_span = soup.find_all('span', id='skipped')[0]
 
             self.assertEqual(1, len(soup.find_all('span', id='skipped')))
@@ -74,17 +74,16 @@ class HtmlFormatterTests(testtools.TestCase):
 
         issue_y = _get_issue_instance()
 
-        get_issue_list.return_value = OrderedDict([(issue_a, [issue_x,
-                                                              issue_y]),
-                                                   (issue_b, [issue_x]),
-                                                   (issue_c, [issue_y])])
+        get_issue_list.return_value = collections.OrderedDict(
+            [(issue_a, [issue_x, issue_y]),
+             (issue_b, [issue_x]), (issue_c, [issue_y])])
 
         tmp_file = open(self.tmp_fname, 'w')
         b_html.report(
             self.manager, tmp_file, bandit.LOW, bandit.LOW)
 
         with open(self.tmp_fname) as f:
-            soup = BeautifulSoup(f.read(), 'html.parser')
+            soup = bs4.BeautifulSoup(f.read(), 'html.parser')
 
             self.assertEqual('1000', soup.find_all('span', id='loc')[0].text)
             self.assertEqual('50', soup.find_all('span', id='nosec')[0].text)

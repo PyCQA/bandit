@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from collections import Counter
+import collections
 
 from bandit.core import constants
 
@@ -76,7 +76,7 @@ class Metrics(object):
 
     def aggregate(self):
         """Do final aggregation of metrics."""
-        c = Counter()
+        c = collections.Counter()
         for fname in self.data:
             c.update(self.data[fname])
         self.data['_totals'] = dict(c)

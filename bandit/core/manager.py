@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from collections import OrderedDict
+import collections
 import fnmatch
 import json
 import logging
@@ -371,7 +371,7 @@ def _find_candidate_matches(unmatched_issues, results_list):
     :return: A dictionary with a list of candidates for each issue
     """
 
-    issue_candidates = OrderedDict()
+    issue_candidates = collections.OrderedDict()
 
     for unmatched in unmatched_issues:
         issue_candidates[unmatched] = ([i for i in results_list if
