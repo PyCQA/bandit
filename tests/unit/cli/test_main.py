@@ -16,7 +16,7 @@ import logging
 import os
 
 import fixtures
-from mock import patch
+import mock
 import testtools
 
 from bandit.cli import main as bandit
@@ -156,43 +156,45 @@ class BanditCLIMainTests(testtools.TestCase):
         option_name = 'aggregate'
         self.assertIsNone(bandit._log_option_source(None, None, option_name))
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
     def test_main_config_unopenable(self):
         # Test that bandit exits when a config file cannot be opened
-        with patch('bandit.core.config.__init__') as mock_bandit_config:
+        with mock.patch('bandit.core.config.__init__') as mock_bandit_config:
             mock_bandit_config.side_effect = utils.ConfigError('', '')
             # assert a SystemExit with code 2
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
     def test_main_invalid_config(self):
         # Test that bandit exits when a config file contains invalid YAML
         # content
-        with patch('bandit.core.config.BanditConfig.__init__'
-                   ) as mock_bandit_config:
+        with mock.patch('bandit.core.config.BanditConfig.__init__'
+                        ) as mock_bandit_config:
             mock_bandit_config.side_effect = utils.ConfigError('', '')
             # assert a SystemExit with code 2
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
     def test_main_handle_ini_options(self):
         # Test that bandit handles cmdline args from a bandit.yaml file
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
         with open('bandit.yaml', 'wt') as fd:
             fd.write(bandit_config_content)
-        with patch('bandit.cli.main._get_options_from_ini') as mock_get_opts:
+        with mock.patch('bandit.cli.main._get_options_from_ini'
+                        ) as mock_get_opts:
             mock_get_opts.return_value = {"exclude": "/tmp",
                                           "skips": "skip_test",
                                           "tests": "some_test"}
 
-            with patch('bandit.cli.main.logger.error') as err_mock:
+            with mock.patch('bandit.cli.main.logger.error') as err_mock:
                 # SystemExit with code 2 when test not found in profile
                 self.assertRaisesRegex(SystemExit, '2', bandit.main)
                 self.assertEqual(str(err_mock.call_args[0][0]),
                                  'Unknown test found in profile: some_test')
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-t', 'badID', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-t', 'badID',
+                             'test'])
     def test_main_unknown_tests(self):
         # Test that bandit exits when an invalid test ID is provided
         temp_directory = self.useFixture(fixtures.TempDir()).path
@@ -202,7 +204,8 @@ class BanditCLIMainTests(testtools.TestCase):
         # assert a SystemExit with code 2
         self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-s', 'badID', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-s', 'badID',
+                             'test'])
     def test_main_unknown_skip_tests(self):
         # Test that bandit exits when an invalid test ID is provided to skip
         temp_directory = self.useFixture(fixtures.TempDir()).path
@@ -212,7 +215,8 @@ class BanditCLIMainTests(testtools.TestCase):
         # assert a SystemExit with code 2
         self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-p', 'bad', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-p', 'bad',
+                             'test'])
     def test_main_profile_not_found(self):
         # Test that bandit exits when an invalid profile name is provided
         temp_directory = self.useFixture(fixtures.TempDir()).path
@@ -220,14 +224,14 @@ class BanditCLIMainTests(testtools.TestCase):
         with open('bandit.yaml', 'wt') as fd:
             fd.write(bandit_config_content)
         # assert a SystemExit with code 2
-        with patch('bandit.cli.main.logger.error') as err_mock:
+        with mock.patch('bandit.cli.main.logger.error') as err_mock:
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
             self.assertEqual(
                 str(err_mock.call_args[0][0]),
                 'Unable to find profile (bad) in config file: bandit.yaml')
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-b', 'base.json',
-           'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-b', 'base.json',
+                             'test'])
     def test_main_baseline_ioerror(self):
         # Test that bandit exits when encountering an IOError while reading
         # baseline data
@@ -237,14 +241,14 @@ class BanditCLIMainTests(testtools.TestCase):
             fd.write(bandit_config_content)
         with open('base.json', 'wt') as fd:
             fd.write(bandit_baseline_content)
-        with patch('bandit.core.manager.BanditManager.populate_baseline'
-                   ) as mock_mgr_pop_bl:
+        with mock.patch('bandit.core.manager.BanditManager.populate_baseline'
+                        ) as mock_mgr_pop_bl:
             mock_mgr_pop_bl.side_effect = IOError
             # assert a SystemExit with code 2
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-b', 'base.json',
-           '-f', 'csv', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', '-b', 'base.json',
+                             '-f', 'csv', 'test'])
     def test_main_invalid_output_format(self):
         # Test that bandit exits when an invalid output format is selected
         temp_directory = self.useFixture(fixtures.TempDir()).path
@@ -256,28 +260,30 @@ class BanditCLIMainTests(testtools.TestCase):
         # assert a SystemExit with code 2
         self.assertRaisesRegex(SystemExit, '2', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o', 'output'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o',
+                             'output'])
     def test_main_exit_with_results(self):
         # Test that bandit exits when there are results
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
         with open('bandit.yaml', 'wt') as fd:
             fd.write(bandit_config_content)
-        with patch('bandit.core.manager.BanditManager.results_count'
-                   ) as mock_mgr_results_ct:
+        with mock.patch('bandit.core.manager.BanditManager.results_count'
+                        ) as mock_mgr_results_ct:
             mock_mgr_results_ct.return_value = 1
             # assert a SystemExit with code 1
             self.assertRaisesRegex(SystemExit, '1', bandit.main)
 
-    @patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o', 'output'])
+    @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o',
+                             'output'])
     def test_main_exit_with_no_results(self):
         # Test that bandit exits when there are no results
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
         with open('bandit.yaml', 'wt') as fd:
             fd.write(bandit_config_content)
-        with patch('bandit.core.manager.BanditManager.results_count'
-                   ) as mock_mgr_results_ct:
+        with mock.patch('bandit.core.manager.BanditManager.results_count'
+                        ) as mock_mgr_results_ct:
             mock_mgr_results_ct.return_value = 0
             # assert a SystemExit with code 0
             self.assertRaisesRegex(SystemExit, '0', bandit.main)

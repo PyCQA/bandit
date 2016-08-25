@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 
 from bandit.core import constants
 
-from six.moves import xrange
+from six import moves
 
 import linecache
 
@@ -93,7 +93,7 @@ class Issue(object):
         lmax = lmin + len(self.linerange) + max_lines - 1
 
         tmplt = "%i\t%s" if tabbed else "%i %s"
-        for line in xrange(lmin, lmax):
+        for line in moves.xrange(lmin, lmax):
             text = linecache.getline(self.fname, line)
 
             if isinstance(text, bytes):

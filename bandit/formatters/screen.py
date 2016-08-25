@@ -44,7 +44,7 @@ import logging
 import sys
 
 from bandit.core import constants
-from bandit.core.test_properties import accepts_baseline
+from bandit.core import test_properties
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ def do_print(bits):
     print('\n'.join([bit for bit in bits]))
 
 
-@accepts_baseline
+@test_properties.accepts_baseline
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """Prints discovered issues formatted for screen reading
 

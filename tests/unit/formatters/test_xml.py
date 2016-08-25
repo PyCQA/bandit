@@ -12,7 +12,7 @@
 #  License for the specific language governing permissions and limitations
 #  under the License.
 
-from collections import defaultdict
+import collections
 import tempfile
 from xml.etree import cElementTree as ET
 
@@ -52,7 +52,7 @@ class XmlFormatterTests(testtools.TestCase):
         d = {t.tag: {} if t.attrib else None}
         children = list(t)
         if children:
-            dd = defaultdict(list)
+            dd = collections.defaultdict(list)
             for dc in map(self._xml_to_dict, children):
                 for k, v in six.iteritems(dc):
                     dd[k].append(v)

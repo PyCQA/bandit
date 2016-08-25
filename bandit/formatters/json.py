@@ -96,18 +96,18 @@ from __future__ import absolute_import
 import datetime
 import json
 import logging
-from operator import itemgetter
+import operator
 import sys
 
 import six
 
 from bandit.core import constants
-from bandit.core.test_properties import accepts_baseline
+from bandit.core import test_properties
 
 logger = logging.getLogger(__name__)
 
 
-@accepts_baseline
+@test_properties.accepts_baseline
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
     '''''Prints issues in JSON format
 
@@ -159,6 +159,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     else:
         collector = [r.as_dict() for r in results]
 
+    itemgetter = operator.itemgetter
     if manager.agg_type == 'vuln':
         machine_output['results'] = sorted(collector,
                                            key=itemgetter('test_name'))

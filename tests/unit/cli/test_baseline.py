@@ -19,7 +19,7 @@ import subprocess
 
 import fixtures
 import git
-from mock import patch
+import mock
 import testtools
 
 import bandit.cli.baseline as baseline
@@ -142,7 +142,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.add([additional_content])
         git_repo.index.commit('Additional Content')
 
-        with patch('git.Repo.commit') as mock_git_repo_commit:
+        with mock.patch('git.Repo.commit') as mock_git_repo_commit:
             mock_git_repo_commit.side_effect = git.exc.GitCommandError('', '')
 
             # assert the system exits with code 2
@@ -175,9 +175,9 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.add([additional_content])
         git_repo.index.commit('Additional Content')
 
-        with patch('subprocess.check_output') as mock_subprocess_check_output:
+        with mock.patch('subprocess.check_output') as mock_check_output:
             mock_bandit_cmd = 'bandit_mock -b temp_file.txt'
-            mock_subprocess_check_output.side_effect = (
+            mock_check_output.side_effect = (
                 subprocess.CalledProcessError('3', mock_bandit_cmd)
             )
 
@@ -217,7 +217,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.add([additional_content])
         git_repo.index.commit('Additional Content')
 
-        with patch('git.Repo') as mock_git_repo:
+        with mock.patch('git.Repo') as mock_git_repo:
             mock_git_repo.side_effect = git.exc.GitCommandNotFound
 
             return_value = baseline.initialize()
@@ -243,7 +243,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         # assert bandit did not run due to dirty repo
         self.assertEqual((None, None, None), return_value)
 
-    @patch('sys.argv', ['bandit', '-f', 'txt', 'test'])
+    @mock.patch('sys.argv', ['bandit', '-f', 'txt', 'test'])
     def test_initialize_existing_report_file(self):
         # Test that bandit does not run when the output file exists (and the
         # provided output format does not match the default format) when
@@ -263,8 +263,8 @@ class BanditBaselineToolTests(testtools.TestCase):
         # assert bandit did not run due to existing report file
         self.assertEqual((None, None, None), return_value)
 
-    @patch('bandit.cli.baseline.bandit_args', ['-o',
-           'bandit_baseline_result'])
+    @mock.patch('bandit.cli.baseline.bandit_args', ['-o',
+                'bandit_baseline_result'])
     def test_initialize_with_output_argument(self):
         # Test that bandit does not run when the '-o' (output) argument is
         # specified
