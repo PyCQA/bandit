@@ -19,7 +19,7 @@ r"""
 Blacklist various Python calls known to be dangerous
 ====================================================
 
-This balcklist data checks for a number of Python calls known to have possible
+This blacklist data checks for a number of Python calls known to have possible
 security implications. The following blacklist tests are run against any
 function calls encoutered in the scanned code base, triggered by encoutering
 ast.Call nodes.
