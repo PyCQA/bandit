@@ -163,6 +163,7 @@ Usage::
       B319  xml_bad_pulldom
       B320  xml_bad_etree
       B321  ftplib
+      B322  input
       B401  import_telnetlib
       B402  import_ftplib
       B403  import_pickle

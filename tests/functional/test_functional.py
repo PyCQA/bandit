@@ -532,3 +532,10 @@ class FunctionalTests(testtools.TestCase):
         self.run_example('flask_debug.py')
         self.assertEqual(1, len(self.b_mgr.baseline))
         self.assertEqual({}, self.b_mgr.get_issue_list())
+
+    def test_blacklist_input(self):
+        expect = {
+            'SEVERITY': {'HIGH': 1},
+            'CONFIDENCE': {'HIGH': 1}
+        }
+        self.check_example('input.py', expect)
