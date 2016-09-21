@@ -133,7 +133,7 @@ class BanditConfig():
 
         updated_profiles = {}
         for name, profile in six.iteritems(self.get_option('profiles') or {}):
-            # NOTE(tkelsey): cant use default of get() because value is
+            # NOTE(tkelsey): can't use default of get() because value is
             # sometimes explicity 'None', for example when the list if given in
             # yaml but not populated with any values.
             include = set((extman.get_plugin_id(i) or i)

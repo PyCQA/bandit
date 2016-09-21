@@ -84,7 +84,7 @@ def get_qual_attr(node, aliases):
             else:
                 prefix = deepgetattr(node, 'value.id')
         except Exception:
-            # NOTE(tkelsey): degrade gracefully when we cant get the fully
+            # NOTE(tkelsey): degrade gracefully when we can't get the fully
             # qualified name for an attr, just return its base name.
             pass
 
