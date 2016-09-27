@@ -12,6 +12,6 @@ testtools>=1.4.0 # MIT
 oslotest>=1.10.0 # Apache-2.0
 
 sphinx!=1.3b1,<1.3,>=1.2.1 # BSD
-oslosphinx!=3.4.0,>=2.5.0 # Apache-2.0
+oslosphinx>=4.7.0 # Apache-2.0
 beautifulsoup4 # MIT
 reno>=1.8.0 # Apache2
