@@ -50,7 +50,7 @@ class BanditTestSetTests(testtools.TestCase):
 
     def setUp(self):
         super(BanditTestSetTests, self).setUp()
-        mngr = self._make_test_manager(mock.MagicMock)
+        mngr = self._make_test_manager(mock.Mock)
         self.patchExtMan = mock.patch('stevedore.extension.ExtensionManager')
         self.mockExtMan = self.patchExtMan.start()
         self.mockExtMan.return_value = mngr
