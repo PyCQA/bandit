@@ -143,7 +143,8 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.commit('Additional Content')
 
         with mock.patch('git.Repo.commit') as mock_git_repo_commit:
-            mock_git_repo_commit.side_effect = git.exc.GitCommandError('', '')
+            mock_git_repo_commit.side_effect = git.exc.GitCommandError(
+                'commit', '')
 
             # assert the system exits with code 2
             self.assertRaisesRegex(SystemExit, '2', baseline.main)
@@ -218,7 +219,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.commit('Additional Content')
 
         with mock.patch('git.Repo') as mock_git_repo:
-            mock_git_repo.side_effect = git.exc.GitCommandNotFound
+            mock_git_repo.side_effect = git.exc.GitCommandNotFound('clone', '')
 
             return_value = baseline.initialize()
 
