@@ -261,4 +261,4 @@ class TestConfigCompat(testtools.TestCase):
         try:
             self.config = config.BanditConfig(f.name)
         except utils.ConfigError as e:
-            self.assertTrue("Error parsing file." in e.message)
+            self.assertIn("Error parsing file.", e.message)
