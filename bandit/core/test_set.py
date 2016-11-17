@@ -78,7 +78,7 @@ class BanditTestSet():
 
         extman = extension_loader.MANAGER
         blacklist = profile.get('blacklist')
-        if not blacklist:  # not overriden by legacy data
+        if not blacklist:  # not overridden by legacy data
             blacklist = {}
             for node, tests in six.iteritems(extman.blacklist):
                 values = [t for t in tests if t['id'] in filtering]
