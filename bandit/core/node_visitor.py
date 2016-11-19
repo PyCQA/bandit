@@ -23,7 +23,7 @@ from bandit.core import tester as b_tester
 from bandit.core import utils as b_utils
 
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor(object):
@@ -49,10 +49,10 @@ class BanditNodeVisitor(object):
         try:
             self.namespace = b_utils.get_module_qualname_from_path(fname)
         except b_utils.InvalidModulePath:
-            logger.info('Unable to find qualified name for module: %s',
-                        self.fname)
+            LOG.info('Unable to find qualified name for module: %s',
+                     self.fname)
             self.namespace = ""
-        logger.debug('Module qualified name: %s', self.namespace)
+        LOG.debug('Module qualified name: %s', self.namespace)
         self.metrics = metrics
 
     def visit_ClassDef(self, node):
@@ -184,14 +184,14 @@ class BanditNodeVisitor(object):
         self.context['import_aliases'] = self.import_aliases
 
         if self.debug:
-            logger.debug(ast.dump(node))
+            LOG.debug(ast.dump(node))
             self.metaast.add_node(node, '', self.depth)
 
         if hasattr(node, 'lineno'):
             self.context['lineno'] = node.lineno
 
             if node.lineno in self.nosec_lines:
-                logger.debug("skipped, nosec")
+                LOG.debug("skipped, nosec")
                 self.metrics.note_nosec()
                 return False
 
@@ -200,10 +200,10 @@ class BanditNodeVisitor(object):
         self.context['filename'] = self.fname
 
         self.seen += 1
-        logger.debug("entering: %s %s [%s]", hex(id(node)), type(node),
-                     self.depth)
+        LOG.debug("entering: %s %s [%s]", hex(id(node)), type(node),
+                  self.depth)
         self.depth += 1
-        logger.debug(self.context)
+        LOG.debug(self.context)
         return True
 
     def visit(self, node):
@@ -212,14 +212,14 @@ class BanditNodeVisitor(object):
         visitor = getattr(self, method, None)
         if visitor is not None:
             if self.debug:
-                logger.debug("%s called (%s)", method, ast.dump(node))
+                LOG.debug("%s called (%s)", method, ast.dump(node))
             visitor(node)
         else:
             self.update_scores(self.tester.run_tests(self.context, name))
 
     def post_visit(self, node):
         self.depth -= 1
-        logger.debug("%s\texiting : %s", self.depth, hex(id(node)))
+        LOG.debug("%s\texiting : %s", self.depth, hex(id(node)))
 
         # HACK(tkelsey): this is needed to clean up post-recursion stuff that
         # gets setup in the visit methods for these node types.

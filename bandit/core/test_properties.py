@@ -18,7 +18,7 @@ import logging
 
 from bandit.core import utils
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def checks(*args):
@@ -28,8 +28,8 @@ def checks(*args):
             func._checks = []
         func._checks.extend(utils.check_ast_node(a) for a in args)
 
-        logger.debug('checks() decorator executed')
-        logger.debug('  func._checks: %s', func._checks)
+        LOG.debug('checks() decorator executed')
+        LOG.debug('  func._checks: %s', func._checks)
         return func
     return wrapper
 
@@ -79,8 +79,7 @@ def accepts_baseline(*args):
         if not hasattr(func, '_accepts_baseline'):
             func._accepts_baseline = True
 
-        logger.debug('accepts_baseline() decorator executed on %s',
-                     func.__name__)
+        LOG.debug('accepts_baseline() decorator executed on %s', func.__name__)
 
         return func
     return wrapper(args[0])

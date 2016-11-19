@@ -31,8 +31,7 @@ def gen_config(name):
                  'PROTOCOL_SSLv3',  # strict option
                  'PROTOCOL_TLSv1',  # strict option
                  'SSLv3_METHOD',    # strict option
-                 'TLSv1_METHOD']    # strict option
-                }
+                 'TLSv1_METHOD']}   # strict option
 
 
 @test.takes_config
@@ -117,7 +116,7 @@ def ssl_with_bad_version(context, config):
     .. versionadded:: 0.9.0
     """
     bad_ssl_versions = get_bad_proto_versions(config)
-    if (context.call_function_name_qual == 'ssl.wrap_socket'):
+    if context.call_function_name_qual == 'ssl.wrap_socket':
         if context.check_call_arg_value('ssl_version', bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
@@ -126,7 +125,7 @@ def ssl_with_bad_version(context, config):
                      "version identified, security issue.",
                 lineno=context.get_lineno_for_call_arg('ssl_version'),
             )
-    elif (context.call_function_name_qual == 'pyOpenSSL.SSL.Context'):
+    elif context.call_function_name_qual == 'pyOpenSSL.SSL.Context':
         if context.check_call_arg_value('method', bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
@@ -139,7 +138,7 @@ def ssl_with_bad_version(context, config):
     elif (context.call_function_name_qual != 'ssl.wrap_socket' and
           context.call_function_name_qual != 'pyOpenSSL.SSL.Context'):
         if (context.check_call_arg_value('method', bad_ssl_versions) or
-           context.check_call_arg_value('ssl_version', bad_ssl_versions)):
+                context.check_call_arg_value('ssl_version', bad_ssl_versions)):
             lineno = (context.get_lineno_for_call_arg('method') or
                       context.get_lineno_for_call_arg('ssl_version'))
             return bandit.Issue(
@@ -259,7 +258,7 @@ def ssl_with_no_version(context):
 
     .. versionadded:: 0.9.0
     """
-    if (context.call_function_name_qual == 'ssl.wrap_socket'):
+    if context.call_function_name_qual == 'ssl.wrap_socket':
         if context.check_call_arg_value('ssl_version') is None:
             # check_call_arg_value() returns False if the argument is found
             # but does not match the supplied value (or the default None).

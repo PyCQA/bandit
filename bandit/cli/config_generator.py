@@ -25,7 +25,7 @@ import yaml
 from bandit.core import extension_loader
 
 PROG_NAME = 'bandit_conf_generator'
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 template = """
@@ -60,14 +60,14 @@ template = """
 
 
 def init_logger():
-    logger.handlers = []
+    LOG.handlers = []
     log_level = logging.INFO
     log_format_string = "[%(levelname)5s]: %(message)s"
     logging.captureWarnings(True)
-    logger.setLevel(log_level)
+    LOG.setLevel(log_level)
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(logging.Formatter(log_format_string))
-    logger.addHandler(handler)
+    LOG.addHandler(handler)
 
 
 def parse_args():
@@ -138,7 +138,7 @@ def main():
 
     if args.output_file:
         if os.path.exists(os.path.abspath(args.output_file)):
-            logger.error("File %s already exists, exiting", args.output_file)
+            LOG.error("File %s already exists, exiting", args.output_file)
             sys.exit(2)
 
         try:
@@ -158,9 +158,9 @@ def main():
                 test_list = [tpl.format(t.plugin._test_id, t.name)
                              for t in extension_loader.MANAGER.plugins]
 
-                test_list.extend([tpl.format(k, v['name'])
-                                  for k, v in six.iteritems(
-                                  extension_loader.MANAGER.blacklist_by_id)])
+                others = [tpl.format(k, v['name']) for k, v in six.iteritems(
+                    extension_loader.MANAGER.blacklist_by_id)]
+                test_list.extend(others)
                 test_list.sort()
 
                 contents = template.format(
@@ -172,13 +172,13 @@ def main():
                 f.write(contents)
 
         except IOError:
-            logger.error("Unable to open %s for writing", args.output_file)
+            LOG.error("Unable to open %s for writing", args.output_file)
 
         except Exception as e:
-            logger.error("Error: %s", e)
+            LOG.error("Error: %s", e)
 
         else:
-            logger.info("Successfully wrote profile: %s", args.output_file)
+            LOG.info("Successfully wrote profile: %s", args.output_file)
 
     return 0
 

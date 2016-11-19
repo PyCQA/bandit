@@ -31,7 +31,7 @@ from bandit.core import node_visitor as b_node_visitor
 from bandit.core import test_set as b_test_set
 
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class BanditManager():
@@ -39,7 +39,7 @@ class BanditManager():
     scope = []
 
     def __init__(self, config, agg_type, debug=False, verbose=False,
-                 profile={}, ignore_nosec=False):
+                 profile=None, ignore_nosec=False):
         '''Get logger, config, AST handler, and result store ready
 
         :param config: config options object
@@ -53,6 +53,8 @@ class BanditManager():
         '''
         self.debug = debug
         self.verbose = verbose
+        if not profile:
+            profile = {}
         self.ignore_nosec = ignore_nosec
         self.b_conf = config
         self.files_list = []
@@ -86,7 +88,7 @@ class BanditManager():
             jdata = json.loads(data)
             items = [issue.issue_from_dict(j) for j in jdata["results"]]
         except Exception as e:
-            logger.warning("Failed to load baseline data: %s", e)
+            LOG.warning("Failed to load baseline data: %s", e)
         self.baseline = items
 
     def filter_results(self, sev_filter, conf_filter):
@@ -181,8 +183,8 @@ class BanditManager():
                     files_list.update(new_files)
                     excluded_files.update(newly_excluded)
                 else:
-                    logger.warning("Skipping directory (%s), use -r flag to "
-                                   "scan contents", fname)
+                    LOG.warning("Skipping directory (%s), use -r flag to "
+                                "scan contents", fname)
 
             else:
                 # if the user explicitly mentions a file on command line,
@@ -212,7 +214,7 @@ class BanditManager():
         new_files_list = list(self.files_list)
 
         for count, fname in enumerate(self.files_list):
-            logger.debug("working on file : %s", fname)
+            LOG.debug("working on file : %s", fname)
 
             if len(self.files_list) > self.progress:
                 # is it time to update the progress indicator?
@@ -247,17 +249,17 @@ class BanditManager():
                         ))
                         new_files_list.remove(fname)
                     except Exception as e:
-                        logger.error(
+                        LOG.error(
                             "Exception occurred when executing tests against "
-                            "{0}. Run \"bandit --debug {0}\" to see the full "
-                            "traceback.".format(fname)
+                            "%s. Run \"bandit --debug %s\" to see the full "
+                            "traceback.", fname, fname
                         )
                         self.skipped.append(
                             (fname, 'exception while scanning file')
                         )
                         new_files_list.remove(fname)
-                        logger.debug("  Exception string: %s", e)
-                        logger.debug(
+                        LOG.debug("  Exception string: %s", e)
+                        LOG.debug(
                             "  Exception traceback: %s",
                             traceback.format_exc()
                         )
@@ -294,8 +296,10 @@ class BanditManager():
         return score
 
 
-def _get_files_from_dir(files_dir, included_globs=['*.py'],
+def _get_files_from_dir(files_dir, included_globs=None,
                         excluded_path_strings=None):
+    if not included_globs:
+        included_globs = ['*.py']
     if not excluded_path_strings:
         excluded_path_strings = []
 

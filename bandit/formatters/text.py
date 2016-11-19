@@ -46,7 +46,7 @@ import sys
 from bandit.core import constants
 from bandit.core import test_properties
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def get_verbose_details(manager):
@@ -158,4 +158,4 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         fileobj.write(str(result.encode('utf-8')))
 
     if fileobj.name != sys.stdout.name:
-        logger.info("Text output written to file: %s", fileobj.name)
+        LOG.info("Text output written to file: %s", fileobj.name)

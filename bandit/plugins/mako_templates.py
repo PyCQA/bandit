@@ -59,7 +59,7 @@ from bandit.core import test_properties as test
 @test.test_id('B702')
 def use_of_mako_templates(context):
     # check type just to be safe
-    if type(context.call_function_name_qual) == str:
+    if isinstance(context.call_function_name_qual, str):
         qualname_list = context.call_function_name_qual.split('.')
         func = qualname_list[-1]
         if 'mako' in qualname_list and func == 'Template':

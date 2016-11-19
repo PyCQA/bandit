@@ -233,7 +233,7 @@ class TestConfigCompat(testtools.TestCase):
                "'bandit-config-generator' can help you with this. Support for "
                "legacy configs will be removed in a future bandit version.")
 
-        with mock.patch('bandit.core.config.logger.warn') as m:
+        with mock.patch('bandit.core.config.LOG.warn') as m:
             self.config._config = {"profiles": {}}
             self.config.validate('')
             self.assertEqual((msg, ''), m.call_args_list[0][0])

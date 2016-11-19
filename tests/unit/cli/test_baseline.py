@@ -189,7 +189,7 @@ class BanditBaselineToolTests(testtools.TestCase):
     def test_init_logger(self):
         # Test whether the logger was initialized when calling init_logger
         baseline.init_logger()
-        logger = baseline.logger
+        logger = baseline.LOG
 
         # verify that logger was initialized
         self.assertIsNotNone(logger)

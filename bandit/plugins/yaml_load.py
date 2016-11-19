@@ -55,7 +55,7 @@ from bandit.core import test_properties as test
 @test.test_id('B506')
 @test.checks('Call')
 def yaml_load(context):
-    if type(context.call_function_name_qual) == str:
+    if isinstance(context.call_function_name_qual, str):
         qualname_list = context.call_function_name_qual.split('.')
         func = qualname_list[-1]
         if 'yaml' in qualname_list and func == 'load':

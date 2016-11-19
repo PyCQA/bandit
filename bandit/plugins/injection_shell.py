@@ -656,7 +656,7 @@ def start_process_with_partial_path(context, config):
                 node = node.elts[0]
 
             # make sure the param is a string literal and not a var name
-            if(isinstance(node, ast.Str) and node.s[0] not in delims):
+            if isinstance(node, ast.Str) and node.s[0] not in delims:
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,

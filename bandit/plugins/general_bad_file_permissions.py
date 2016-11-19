@@ -70,10 +70,8 @@ def set_bad_file_permissions(context):
         if context.call_args_count == 2:
             mode = context.get_call_arg_at_position(1)
 
-            if (
-                mode is not None and type(mode) == int and
-                (mode & stat.S_IWOTH or mode & stat.S_IXGRP)
-            ):
+            if (mode is not None and isinstance(mode, int) and
+                    (mode & stat.S_IWOTH or mode & stat.S_IXGRP)):
                 # world writable is an HIGH, group executable is a MEDIUM
                 if mode & stat.S_IWOTH:
                     sev_level = bandit.HIGH
@@ -87,5 +85,5 @@ def set_bad_file_permissions(context):
                     severity=sev_level,
                     confidence=bandit.HIGH,
                     text="Chmod setting a permissive mask %s on file (%s)." %
-                         (oct(mode), filename)
+                    (oct(mode), filename)
                 )

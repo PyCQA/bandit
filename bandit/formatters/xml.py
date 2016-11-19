@@ -46,7 +46,7 @@ from xml.etree import cElementTree as ET
 
 import six
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
@@ -88,4 +88,4 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         tree.write(fileobj, encoding='utf-8', xml_declaration=True)
 
     if fileobj.name != sys.stdout.name:
-        logger.info("XML output written to file: %s" % fileobj.name)
+        LOG.info("XML output written to file: %s", fileobj.name)

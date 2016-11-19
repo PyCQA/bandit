@@ -25,7 +25,7 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 """Various helper functions."""
@@ -46,11 +46,11 @@ def _get_attr_qual_name(node, aliases):
     :param aliases: Import aliases dictionary
     :returns: Qualified name referred to by the attribute or name.
     '''
-    if type(node) == _ast.Name:
+    if isinstance(node, _ast.Name):
         if node.id in aliases:
             return aliases[node.id]
         return node.id
-    elif type(node) == _ast.Attribute:
+    elif isinstance(node, _ast.Attribute):
         name = '%s.%s' % (_get_attr_qual_name(node.value, aliases), node.attr)
         if name in aliases:
             return aliases[name]
@@ -60,11 +60,11 @@ def _get_attr_qual_name(node, aliases):
 
 
 def get_call_name(node, aliases):
-    if type(node.func) == _ast.Name:
+    if isinstance(node.func, _ast.Name):
         if deepgetattr(node, 'func.id') in aliases:
             return aliases[deepgetattr(node, 'func.id')]
-        return(deepgetattr(node, 'func.id'))
-    elif type(node.func) == _ast.Attribute:
+        return deepgetattr(node, 'func.id')
+    elif isinstance(node.func, _ast.Attribute):
         return _get_attr_qual_name(node.func, aliases)
     else:
         return ""
@@ -76,7 +76,7 @@ def get_func_name(node):
 
 def get_qual_attr(node, aliases):
     prefix = ""
-    if type(node) == _ast.Attribute:
+    if isinstance(node, _ast.Attribute):
         try:
             val = deepgetattr(node, 'value.id')
             if val in aliases:
@@ -88,7 +88,7 @@ def get_qual_attr(node, aliases):
             # qualified name for an attr, just return its base name.
             pass
 
-        return("%s.%s" % (prefix, node.attr))
+        return "%s.%s" % (prefix, node.attr)
     else:
         return ""  # TODO(tkelsey): process other node types
 
@@ -122,10 +122,7 @@ class ProfileNotFound(Exception):
         super(ProfileNotFound, self).__init__(message)
 
 
-def warnings_formatter(message,
-                       category=UserWarning,
-                       filename='',
-                       lineno=-1,
+def warnings_formatter(message, category=UserWarning, filename='', lineno=-1,
                        line=''):
     '''Monkey patch for warnings.warn to suppress cruft output.'''
     return "{0}\n".format(message)
@@ -286,7 +283,7 @@ def get_called_name(node):
     '''
     func = node.func
     try:
-        return (func.attr if isinstance(func, ast.Attribute) else func.id)
+        return func.attr if isinstance(func, ast.Attribute) else func.id
     except AttributeError:
         return ""
 
@@ -303,14 +300,14 @@ def get_path_for_function(f):
     elif hasattr(f, "im_func"):
         module_name = f.im_func.__module__
     else:
-        logger.warning("Cannot resolve file where %s is defined", f)
+        LOG.warning("Cannot resolve file where %s is defined", f)
         return None
 
     module = sys.modules[module_name]
     if hasattr(module, "__file__"):
         return module.__file__
     else:
-        logger.warning("Cannot resolve file path for module %s", module_name)
+        LOG.warning("Cannot resolve file path for module %s", module_name)
         return None
 
 
@@ -321,8 +318,8 @@ def parse_ini_file(f_loc):
         return {k: v for k, v in config.items('bandit')}
 
     except (configparser.Error, KeyError, TypeError):
-        logger.warning("Unable to parse config file %s or missing [bandit] "
-                       "section", f_loc)
+        LOG.warning("Unable to parse config file %s or missing [bandit] "
+                    "section", f_loc)
 
     return None
 

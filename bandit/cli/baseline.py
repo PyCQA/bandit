@@ -38,7 +38,7 @@ bandit_args = sys.argv[1:]
 baseline_tmp_file = '_bandit_baseline_run.json_'
 current_commit = None
 default_output_format = 'terminal'
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 repo = None
 report_basename = 'bandit_baseline_result'
 valid_baseline_formats = ['txt', 'html', 'json']
@@ -65,17 +65,17 @@ def main():
     try:
         commit = repo.commit()
         current_commit = commit.hexsha
-        logger.info('Got current commit: [%s]', commit.name_rev)
+        LOG.info('Got current commit: [%s]', commit.name_rev)
 
         commit = commit.parents[0]
         parent_commit = commit.hexsha
-        logger.info('Got parent commit: [%s]', commit.name_rev)
+        LOG.info('Got parent commit: [%s]', commit.name_rev)
 
     except git.GitCommandError:
-        logger.error("Unable to get current or parent commit")
+        LOG.error("Unable to get current or parent commit")
         sys.exit(2)
     except IndexError:
-        logger.error("Parent commit not available")
+        LOG.error("Parent commit not available")
         sys.exit(2)
 
     # #################### Run Bandit against both commits ####################
@@ -99,7 +99,7 @@ def main():
         for step in steps:
             repo.head.reset(commit=step['commit'], working_tree=True)
 
-            logger.info(step['message'])
+            LOG.info(step['message'])
 
             bandit_command = ['bandit'] + step['args']
 
@@ -113,15 +113,15 @@ def main():
                 output = output.decode('utf-8')  # subprocess returns bytes
 
             if return_code not in [0, 1]:
-                logger.error("Error running command: %s\nOutput: %s\n",
-                             bandit_args, output)
+                LOG.error("Error running command: %s\nOutput: %s\n",
+                          bandit_args, output)
 
     # #################### Output and exit ####################################
     # print output or display message about written report
     if output_format == default_output_format:
         print(output)
     else:
-        logger.info("Successfully wrote %s", report_fname)
+        LOG.info("Successfully wrote %s", report_fname)
 
     # exit with the code the last Bandit run returned
     sys.exit(return_code)
@@ -140,14 +140,14 @@ def baseline_setup():
 
 # #################### Setup logging ##########################################
 def init_logger():
-    logger.handlers = []
+    LOG.handlers = []
     log_level = logging.INFO
     log_format_string = "[%(levelname)7s ] %(message)s"
     logging.captureWarnings(True)
-    logger.setLevel(log_level)
+    LOG.setLevel(log_level)
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(logging.Formatter(log_format_string))
-    logger.addHandler(handler)
+    LOG.addHandler(handler)
 
 
 # #################### Perform initialization and validate assumptions ########
@@ -178,8 +178,7 @@ def initialize():
                      else default_output_format)
 
     if output_format == default_output_format:
-        logger.info("No output format specified, using %s",
-                    default_output_format)
+        LOG.info("No output format specified, using %s", default_output_format)
 
     # set the report name based on the output format
     report_fname = "{}.{}".format(report_basename, output_format)
@@ -189,33 +188,33 @@ def initialize():
         repo = git.Repo(os.getcwd())
 
     except git.exc.InvalidGitRepositoryError:
-        logger.error("Bandit baseline must be called from a git project root")
+        LOG.error("Bandit baseline must be called from a git project root")
         valid = False
 
     except git.exc.GitCommandNotFound:
-        logger.error("Git command not found")
+        LOG.error("Git command not found")
         valid = False
 
     else:
         if repo.is_dirty():
-            logger.error("Current working directory is dirty and must be "
-                         "resolved")
+            LOG.error("Current working directory is dirty and must be "
+                      "resolved")
             valid = False
 
     # if output format is specified, we need to be able to write the report
     if output_format != default_output_format and os.path.exists(report_fname):
-        logger.error("File %s already exists, aborting", report_fname)
+        LOG.error("File %s already exists, aborting", report_fname)
         valid = False
 
     # Bandit needs to be able to create this temp file
     if os.path.exists(baseline_tmp_file):
-        logger.error("Temporary file %s needs to be removed prior to running",
-                     baseline_tmp_file)
+        LOG.error("Temporary file %s needs to be removed prior to running",
+                  baseline_tmp_file)
         valid = False
 
     # we must validate -o is not provided, as it will mess up Bandit baseline
     if '-o' in bandit_args:
-        logger.error("Bandit baseline must not be called with the -o option")
+        LOG.error("Bandit baseline must not be called with the -o option")
         valid = False
 
     return (output_format, repo, report_fname) if valid else (None, None, None)

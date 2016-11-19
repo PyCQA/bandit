@@ -24,7 +24,7 @@ from bandit.core import extension_loader
 from bandit.core import utils
 
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class BanditConfig():
@@ -167,8 +167,8 @@ class BanditConfig():
                 bad_imports_list.append(val)
 
         if bad_imports_list or bad_calls_list:
-            logger.warning('Legacy blacklist data found in config, '
-                           'overriding data plugins')
+            LOG.warning('Legacy blacklist data found in config, overriding '
+                        'data plugins')
         return bad_calls_list, bad_imports_list
 
     def convert_legacy_blacklist_tests(self, profiles, bad_imports, bad_calls):
@@ -235,9 +235,8 @@ class BanditConfig():
 
         # show deprecation message
         if legacy:
-            logger.warn("Config file '%s' contains deprecated legacy "
-                        "config data. Please consider upgrading to "
-                        "the new config format. The tool "
-                        "'bandit-config-generator' can help you with "
-                        "this. Support for legacy configs will be removed "
-                        "in a future bandit version.", path)
+            LOG.warn("Config file '%s' contains deprecated legacy config "
+                     "data. Please consider upgrading to the new config "
+                     "format. The tool 'bandit-config-generator' can help you "
+                     "with this. Support for legacy configs will be removed "
+                     "in a future bandit version.", path)

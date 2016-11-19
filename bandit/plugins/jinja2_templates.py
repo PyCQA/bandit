@@ -78,7 +78,7 @@ from bandit.core import test_properties as test
 @test.test_id('B701')
 def jinja2_autoescape_false(context):
     # check type just to be safe
-    if type(context.call_function_name_qual) == str:
+    if isinstance(context.call_function_name_qual, str):
         qualname_list = context.call_function_name_qual.split('.')
         func = qualname_list[-1]
         if 'jinja2' in qualname_list and func == 'Environment':
@@ -87,7 +87,7 @@ def jinja2_autoescape_false(context):
                     # definite autoescape = False
                     if (getattr(node, 'arg', None) == 'autoescape' and
                             (getattr(node.value, 'id', None) == 'False' or
-                                getattr(node.value, 'value', None) is False)):
+                             getattr(node.value, 'value', None) is False)):
                         return bandit.Issue(
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,

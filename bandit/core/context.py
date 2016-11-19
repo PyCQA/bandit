@@ -103,10 +103,8 @@ class Context():
 
         :return: A dictionary of keyword parameters for a call as strings
         '''
-        if (
-            'call' in self._context and
-            hasattr(self._context['call'], 'keywords')
-        ):
+        if ('call' in self._context and
+                hasattr(self._context['call'], 'keywords')):
             return_dict = {}
             for li in self._context['call'].keywords:
                 if hasattr(li.value, 'attr'):
@@ -152,7 +150,7 @@ class Context():
         '''Get escaped value of the object.
 
         Turn the value of a string or bytes object into byte sequence with
-        unknown, control, and \ characters escaped.
+        unknown, control, and \\ characters escaped.
 
         This function should be used when looking for a known sequence in a
         potentially badly encoded string in the code.
@@ -298,11 +296,9 @@ class Context():
         :param position_num: The index of the argument to return the value for
         :return: Value of the argument at the specified position if it exists
         '''
-        if (
-            'call' in self._context and
-            hasattr(self._context['call'], 'args') and
-            position_num < len(self._context['call'].args)
-        ):
+        if ('call' in self._context and
+                hasattr(self._context['call'], 'args') and
+                position_num < len(self._context['call'].args)):
             return self._get_literal_value(
                 self._context['call'].args[position_num]
             )
@@ -315,10 +311,7 @@ class Context():
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
-        if 'module' in self._context and self._context['module'] == module:
-            return True
-        else:
-            return False
+        return 'module' in self._context and self._context['module'] == module
 
     def is_module_imported_exact(self, module):
         '''Check if a specified module has been imported; only exact matches.
@@ -326,10 +319,8 @@ class Context():
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
-        if 'imports' in self._context and module in self._context['imports']:
-            return True
-        else:
-            return False
+        return ('imports' in self._context and
+                module in self._context['imports'])
 
     def is_module_imported_like(self, module):
         '''Check if a specified module has been imported

@@ -104,7 +104,7 @@ import six
 from bandit.core import constants
 from bandit.core import test_properties
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @test_properties.accepts_baseline
@@ -182,4 +182,4 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         fileobj.write(result)
 
     if fileobj.name != sys.stdout.name:
-        logger.info("JSON output written to file: %s" % fileobj.name)
+        LOG.info("JSON output written to file: %s", fileobj.name)

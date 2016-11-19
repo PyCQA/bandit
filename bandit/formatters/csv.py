@@ -40,7 +40,7 @@ import csv
 import logging
 import sys
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
@@ -73,4 +73,4 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
             writer.writerow(result.as_dict(with_code=False))
 
     if fileobj.name != sys.stdout.name:
-        logger.info("CSV output written to file: %s" % fileobj.name)
+        LOG.info("CSV output written to file: %s", fileobj.name)

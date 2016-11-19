@@ -187,7 +187,7 @@ class BanditCLIMainTests(testtools.TestCase):
                                           "skips": "skip_test",
                                           "tests": "some_test"}
 
-            with mock.patch('bandit.cli.main.logger.error') as err_mock:
+            with mock.patch('bandit.cli.main.LOG.error') as err_mock:
                 # SystemExit with code 2 when test not found in profile
                 self.assertRaisesRegex(SystemExit, '2', bandit.main)
                 self.assertEqual(str(err_mock.call_args[0][0]),
@@ -224,7 +224,7 @@ class BanditCLIMainTests(testtools.TestCase):
         with open('bandit.yaml', 'wt') as fd:
             fd.write(bandit_config_content)
         # assert a SystemExit with code 2
-        with mock.patch('bandit.cli.main.logger.error') as err_mock:
+        with mock.patch('bandit.cli.main.LOG.error') as err_mock:
             self.assertRaisesRegex(SystemExit, '2', bandit.main)
             self.assertEqual(
                 str(err_mock.call_args[0][0]),

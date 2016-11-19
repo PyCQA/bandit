@@ -144,6 +144,6 @@ def linux_commands_wildcard_injection(context, config):
                             severity=bandit.HIGH,
                             confidence=bandit.MEDIUM,
                             text="Possible wildcard injection in call: %s" %
-                                 context.call_function_name_qual,
+                            context.call_function_name_qual,
                             lineno=context.get_lineno_for_call_arg('shell'),
                         )

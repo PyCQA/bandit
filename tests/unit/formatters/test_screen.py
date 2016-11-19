@@ -46,27 +46,27 @@ class ScreenFormatterTests(testtools.TestCase):
                                  _issue.confidence.capitalize()),
                           "{}   Location: {}:{}{}".
                           format(_indent_val, _issue.fname, _issue.lineno,
-                                 screen.color['DEFAULT'])]
+                                 screen.COLOR['DEFAULT'])]
             if _code:
                 return_val.append("{}{}".format(_indent_val, _code))
             return '\n'.join(return_val)
 
         issue_text = screen._output_issue_str(issue, indent_val)
         expected_return = _template(issue, indent_val, 'DDDDDDD',
-                                    screen.color['MEDIUM'])
+                                    screen.COLOR['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
         issue_text = screen._output_issue_str(issue, indent_val,
                                               show_code=False)
         expected_return = _template(issue, indent_val, '',
-                                    screen.color['MEDIUM'])
+                                    screen.COLOR['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
         issue.lineno = ''
         issue_text = screen._output_issue_str(issue, indent_val,
                                               show_lineno=False)
         expected_return = _template(issue, indent_val, 'DDDDDDD',
-                                    screen.color['MEDIUM'])
+                                    screen.COLOR['MEDIUM'])
         self.assertEqual(expected_return, issue_text)
 
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')

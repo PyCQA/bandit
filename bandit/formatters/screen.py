@@ -46,9 +46,9 @@ import sys
 from bandit.core import constants
 from bandit.core import test_properties
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
-color = {
+COLOR = {
     'DEFAULT': '\033[0m',
     'HEADER': '\033[95m',
     'LOW': '\033[94m',
@@ -58,7 +58,7 @@ color = {
 
 
 def header(text, *args):
-    return u'%s%s%s' % (color['HEADER'], (text % args), color['DEFAULT'])
+    return u'%s%s%s' % (COLOR['HEADER'], (text % args), COLOR['DEFAULT'])
 
 
 def get_verbose_details(manager):
@@ -90,7 +90,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     # returns a list of lines that should be added to the existing lines list
     bits = []
     bits.append("%s%s>> Issue: [%s:%s] %s" % (
-        indent, color[issue.severity], issue.test_id, issue.test, issue.text))
+        indent, COLOR[issue.severity], issue.test_id, issue.test, issue.text))
 
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))
@@ -98,7 +98,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     bits.append("%s   Location: %s:%s%s" % (
         indent, issue.fname,
         issue.lineno if show_lineno else "",
-        color['DEFAULT']))
+        COLOR['DEFAULT']))
 
     if show_code:
         bits.extend([indent + l for l in
@@ -177,5 +177,5 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     do_print(bits)
 
     if fileobj.name != sys.stdout.name:
-        logger.info(("Screen formatter output was not written to file: %s"
-                     ", consider '-f txt'") % fileobj.name)
+        LOG.info("Screen formatter output was not written to file: %s, "
+                 "consider '-f txt'", fileobj.name)

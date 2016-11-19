@@ -29,7 +29,7 @@ from bandit.core import utils
 
 
 BASE_CONFIG = 'bandit.yaml'
-logger = logging.getLogger()
+LOG = logging.getLogger()
 
 
 def _init_logger(debug=False, log_format=None):
@@ -38,7 +38,7 @@ def _init_logger(debug=False, log_format=None):
     :param debug: Whether to enable debug mode
     :return: An instantiated logging instance
     '''
-    logger.handlers = []
+    LOG.handlers = []
     log_level = logging.INFO
     if debug:
         log_level = logging.DEBUG
@@ -51,11 +51,11 @@ def _init_logger(debug=False, log_format=None):
 
     logging.captureWarnings(True)
 
-    logger.setLevel(log_level)
+    LOG.setLevel(log_level)
     handler = logging.StreamHandler(sys.stderr)
     handler.setFormatter(logging.Formatter(log_format_string))
-    logger.addHandler(handler)
-    logger.debug("logging initialized")
+    LOG.addHandler(handler)
+    LOG.debug("logging initialized")
 
 
 def _get_options_from_ini(ini_path, target):
@@ -73,15 +73,13 @@ def _get_options_from_ini(ini_path, target):
                     bandit_files.append(os.path.join(root, filename))
 
         if len(bandit_files) > 1:
-            logger.error('Multiple .bandit files found - scan separately or '
-                         'choose one with --ini\n\t%s',
-                         ', '.join(bandit_files))
+            LOG.error('Multiple .bandit files found - scan separately or '
+                      'choose one with --ini\n\t%s', ', '.join(bandit_files))
             sys.exit(2)
 
         elif len(bandit_files) == 1:
             ini_file = bandit_files[0]
-            logger.info('Found project level .bandit file: %s',
-                        bandit_files[0])
+            LOG.info('Found project level .bandit file: %s', bandit_files[0])
 
     if ini_file:
         return utils.parse_ini_file(ini_file)
@@ -97,10 +95,10 @@ def _init_extensions():
 def _log_option_source(arg_val, ini_val, option_name):
     """It's useful to show the source of each option."""
     if arg_val:
-        logger.info("Using command line arg for %s", option_name)
+        LOG.info("Using command line arg for %s", option_name)
         return arg_val
     elif ini_val:
-        logger.info("Using .bandit arg for %s", option_name)
+        LOG.info("Using .bandit arg for %s", option_name)
         return ini_val
     else:
         return None
@@ -120,7 +118,7 @@ def _get_profile(config, profile_name, config_path):
         profile = profiles.get(profile_name)
         if profile is None:
             raise utils.ProfileNotFound(config_path, profile_name)
-        logger.debug("read in legacy profile '%s': %s", profile_name, profile)
+        LOG.debug("read in legacy profile '%s': %s", profile_name, profile)
     else:
         profile['include'] = set(config.get_option('tests') or [])
         profile['exclude'] = set(config.get_option('skips') or [])
@@ -130,10 +128,10 @@ def _get_profile(config, profile_name, config_path):
 def _log_info(args, profile):
     inc = ",".join([t for t in profile['include']]) or "None"
     exc = ",".join([t for t in profile['exclude']]) or "None"
-    logger.info("profile include tests: %s", inc)
-    logger.info("profile exclude tests: %s", exc)
-    logger.info("cli include tests: %s", args.tests)
-    logger.info("cli exclude tests: %s", args.skips)
+    LOG.info("profile include tests: %s", inc)
+    LOG.info("profile exclude tests: %s", exc)
+    LOG.info("cli include tests: %s", args.tests)
+    LOG.info("cli exclude tests: %s", args.skips)
 
 
 def main():
@@ -265,7 +263,7 @@ def main():
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
     except utils.ConfigError as e:
-        logger.error(e)
+        LOG.error(e)
         sys.exit(2)
 
     # Handle .bandit files in projects to pass cmdline args from file
@@ -297,7 +295,7 @@ def main():
         extension_mgr.validate_profile(profile)
 
     except (utils.ProfileNotFound, ValueError) as e:
-        logger.error(e)
+        LOG.error(e)
         sys.exit(2)
 
     b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
@@ -310,32 +308,32 @@ def main():
                 data = bl.read()
                 b_mgr.populate_baseline(data)
         except IOError:
-            logger.warning("Could not open baseline report: %s", args.baseline)
+            LOG.warning("Could not open baseline report: %s", args.baseline)
             sys.exit(2)
 
         if args.output_format not in baseline_formatters:
-            logger.warning('Baseline must be used with one of the following '
-                           'formats: ' + str(baseline_formatters))
+            LOG.warning('Baseline must be used with one of the following '
+                        'formats: ' + str(baseline_formatters))
             sys.exit(2)
 
     if args.output_format != "json":
         if args.config_file:
-            logger.info("using config: %s", args.config_file)
+            LOG.info("using config: %s", args.config_file)
 
-        logger.info("running on Python %d.%d.%d", sys.version_info.major,
-                    sys.version_info.minor, sys.version_info.micro)
+        LOG.info("running on Python %d.%d.%d", sys.version_info.major,
+                 sys.version_info.minor, sys.version_info.micro)
 
     # initiate file discovery step within Bandit Manager
     b_mgr.discover_files(args.targets, args.recursive, args.excluded_paths)
 
     if not b_mgr.b_ts.tests:
-        logger.error('No tests would be run, please check the profile.')
+        LOG.error('No tests would be run, please check the profile.')
         sys.exit(2)
 
     # initiate execution of tests within Bandit Manager
     b_mgr.run_tests()
-    logger.debug(b_mgr.b_ma)
-    logger.debug(b_mgr.metrics)
+    LOG.debug(b_mgr.b_ma)
+    LOG.debug(b_mgr.metrics)
 
     # trigger output of results by Bandit Manager
     sev_level = constants.RANKING[args.severity - 1]

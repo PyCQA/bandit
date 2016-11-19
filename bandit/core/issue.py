@@ -17,11 +17,11 @@
 from __future__ import division
 from __future__ import unicode_literals
 
-from bandit.core import constants
+import linecache
 
 from six import moves
 
-import linecache
+from bandit.core import constants
 
 
 class Issue(object):

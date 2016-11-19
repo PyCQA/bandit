@@ -153,7 +153,7 @@ import sys
 from bandit.core import docs_utils
 from bandit.core import test_properties
 
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @test_properties.accepts_baseline
@@ -376,4 +376,4 @@ pre {
         fileobj.write(str(report_contents.encode('utf-8')))
 
     if fileobj.name != sys.stdout.name:
-        logger.info("HTML output written to file: %s" % fileobj.name)
+        LOG.info("HTML output written to file: %s", fileobj.name)

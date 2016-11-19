@@ -67,7 +67,7 @@ def _classify_key_size(key_type, key_size):
                 severity=level,
                 confidence=bandit.HIGH,
                 text='%s key sizes below %d bits are considered breakable. ' %
-                     (key_type, size))
+                (key_type, size))
 
 
 def _weak_crypto_key_size_cryptography_io(context):

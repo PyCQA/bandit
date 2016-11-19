@@ -23,7 +23,7 @@ from bandit.core import context as b_context
 from bandit.core import utils
 
 warnings.formatwarning = utils.warnings_formatter
-logger = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class BanditTester():
@@ -77,9 +77,7 @@ class BanditTester():
 
                     self.results.append(result)
 
-                    logger.debug(
-                        "Issue identified by %s: %s", name, result
-                    )
+                    LOG.debug("Issue identified by %s: %s", name, result)
                     sev = constants.RANKING.index(result.severity)
                     val = constants.RANKING_VALUES[result.severity]
                     scores['SEVERITY'][sev] += val
@@ -91,7 +89,7 @@ class BanditTester():
                 self.report_error(name, context, e)
                 if self.debug:
                     raise
-        logger.debug("Returning scores: %s", scores)
+        LOG.debug("Returning scores: %s", scores)
         return scores
 
     def report_error(self, test, context, error):
@@ -104,4 +102,4 @@ class BanditTester():
         what += str(error)
         import traceback
         what += traceback.format_exc()
-        logger.error(what)
+        LOG.error(what)

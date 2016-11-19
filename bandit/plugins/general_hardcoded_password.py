@@ -21,7 +21,7 @@ import bandit
 from bandit.core import test_properties as test
 
 
-candidates = set(["password", "pass", "passwd", "pwd", "secret", "token",
+CANDIDATES = set(["password", "pass", "passwd", "pwd", "secret", "token",
                   "secrete"])
 
 
@@ -84,10 +84,10 @@ def hardcoded_password_string(context):
     if isinstance(node.parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node.parent.targets:
-            if isinstance(targ, ast.Name) and targ.id in candidates:
+            if isinstance(targ, ast.Name) and targ.id in CANDIDATES:
                 return _report(node.s)
 
-    elif isinstance(node.parent, ast.Index) and node.s in candidates:
+    elif isinstance(node.parent, ast.Index) and node.s in CANDIDATES:
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node.parent.parent.parent
@@ -98,7 +98,7 @@ def hardcoded_password_string(context):
     elif isinstance(node.parent, ast.Compare):
         # looks for "candidate == 'some_string'"
         comp = node.parent
-        if isinstance(comp.left, ast.Name) and comp.left.id in candidates:
+        if isinstance(comp.left, ast.Name) and comp.left.id in CANDIDATES:
             if isinstance(comp.comparators[0], ast.Str):
                 return _report(comp.comparators[0].s)
 
@@ -150,7 +150,7 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        if isinstance(kw.value, ast.Str) and kw.arg in candidates:
+        if isinstance(kw.value, ast.Str) and kw.arg in CANDIDATES:
             return _report(kw.value.s)
 
 
@@ -211,5 +211,5 @@ def hardcoded_password_default(context):
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, ast.Name):
             check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-            if isinstance(val, ast.Str) and check in candidates:
+            if isinstance(val, ast.Str) and check in CANDIDATES:
                 return _report(val.s)

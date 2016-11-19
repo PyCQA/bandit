@@ -15,7 +15,7 @@
 # under the License.
 
 # where our docs are hosted
-base_url = 'http://docs.openstack.org/developer/bandit/'
+BASE_URL = 'http://docs.openstack.org/developer/bandit/'
 
 
 def get_url(bid):
@@ -26,7 +26,7 @@ def get_url(bid):
 
     info = extension_loader.MANAGER.plugins_by_id.get(bid, None)
     if info is not None:
-        return base_url + ('plugins/%s.html' % info.plugin.__name__)
+        return BASE_URL + ('plugins/%s.html' % info.plugin.__name__)
 
     info = extension_loader.MANAGER.blacklist_by_id.get(bid, None)
     if info is not None:
@@ -38,6 +38,6 @@ def get_url(bid):
             ext = template.format(
                 kind='imports', id=info['id'], name=info['name'])
 
-        return base_url + ext.lower()
+        return BASE_URL + ext.lower()
 
-    return base_url  # no idea, give the docs main page
+    return BASE_URL  # no idea, give the docs main page
