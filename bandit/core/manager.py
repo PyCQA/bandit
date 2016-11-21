@@ -222,48 +222,12 @@ class BanditManager():
                     sys.stderr.write("%s.. " % count)
                     sys.stderr.flush()
             try:
-                with open(fname, 'rb') as fdata:
-                    try:
-                        # parse the current file
-                        data = fdata.read()
-                        lines = data.splitlines()
-                        self.metrics.begin(fname)
-                        self.metrics.count_locs(lines)
-                        if self.ignore_nosec:
-                            nosec_lines = set()
-                        else:
-                            nosec_lines = set(
-                                lineno + 1 for
-                                (lineno, line) in enumerate(lines)
-                                if b'#nosec' in line or b'# nosec' in line)
-                        score = self._execute_ast_visitor(fname, data,
-                                                          nosec_lines)
-                        self.scores.append(score)
-                        self.metrics.count_issues([score, ])
-                    except KeyboardInterrupt as e:
-                        sys.exit(2)
-                    except SyntaxError as e:
-                        self.skipped.append((
-                            fname,
-                            "syntax error while parsing AST from file"
-                        ))
-                        new_files_list.remove(fname)
-                    except Exception as e:
-                        LOG.error(
-                            "Exception occurred when executing tests against "
-                            "%s. Run \"bandit --debug %s\" to see the full "
-                            "traceback.", fname, fname
-                        )
-                        self.skipped.append(
-                            (fname, 'exception while scanning file')
-                        )
-                        new_files_list.remove(fname)
-                        LOG.debug("  Exception string: %s", e)
-                        LOG.debug(
-                            "  Exception traceback: %s",
-                            traceback.format_exc()
-                        )
-                        continue
+                if fname == '-':
+                    sys.stdin = os.fdopen(sys.stdin.fileno(), 'rb', 0)
+                    self._parse_file('<stdin>', sys.stdin, new_files_list)
+                else:
+                    with open(fname, 'rb') as fdata:
+                        self._parse_file(fname, fdata, new_files_list)
             except IOError as e:
                 self.skipped.append((fname, e.strerror))
                 new_files_list.remove(fname)
@@ -277,6 +241,38 @@ class BanditManager():
 
         # do final aggregation of metrics
         self.metrics.aggregate()
+
+    def _parse_file(self, fname, fdata, new_files_list):
+        try:
+            # parse the current file
+            data = fdata.read()
+            lines = data.splitlines()
+            self.metrics.begin(fname)
+            self.metrics.count_locs(lines)
+            if self.ignore_nosec:
+                nosec_lines = set()
+            else:
+                nosec_lines = set(
+                    lineno + 1 for
+                    (lineno, line) in enumerate(lines)
+                    if b'#nosec' in line or b'# nosec' in line)
+            score = self._execute_ast_visitor(fname, data, nosec_lines)
+            self.scores.append(score)
+            self.metrics.count_issues([score, ])
+        except KeyboardInterrupt as e:
+            sys.exit(2)
+        except SyntaxError as e:
+            self.skipped.append((fname,
+                                 "syntax error while parsing AST from file"))
+            new_files_list.remove(fname)
+        except Exception as e:
+            LOG.error("Exception occurred when executing tests against "
+                      "%s. Run \"bandit --debug %s\" to see the full "
+                      "traceback.", fname, fname)
+            self.skipped.append((fname, 'exception while scanning file'))
+            new_files_list.remove(fname)
+            LOG.debug("  Exception string: %s", e)
+            LOG.debug("  Exception traceback: %s", traceback.format_exc())
 
     def _execute_ast_visitor(self, fname, data, nosec_lines):
         '''Execute AST parse on each file
