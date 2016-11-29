@@ -88,6 +88,11 @@ using only the plugins listed in the ShellInjection profile::
 
     bandit examples/*.py -p ShellInjection
 
+Bandit also supports passing lines of code to scan using standard input. To
+run Bandit with standard input::
+
+    cat examples/imports.py | bandit -
+
 SEE ALSO
 ========
 

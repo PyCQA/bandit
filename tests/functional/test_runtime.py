@@ -21,10 +21,10 @@ import testtools
 
 class RuntimeTests(testtools.TestCase):
 
-    def _test_runtime(self, cmdlist):
+    def _test_runtime(self, cmdlist, infile=None):
         process = subprocess.Popen(
             cmdlist,
-            stdin=subprocess.PIPE,
+            stdin=infile if infile else subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             close_fds=True
@@ -38,7 +38,6 @@ class RuntimeTests(testtools.TestCase):
             cmdlist.append(os.path.join(os.getcwd(), 'examples', t))
         return self._test_runtime(cmdlist)
 
-    # test direct execution of bandit
     def test_no_arguments(self):
         (retcode, output) = self._test_runtime(['bandit', ])
         self.assertEqual(2, retcode)
@@ -46,6 +45,18 @@ class RuntimeTests(testtools.TestCase):
             self.assertIn("error: too few arguments", output)
         else:
             self.assertIn("arguments are required: targets", output)
+
+    def test_piped_input(self):
+        with open('examples/imports.py', 'r') as infile:
+            (retcode, output) = self._test_runtime(['bandit', '-'], infile)
+            self.assertEqual(1, retcode)
+            self.assertIn("Total lines of code: 4", output)
+            self.assertIn("Low: 2", output)
+            self.assertIn("High: 2", output)
+            self.assertIn("Files skipped (0):", output)
+            self.assertIn("Issue: [B403:blacklist] Consider possible", output)
+            self.assertIn("<stdin>:2", output)
+            self.assertIn("<stdin>:4", output)
 
     def test_nonexistent_config(self):
         (retcode, output) = self._test_runtime([
