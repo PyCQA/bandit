@@ -155,6 +155,6 @@ class BanditTestSetTests(testtools.TestCase):
         ts = test_set.BanditTestSet(self.config, profile)
         blacklist = ts.get_tests('Call')[0]
 
-        self.assertFalse('Import' in blacklist._config)
-        self.assertFalse('ImportFrom' in blacklist._config)
+        self.assertNotIn('Import', blacklist._config)
+        self.assertNotIn('ImportFrom', blacklist._config)
         self.assertEqual(len(blacklist._config['Call']), 1)
