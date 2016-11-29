@@ -81,7 +81,8 @@ class Metrics(object):
             c.update(self.data[fname])
         self.data['_totals'] = dict(c)
 
-    def _get_issue_counts(self, scores):
+    @staticmethod
+    def _get_issue_counts(scores):
         """Get issue counts aggregated by confidence/severity rankings.
 
         :param scores: list of scores to aggregate / count

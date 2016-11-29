@@ -92,7 +92,8 @@ class BanditTester():
         LOG.debug("Returning scores: %s", scores)
         return scores
 
-    def report_error(self, test, context, error):
+    @staticmethod
+    def report_error(test, context, error):
         what = "Bandit internal error running: "
         what += "%s " % test
         what += "on file %s at line %i: " % (

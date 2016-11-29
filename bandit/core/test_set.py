@@ -38,7 +38,8 @@ class BanditTestSet():
         self.plugins.extend(self._load_builtins(filtering, profile))
         self._load_tests(config, self.plugins)
 
-    def _get_filter(self, config, profile):
+    @staticmethod
+    def _get_filter(config, profile):
         extman = extension_loader.MANAGER
 
         inc = set(profile.get('include', []))

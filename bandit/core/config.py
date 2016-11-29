@@ -171,7 +171,8 @@ class BanditConfig():
                         'data plugins')
         return bad_calls_list, bad_imports_list
 
-    def convert_legacy_blacklist_tests(self, profiles, bad_imports, bad_calls):
+    @staticmethod
+    def convert_legacy_blacklist_tests(profiles, bad_imports, bad_calls):
         '''Detect old blacklist tests, convert to use new builtin.'''
         def _clean_set(name, data):
             if name in data:
