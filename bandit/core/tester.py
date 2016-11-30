@@ -26,7 +26,7 @@ warnings.formatwarning = utils.warnings_formatter
 LOG = logging.getLogger(__name__)
 
 
-class BanditTester():
+class BanditTester(object):
     def __init__(self, testset, debug, nosec_lines):
         self.results = []
         self.testset = testset

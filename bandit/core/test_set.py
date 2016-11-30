@@ -27,7 +27,7 @@ from bandit.core import extension_loader
 LOG = logging.getLogger(__name__)
 
 
-class BanditTestSet():
+class BanditTestSet(object):
     def __init__(self, config, profile=None):
         if not profile:
             profile = {}
@@ -74,7 +74,7 @@ class BanditTestSet():
     def _load_builtins(self, filtering, profile):
         '''loads up builtin functions, so they can be filtered.'''
 
-        class Wrapper:
+        class Wrapper(object):
             def __init__(self, name, plugin):
                 self.name = name
                 self.plugin = plugin
