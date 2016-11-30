@@ -200,51 +200,53 @@ class Context(object):
         :return: The value of the AST literal
         '''
         if isinstance(literal, _ast.Num):
-            return literal.n
+            literal_value = literal.n
 
         elif isinstance(literal, _ast.Str):
-            return literal.s
+            literal_value = literal.s
 
         elif isinstance(literal, _ast.List):
             return_list = list()
             for li in literal.elts:
                 return_list.append(self._get_literal_value(li))
-            return return_list
+            literal_value = return_list
 
         elif isinstance(literal, _ast.Tuple):
             return_tuple = tuple()
             for ti in literal.elts:
                 return_tuple = return_tuple + (self._get_literal_value(ti),)
-            return return_tuple
+            literal_value = return_tuple
 
         elif isinstance(literal, _ast.Set):
             return_set = set()
             for si in literal.elts:
                 return_set.add(self._get_literal_value(si))
-            return return_set
+            literal_value = return_set
 
         elif isinstance(literal, _ast.Dict):
-            return dict(zip(literal.keys, literal.values))
+            literal_value = dict(zip(literal.keys, literal.values))
 
         elif isinstance(literal, _ast.Ellipsis):
             # what do we want to do with this?
-            pass
+            literal_value = None
 
         elif isinstance(literal, _ast.Name):
-            return literal.id
+            literal_value = literal.id
 
         # NOTE(sigmavirus24): NameConstants are only part of the AST in Python
         # 3. NameConstants tend to refer to things like True and False. This
         # prevents them from being re-assigned in Python 3.
         elif six.PY3 and isinstance(literal, _ast.NameConstant):
-            return str(literal.value)
+            literal_value = str(literal.value)
 
         # NOTE(sigmavirus24): Bytes are only part of the AST in Python 3
         elif six.PY3 and isinstance(literal, _ast.Bytes):
-            return literal.s
+            literal_value = literal.s
 
         else:
-            return None
+            literal_value = None
+
+        return literal_value
 
     def get_call_arg_value(self, argument_name):
         '''Gets the value of a named argument in a function call.
