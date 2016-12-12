@@ -1,6 +1,10 @@
 Bandit
 ======
 
+.. image:: http://governance.openstack.org/badges/bandit.svg
+    :target: http://governance.openstack.org/reference/tags/index.html
+    :alt: Bandit team and repository tags
+
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.python.org/pypi/bandit/
     :alt: Latest Version
