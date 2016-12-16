@@ -21,7 +21,7 @@ import six
 from bandit.core import utils
 
 
-class Context():
+class Context(object):
     def __init__(self, context_object=None):
         '''Initialize the class with a context, empty dict otherwise
 

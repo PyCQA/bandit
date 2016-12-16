@@ -22,7 +22,7 @@ import logging
 LOG = logging.getLogger(__name__)
 
 
-class BanditMetaAst():
+class BanditMetaAst(object):
 
     nodes = collections.OrderedDict()
 

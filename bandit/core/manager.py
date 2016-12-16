@@ -34,7 +34,7 @@ from bandit.core import test_set as b_test_set
 LOG = logging.getLogger(__name__)
 
 
-class BanditManager():
+class BanditManager(object):
 
     scope = []
 

@@ -27,7 +27,7 @@ from bandit.core import utils
 LOG = logging.getLogger(__name__)
 
 
-class BanditConfig():
+class BanditConfig(object):
     def __init__(self, config_file=None):
         '''Attempt to initialize a config dictionary from a yaml file.
 
