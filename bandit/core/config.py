@@ -236,8 +236,8 @@ class BanditConfig(object):
 
         # show deprecation message
         if legacy:
-            LOG.warn("Config file '%s' contains deprecated legacy config "
-                     "data. Please consider upgrading to the new config "
-                     "format. The tool 'bandit-config-generator' can help you "
-                     "with this. Support for legacy configs will be removed "
-                     "in a future bandit version.", path)
+            LOG.warning("Config file '%s' contains deprecated legacy config "
+                        "data. Please consider upgrading to the new config "
+                        "format. The tool 'bandit-config-generator' can help "
+                        "you with this. Support for legacy configs will be "
+                        "removed in a future bandit version.", path)
