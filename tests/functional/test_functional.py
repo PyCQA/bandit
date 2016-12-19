@@ -419,8 +419,8 @@ class FunctionalTests(testtools.TestCase):
 
     def test_partial_path(self):
         '''Test process spawning with partial file paths.'''
-        expect = {'SEVERITY': {'LOW': 9},
-                  'CONFIDENCE': {'HIGH': 9}}
+        expect = {'SEVERITY': {'LOW': 11},
+                  'CONFIDENCE': {'HIGH': 11}}
 
         self.check_example('partial_path_process.py', expect)
 
