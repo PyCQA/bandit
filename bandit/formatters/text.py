@@ -45,6 +45,7 @@ import sys
 
 from bandit.core import constants
 from bandit.core import test_properties
+from bandit.formatters import utils
 
 LOG = logging.getLogger(__name__)
 
@@ -155,7 +156,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     result = '\n'.join([bit for bit in bits]) + '\n'
 
     with fileobj:
-        fileobj.write(str(result.encode('utf-8')))
+        wrapped_file = utils.wrap_file_object(fileobj)
+        wrapped_file.write(utils.convert_file_contents(result))
 
     if fileobj.name != sys.stdout.name:
         LOG.info("Text output written to file: %s", fileobj.name)
