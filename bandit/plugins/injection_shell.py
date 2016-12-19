@@ -15,33 +15,16 @@
 # under the License.
 
 import ast
-import re
 
 import bandit
 from bandit.core import test_properties as test
 
 
-def _has_special_characters(command):
-    # check if it contains any of the characters that may cause globing,
-    # multiple commands, subshell, or variable resolution
-    # glob: [ { * ?
-    # variable: $
-    # subshell: ` $
-    return bool(re.search(r'[{|\[;$\*\?`]', command))
-
-
 def _evaluate_shell_call(context):
     no_formatting = isinstance(context.node.args[0], ast.Str)
-    if no_formatting:
-        command = context.call_args[0]
-        no_special_chars = not _has_special_characters(command)
-    else:
-        no_special_chars = False
 
-    if no_formatting and no_special_chars:
+    if no_formatting:
         return bandit.LOW
-    elif no_formatting:
-        return bandit.MEDIUM
     else:
         return bandit.HIGH
 
@@ -202,15 +185,6 @@ def subprocess_popen_with_shell_equals_true(context, config):
                         text='subprocess call with shell=True seems safe, but '
                              'may be changed in the future, consider '
                              'rewriting without shell',
-                        lineno=context.get_lineno_for_call_arg('shell'),
-                    )
-                elif sev == bandit.MEDIUM:
-                    return bandit.Issue(
-                        severity=bandit.MEDIUM,
-                        confidence=bandit.HIGH,
-                        text='call with shell=True contains special shell '
-                             'characters, consider moving extra logic into '
-                             'Python code',
                         lineno=context.get_lineno_for_call_arg('shell'),
                     )
                 else:
@@ -463,14 +437,6 @@ def start_process_with_a_shell(context, config):
                     text='Starting a process with a shell: '
                          'Seems safe, but may be changed in the future, '
                          'consider rewriting without shell'
-                )
-            elif sev == bandit.MEDIUM:
-                return bandit.Issue(
-                    severity=bandit.MEDIUM,
-                    confidence=bandit.HIGH,
-                    text='Starting a process with a shell and special shell '
-                         'characters, consider moving extra logic into '
-                         'Python code'
                 )
             else:
                 return bandit.Issue(

@@ -29,3 +29,5 @@ subprocess.Popen('/bin/ls {}'.format('something'), shell=True)
 
 command = "/bin/ls" + unknown_function()
 subprocess.Popen(command, shell=True)
+
+subprocess.Popen('/bin/ls && cat /etc/passwd', shell=True)
