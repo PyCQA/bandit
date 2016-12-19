@@ -28,6 +28,8 @@ This formatter outputs the issues as HTML.
     <html>
     <head>
 
+    <meta charset="UTF-8">
+
     <title>
         Bandit Report
     </title>
@@ -47,7 +49,6 @@ This formatter outputs the issues as HTML.
         padding-top:.5em;
         padding-bottom:.5em;
         padding-left:1em;
-
     }
 
     .metrics-box {
@@ -99,45 +100,49 @@ This formatter outputs the issues as HTML.
 
     <body>
 
-    <span id='metrics'>
-        <div class='metrics-box bordered-box'>
-            <div class='metrics-title'>
+    <div id="metrics">
+        <div class="metrics-box bordered-box">
+            <div class="metrics-title">
                 Metrics:<br>
             </div>
-            Total lines of code: <span id='loc'>5</span><br>
-            Total lines skipped (#nosec): <span id='nosec'>0</span>
+            Total lines of code: <span id="loc">9</span><br>
+            Total lines skipped (#nosec): <span id="nosec">0</span>
         </div>
-    </span>
+    </div>
 
 
 
 
     <br>
-    <span id='results'>
+    <div id="results">
 
-    <span id='issue-0'>
-    <div class='issue-block issue-sev-medium'>
-        <b>blacklist_calls: </b> Use of unsafe yaml load. Allows instantiation
-        of arbitrary objects. Consider yaml.safe_load().
-    <br>
-        <b>Test ID: </b>B301<br />
-        <b>Severity: </b>MEDIUM<br />
-        <b>Confidence: </b>HIGH</br />
-        <b>File: </b><a href='examples/yaml_load.py' target='_blank'>
-        examples/yaml_load.py</a> <br />
+    <div id="issue-0">
+    <div class="issue-block issue-sev-medium">
+        <b>yaml_load: </b> Use of unsafe yaml load. Allows
+        instantiation of arbitrary objects. Consider yaml.safe_load().<br>
+        <b>Test ID:</b> B506<br>
+        <b>Severity: </b>MEDIUM<br>
+        <b>Confidence: </b>HIGH<br>
+        <b>File: </b><a href="examples/yaml_load.py"
+        target="_blank">examples/yaml_load.py</a> <br>
+        <b>More info: </b><a href="http://docs.openstack.org/developer/bandit/
+        plugins/yaml_load.html" target="_blank">
+        http://docs.openstack.org/developer/bandit/plugins/yaml_load.html</a>
+        <br>
 
-    <span id='code'>
+    <div class="code">
     <pre>
-    4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
-    5       y = yaml.load(ystr)
-    6       yaml.dump(y)
+    5       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
+    6       y = yaml.load(ystr)
+    7       yaml.dump(y)
     </pre>
-    </span>
+    </div>
+
 
     </div>
-    </span>
+    </div>
 
-    </span>
+    </div>
 
     </body>
     </html>
@@ -173,6 +178,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 <html>
 <head>
 
+<meta charset="UTF-8">
+
 <title>
     Bandit Report
 </title>
@@ -192,7 +199,6 @@ pre {
     padding-top:.5em;
     padding-bottom:.5em;
     padding-left:1em;
-
 }
 
 .metrics-box {
@@ -249,73 +255,73 @@ pre {
 {skipped}
 
 <br>
-<span id='results'>
+<div id="results">
     {results}
-</span>
+</div>
 
 </body>
 </html>
 """
 
     issue_block = u"""
-<span id='issue-{issue_no}'>
-<div class='issue-block {issue_class}'>
+<div id="issue-{issue_no}">
+<div class="issue-block {issue_class}">
     <b>{test_name}: </b> {test_text}<br>
     <b>Test ID:</b> {test_id}<br>
-    <b>Severity: </b>{severity}<br />
-    <b>Confidence: </b>{confidence}</br />
-    <b>File: </b><a href='{path}' target='_blank'>{path}</a> <br />
-    <b>More info: </b><a href='{url}' target='_blank'>{url}</a><br />
+    <b>Severity: </b>{severity}<br>
+    <b>Confidence: </b>{confidence}<br>
+    <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
+    <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
 {candidates}
 </div>
-</span>
+</div>
 """
 
     code_block = u"""
-<span id='code'>
+<div class="code">
 <pre>
 {code}
 </pre>
-</span>
+</div>
 """
 
     candidate_block = u"""
-<span id='candidates'>
+<div class="candidates">
 <br>
 <b>Candidates: </b>
 {candidate_list}
-</span>
+</div>
 """
 
     candidate_issue = u"""
-<span id='candidate'>
-<div class='candidate-issues'>
+<div class="candidate">
+<div class="candidate-issues">
 <pre>{code}</pre>
 </div>
-</span>
+</div>
 """
 
     skipped_block = u"""
 <br>
-<span id='skipped'>
-<div class='bordered-box'>
+<div id="skipped">
+<div class="bordered-box">
 <b>Skipped files:</b><br><br>
 {files_list}
 </div>
-</span>
+</div>
 """
 
     metrics_block = u"""
-<span id='metrics'>
-    <div class='metrics-box bordered-box'>
-        <div class='metrics-title'>
+<div id="metrics">
+    <div class="metrics-box bordered-box">
+        <div class="metrics-title">
             Metrics:<br>
         </div>
-        Total lines of code: <span id='loc'>{loc}</span><br>
-        Total lines skipped (#nosec): <span id='nosec'>{nosec}</span>
+        Total lines of code: <span id="loc">{loc}</span><br>
+        Total lines skipped (#nosec): <span id="nosec">{nosec}</span>
     </div>
-</span>
+</div>
 
 """
 

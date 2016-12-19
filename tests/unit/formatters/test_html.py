@@ -47,11 +47,11 @@ class HtmlFormatterTests(testtools.TestCase):
 
         with open(self.tmp_fname) as f:
             soup = bs4.BeautifulSoup(f.read(), 'html.parser')
-            skipped_span = soup.find_all('span', id='skipped')[0]
+            skipped = soup.find_all('div', id='skipped')[0]
 
-            self.assertEqual(1, len(soup.find_all('span', id='skipped')))
-            self.assertIn('abc.py', skipped_span.text)
-            self.assertIn('File is bad', skipped_span.text)
+            self.assertEqual(1, len(soup.find_all('div', id='skipped')))
+            self.assertIn('abc.py', skipped.text)
+            self.assertIn('File is bad', skipped.text)
 
     @mock.patch('bandit.core.issue.Issue.get_code')
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
@@ -88,9 +88,9 @@ class HtmlFormatterTests(testtools.TestCase):
             self.assertEqual('1000', soup.find_all('span', id='loc')[0].text)
             self.assertEqual('50', soup.find_all('span', id='nosec')[0].text)
 
-            issue1 = soup.find_all('span', id='issue-0')[0]
-            issue2 = soup.find_all('span', id='issue-1')[0]
-            issue3 = soup.find_all('span', id='issue-2')[0]
+            issue1 = soup.find_all('div', id='issue-0')[0]
+            issue2 = soup.find_all('div', id='issue-1')[0]
+            issue3 = soup.find_all('div', id='issue-2')[0]
 
             # make sure the class has been applied properly
             self.assertEqual(1, len(issue1.find_all(
@@ -103,23 +103,27 @@ class HtmlFormatterTests(testtools.TestCase):
                 'div', {'class': 'issue-sev-high'})))
 
             # issue1 has a candidates section with 2 candidates in it
-            self.assertEqual(1, len(issue1.find_all('span', id='candidates')))
-            self.assertEqual(2, len(issue1.find_all('span', id='candidate')))
+            self.assertEqual(1, len(issue1.find_all('div',
+                                                    {'class': 'candidates'})))
+            self.assertEqual(2, len(issue1.find_all('div',
+                                                    {'class': 'candidate'})))
 
             # issue2 doesn't have candidates
-            self.assertEqual(0, len(issue2.find_all('span', id='candidates')))
-            self.assertEqual(0, len(issue2.find_all('span', id='candidate')))
+            self.assertEqual(0, len(issue2.find_all('div',
+                                                    {'class': 'candidates'})))
+            self.assertEqual(0, len(issue2.find_all('div',
+                                                    {'class': 'candidate'})))
 
             # issue1 doesn't have code issue 2 and 3 do
-            self.assertEqual(0, len(issue1.find_all('span', id='code')))
-            self.assertEqual(1, len(issue2.find_all('span', id='code')))
-            self.assertEqual(1, len(issue3.find_all('span', id='code')))
+            self.assertEqual(0, len(issue1.find_all('div', {'class': 'code'})))
+            self.assertEqual(1, len(issue2.find_all('div', {'class': 'code'})))
+            self.assertEqual(1, len(issue3.find_all('div', {'class': 'code'})))
 
             # issue2 code and issue1 first candidate have code
-            self.assertIn('some code', issue1.find_all('span',
-                                                       id='candidate')[0].text)
-            self.assertIn('some code', issue2.find_all('span',
-                                                       id='code')[0].text)
+            element1 = issue1.find_all('div', {'class': 'candidate'})
+            self.assertIn('some code', element1[0].text)
+            element2 = issue2.find_all('div', {'class': 'code'})
+            self.assertIn('some code', element2[0].text)
 
             # make sure correct things are being output in issues
             self.assertIn('AAAAAAA:', issue1.text)
