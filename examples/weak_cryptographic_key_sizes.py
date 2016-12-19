@@ -9,6 +9,8 @@ from Crypto.PublicKey import RSA
 # Correct
 dsa.generate_private_key(key_size=2048,
                          backend=backends.default_backend())
+ec.generate_private_key(curve=ec.SECP384R1,
+                        backend=backends.default_backend())
 rsa.generate_private_key(public_exponent=65537,
                          key_size=2048,
                          backend=backends.default_backend())
@@ -29,6 +31,8 @@ RSA.generate(4096)
 # Incorrect: weak key sizes
 dsa.generate_private_key(key_size=1024,
                          backend=backends.default_backend())
+ec.generate_private_key(curve=ec.SECT163R2,
+                        backend=backends.default_backend())
 rsa.generate_private_key(public_exponent=65537,
                          key_size=1024,
                          backend=backends.default_backend())
