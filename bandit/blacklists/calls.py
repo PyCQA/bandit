@@ -124,7 +124,7 @@ be reviewed.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
-| B308 | mark_safe           | - mark_safe                        | Medium    |
+| B308 | mark_safe           | - django.utils.safestring.mark_safe| Medium    |
 +------+---------------------+------------------------------------+-----------+
 
 B309: httpsconnection
@@ -136,8 +136,7 @@ https://wiki.openstack.org/wiki/OSSN/OSSN-0033
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
-| B309 | httpsconnection     | - mark_safe                        | Medium    |
-|      |                     | - httplib.HTTPSConnection          |           |
+| B309 | httpsconnection     | - httplib.HTTPSConnection          | Medium    |
 |      |                     | - http.client.HTTPSConnection      |           |
 |      |                     | - six.moves.http_client            |           |
 |      |                     |   .HTTPSConnection                 |           |
@@ -351,7 +350,7 @@ def gen_blacklist():
         ))
 
     sets.append(utils.build_conf_dict(
-        'mark_safe', 'B308', ['mark_safe'],
+        'mark_safe', 'B308', ['django.utils.safestring.mark_safe'],
         'Use of mark_safe() may expose cross-site scripting '
         'vulnerabilities and should be reviewed.'
         ))
