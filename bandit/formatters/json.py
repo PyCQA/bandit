@@ -68,21 +68,6 @@ This formatter outputs the issues in JSON.
           "test_name": "blacklist_calls",
           "test_id": "B301"
         }
-      ],
-      "stats": [
-        {
-          "filename": "examples/yaml_load.py",
-          "issue totals": {
-            "HIGH": 0,
-            "LOW": 0,
-            "MEDIUM": 1,
-            "UNDEFINED": 0
-          },
-          "score": {
-            "CONFIDENCE": 10,
-            "SEVERITY": 5
-          }
-        }
       ]
     }
 
@@ -99,9 +84,6 @@ import logging
 import operator
 import sys
 
-import six
-
-from bandit.core import constants
 from bandit.core import test_properties
 
 LOG = logging.getLogger(__name__)
@@ -118,30 +100,10 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     :param lines: Number of lines to report, -1 for all
     '''
 
-    stats = dict(zip(manager.files_list, manager.scores))
-    machine_output = dict({'results': [], 'errors': [], 'stats': []})
+    machine_output = dict({'results': [], 'errors': []})
     for (fname, reason) in manager.skipped:
         machine_output['errors'].append({'filename': fname,
                                          'reason': reason})
-
-    for filer, score in six.iteritems(stats):
-        totals = {}
-        rank = constants.RANKING
-        sev_idx = rank.index(sev_level)
-        for i in range(sev_idx, len(rank)):
-            severity = rank[i]
-            severity_value = constants.RANKING_VALUES[severity]
-            try:
-                sc = score['SEVERITY'][i] / severity_value
-            except ZeroDivisionError:
-                sc = 0
-            totals[severity] = sc
-
-        machine_output['stats'].append({
-            'filename': filer,
-            'score': {'SEVERITY': sum(i for i in score['SEVERITY']),
-                      'CONFIDENCE': sum(i for i in score['CONFIDENCE'])},
-            'issue totals': totals})
 
     results = manager.get_issue_list(sev_level=sev_level,
                                      conf_level=conf_level)
