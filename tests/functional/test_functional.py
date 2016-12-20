@@ -133,6 +133,11 @@ class FunctionalTests(testtools.TestCase):
         expect = {'SEVERITY': {'MEDIUM': 3}, 'CONFIDENCE': {'HIGH': 3}}
         self.check_example('eval.py', expect)
 
+    def test_mark_safe(self):
+        '''Test the `mark_safe` example.'''
+        expect = {'SEVERITY': {'MEDIUM': 1}, 'CONFIDENCE': {'HIGH': 1}}
+        self.check_example('mark_safe.py', expect)
+
     def test_exec(self):
         '''Test the `exec` example.'''
         filename = 'exec-{}.py'
@@ -186,6 +191,11 @@ class FunctionalTests(testtools.TestCase):
         '''Test for `import telnetlib` and Telnet.* calls.'''
         expect = {'SEVERITY': {'HIGH': 2}, 'CONFIDENCE': {'HIGH': 2}}
         self.check_example('telnetlib.py', expect)
+
+    def test_ftp_usage(self):
+        '''Test for `import ftplib` and FTP.* calls.'''
+        expect = {'SEVERITY': {'HIGH': 2}, 'CONFIDENCE': {'HIGH': 2}}
+        self.check_example('ftplib.py', expect)
 
     def test_imports(self):
         '''Test for dangerous imports.'''
