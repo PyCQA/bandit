@@ -455,8 +455,8 @@ class FunctionalTests(testtools.TestCase):
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
         expect = {
-            'SEVERITY': {'MEDIUM': 5, 'HIGH': 4},
-            'CONFIDENCE': {'HIGH': 9}
+            'SEVERITY': {'MEDIUM': 6, 'HIGH': 4},
+            'CONFIDENCE': {'HIGH': 10}
         }
         self.check_example('weak_cryptographic_key_sizes.py', expect)
 
