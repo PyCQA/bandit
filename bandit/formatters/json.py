@@ -100,7 +100,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     :param lines: Number of lines to report, -1 for all
     '''
 
-    machine_output = dict({'results': [], 'errors': []})
+    machine_output = {'results': [], 'errors': []}
     for (fname, reason) in manager.skipped:
         machine_output['errors'].append({'filename': fname,
                                          'reason': reason})
