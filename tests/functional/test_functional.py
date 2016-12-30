@@ -292,8 +292,8 @@ class FunctionalTests(testtools.TestCase):
     def test_sql_statements(self):
         '''Test for SQL injection through string building.'''
         expect = {
-            'SEVERITY': {'MEDIUM': 12},
-            'CONFIDENCE': {'LOW': 7, 'MEDIUM': 5}}
+            'SEVERITY': {'MEDIUM': 14},
+            'CONFIDENCE': {'LOW': 8, 'MEDIUM': 6}}
         self.check_example('sql_statements.py', expect)
 
     def test_ssl_insecure_version(self):
