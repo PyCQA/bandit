@@ -32,12 +32,12 @@ Overview
 --------
 Bandit is a tool designed to find common security issues in Python code. To do
 this Bandit processes each file, builds an AST from it, and runs appropriate
-plugins against the AST nodes.  Once Bandit has finished scanning all the files
+plugins against the AST nodes. Once Bandit has finished scanning all the files
 it generates a report.
 
 Installation
 ------------
-Bandit is distributed on PyPI.  The best way to install it is with pip:
+Bandit is distributed on PyPI. The best way to install it is with pip:
 
 
 Create a virtual environment (optional)::
@@ -47,16 +47,16 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    # Or, if you're working with a Python 3 project
-    pip3.4 install bandit
+    # Or if you're working with a Python 3.5 project
+    pip3.5 install bandit
 
 Run Bandit::
 
     bandit -r path/to/your/code
 
 
-Bandit can also be installed from source.  To do so, download the source
-tarball from PyPI, then install it::
+Bandit can also be installed from source. To do so, download the source tarball
+from PyPI, then install it::
 
     python setup.py install
 
@@ -72,7 +72,7 @@ context and only reporting on the high-severity issues::
 
     bandit examples/*.py -n 3 -lll
 
-Bandit can be run with profiles.  To run Bandit against the examples directory
+Bandit can be run with profiles. To run Bandit against the examples directory
 using only the plugins listed in the ``ShellInjection`` profile::
 
     bandit examples/*.py -p ShellInjection
@@ -216,14 +216,14 @@ An optional config file may be supplied and may include:
 Per Project Command Line Args
 -----------------------------
 Projects may include a `.bandit` file that specifies command line arguments
-that should be supplied for that project.  The currently supported arguments
+that should be supplied for that project. The currently supported arguments
 are:
 
  - exclude: comma separated list of excluded paths
  - skips: comma separated list of tests to skip
  - tests: comma separated list of tests to run
 
-To use this, put a .bandit file in your project's directory.  For example:
+To use this, put a .bandit file in your project's directory. For example:
 
 ::
 
@@ -254,7 +254,7 @@ Vulnerability Tests
 Vulnerability tests or "plugins" are defined in files in the plugins directory.
 
 Tests are written in Python and are autodiscovered from the plugins directory.
-Each test can examine one or more type of Python statements.  Tests are marked
+Each test can examine one or more type of Python statements. Tests are marked
 with the types of Python statements they examine (for example: function call,
 string, import, etc).
 
@@ -305,7 +305,7 @@ Formatters need to accept 4 things:
 - `excluded_files`: The list of files that were excluded from the scope
 
 Plugins tend to take advantage of the `bandit.checks` decorator which allows
-the author to register a check for a particular type of AST node. For example,
+the author to register a check for a particular type of AST node. For example
 
 ::
 
@@ -340,8 +340,8 @@ To register your plugin, you have two options:
 
 Contributing
 ------------
-Contributions to Bandit are always welcome!  We can be found on #openstack-security
-on Freenode IRC.
+Contributions to Bandit are always welcome! We can be found on
+#openstack-security on Freenode IRC.
 
 The best way to get started with Bandit is to grab the source::
 
@@ -352,7 +352,8 @@ You can test any changes with tox::
     pip install tox
     tox -e pep8
     tox -e py27
-    tox -e py34
+    tox -e py35
+    tox -e docs
     tox -e cover
 
 Reporting Bugs
@@ -365,17 +366,17 @@ Under Which Version of Python Should I Install Bandit?
 The answer to this question depends on the project(s) you will be running
 Bandit against. If your project is only compatible with Python 2.7, you
 should install Bandit to run under Python 2.7. If your project is only
-compatible with Python 3.4, then use 3.4. If your project supports both, you
-*could* run Bandit with both versions but you don't have to.
+compatible with Python 3.5, then use 3.5 respectively. If your project supports
+both, you *could* run Bandit with both versions but you don't have to.
 
 Bandit uses the `ast` module from Python's standard library in order to
 analyze your Python code. The `ast` module is only able to parse Python code
 that is valid in the version of the interpreter from which it is imported. In
 other words, if you try to use Python 2.7's `ast` module to parse code written
-for 3.4 that uses, for example, `yield from` with asyncio, then you'll have
+for 3.5 that uses, for example, `yield from` with asyncio, then you'll have
 syntax errors that will prevent Bandit from working properly. Alternatively,
 if you are relying on 2.7's octal notation of `0777` then you'll have a syntax
-error if you run Bandit on 3.4.
+error if you run Bandit on 3.x.
 
 
 References
