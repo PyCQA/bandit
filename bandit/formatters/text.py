@@ -150,9 +150,10 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     bits.append('\tTotal lines skipped (#nosec): %i' %
                 (manager.metrics.data['_totals']['nosec']))
 
+    skipped = manager.get_skipped()
     bits.append(get_metrics(manager))
-    bits.append("Files skipped (%i):" % len(manager.skipped))
-    bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
+    bits.append("Files skipped (%i):" % len(skipped))
+    bits.extend(["\t%s (%s)" % skip for skip in skipped])
     result = '\n'.join([bit for bit in bits]) + '\n'
 
     with fileobj:

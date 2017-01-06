@@ -172,8 +172,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
                 (manager.metrics.data['_totals']['nosec']))
 
     bits.append(get_metrics(manager))
-    bits.append(header("Files skipped (%i):", len(manager.skipped)))
-    bits.extend(["\t%s (%s)" % skip for skip in manager.skipped])
+    skipped = manager.get_skipped()
+    bits.append(header("Files skipped (%i):", len(skipped)))
+    bits.extend(["\t%s (%s)" % skip for skip in skipped])
     do_print(bits)
 
     if fileobj.name != sys.stdout.name:

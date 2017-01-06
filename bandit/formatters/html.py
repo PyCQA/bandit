@@ -331,7 +331,7 @@ pre {
 
     # build the skipped string to insert in the report
     skipped_str = ''.join('%s <b>reason:</b> %s<br>' % (fname, reason)
-                          for fname, reason in manager.skipped)
+                          for fname, reason in manager.get_skipped())
     if skipped_str:
         skipped_text = skipped_block.format(files_list=skipped_str)
     else:

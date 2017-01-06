@@ -67,7 +67,12 @@ class BanditTester(object):
                 if (result is not None and
                         result.lineno not in self.nosec_lines and
                         temp_context['lineno'] not in self.nosec_lines):
-                    result.fname = temp_context['filename']
+
+                    if isinstance(temp_context['filename'], bytes):
+                        result.fname = temp_context['filename'].decode('utf-8')
+                    else:
+                        result.fname = temp_context['filename']
+
                     if result.lineno is None:
                         result.lineno = temp_context['lineno']
                     result.linerange = temp_context['linerange']
