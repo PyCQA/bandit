@@ -113,14 +113,14 @@ class FunctionalTests(testtools.TestCase):
 
     def test_crypto_md5(self):
         '''Test the `hashlib.md5` example.'''
-        expect = {'SEVERITY': {'MEDIUM': 8},
-                  'CONFIDENCE': {'HIGH': 8}}
+        expect = {'SEVERITY': {'MEDIUM': 11},
+                  'CONFIDENCE': {'HIGH': 11}}
         self.check_example('crypto-md5.py', expect)
 
     def test_ciphers(self):
         '''Test the `Crypto.Cipher` example.'''
-        expect = {'SEVERITY': {'HIGH': 8},
-                  'CONFIDENCE': {'HIGH': 8}}
+        expect = {'SEVERITY': {'HIGH': 13},
+                  'CONFIDENCE': {'HIGH': 13}}
         self.check_example('ciphers.py', expect)
 
     def test_cipher_modes(self):
@@ -465,8 +465,8 @@ class FunctionalTests(testtools.TestCase):
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
         expect = {
-            'SEVERITY': {'MEDIUM': 6, 'HIGH': 4},
-            'CONFIDENCE': {'HIGH': 10}
+            'SEVERITY': {'MEDIUM': 8, 'HIGH': 6},
+            'CONFIDENCE': {'HIGH': 14}
         }
         self.check_example('weak_cryptographic_key_sizes.py', expect)
 

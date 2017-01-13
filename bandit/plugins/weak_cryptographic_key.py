@@ -106,6 +106,8 @@ def _weak_crypto_key_size_pycrypto(context):
     func_key_type = {
         'Crypto.PublicKey.DSA.generate': 'DSA',
         'Crypto.PublicKey.RSA.generate': 'RSA',
+        'Cryptodome.PublicKey.DSA.generate': 'DSA',
+        'Cryptodome.PublicKey.RSA.generate': 'RSA',
     }
     key_type = func_key_type.get(context.call_function_name_qual)
     if key_type:

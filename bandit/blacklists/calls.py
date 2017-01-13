@@ -64,6 +64,9 @@ Use of insecure MD2, MD4, or MD5 hash function.
 |      |                     | - Crypto.Hash.MD2.new              |           |
 |      |                     | - Crypto.Hash.MD4.new              |           |
 |      |                     | - Crypto.Hash.MD5.new              |           |
+|      |                     | - Cryptodome.Hash.MD2.new          |           |
+|      |                     | - Cryptodome.Hash.MD4.new          |           |
+|      |                     | - Cryptodome.Hash.MD5.new          |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
 |      |                     |   .hashes.MD5                      |           |
 +------+---------------------+------------------------------------+-----------+
@@ -82,6 +85,11 @@ as AES.
 |      |                     | - Crypto.Cipher.Blowfish.new       |           |
 |      |                     | - Crypto.Cipher.DES.new            |           |
 |      |                     | - Crypto.Cipher.XOR.new            |           |
+|      |                     | - Cryptodome.Cipher.ARC2.new       |           |
+|      |                     | - Cryptodome.Cipher.ARC4.new       |           |
+|      |                     | - Cryptodome.Cipher.Blowfish.new   |           |
+|      |                     | - Cryptodome.Cipher.DES.new        |           |
+|      |                     | - Cryptodome.Cipher.XOR.new        |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
 |      |                     |   .ciphers.algorithms.ARC4         |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
@@ -313,6 +321,9 @@ def gen_blacklist():
          'Crypto.Hash.MD2.new',
          'Crypto.Hash.MD4.new',
          'Crypto.Hash.MD5.new',
+         'Cryptodome.Hash.MD2.new',
+         'Cryptodome.Hash.MD4.new',
+         'Cryptodome.Hash.MD5.new',
          'cryptography.hazmat.primitives.hashes.MD5'],
         'Use of insecure MD2, MD4, or MD5 hash function.'
         ))
@@ -324,6 +335,11 @@ def gen_blacklist():
          'Crypto.Cipher.Blowfish.new',
          'Crypto.Cipher.DES.new',
          'Crypto.Cipher.XOR.new',
+         'Cryptodome.Cipher.ARC2.new',
+         'Cryptodome.Cipher.ARC4.new',
+         'Cryptodome.Cipher.Blowfish.new',
+         'Cryptodome.Cipher.DES.new',
+         'Cryptodome.Cipher.XOR.new',
          'cryptography.hazmat.primitives.ciphers.algorithms.ARC4',
          'cryptography.hazmat.primitives.ciphers.algorithms.Blowfish',
          'cryptography.hazmat.primitives.ciphers.algorithms.IDEA'],
