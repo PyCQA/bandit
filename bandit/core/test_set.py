@@ -112,7 +112,7 @@ class BanditTestSet(object):
                 plugin.plugin._config = cfg
             for check in plugin.plugin._checks:
                 self.tests.setdefault(check, []).append(plugin.plugin)
-                LOG.debug('added function %s (%s) targetting %s',
+                LOG.debug('added function %s (%s) targeting %s',
                           plugin.name, plugin.plugin._test_id, check)
 
     def get_tests(self, checktype):
