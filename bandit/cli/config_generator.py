@@ -124,7 +124,7 @@ def get_config_settings():
             if hasattr(fn_module, 'gen_config'):
                 config[fn_name] = fn_module.gen_config(function._takes_config)
 
-    return yaml.safe_dump(config)
+    return yaml.safe_dump(config, default_flow_style=False)
 
 
 def main():
