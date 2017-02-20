@@ -689,3 +689,11 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
         }
         self.check_example('input.py', expect)
+
+    def test_unverified_context(self):
+        '''Test for `ssl._create_unverified_context`.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
+        }
+        self.check_example('unverified_context.py', expect)

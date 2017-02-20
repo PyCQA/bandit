@@ -278,6 +278,20 @@ is safe in Python 3.
 | B322 | input               | - input                            | High      |
 +------+---------------------+------------------------------------+-----------+
 
+B323: unverified_context
+------------------------
+
+By default, Python will create a secure, verified ssl context for use in such
+classes as HTTPSConnection. However, it still allows using an insecure
+context via the _create_unverified_context that reverts to the previous
+behavior that does not validate certificates or perform hostname checks.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B322 | unverified_context  | - ssl._create_unverified_context   | Medium    |
++------+---------------------+------------------------------------+-----------+
+
 """
 
 from bandit.blacklists import utils
@@ -507,6 +521,15 @@ def gen_blacklist():
         'is similar, though in many ways worse, then using eval. On Python '
         '2, use raw_input instead, input is safe in Python 3.',
         'HIGH'
+        ))
+
+    sets.append(utils.build_conf_dict(
+        'unverified_context', 'B323', ['ssl._create_unverified_context'],
+        'By default, Python will create a secure, verified ssl context for '
+        'use in such classes as HTTPSConnection. However, it still allows '
+        'using an insecure context via the _create_unverified_context that '
+        'reverts to the previous behavior that does not validate certificates '
+        'or perform hostname checks.'
         ))
 
     return {'Call': sets}
