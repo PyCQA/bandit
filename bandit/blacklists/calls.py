@@ -244,9 +244,6 @@ to XML attacks. Methods should be replaced with their defusedxml equivalents.
 | B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
 |      |                     | - xml.dom.pulldom.parseString      |           |
 +------+---------------------+------------------------------------+-----------+
-| B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
-|      |                     | - xml.dom.pulldom.parseString      |           |
-+------+---------------------+------------------------------------+-----------+
 | B320 | xml_bad_etree       | - lxml.etree.parse                 | Medium    |
 |      |                     | - lxml.etree.fromstring            |           |
 |      |                     | - lxml.etree.RestrictedElement     |           |
