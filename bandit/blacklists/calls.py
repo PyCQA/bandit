@@ -138,8 +138,8 @@ be reviewed.
 B309: httpsconnection
 ---------------------
 
-Use of HTTPSConnection does not provide security, see
-https://wiki.openstack.org/wiki/OSSN/OSSN-0033
+Use of HTTPSConnection on older versions of Python prior to 2.7.9 and 3.4.3 do
+not provide security, see https://wiki.openstack.org/wiki/OSSN/OSSN-0033
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
@@ -373,7 +373,8 @@ def gen_blacklist():
         ['httplib.HTTPSConnection',
          'http.client.HTTPSConnection',
          'six.moves.http_client.HTTPSConnection'],
-        'Use of HTTPSConnection does not provide security, see '
+        'Use of HTTPSConnection on older versions of Python prior to 2.7.9 '
+        'and 3.4.3 do not provide security, see '
         'https://wiki.openstack.org/wiki/OSSN/OSSN-0033'
         ))
 
