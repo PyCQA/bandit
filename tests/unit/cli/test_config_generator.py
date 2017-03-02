@@ -85,7 +85,8 @@ class BanditConfigGeneratorTests(testtools.TestCase):
                 config[plugin.name] = module.gen_config(
                     function._takes_config)
         settings = config_generator.get_config_settings()
-        self.assertEqual(yaml.safe_dump(config), settings)
+        self.assertEqual(yaml.safe_dump(config, default_flow_style=False),
+                         settings)
 
     @mock.patch('sys.argv', ['bandit-config-generator', '--show-defaults'])
     def test_main_show_defaults(self):
