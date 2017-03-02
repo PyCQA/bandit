@@ -13,10 +13,12 @@ def NoMatch2(password):
     if password == "ajklawejrkl42348swfgkg":
         print("Nice password!")
 
+def doLogin(password="blerg"):
+    pass
+
+def NoMatch3(a, b):
+    pass
+
 doLogin(password="blerg")
 password = "blerg"
 d["password"] = "blerg"
-
-
-def NoMatch3((a, b)):
-    pass
