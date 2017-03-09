@@ -23,11 +23,45 @@ This formatter outputs the issues in a yaml format.
 
 .. code-block:: none
 
-    filename,test_name,test_id,issue_severity,issue_confidence,issue_text,
-    line_number,line_range
-    examples/yaml_load.py,blacklist_calls,B301,MEDIUM,HIGH,"Use of unsafe yaml
-    load. Allows instantiation of arbitrary objects. Consider yaml.safe_load().
-    ",5,[5]
+    errors: []
+    generated_at: '2017-03-09T22:29:30Z'
+    metrics:
+      _totals:
+        CONFIDENCE.HIGH: 1
+        CONFIDENCE.LOW: 0
+        CONFIDENCE.MEDIUM: 0
+        CONFIDENCE.UNDEFINED: 0
+        SEVERITY.HIGH: 0
+        SEVERITY.LOW: 0
+        SEVERITY.MEDIUM: 1
+        SEVERITY.UNDEFINED: 0
+        loc: 9
+        nosec: 0
+      examples/yaml_load.py:
+        CONFIDENCE.HIGH: 1
+        CONFIDENCE.LOW: 0
+        CONFIDENCE.MEDIUM: 0
+        CONFIDENCE.UNDEFINED: 0
+        SEVERITY.HIGH: 0
+        SEVERITY.LOW: 0
+        SEVERITY.MEDIUM: 1
+        SEVERITY.UNDEFINED: 0
+        loc: 9
+        nosec: 0
+    results:
+    - code: '5     ystr = yaml.dump({''a'' : 1, ''b'' : 2, ''c'' : 3})\n
+             6     y = yaml.load(ystr)\n7     yaml.dump(y)\n'
+      filename: examples/yaml_load.py
+      issue_confidence: HIGH
+      issue_severity: MEDIUM
+      issue_text: Use of unsafe yaml load. Allows instantiation of arbitrary
+                  objects.
+        Consider yaml.safe_load().
+      line_number: 6
+      line_range:
+      - 6
+      test_id: B506
+      test_name: yaml_load
 
 .. versionadded:: 1.4.1
 
