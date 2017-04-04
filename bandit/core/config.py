@@ -16,7 +16,6 @@
 
 import logging
 
-import six
 import yaml
 
 from bandit.core import constants
@@ -132,7 +131,7 @@ class BanditConfig(object):
         extman = extension_loader.MANAGER
 
         updated_profiles = {}
-        for name, profile in six.iteritems(self.get_option('profiles') or {}):
+        for name, profile in (self.get_option('profiles') or {}).items():
             # NOTE(tkelsey): can't use default of get() because value is
             # sometimes explicity 'None', for example when the list if given in
             # yaml but not populated with any values.
@@ -151,7 +150,7 @@ class BanditConfig(object):
         bad_calls = self.get_option('blacklist_calls') or {}
         bad_calls = bad_calls.get('bad_name_sets', {})
         for item in bad_calls:
-            for key, val in six.iteritems(item):
+            for key, val in item.items():
                 val['name'] = key
                 val['message'] = val['message'].replace('{func}', '{name}')
                 bad_calls_list.append(val)
@@ -159,7 +158,7 @@ class BanditConfig(object):
         bad_imports = self.get_option('blacklist_imports') or {}
         bad_imports = bad_imports.get('bad_import_sets', {})
         for item in bad_imports:
-            for key, val in six.iteritems(item):
+            for key, val in item.items():
                 val['name'] = key
                 val['message'] = val['message'].replace('{module}', '{name}')
                 val['qualnames'] = val['imports']
@@ -179,7 +178,7 @@ class BanditConfig(object):
                 data.remove(name)
                 data.add('B001')
 
-        for name, profile in six.iteritems(profiles):
+        for name, profile in profiles.items():
             blacklist = {}
             include = profile['include']
             exclude = profile['exclude']

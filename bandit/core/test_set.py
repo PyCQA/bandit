@@ -18,7 +18,6 @@
 import importlib
 import logging
 
-import six
 
 from bandit.core import blacklisting
 from bandit.core import extension_loader
@@ -46,7 +45,7 @@ class BanditTestSet(object):
         exc = set(profile.get('exclude', []))
 
         all_blacklist_tests = set()
-        for _node, tests in six.iteritems(extman.blacklist):
+        for _node, tests in extman.blacklist.items():
             all_blacklist_tests.update(t['id'] for t in tests)
 
         # this block is purely for backwards compatibility, the rules are as
@@ -83,7 +82,7 @@ class BanditTestSet(object):
         blacklist = profile.get('blacklist')
         if not blacklist:  # not overridden by legacy data
             blacklist = {}
-            for node, tests in six.iteritems(extman.blacklist):
+            for node, tests in extman.blacklist.items():
                 values = [t for t in tests if t['id'] in filtering]
                 if values:
                     blacklist[node] = values

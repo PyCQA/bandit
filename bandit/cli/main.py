@@ -19,7 +19,6 @@ import logging
 import os
 import sys
 
-import six
 
 import bandit
 from bandit.core import config as b_config
@@ -247,9 +246,9 @@ def main():
     parser.set_defaults(ignore_nosec=False)
 
     plugin_info = ["%s\t%s" % (a[0], a[1].name) for a in
-                   six.iteritems(extension_mgr.plugins_by_id)]
+                   extension_mgr.plugins_by_id.items()]
     blacklist_info = []
-    for a in six.iteritems(extension_mgr.blacklist):
+    for a in extension_mgr.blacklist.items():
         for b in a[1]:
             blacklist_info.append('%s\t%s' % (b['id'], b['name']))
 
