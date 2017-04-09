@@ -173,6 +173,7 @@ Usage::
       B320  xml_bad_etree
       B321  ftplib
       B322  input
+      B323  unverified_context
       B401  import_telnetlib
       B402  import_ftplib
       B403  import_pickle
