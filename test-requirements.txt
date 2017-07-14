@@ -13,7 +13,7 @@ oslotest>=1.10.0 # Apache-2.0
 
 sphinx>=1.6.2 # BSD
 oslosphinx>=4.7.0 # Apache-2.0
-beautifulsoup4 # MIT
+beautifulsoup4>=4.6.0 # MIT
 reno!=2.3.1,>=1.8.0 # Apache-2.0
 
 pylint==1.4.5 # GPLv2
