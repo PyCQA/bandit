@@ -1,8 +1,8 @@
 Bandit
 ======
 
-.. image:: http://governance.openstack.org/badges/bandit.svg
-    :target: http://governance.openstack.org/reference/tags/index.html
+.. image:: https://governance.openstack.org/badges/bandit.svg
+    :target: https://governance.openstack.org/reference/tags/index.html
     :alt: Bandit team and repository tags
 
 .. image:: https://img.shields.io/pypi/v/bandit.svg
@@ -388,8 +388,8 @@ Bandit wiki: https://wiki.openstack.org/wiki/Security/Projects/Bandit
 Python AST module documentation: https://docs.python.org/2/library/ast.html
 
 Green Tree Snakes - the missing Python AST docs:
-http://greentreesnakes.readthedocs.org/en/latest/
+https://greentreesnakes.readthedocs.org/en/latest/
 
 Documentation of the various types of AST nodes that Bandit currently covers
 or could be extended to cover:
-http://greentreesnakes.readthedocs.org/en/latest/nodes.html
+https://greentreesnakes.readthedocs.org/en/latest/nodes.html
