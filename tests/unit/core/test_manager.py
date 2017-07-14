@@ -51,9 +51,9 @@ class ManagerTests(testtools.TestCase):
 
     def test_create_manager(self):
         # make sure we can create a manager
-        self.assertEqual(self.manager.debug, False)
-        self.assertEqual(self.manager.verbose, False)
-        self.assertEqual(self.manager.agg_type, 'file')
+        self.assertEqual(False, self.manager.debug)
+        self.assertEqual(False, self.manager.verbose)
+        self.assertEqual('file', self.manager.agg_type)
 
     def test_create_manager_with_profile(self):
         # make sure we can create a manager
@@ -61,9 +61,9 @@ class ManagerTests(testtools.TestCase):
                                   debug=False, verbose=False,
                                   profile=self.profile)
 
-        self.assertEqual(m.debug, False)
-        self.assertEqual(m.verbose, False)
-        self.assertEqual(m.agg_type, 'file')
+        self.assertEqual(False, m.debug)
+        self.assertEqual(False, m.verbose)
+        self.assertEqual('file', m.agg_type)
 
     def test_matches_globlist(self):
         self.assertTrue(manager._matches_glob_list('test', ['*tes*']))
@@ -101,8 +101,8 @@ class ManagerTests(testtools.TestCase):
                                                included_globs=['*.py'],
                                                excluded_path_strings=None)
 
-        self.assertEqual(exc, set(['/a/c.ww']))
-        self.assertEqual(inc, set(['/a/a.py', '/a/b.py']))
+        self.assertEqual(set(['/a/c.ww']), exc)
+        self.assertEqual(set(['/a/a.py', '/a/b.py']), inc)
 
     def test_populate_baseline_success(self):
         # Test populate_baseline with valid JSON
@@ -183,8 +183,8 @@ class ManagerTests(testtools.TestCase):
     def test_discover_files_recurse_skip(self, isdir):
         isdir.return_value = True
         self.manager.discover_files(['thing'], False)
-        self.assertEqual(self.manager.files_list, [])
-        self.assertEqual(self.manager.excluded_files, [])
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual([], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_recurse_files(self, isdir):
@@ -192,8 +192,8 @@ class ManagerTests(testtools.TestCase):
         with mock.patch.object(manager, '_get_files_from_dir') as m:
             m.return_value = (set(['files']), set(['excluded']))
             self.manager.discover_files(['thing'], True)
-            self.assertEqual(self.manager.files_list, ['files'])
-            self.assertEqual(self.manager.excluded_files, ['excluded'])
+            self.assertEqual(['files'], self.manager.files_list)
+            self.assertEqual(['excluded'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_exclude(self, isdir):
@@ -201,8 +201,8 @@ class ManagerTests(testtools.TestCase):
         with mock.patch.object(manager, '_is_file_included') as m:
             m.return_value = False
             self.manager.discover_files(['thing'], True)
-            self.assertEqual(self.manager.files_list, [])
-            self.assertEqual(self.manager.excluded_files, ['thing'])
+            self.assertEqual([], self.manager.files_list)
+            self.assertEqual(['thing'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_exclude_cmdline(self, isdir):
@@ -219,8 +219,8 @@ class ManagerTests(testtools.TestCase):
         with mock.patch.object(manager, '_is_file_included') as m:
             m.return_value = True
             self.manager.discover_files(['thing'], True)
-            self.assertEqual(self.manager.files_list, ['thing'])
-            self.assertEqual(self.manager.excluded_files, [])
+            self.assertEqual(['thing'], self.manager.files_list)
+            self.assertEqual([], self.manager.excluded_files)
 
     def test_run_tests_keyboardinterrupt(self):
         # Test that bandit manager exits when there is a keyboard interrupt
