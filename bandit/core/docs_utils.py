@@ -24,11 +24,11 @@ def get_url(bid):
     # later though.
     from bandit.core import extension_loader
 
-    info = extension_loader.MANAGER.plugins_by_id.get(bid, None)
+    info = extension_loader.MANAGER.plugins_by_id.get(bid)
     if info is not None:
         return BASE_URL + ('plugins/%s.html' % info.plugin.__name__)
 
-    info = extension_loader.MANAGER.blacklist_by_id.get(bid, None)
+    info = extension_loader.MANAGER.blacklist_by_id.get(bid)
     if info is not None:
         template = 'blacklists/blacklist_{kind}.html#{id}-{name}'
         info['name'] = info['name'].replace('_', '-')

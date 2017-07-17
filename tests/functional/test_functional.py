@@ -105,7 +105,7 @@ class FunctionalTests(testtools.TestCase):
                 for rank in C.RANKING:
                     label = '{0}.{1}'.format(criteria, rank)
                     expected = 0
-                    if expect['issues'].get(criteria, None).get(rank, None):
+                    if expect['issues'].get(criteria).get(rank):
                         expected = expect['issues'][criteria][rank]
                     self.assertEqual(expected, m['_totals'][label])
 
