@@ -47,13 +47,16 @@ false. A HIGH severity warning is generated in either of these scenarios.
     14
 
     >> Issue: By default, jinja2 sets autoescape to False. Consider using
-    autoescape=True to mitigate XSS vulnerabilities.
+    autoescape=True or use the select_autoescape function to mitigate XSS
+    vulnerabilities.
        Severity: High   Confidence: High
        Location: ./examples/jinja2_templating.py:15
     14
     15  Environment(loader=templateLoader,
     16              load=templateLoader)
     17
+    18  Environment(autoescape=select_autoescape(['html', 'htm', 'xml']),
+    19              loader=templateLoader)
 
 
 .. seealso::
@@ -93,13 +96,19 @@ def jinja2_autoescape_false(context):
                             confidence=bandit.HIGH,
                             text="Using jinja2 templates with autoescape="
                                  "False is dangerous and can lead to XSS. "
-                                 "Use autoescape=True to mitigate XSS "
+                                 "Use autoescape=True or use the "
+                                 "select_autoescape function to mitigate XSS "
                                  "vulnerabilities."
                         )
                     # found autoescape
                     if getattr(node, 'arg', None) == 'autoescape':
-                        if (getattr(node.value, 'id', None) == 'True' or
-                                getattr(node.value, 'value', None) is True):
+                        value = getattr(node, 'value', None)
+                        if (getattr(value, 'id', None) == 'True' or
+                                getattr(value, 'value', None) is True):
+                            return
+                        # Check if select_autoescape function is used.
+                        elif isinstance(value, ast.Call) and getattr(
+                                value.func, 'id', None) == 'select_autoescape':
                             return
                         else:
                             return bandit.Issue(
@@ -107,8 +116,9 @@ def jinja2_autoescape_false(context):
                                 confidence=bandit.MEDIUM,
                                 text="Using jinja2 templates with autoescape="
                                      "False is dangerous and can lead to XSS. "
-                                     "Ensure autoescape=True to mitigate XSS "
-                                     "vulnerabilities."
+                                     "Ensure autoescape=True or use the "
+                                     "select_autoescape function to mitigate "
+                                     "XSS vulnerabilities."
                             )
             # We haven't found a keyword named autoescape, indicating default
             # behavior
@@ -116,5 +126,6 @@ def jinja2_autoescape_false(context):
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="By default, jinja2 sets autoescape to False. Consider "
-                     "using autoescape=True to mitigate XSS vulnerabilities."
+                     "using autoescape=True or use the select_autoescape "
+                     "function to mitigate XSS vulnerabilities."
             )
