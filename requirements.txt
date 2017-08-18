@@ -2,6 +2,6 @@
 # of appearance. Changing the order has an impact on the overall integration
 # process, which may cause wedges in the gate later.
 GitPython>=1.0.1 # BSD License (3 clause)
-PyYAML>=3.10.0 # MIT
+PyYAML>=3.10 # MIT
 six>=1.9.0 # MIT
 stevedore>=1.20.0 # Apache-2.0
