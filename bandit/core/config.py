@@ -49,7 +49,8 @@ class BanditConfig(object):
             try:
                 self._config = yaml.safe_load(f)
                 self.validate(config_file)
-            except yaml.YAMLError:
+            except yaml.YAMLError as err:
+                LOG.error(err)
                 raise utils.ConfigError("Error parsing file.", config_file)
 
             # valid config must be a dict
