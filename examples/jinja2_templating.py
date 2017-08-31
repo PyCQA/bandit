@@ -1,5 +1,5 @@
 import jinja2
-from jinja2 import Environment
+from jinja2 import Environment, select_autoescape
 templateLoader = jinja2.FileSystemLoader( searchpath="/" )
 something = ''
 
@@ -14,3 +14,13 @@ Environment(loader=templateLoader,
 
 Environment(loader=templateLoader,
             load=templateLoader)
+
+Environment(loader=templateLoader, autoescape=select_autoescape())
+
+Environment(loader=templateLoader,
+            autoescape=select_autoescape(['html', 'htm', 'xml']))
+
+
+def fake_func():
+    return 'foobar'
+Environment(loader=templateLoader, autoescape=fake_func())

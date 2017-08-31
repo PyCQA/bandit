@@ -441,8 +441,8 @@ class FunctionalTests(testtools.TestCase):
     def test_jinja2_templating(self):
         '''Test jinja templating for potential XSS bugs.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 4},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 3}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 3}
         }
         self.check_example('jinja2_templating.py', expect)
 
