@@ -289,7 +289,7 @@ behavior that does not validate certificates or perform hostname checks.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
-| B322 | unverified_context  | - ssl._create_unverified_context   | Medium    |
+| B323 | unverified_context  | - ssl._create_unverified_context   | Medium    |
 +------+---------------------+------------------------------------+-----------+
 
 """
