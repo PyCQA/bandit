@@ -5,6 +5,7 @@ venv*
 *.egg
 *.egg-info
 .eggs/
+.idea/
 .tox
 .testrepository
 build/*
