@@ -55,20 +55,25 @@ Deserialization with the marshal module is possibly dangerous.
 B303: md5
 ---------
 
-Use of insecure MD2, MD4, or MD5 hash function.
+Use of insecure MD2, MD4, MD5, or SHA1 hash function.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
 | B303 | md5                 | - hashlib.md5                      | Medium    |
+|      |                     | - hashlib.sha1                     |           |
 |      |                     | - Crypto.Hash.MD2.new              |           |
 |      |                     | - Crypto.Hash.MD4.new              |           |
 |      |                     | - Crypto.Hash.MD5.new              |           |
+|      |                     | - Crypto.Hash.SHA.new              |           |
 |      |                     | - Cryptodome.Hash.MD2.new          |           |
 |      |                     | - Cryptodome.Hash.MD4.new          |           |
 |      |                     | - Cryptodome.Hash.MD5.new          |           |
+|      |                     | - Cryptodome.Hash.SHA.new          |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
 |      |                     |   .hashes.MD5                      |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .hashes.SHA1                     |           |
 +------+---------------------+------------------------------------+-----------+
 
 B304 - B305: ciphers and modes
@@ -329,14 +334,18 @@ def gen_blacklist():
     sets.append(utils.build_conf_dict(
         'md5', 'B303',
         ['hashlib.md5',
+         'hashlib.sha1',
          'Crypto.Hash.MD2.new',
          'Crypto.Hash.MD4.new',
          'Crypto.Hash.MD5.new',
+         'Crypto.Hash.SHA.new',
          'Cryptodome.Hash.MD2.new',
          'Cryptodome.Hash.MD4.new',
          'Cryptodome.Hash.MD5.new',
-         'cryptography.hazmat.primitives.hashes.MD5'],
-        'Use of insecure MD2, MD4, or MD5 hash function.'
+         'Cryptodome.Hash.SHA.new',
+         'cryptography.hazmat.primitives.hashes.MD5',
+         'cryptography.hazmat.primitives.hashes.SHA1'],
+        'Use of insecure MD2, MD4, MD5, or SHA1 hash function.'
         ))
 
     sets.append(utils.build_conf_dict(
