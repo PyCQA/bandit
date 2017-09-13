@@ -151,7 +151,7 @@ class BanditCLIMainTests(testtools.TestCase):
                          option_name))
 
     def test_log_option_source_no_values(self):
-        # Test that None is returned when no command arguement or ini value are
+        # Test that None is returned when no command argument or ini value are
         # provided
         option_name = 'aggregate'
         self.assertIsNone(bandit._log_option_source(None, None, option_name))

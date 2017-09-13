@@ -222,7 +222,7 @@ class BaselineFunctionalTests(testtools.TestCase):
                                  "new_candidates-all.py"}
         target_directory, baseline_code = (self._create_baseline(
                                            baseline_report_files))
-        # assert the intial baseline found results
+        # assert the initial baseline found results
         self.assertEqual(1, baseline_code)
         baseline_report = os.path.join(target_directory,
                                        self.baseline_report_file)

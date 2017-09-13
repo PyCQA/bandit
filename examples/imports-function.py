@@ -7,6 +7,6 @@ subprocess = __import__("subprocess")
 # see bug https://bugs.launchpad.net/bandit/+bug/1396333
 __import__()
 
-# TODO(??): bandit can not find this one unfortunatly (no symbol tab)
+# TODO(??): bandit can not find this one unfortunately (no symbol tab)
 a = 'subprocess'
 __import__(a)
