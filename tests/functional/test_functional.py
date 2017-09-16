@@ -697,3 +697,11 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
         }
         self.check_example('unverified_context.py', expect)
+
+    def test_hashlib_new_insecure_functions(self):
+        '''Test insecure hash functions created by `hashlib.new`.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 5, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
+        }
+        self.check_example('hashlib_new_insecure_functions.py', expect)
