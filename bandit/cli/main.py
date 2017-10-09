@@ -18,6 +18,7 @@ import fnmatch
 import logging
 import os
 import sys
+import textwrap
 
 
 import bandit
@@ -206,6 +207,13 @@ def main():
         choices=sorted(extension_mgr.formatter_names)
     )
     parser.add_argument(
+        '--msg-template', action='store',
+        default=None, help='specify output message template'
+                           ' (only usable with --format custom),'
+                           ' see CUSTOM FORMAT section'
+                           ' for list of available values',
+    )
+    parser.add_argument(
         '-o', '--output', dest='output_file', action='store', nargs='?',
         type=argparse.FileType('w'), default=sys.stdout,
         help='write report to filename'
@@ -253,11 +261,41 @@ def main():
             blacklist_info.append('%s\t%s' % (b['id'], b['name']))
 
     plugin_list = '\n\t'.join(sorted(set(plugin_info + blacklist_info)))
-    parser.epilog = ('The following tests were discovered and'
-                     ' loaded:\n\t{0}\n'.format(plugin_list))
+    dedent_text = textwrap.dedent('''
+    CUSTOM FORMATTING
+    -----------------
+
+    Available tags:
+
+        {abspath}, {relpath}, {line},  {test_id},
+        {severity}, {msg}, {confidence}, {range}
+
+    Example usage:
+
+        Default template:
+        bandit -r examples/ --format custom --msg-template \\
+        "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"
+
+        Provides same output as:
+        bandit -r examples/ --format custom
+
+        Tags can also be formatted in python string.format() style:
+        bandit -r examples/ --format custom --msg-template \\
+        "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
+
+        See python documentation for more information about formatting style:
+        https://docs.python.org/3.4/library/string.html
+
+    The following tests were discovered and loaded:
+    -----------------------------------------------
+    ''')
+    parser.epilog = dedent_text + "\t{0}".format(plugin_list)
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
+    # Check if `--msg-template` is not present without custom formatter
+    if args.output_format != 'custom' and args.msg_template is not None:
+        parser.error("--msg-template can only be used with --format=custom")
 
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
@@ -341,7 +379,8 @@ def main():
                          sev_level,
                          conf_level,
                          args.output_file,
-                         args.output_format)
+                         args.output_format,
+                         args.msg_template)
 
     # return an exit code of 1 if there are results, 0 otherwise
     if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:

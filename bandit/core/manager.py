@@ -136,7 +136,7 @@ class BanditManager(object):
         return len(self.get_issue_list(sev_filter, conf_filter))
 
     def output_results(self, lines, sev_level, conf_level, output_file,
-                       output_format):
+                       output_format, template=None):
         '''Outputs results from the result store
 
         :param lines: How many surrounding lines to show per result
@@ -144,6 +144,9 @@ class BanditManager(object):
         :param conf_level: Which confidence levels to show (LOW, MEDIUM, HIGH)
         :param output_file: File to store results
         :param output_format: output format plugin name
+        :param template: Output template with non-terminal tags <N>
+                         (default:  {abspath}:{line}:
+                         {test_id}[bandit]: {severity}: {msg})
         :return: -
         '''
         try:
@@ -153,8 +156,13 @@ class BanditManager(object):
 
             formatter = formatters_mgr[output_format]
             report_func = formatter.plugin
-            report_func(self, fileobj=output_file, sev_level=sev_level,
-                        conf_level=conf_level, lines=lines)
+            if output_format == 'custom':
+                report_func(self, fileobj=output_file, sev_level=sev_level,
+                            conf_level=conf_level, lines=lines,
+                            template=template)
+            else:
+                report_func(self, fileobj=output_file, sev_level=sev_level,
+                            conf_level=conf_level, lines=lines)
 
         except Exception as e:
             raise RuntimeError("Unable to output report using '%s' formatter: "
