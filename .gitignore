@@ -7,7 +7,7 @@ venv*
 .eggs/
 .idea/
 .tox
-.testrepository
+.stestr
 build/*
 cover/*
 .coverage*
