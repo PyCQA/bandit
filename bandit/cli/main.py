@@ -97,7 +97,7 @@ def _log_option_source(arg_val, ini_val, option_name):
         LOG.info("Using command line arg for %s", option_name)
         return arg_val
     elif ini_val:
-        LOG.info("Using .bandit arg for %s", option_name)
+        LOG.info("Using ini file for %s", option_name)
         return ini_val
     else:
         return None
@@ -150,7 +150,7 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
-        'targets', metavar='targets', type=str, nargs='+',
+        'targets', metavar='targets', type=str, nargs='*',
         help='source file(s) or directory(s) to be tested'
     )
     parser.add_argument(
@@ -278,8 +278,16 @@ def main():
 
         args.tests = _log_option_source(args.tests, ini_options.get('tests'),
                                         'selected tests')
+        ini_targets = ini_options.get('targets')
+        if ini_targets:
+            ini_targets = ini_targets.split(',')
+        args.targets = _log_option_source(args.targets, ini_targets,
+                                          'selected targets')
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
+    if not args.targets:
+        LOG.error("No targets found in CLI or ini files, exiting.")
+        sys.exit(2)
     # if the log format string was set in the options, reinitialize
     if b_conf.get_option('log_format'):
         log_format = b_conf.get_option('log_format')

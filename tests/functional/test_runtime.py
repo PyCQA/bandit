@@ -15,7 +15,6 @@
 import os
 import subprocess
 
-import six
 import testtools
 
 
@@ -41,10 +40,7 @@ class RuntimeTests(testtools.TestCase):
     def test_no_arguments(self):
         (retcode, output) = self._test_runtime(['bandit', ])
         self.assertEqual(2, retcode)
-        if six.PY2:
-            self.assertIn("error: too few arguments", output)
-        else:
-            self.assertIn("arguments are required: targets", output)
+        self.assertIn("No targets found in CLI or ini files", output)
 
     def test_piped_input(self):
         with open('examples/imports.py', 'r') as infile:

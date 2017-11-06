@@ -90,7 +90,7 @@ Usage::
                   [-f {csv,html,json,screen,txt,xml,yaml}] [-o [OUTPUT_FILE]] [-v]
                   [-d] [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
                   [--ini INI_PATH] [--version]
-                  targets [targets ...]
+                  [targets [targets ...]]
 
     Bandit - a Python source code security analyzer
 
@@ -221,6 +221,7 @@ Projects may include a `.bandit` file that specifies command line arguments
 that should be supplied for that project. The currently supported arguments
 are:
 
+ - targets: comma separated list of target dirs/files to run bandit on
  - exclude: comma separated list of excluded paths
  - skips: comma separated list of tests to skip
  - tests: comma separated list of tests to run
