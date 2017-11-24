@@ -370,33 +370,6 @@ To register your plugin, you have two options:
         bandit.plugins =
             mako = bandit_mako
 
-
-Custom Formatting
------------------
-
-Available tags:
-
-::
-    {abspath}, {relpath}, {line},  {test_id},
-    {severity}, {msg}, {confidence}, {range}
-
-Example usage:
-
-  Default template::
-    bandit -r examples/ --format custom --msg-template \
-    "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"
-
-  Provides same output as::
-    bandit -r examples/ --format custom
-
-  Tags can also be formatted in python string.format() style::
-    bandit -r examples/ --format custom --msg-template \
-    "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
-
-See python documentation for more information about formatting style:
-https://docs.python.org/3.4/library/string.html
-
-
 Contributing
 ------------
 Contributions to Bandit are always welcome! We can be found on
