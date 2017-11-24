@@ -77,7 +77,7 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("tests were discovered and loaded:", output)
 
     def test_help_in_readme(self):
-        replace_list = [' ', '\t']
+        replace_list = [' ', '\t', '\n']
         (retcode, output) = self._test_runtime(['bandit', '-h'])
         for i in replace_list:
             output = output.replace(i, '')
