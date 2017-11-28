@@ -1,0 +1,31 @@
+- hosts: all
+  name: Autoconverted job legacy-bandit-integration-keystone from old job gate-bandit-integration-keystone
+  tasks:
+
+    - name: Ensure legacy workspace directory
+      file:
+        path: '{{ ansible_user_dir }}/workspace'
+        state: directory
+
+    - shell:
+        cmd: /usr/local/jenkins/slave_scripts/install-distro-packages.sh
+        chdir: '{{ ansible_user_dir }}/workspace'
+      environment: '{{ zuul | zuul_legacy_vars }}'
+
+    - shell:
+        cmd: |
+          set -u
+          set -e
+          set -x
+          cd $WORKSPACE
+          /usr/zuul-env/bin/zuul-cloner --cache-dir /opt/git \
+            git://git.openstack.org \
+            openstack/bandit \
+            openstack/keystone
+          cd $WORKSPACE/openstack/bandit
+          tox -e integration openstack keystone \
+            $WORKSPACE/openstack/keystone
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+      environment: '{{ zuul | zuul_legacy_vars }}'
+
