@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    The 'targets' CLI arguments are now optional and can be specified in the
+    ini file.
