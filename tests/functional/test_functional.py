@@ -705,3 +705,11 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
         }
         self.check_example('hashlib_new_insecure_functions.py', expect)
+
+    def test_blacklist_pycrypto(self):
+        '''Test importing pycrypto module'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+        }
+        self.check_example('pycrypto.py', expect)
