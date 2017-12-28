@@ -65,6 +65,7 @@ This formatter outputs the issues in JSON.
           "line_range": [
             5
           ],
+          "more_info": "https://docs.openstack.org/developer/bandit/",
           "test_name": "blacklist_calls",
           "test_id": "B301"
         }
@@ -84,6 +85,7 @@ import logging
 import operator
 import sys
 
+from bandit.core import docs_utils
 from bandit.core import test_properties
 
 LOG = logging.getLogger(__name__)
@@ -114,12 +116,15 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         collector = []
         for r in results:
             d = r.as_dict()
+            d['more_info'] = docs_utils.get_url(d['test_id'])
             if len(results[r]) > 1:
                 d['candidates'] = [c.as_dict() for c in results[r]]
             collector.append(d)
 
     else:
         collector = [r.as_dict() for r in results]
+        for elem in collector:
+            elem['more_info'] = docs_utils.get_url(elem['test_id'])
 
     itemgetter = operator.itemgetter
     if manager.agg_type == 'vuln':
