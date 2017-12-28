@@ -53,6 +53,10 @@ def blacklist(context, config):
                 name = ""  # handle '__import__()'
         else:
             name = context.call_function_name_qual
+            # In the case the Call is an importlib.import, treat the first
+            # argument name as an actual import module name.
+            if name in ["importlib.import_module", "importlib.__import__"]:
+                name = context.call_args[0]
         for check in blacklists[node_type]:
             for qn in check['qualnames']:
                 if fnmatch.fnmatch(name, qn):

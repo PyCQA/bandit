@@ -256,6 +256,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('imports.py', expect)
 
+    def test_imports_using_importlib(self):
+        '''Test for dangerous imports using importlib.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+        }
+        self.check_example('imports-with-importlib.py', expect)
+
     def test_mktemp(self):
         '''Test for `tempfile.mktemp`.'''
         expect = {
