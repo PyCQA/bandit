@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    [bug/1695890] The ``more_info`` URL link displayed in the HTML output is
+    now also available in the JSON output.
