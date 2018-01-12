@@ -375,7 +375,7 @@ def start_process_with_a_shell(context, config):
     invocation is dangerous as it is vulnerable to various shell injection
     attacks. Great care should be taken to sanitize all input in order to
     mitigate this risk. Calls of this type are identified by the use of certain
-    commands which are known to use shells. Bandit will report a MEDIUM
+    commands which are known to use shells. Bandit will report a LOW
     severity warning.
 
     See also:
@@ -418,7 +418,7 @@ def start_process_with_a_shell(context, config):
     .. code-block:: none
 
         >> Issue: Starting a process with a shell: check for injection.
-           Severity: Medium   Confidence: Medium
+           Severity: Low   Confidence: Medium
            Location: examples/os_system.py:3
         2
         3   os.system('/bin/echo hi')
