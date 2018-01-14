@@ -285,6 +285,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('okay.py', expect)
 
+    def test_subdirectory_okay(self):
+        '''Test a vulnerability-free file under a subdirectory.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.check_example('init-py-test/subdirectory-okay.py', expect)
+
     def test_os_chmod(self):
         '''Test setting file permissions.'''
         filename = 'os-chmod-{}.py'
