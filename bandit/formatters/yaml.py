@@ -60,6 +60,7 @@ This formatter outputs the issues in a yaml format.
       line_number: 6
       line_range:
       - 6
+      more_info: https://docs.openstack.org/bandit/latest/
       test_id: B506
       test_name: yaml_load
 
@@ -76,6 +77,8 @@ import operator
 import sys
 
 import yaml
+
+from bandit.core import docs_utils
 
 LOG = logging.getLogger(__name__)
 
@@ -98,6 +101,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
                                      conf_level=conf_level)
 
     collector = [r.as_dict() for r in results]
+    for elem in collector:
+        elem['more_info'] = docs_utils.get_url(elem['test_id'])
 
     itemgetter = operator.itemgetter
     if manager.agg_type == 'vuln':

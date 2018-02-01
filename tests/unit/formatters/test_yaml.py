@@ -94,3 +94,5 @@ class JsonFormatterTests(testtools.TestCase):
                              data['results'][0]['line_range'])
             self.assertEqual(self.check_name, data['results'][0]['test_name'])
             self.assertIn('candidates', data['results'][0])
+            self.assertIn('more_info', data['results'][0])
+            self.assertIsNotNone(data['results'][0]['more_info'])
