@@ -144,7 +144,6 @@
       - openstack/sahara
 
 - project:
-    name: openstack/bandit
     check:
       jobs:
         - bandit-integration-barbican
