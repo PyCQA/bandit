@@ -151,7 +151,7 @@ def get_module_qualname_from_path(path):
                                 ' Missing path or file name' % (path))
 
     qname = [os.path.splitext(tail)[0]]
-    while head not in ['/', '.']:
+    while head not in ['/', '.', '']:
         if os.path.isfile(os.path.join(head, '__init__.py')):
             (head, tail) = os.path.split(head)
             qname.insert(0, tail)
