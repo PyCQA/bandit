@@ -179,6 +179,19 @@ at https://httpoxy.org/.
 |      |                     | - twisted.web.twcgi.CGIScript      |           |
 +------+---------------------+------------------------------------+-----------+
 
+B413: import_pycrypto
+---------------------
+pycrypto library is known to have publicly disclosed buffer overflow
+vulnerability https://github.com/dlitz/pycrypto/issues/176. It is no longer
+actively maintained and has been deprecated in favor of pyca/cryptography
+library.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B413 | import_pycrypto     | - Crypto                           | high      |
++------+---------------------+------------------------------------+-----------+
+
 """
 
 from bandit.blacklists import utils
@@ -267,5 +280,11 @@ def gen_blacklist():
         'Consider possible security implications associated with '
         '{name} module.', 'HIGH'
         ))
+
+    sets.append(utils.build_conf_dict(
+        'import_pycrypto', 'B413', ['Crypto'],
+        'The pyCrypto library and its module {name} are no longer actively '
+        'maintained and have been deprecated. '
+        'Consider using pyca/cryptography library.', 'HIGH'))
 
     return {'Import': sets, 'ImportFrom': sets, 'Call': sets}
