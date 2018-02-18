@@ -189,7 +189,14 @@ library.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B413 | import_pycrypto     | - Crypto                           | high      |
+| B413 | import_pycrypto     | - Crypto.Cipher                    | high      |
+|      |                     | - Crypto.Hash                      |           |
+|      |                     | - Crypto.IO                        |           |
+|      |                     | - Crypto.Protocol                  |           |
+|      |                     | - Crypto.PublicKey                 |           |
+|      |                     | - Crypto.Random                    |           |
+|      |                     | - Crypto.Signature                 |           |
+|      |                     | - Crypto.Util                      |           |
 +------+---------------------+------------------------------------+-----------+
 
 """
@@ -282,7 +289,15 @@ def gen_blacklist():
         ))
 
     sets.append(utils.build_conf_dict(
-        'import_pycrypto', 'B413', ['Crypto'],
+        'import_pycrypto', 'B413',
+        ['Crypto.Cipher',
+         'Crypto.Hash',
+         'Crypto.IO',
+         'Crypto.Protocol',
+         'Crypto.PublicKey',
+         'Crypto.Random',
+         'Crypto.Signature',
+         'Crypto.Util'],
         'The pyCrypto library and its module {name} are no longer actively '
         'maintained and have been deprecated. '
         'Consider using pyca/cryptography library.', 'HIGH'))
