@@ -2,6 +2,6 @@
 # of appearance. Changing the order has an impact on the overall integration
 # process, which may cause wedges in the gate later.
 openstackdocstheme>=1.18.1 # Apache-2.0
-sphinx!=1.6.6,<1.7.0,>=1.6.2 # BSD
+sphinx!=1.6.6,>=1.6.2 # BSD
 reno>=2.5.0 # Apache-2.0
 oslosphinx>=4.7.0 # Apache-2.0
