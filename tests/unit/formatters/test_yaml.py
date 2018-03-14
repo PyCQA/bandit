@@ -28,10 +28,10 @@ from bandit.core import metrics
 from bandit.formatters import json as b_json
 
 
-class JsonFormatterTests(testtools.TestCase):
+class YamlFormatterTests(testtools.TestCase):
 
     def setUp(self):
-        super(JsonFormatterTests, self).setUp()
+        super(YamlFormatterTests, self).setUp()
         conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, 'file')
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
