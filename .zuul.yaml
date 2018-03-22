@@ -160,6 +160,7 @@
         - bandit-integration-python-keystoneclient
         - bandit-integration-python-magnumclient
         - bandit-integration-sahara
+        - openstack-tox-lower-constraints
     gate:
       jobs:
         - bandit-integration-barbican
@@ -175,3 +176,4 @@
         - bandit-integration-oslo.vmware
         - bandit-integration-python-keystoneclient
         - bandit-integration-python-magnumclient
+        - openstack-tox-lower-constraints
