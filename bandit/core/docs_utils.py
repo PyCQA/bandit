@@ -26,7 +26,8 @@ def get_url(bid):
 
     info = extension_loader.MANAGER.plugins_by_id.get(bid)
     if info is not None:
-        return BASE_URL + ('plugins/%s.html' % info.plugin.__name__)
+        return '%splugins/%s_%s.html' % (BASE_URL, bid.lower(),
+                                         info.plugin.__name__)
 
     info = extension_loader.MANAGER.blacklist_by_id.get(bid)
     if info is not None:
