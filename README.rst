@@ -6,15 +6,15 @@ Bandit
     :alt: Bandit team and repository tags
 
 .. image:: https://img.shields.io/pypi/v/bandit.svg
-    :target: https://pypi.python.org/pypi/bandit/
+    :target: https://pypi.org/project/bandit/
     :alt: Latest Version
 
 .. image:: https://img.shields.io/pypi/pyversions/bandit.svg
-    :target: https://pypi.python.org/pypi/bandit/
+    :target: https://pypi.org/project/bandit/
     :alt: Python Versions
 
 .. image:: https://img.shields.io/pypi/format/bandit.svg
-    :target: https://pypi.python.org/pypi/bandit/
+    :target: https://pypi.org/project/bandit/
     :alt: Format
 
 .. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
