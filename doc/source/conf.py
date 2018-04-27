@@ -35,7 +35,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bandit'
-copyright = u'2018, PyCQA'
+copyright = u'2016, OpenStack Foundation'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
