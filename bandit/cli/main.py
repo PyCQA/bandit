@@ -245,10 +245,13 @@ def main():
         '--ini', dest='ini_path', action='store', default=None,
         help='path to a .bandit file that supplies command line arguments'
     )
+    python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
-        version='%(prog)s {version}'.format(version=bandit.__version__)
+        version='%(prog)s {version}\n  python version = {python}'.format(
+            version=bandit.__version__, python=python_ver)
     )
+
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
     parser.set_defaults(ignore_nosec=False)
