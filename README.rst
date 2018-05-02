@@ -1,10 +1,6 @@
 Bandit
 ======
 
-.. image:: https://governance.openstack.org/badges/bandit.svg
-    :target: https://governance.openstack.org/reference/tags/index.html
-    :alt: Bandit team and repository tags
-
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.python.org/pypi/bandit/
     :alt: Latest Version
@@ -18,15 +14,15 @@ Bandit
     :alt: Format
 
 .. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
-    :target: https://git.openstack.org/cgit/openstack/bandit/plain/LICENSE
+    :target: https://github.com/PyCQA/bandit/blob/master/LICENSE
     :alt: License
 
-A security linter from OpenStack Security
+A security linter from PyCQA
 
 * Free software: Apache license
-* Documentation: https://wiki.openstack.org/wiki/Security/Projects/Bandit
-* Source: https://git.openstack.org/cgit/openstack/bandit
-* Bugs: https://bugs.launchpad.net/bandit
+* Documentation: https://bandit.readthedocs.io/en/latest/
+* Source: https://github.com/PyCQA/bandit
+* Bugs: https://github.com/PyCQA/bandit/issues
 
 Overview
 --------
@@ -34,6 +30,9 @@ Bandit is a tool designed to find common security issues in Python code. To do
 this Bandit processes each file, builds an AST from it, and runs appropriate
 plugins against the AST nodes. Once Bandit has finished scanning all the files
 it generates a report.
+
+Bandit was originally developed within the OpenStack Security Project and 
+later rehomed to PyCQA.
 
 Installation
 ------------
@@ -65,7 +64,7 @@ Usage
 -----
 Example usage across a code tree::
 
-    bandit -r ~/openstack-repo/keystone
+    bandit -r ~/your_repos/project
 
 Example usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues::
@@ -374,12 +373,11 @@ To register your plugin, you have two options:
 
 Contributing
 ------------
-Contributions to Bandit are always welcome! We can be found on
-#openstack-security on Freenode IRC.
+Contributions to Bandit are always welcome!
 
 The best way to get started with Bandit is to grab the source::
 
-    git clone https://git.openstack.org/openstack/bandit.git
+    git clone https://github.com/PyCQA/bandit.git
 
 You can test any changes with tox::
 
@@ -390,10 +388,15 @@ You can test any changes with tox::
     tox -e docs
     tox -e cover
 
+Please make PR requests using your own branch, and not master::
+
+    git checkout -b mychange
+    git push origin mychange
+
 Reporting Bugs
 --------------
-Bugs should be reported on Launchpad. To file a bug against Bandit, visit:
-https://bugs.launchpad.net/bandit/+filebug
+Bugs should be reported on github. To file a bug against Bandit, visit:
+https://github.com/PyCQA/bandit/issues
 
 Under Which Version of Python Should I Install Bandit?
 ------------------------------------------------------
@@ -416,7 +419,7 @@ error if you run Bandit on 3.x.
 References
 ==========
 
-Bandit wiki: https://wiki.openstack.org/wiki/Security/Projects/Bandit
+Bandit docs: https://bandit.readthedocs.io/en/latest/
 
 Python AST module documentation: https://docs.python.org/2/library/ast.html
 

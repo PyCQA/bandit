@@ -105,7 +105,7 @@ EXAMPLES
 
 Example usage across a code tree::
 
-    bandit -r ~/openstack-repo/keystone
+    bandit -r ~/your-repos/project
 
 Example usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues::

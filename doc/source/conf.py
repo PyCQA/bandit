@@ -20,11 +20,8 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = [
-    'sphinx.ext.autodoc',
-    # 'sphinx.ext.intersphinx',
-    'oslosphinx'
-]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.doctest',
+              'sphinx.ext.coverage', 'sphinx.ext.viewcode']
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
 # text edit cycles.
@@ -38,7 +35,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Bandit'
-copyright = u'2016, OpenStack Foundation'
+copyright = u'2016, Bandit Developers'
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -59,7 +56,7 @@ modindex_common_prefix = ['bandit.']
 
 man_pages = [
     ('man/bandit', 'bandit', u'Python source code security analyzer',
-     [u'OpenStack Security Group'], 1)
+     [u'PyCQA'], 1)
 ]
 
 # -- Options for HTML output --------------------------------------------------
@@ -67,7 +64,7 @@ man_pages = [
 # The theme to use for HTML and HTML Help pages.  Major themes that come with
 # Sphinx are currently 'default' and 'sphinxdoc'.
 # html_theme_path = ["."]
-# html_theme = '_theme'
+html_theme = 'sphinx_rtd_theme'
 # html_static_path = ['static']
 html_theme_options = {}
 
@@ -81,7 +78,7 @@ latex_documents = [
     ('index',
      '%s.tex' % project,
      u'%s Documentation' % project,
-     u'OpenStack Foundation', 'manual'),
+     u'PyCQA', 'manual'),
 ]
 
 # Example configuration for intersphinx: refer to the Python standard library.

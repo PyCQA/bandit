@@ -1,0 +1,25 @@
+language: python
+cache: pip
+sudo: false
+install:
+  - pip install tox
+script: tox
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=py27
+    - python: 3.5
+      env: TOXENV=py35
+    - python: 3.6
+      env: TOXENV=py36
+    - python: pypy
+      env: TOXENV=pypy
+
+notifications:
+  email:
+    - lhinds@protonmail.com
+  irc:
+    channels:
+      - "irc.freenode.org##python-code-quality"
+    use_notice: true
+skip_join: true
