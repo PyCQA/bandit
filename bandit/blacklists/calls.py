@@ -216,7 +216,7 @@ B313 - B320: XML
 ----------------
 
 Most of this is based off of Christian Heimes' work on defusedxml:
-https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+https://pypi.org/project/defusedxml/#defusedxml-sax
 
 Using various XLM methods to parse untrusted XML data is known to be vulnerable
 to XML attacks. Methods should be replaced with their defusedxml equivalents.
@@ -442,7 +442,7 @@ def gen_blacklist():
         ))
 
     # Most of this is based off of Christian Heimes' work on defusedxml:
-    #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+    #   https://pypi.org/project/defusedxml/#defusedxml-sax
 
     xml_msg = ('Using {name} to parse untrusted XML data is known to be '
                'vulnerable to XML attacks. Replace {name} with its '

@@ -24,7 +24,7 @@ possible security implications. The following blacklist tests are run against
 any import statements or calls encountered in the scanned code base.
 
 Note that the XML rules listed here are mostly based off of Christian Heimes'
-work on defusedxml: https://pypi.python.org/pypi/defusedxml
+work on defusedxml: https://pypi.org/project/defusedxml/
 
 B401: import_telnetlib
 ----------------------
@@ -244,7 +244,7 @@ def gen_blacklist():
         ))
 
     # Most of this is based off of Christian Heimes' work on defusedxml:
-    #   https://pypi.python.org/pypi/defusedxml/#defusedxml-sax
+    #   https://pypi.org/project/defusedxml/#defusedxml-sax
 
     xml_msg = ('Using {name} to parse untrusted XML data is known to be '
                'vulnerable to XML attacks. Replace {name} with the equivalent '
