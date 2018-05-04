@@ -1,6 +1,10 @@
 Bandit
 ======
 
+.. image:: https://travis-ci.org/PyCQA/bandit.svg?branch=master
+    :target: https://travis-ci.org/PyCQA/bandit/
+    :alt: Build Status
+
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.org/project/bandit/
     :alt: Latest Version
