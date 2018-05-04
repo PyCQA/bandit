@@ -50,8 +50,8 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    # Or if you're working with a Python 3.5 project
-    pip3.5 install bandit
+    # Or if you're working with a Python 3 project
+    pip3 install bandit
 
 Run Bandit::
 
