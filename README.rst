@@ -234,6 +234,7 @@ Usage::
       B609  linux_commands_wildcard_injection
       B701  jinja2_autoescape_false
       B702  use_of_mako_templates
+      B703  django_mark_safe
 
 
 Configuration
