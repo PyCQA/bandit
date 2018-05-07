@@ -455,7 +455,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('django_sql_injection_extra.py', expect)
 
-
     def test_django_sql_injection_raw(self):
         """Test insecure raw functions on Django."""
 
@@ -464,7 +463,6 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 4, 'HIGH': 0}
         }
         self.check_example('django_sql_injection_raw.py', expect)
-
 
     def test_yaml(self):
         '''Test for `yaml.load`.'''
