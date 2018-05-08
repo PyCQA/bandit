@@ -38,10 +38,14 @@ subprocess.Popen('/bin/ls && cat /etc/passwd', shell=True)
 # Issue #157
 command = 'pwd'
 subprocess.call(command, shell='True')
+subprocess.call(command, shell='False')
+subprocess.call(command, shell='None')
 subprocess.call(command, shell=1)
 
-# HOW TO manage it ??
-# subprocess.call(command, shell=Popen())
+subprocess.call(command, shell=Popen())
+subprocess.call(command, shell=[True])
+subprocess.call(command, shell={'IS': 'True'})
+subprocess.call(command, shell=command)
 
 subprocess.call(command, shell=False)
 subprocess.call(command, shell=0)
