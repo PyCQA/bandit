@@ -1,6 +1,10 @@
 Bandit
 ======
 
+.. image:: https://travis-ci.org/PyCQA/bandit.svg?branch=master
+    :target: https://travis-ci.org/PyCQA/bandit/
+    :alt: Build Status
+
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.org/project/bandit/
     :alt: Latest Version
@@ -46,8 +50,8 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    # Or if you're working with a Python 3.5 project
-    pip3.5 install bandit
+    # Or if you're working with a Python 3 project
+    pip3 install bandit
 
 Run Bandit::
 
