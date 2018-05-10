@@ -35,7 +35,6 @@ subprocess.Popen(command, shell=True)
 
 subprocess.Popen('/bin/ls && cat /etc/passwd', shell=True)
 
-# Issue #157
 command = 'pwd'
 subprocess.call(command, shell='True')
 subprocess.call(command, shell='False')
