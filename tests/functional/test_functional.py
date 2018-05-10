@@ -454,6 +454,12 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('yaml_load.py', expect)
 
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.check_example('yaml_lib_load.py', expect)
+
     def test_jinja2_templating(self):
         '''Test jinja templating for potential XSS bugs.'''
         expect = {
