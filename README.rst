@@ -1,4 +1,6 @@
-Bandit
+.. image:: https://github.com/PyCQA/bandit/blob/master/logo/logotype-sm.png
+    :alt: Bandit
+
 ======
 
 .. image:: https://travis-ci.org/PyCQA/bandit.svg?branch=master
