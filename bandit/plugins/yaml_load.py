@@ -55,9 +55,10 @@ from bandit.core import test_properties as test
 @test.test_id('B506')
 @test.checks('Call')
 def yaml_load(context):
-    if context.is_module_imported_exact('yaml') and \
-       isinstance(context.call_function_name_qual, str):
-        qualname_list = context.call_function_name_qual.split('.')
+    imported = context.is_module_imported_exact('yaml')
+    qualname = context.call_function_name_qual
+    if imported and isinstance(qualname, str):
+        qualname_list = qualname.split('.')
         func = qualname_list[-1]
         if 'yaml' in qualname_list and func == 'load':
             if not context.check_call_arg_value('Loader', 'SafeLoader'):
