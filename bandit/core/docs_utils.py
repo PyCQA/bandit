@@ -15,7 +15,7 @@
 # under the License.
 
 # where our docs are hosted
-BASE_URL = 'https://docs.openstack.org/bandit/latest/'
+BASE_URL = 'https://bandit.readthedocs.io/en/latest/'
 
 
 def get_url(bid):
