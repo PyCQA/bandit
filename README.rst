@@ -224,6 +224,7 @@ Usage::
       B411  import_xmlrpclib
       B412  import_httpoxy
       B413  import_pycrypto
+      B414  import_pycryptodome
       B501  request_with_no_cert_validation
       B502  ssl_with_bad_version
       B503  ssl_with_bad_defaults

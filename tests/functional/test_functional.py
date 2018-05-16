@@ -729,3 +729,11 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
         }
         self.check_example('pycrypto.py', expect)
+
+    def test_blacklist_pycryptodome(self):
+        '''Test importing pycryptodome module'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+        }
+        self.check_example('pycryptodome.py', expect)
