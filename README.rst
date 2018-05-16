@@ -240,6 +240,8 @@ Usage::
       B607  start_process_with_partial_path
       B608  hardcoded_sql_expressions
       B609  linux_commands_wildcard_injection
+      B610  django_extra_used
+      B611  django_rawsql_used
       B701  jinja2_autoescape_false
       B702  use_of_mako_templates
 
