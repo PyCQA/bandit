@@ -2,4 +2,7 @@
 B610: django_extra_used
 -----------------------
 
-.. automodule:: bandit.plugins.django_injection_sql
+.. currentmodule:: bandit.plugins.django_injection_sql
+
+.. autofunction:: django_extra_used
+   :noindex:
