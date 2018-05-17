@@ -16,6 +16,7 @@
 
 
 import ast
+
 import bandit
 from bandit.core import test_properties as test
 
@@ -38,7 +39,7 @@ def django_extra_used(context):
      - https://docs.djangoproject.com/en/dev/topics/
         security/#sql-injection-protection
 
-    .. versionadded:: X.X.X
+    .. versionadded:: 1.4.1
 
     """
     description = "Use of extra potential SQL attack vector."
@@ -101,7 +102,7 @@ def django_rawsql_used(context):
      - https://docs.djangoproject.com/en/dev/topics/
         security/#sql-injection-protection
 
-    .. versionadded:: X.X.X
+    .. versionadded:: 1.4.1
 
     """
     description = "Use of RawSQL potential SQL attack vector."
