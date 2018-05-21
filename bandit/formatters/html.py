@@ -125,9 +125,9 @@ This formatter outputs the issues as HTML.
         <b>Confidence: </b>HIGH<br>
         <b>File: </b><a href="examples/yaml_load.py"
         target="_blank">examples/yaml_load.py</a> <br>
-        <b>More info: </b><a href="https://docs.openstack.org/bandit/latest/
+        <b>More info: </b><a href="https://bandit.readthedocs.io/en/latest/
         plugins/yaml_load.html" target="_blank">
-        https://docs.openstack.org/bandit/latest/plugins/yaml_load.html</a>
+        https://bandit.readthedocs.io/en/latest/plugins/yaml_load.html</a>
         <br>
 
     <div class="code">

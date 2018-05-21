@@ -1,4 +1,6 @@
-Bandit
+.. image:: https://github.com/PyCQA/bandit/blob/master/logo/logotype-sm.png
+    :alt: Bandit
+
 ======
 
 .. image:: https://travis-ci.org/PyCQA/bandit.svg?branch=master
@@ -221,6 +223,8 @@ Usage::
       B410  import_lxml
       B411  import_xmlrpclib
       B412  import_httpoxy
+      B413  import_pycrypto
+      B414  import_pycryptodome
       B501  request_with_no_cert_validation
       B502  ssl_with_bad_version
       B503  ssl_with_bad_defaults
@@ -236,6 +240,8 @@ Usage::
       B607  start_process_with_partial_path
       B608  hardcoded_sql_expressions
       B609  linux_commands_wildcard_injection
+      B610  django_extra_used
+      B611  django_rawsql_used
       B701  jinja2_autoescape_false
       B702  use_of_mako_templates
 
