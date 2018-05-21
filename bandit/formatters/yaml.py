@@ -60,7 +60,7 @@ This formatter outputs the issues in a yaml format.
       line_number: 6
       line_range:
       - 6
-      more_info: https://docs.openstack.org/bandit/latest/
+      more_info: https://bandit.readthedocs.io/en/latest/
       test_id: B506
       test_name: yaml_load
 
