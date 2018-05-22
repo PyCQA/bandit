@@ -176,14 +176,6 @@ class FunctionalTests(testtools.TestCase):
             }
         self.check_example(filename, expect)
 
-    def test_exec_as_root(self):
-        '''Test for the `run_as_root=True` keyword argument.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 5, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 5, 'HIGH': 0}
-        }
-        self.check_example('exec-as-root.py', expect)
-
     def test_hardcoded_passwords(self):
         '''Test for hard-coded passwords.'''
         expect = {
@@ -479,14 +471,6 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 3}
         }
         self.check_example('jinja2_templating.py', expect)
-
-    def test_secret_config_option(self):
-        '''Test for `secret=True` in Oslo's config.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 3, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 0}
-        }
-        self.check_example('secret-config-option.py', expect)
 
     def test_mako_templating(self):
         '''Test Mako templates for XSS.'''
