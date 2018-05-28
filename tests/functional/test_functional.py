@@ -496,6 +496,30 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('mako_templating.py', expect)
 
+    def test_django_xss_secure(self):
+        """Test false positives for Django XSS"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf,
+            profile={'exclude': ['B308']}
+        )
+        self.check_example('mark_safe_secure.py', expect)
+
+    def test_django_xss_insecure(self):
+        """Test for Django XSS via django.utils.safestring"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 28, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 28}
+        }
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf,
+            profile={'exclude': ['B308']}
+        )
+        self.check_example('mark_safe_insecure.py', expect)
+
     def test_xml(self):
         '''Test xml vulnerabilities.'''
         expect = {
