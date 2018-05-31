@@ -1,6 +1,5 @@
-# -*- coding:utf-8 -*-
 #
-# Copyright (c) 2018 [disconnect3d](https://github.com/disconnect3d)
+# Copyright (c) 2018 disconnect3d
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -44,11 +43,12 @@ Please see official Python docs to zipfile module for more information on
  - https://docs.python.org/2/library/zipfile.html#zipfile.ZipFile.extractall
  - https://docs.python.org/3.3/library/zipfile.html#zipfile.ZipFile.extractall
 
-.. versionadded:: 1.5.0
+.. versionadded:: 1.4.1
 
 """
 
 import sys
+
 import bandit
 from bandit.core import test_properties as test
 
