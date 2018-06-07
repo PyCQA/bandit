@@ -2,7 +2,7 @@
 B111: Test for the use of rootwrap running as root
 --------------------------------------------------
 
-This plugin has been deprecated.
+This plugin has been removed.
 
 Running commands as root dramatically increase their potential risk. Running
 commands with restricted user privileges provides defense in depth against

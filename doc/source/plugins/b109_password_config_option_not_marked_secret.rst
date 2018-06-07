@@ -2,7 +2,7 @@
 B109: Test for a password based config option not marked secret
 ---------------------------------------------------------------
 
-This plugin has been deprecated.
+This plugin has been removed.
 
 Passwords are sensitive and must be protected appropriately. In OpenStack
 Oslo there is an option to mark options "secret" which will ensure that they
