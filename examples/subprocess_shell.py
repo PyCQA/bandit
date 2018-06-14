@@ -5,6 +5,9 @@ from subprocess import Popen as pop
 def Popen(*args, **kwargs):
     print('hi')
 
+    def __len__(self):
+        return 0
+
 pop('/bin/gcc --version', shell=True)
 Popen('/bin/gcc --version', shell=True)
 
@@ -31,3 +34,20 @@ command = "/bin/ls" + unknown_function()
 subprocess.Popen(command, shell=True)
 
 subprocess.Popen('/bin/ls && cat /etc/passwd', shell=True)
+
+command = 'pwd'
+subprocess.call(command, shell='True')
+subprocess.call(command, shell='False')
+subprocess.call(command, shell='None')
+subprocess.call(command, shell=1)
+
+subprocess.call(command, shell=Popen())
+subprocess.call(command, shell=[True])
+subprocess.call(command, shell={'IS': 'True'})
+subprocess.call(command, shell=command)
+
+subprocess.call(command, shell=False)
+subprocess.call(command, shell=0)
+subprocess.call(command, shell=[])
+subprocess.call(command, shell={})
+subprocess.call(command, shell=None)
