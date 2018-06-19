@@ -85,6 +85,25 @@ def gen_config(name):
             }
 
 
+def has_shell(context):
+    keywords = context.node.keywords
+    if 'shell' in context.call_keywords:
+        for key in keywords:
+            if key.arg == 'shell':
+                val = key.value
+                if isinstance(val, ast.Num):
+                    return bool(val.n)
+                if isinstance(val, ast.List):
+                    return bool(val.elts)
+                if isinstance(val, ast.Dict):
+                    return bool(val.keys)
+                if isinstance(val, ast.Name):
+                    if val.id in ['False', 'None']:
+                        return False
+                return True
+    return False
+
+
 @test.takes_config('shell_injection')
 @test.checks('Call')
 @test.test_id('B602')
@@ -180,7 +199,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
     .. versionadded:: 0.9.0
     """
     if config and context.call_function_name_qual in config['subprocess']:
-        if context.check_call_arg_value('shell', 'True'):
+        if has_shell(context):
             if len(context.call_args) > 0:
                 sev = _evaluate_shell_call(context)
                 if sev == bandit.LOW:
@@ -271,7 +290,7 @@ def subprocess_without_shell_equals_true(context, config):
     .. versionadded:: 0.9.0
     """
     if config and context.call_function_name_qual in config['subprocess']:
-        if not context.check_call_arg_value('shell', 'True'):
+        if not has_shell(context):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
@@ -349,7 +368,7 @@ def any_other_function_with_shell_equals_true(context, config):
     .. versionadded:: 0.9.0
     """
     if config and context.call_function_name_qual not in config['subprocess']:
-        if context.check_call_arg_value('shell', 'True'):
+        if has_shell(context):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
