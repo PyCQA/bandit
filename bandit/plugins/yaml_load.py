@@ -6,7 +6,7 @@
 
 r"""
 ===============================
-B506: Test for use of yaml load
+B612: Test for use of yaml load
 ===============================
 
 This plugin test checks for the unsafe usage of the ``yaml.load`` function from
@@ -43,6 +43,7 @@ from bandit.core import test_properties as test
 
 
 @test.test_id('B506')
+@test.test_id('B612')
 @test.checks('Call')
 def yaml_load(context):
     imported = context.is_module_imported_exact('yaml')
