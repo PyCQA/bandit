@@ -230,7 +230,7 @@ Usage::
       B503  ssl_with_bad_defaults
       B504  ssl_with_no_version
       B505  weak_cryptographic_key
-      B506  yaml_load
+      B506  yaml_load (moved to B612)
       B601  paramiko_calls
       B602  subprocess_popen_with_shell_equals_true
       B603  subprocess_without_shell_equals_true
@@ -242,6 +242,7 @@ Usage::
       B609  linux_commands_wildcard_injection
       B610  django_extra_used
       B611  django_rawsql_used
+      B612  yaml_load
       B701  jinja2_autoescape_false
       B702  use_of_mako_templates
       B703  django_mark_safe

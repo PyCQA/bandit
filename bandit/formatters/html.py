@@ -120,7 +120,7 @@ This formatter outputs the issues as HTML.
     <div class="issue-block issue-sev-medium">
         <b>yaml_load: </b> Use of unsafe yaml load. Allows
         instantiation of arbitrary objects. Consider yaml.safe_load().<br>
-        <b>Test ID:</b> B506<br>
+        <b>Test ID:</b> B612<br>
         <b>Severity: </b>MEDIUM<br>
         <b>Confidence: </b>HIGH<br>
         <b>File: </b><a href="examples/yaml_load.py"

@@ -1,5 +1,5 @@
 ---------------
-B506: yaml_load (moved to B612)
+B612: yaml_load
 ---------------
 
 .. automodule:: bandit.plugins.yaml_load
