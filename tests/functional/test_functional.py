@@ -176,14 +176,6 @@ class FunctionalTests(testtools.TestCase):
             }
         self.check_example(filename, expect)
 
-    def test_exec_as_root(self):
-        '''Test for the `run_as_root=True` keyword argument.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 5, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 5, 'HIGH': 0}
-        }
-        self.check_example('exec-as-root.py', expect)
-
     def test_hardcoded_passwords(self):
         '''Test for hard-coded passwords.'''
         expect = {
@@ -417,8 +409,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         '''Test for `subprocess.Popen` with `shell=True`.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 14, 'MEDIUM': 1, 'HIGH': 3},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 17}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 19, 'MEDIUM': 1, 'HIGH': 11},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 30}
         }
         self.check_example('subprocess_shell.py', expect)
 
@@ -480,14 +472,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('jinja2_templating.py', expect)
 
-    def test_secret_config_option(self):
-        '''Test for `secret=True` in Oslo's config.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 3, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 0}
-        }
-        self.check_example('secret-config-option.py', expect)
-
     def test_mako_templating(self):
         '''Test Mako templates for XSS.'''
         expect = {
@@ -495,6 +479,30 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 3}
         }
         self.check_example('mako_templating.py', expect)
+
+    def test_django_xss_secure(self):
+        """Test false positives for Django XSS"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf,
+            profile={'exclude': ['B308']}
+        )
+        self.check_example('mark_safe_secure.py', expect)
+
+    def test_django_xss_insecure(self):
+        """Test for Django XSS via django.utils.safestring"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 28, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 28}
+        }
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf,
+            profile={'exclude': ['B308']}
+        )
+        self.check_example('mark_safe_insecure.py', expect)
 
     def test_xml(self):
         '''Test xml vulnerabilities.'''
