@@ -120,16 +120,16 @@ class FunctionalTests(testtools.TestCase):
     def test_crypto_md5(self):
         '''Test the `hashlib.md5` example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 15}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15, 'HIGH': 8},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 23}
         }
         self.check_example('crypto-md5.py', expect)
 
     def test_ciphers(self):
         '''Test the `Crypto.Cipher` example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 13},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 14}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 26},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 27}
         }
         self.check_example('ciphers.py', expect)
 
@@ -647,8 +647,8 @@ class FunctionalTests(testtools.TestCase):
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 8, 'HIGH': 6},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 14}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 8, 'HIGH': 10},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 18}
         }
         self.check_example('weak_cryptographic_key_sizes.py', expect)
 
