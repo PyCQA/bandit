@@ -15,7 +15,6 @@
 # under the License.
 
 import os
-import sys
 
 import fixtures
 import mock
