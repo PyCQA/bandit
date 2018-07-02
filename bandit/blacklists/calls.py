@@ -558,12 +558,12 @@ def gen_blacklist():
         'or perform hostname checks.'
         ))
 
-    # skipped B324 due to use in bandit/plugins/hashlib_new_insecure_functions.py
+    # skipped B324 (used in bandit/plugins/hashlib_new_insecure_functions.py)
 
     sets.append(utils.build_conf_dict(
         'tempnam', 'B325', ['os.tempnam', 'os.tmpnam'],
-        'Use of os.tempnam() and os.tmpnam() is vulnerable to symlink attacks. '
-        'Consider using tmpfile() instead.'
+        'Use of os.tempnam() and os.tmpnam() is vulnerable to symlink '
+        'attacks. Consider using tmpfile() instead.'
         ))
 
     return {'Call': sets}
