@@ -13,18 +13,25 @@ matrix:
   include:
     - python: 2.7
       env: TOXENV=pylint
+      dist: xenial
     - python: 2.7
       env: TOXENV=pep8
+      dist: xenial
     - python: 2.7
       env: TOXENV=py27
+      dist: xenial
     - python: 3.5
       env: TOXENV=py35
+      dist: xenial
     - python: 3.6
       env: TOXENV=py36
+      dist: xenial
     - python: 3.7
       env: TOXENV=py37
+      dist: xenial
     - python: pypy
       env: TOXENV=pypy
+      dist: xenial
 
 notifications:
   email:
