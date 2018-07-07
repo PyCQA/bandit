@@ -422,14 +422,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('urlopen.py', expect)
 
-    def test_utils_shell(self):
-        '''Test for `utils.execute*` with `shell=True`.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 5, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
-        }
-        self.check_example('utils-shell.py', expect)
-
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
         expect = {
