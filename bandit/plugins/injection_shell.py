@@ -43,7 +43,8 @@ def gen_config(name):
             ['subprocess.Popen',
              'subprocess.call',
              'subprocess.check_call',
-             'subprocess.check_output'],
+             'subprocess.check_output',
+             'subprocess.run'],
 
             # Start a process with a function vulnerable to shell injection.
             'shell':
