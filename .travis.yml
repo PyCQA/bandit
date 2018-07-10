@@ -1,17 +1,30 @@
 language: python
+
 cache: pip
+
 sudo: false
+
 install:
   - pip install tox
+
 script: tox
+
 matrix:
   include:
+    - python: 2.7
+      env: TOXENV=pylint
+    - python: 2.7
+      env: TOXENV=pep8
     - python: 2.7
       env: TOXENV=py27
     - python: 3.5
       env: TOXENV=py35
     - python: 3.6
       env: TOXENV=py36
+    - python: 3.7
+      env: TOXENV=py37
+      dist: xenial
+      sudo: true
     - python: pypy
       env: TOXENV=pypy
 
@@ -22,4 +35,4 @@ notifications:
     channels:
       - "irc.freenode.org##python-code-quality"
     use_notice: true
-skip_join: true
+    skip_join: true

@@ -43,9 +43,7 @@ def gen_config(name):
             ['subprocess.Popen',
              'subprocess.call',
              'subprocess.check_call',
-             'subprocess.check_output',
-             'utils.execute',
-             'utils.execute_with_timeout'],
+             'subprocess.check_output'],
 
             # Start a process with a function vulnerable to shell injection.
             'shell':
@@ -344,8 +342,8 @@ def any_other_function_with_shell_equals_true(context, config):
             # Start a process using the subprocess module, or one of its
             wrappers.
             subprocess: [subprocess.Popen, subprocess.call,
-                         subprocess.check_call, subprocess.check_output,
-                         utils.execute, utils.execute_with_timeout]
+                         subprocess.check_call, subprocess.check_output
+                         execute_with_timeout]
 
 
     :Example:

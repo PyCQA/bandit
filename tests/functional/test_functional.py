@@ -264,6 +264,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('mktemp.py', expect)
 
+    def test_tempnam(self):
+        '''Test for `os.tempnam` / `os.tmpnam`.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 6}
+        }
+        self.check_example('tempnam.py', expect)
+
     def test_nonsense(self):
         '''Test that a syntactically invalid module is skipped.'''
         self.run_example('nonsense.py')
@@ -421,14 +429,6 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 14}
         }
         self.check_example('urlopen.py', expect)
-
-    def test_utils_shell(self):
-        '''Test for `utils.execute*` with `shell=True`.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 5, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
-        }
-        self.check_example('utils-shell.py', expect)
 
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''
