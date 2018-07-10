@@ -1,0 +1,1 @@
+../all/strip_tags.py
