@@ -13,16 +13,21 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
+from __future__ import print_function
 
-
+import glob
 import importlib
 import logging
+import os
+import sys
+import ast
 
+from stevedore import extension
 
 from bandit.core import blacklisting
 from bandit.core import extension_loader
 
-
+import ipdb
 LOG = logging.getLogger(__name__)
 
 
@@ -35,6 +40,7 @@ class BanditTestSet(object):
         self.plugins = [p for p in extman.plugins
                         if p.plugin._test_id in filtering]
         self.plugins.extend(self._load_builtins(filtering, profile))
+        self._load_dynamics_tests(profile)
         self._load_tests(config, self.plugins)
 
     @staticmethod
@@ -69,6 +75,64 @@ class BanditTestSet(object):
             filtered.update(extman.builtin)
             filtered.update(all_blacklist_tests)
         return filtered - exc
+
+    def _find_functions(self, filepath):
+        f_ast = ast.parse(open(filepath).read())
+        functions = []
+        for value in f_ast.body:
+            if isinstance(value, ast.FunctionDef):
+                functions.append(value.name)
+        return functions
+
+    def _load_rule_from_file(self, filepath, exclude):
+        if os.path.islink(filepath):
+            LOG.info('Link not loaded {}'.format(filepath))
+            return
+
+        functions = self._find_functions(filepath)
+        if not functions:
+            LOG.debug('No functions finds')
+            return
+
+        LOG.debug('Loading {}'.format(filepath))
+        module_name = os.path.basename(filepath)[:-3]
+        rule_dir = os.path.dirname(filepath)
+        base_path = os.getcwd()
+
+        class Wrapper(object):
+            def __init__(self, name, plugin):
+                self.name = name
+                self.plugin = plugin
+
+        os.chdir(rule_dir)
+        try:
+            LOG.debug('Importing {}'.format(module_name))
+            module = importlib.import_module(module_name)
+
+            for funct in functions:
+                dynamic_funct = getattr(module, funct)
+                if hasattr(dynamic_funct, '_test_id'):
+                    test_id = dynamic_funct._test_id
+                    if test_id not in exclude:
+                        self.plugins.append(Wrapper(test_id, dynamic_funct))
+        finally:
+            os.chdir(base_path)
+
+    def _load_dynamics_tests(self, profile):
+        exclude = profile.get('exclude', [])
+        for rule_dir in profile.get('rules'):
+            if os.path.isdir(rule_dir):
+                rule_dir = "{}/{}".format(
+                    os.path.dirname(rule_dir),
+                    os.path.basename(rule_dir),
+                )
+                for filename in glob.glob('{}/*.py'.format(rule_dir)):
+                    if os.path.isfile(filename):
+                        self._load_rule_from_file(filename, exclude)
+            elif rule_dir.endswith('.py'):
+                self._load_rule_from_file(rule_dir, exclude)
+            else:
+                LOG.warning('Unsupported rule {}'.format(rule_dir))
 
     def _load_builtins(self, filtering, profile):
         '''loads up builtin functions, so they can be filtered.'''

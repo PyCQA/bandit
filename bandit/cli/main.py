@@ -122,6 +122,7 @@ def _get_profile(config, profile_name, config_path):
     else:
         profile['include'] = set(config.get_option('tests') or [])
         profile['exclude'] = set(config.get_option('skips') or [])
+        profile['rules'] = set(config.get_option('rules') or [])
     return profile
 
 
@@ -245,6 +246,10 @@ def main():
         '--ini', dest='ini_path', action='store', default=None,
         help='path to a .bandit file that supplies command line arguments'
     )
+    parser.add_argument(
+        '--rules', dest='rules', action='store', default=None,
+        help='path to dynamic rules files'
+    )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
@@ -340,6 +345,7 @@ def main():
 
         profile['include'].update(args.tests.split(',') if args.tests else [])
         profile['exclude'].update(args.skips.split(',') if args.skips else [])
+        profile['rules'].update(args.rules.split(',') if args.rules else [])
         extension_mgr.validate_profile(profile)
 
     except (utils.ProfileNotFound, ValueError) as e:
