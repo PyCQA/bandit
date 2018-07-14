@@ -20,13 +20,11 @@ import os
 import sys
 import textwrap
 
-
 import bandit
 from bandit.core import config as b_config
 from bandit.core import constants
 from bandit.core import manager as b_manager
 from bandit.core import utils
-
 
 BASE_CONFIG = 'bandit.yaml'
 LOG = logging.getLogger()
@@ -346,6 +344,7 @@ def main():
         profile['include'].update(args.tests.split(',') if args.tests else [])
         profile['exclude'].update(args.skips.split(',') if args.skips else [])
         profile['rules'].update(args.rules.split(',') if args.rules else [])
+        extension_mgr.load_dynamic(profile)
         extension_mgr.validate_profile(profile)
 
     except (utils.ProfileNotFound, ValueError) as e:

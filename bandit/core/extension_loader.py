@@ -14,12 +14,19 @@
 
 from __future__ import print_function
 
+import ast
+import glob
+import importlib
+import logging
+import os
 import sys
 
 import six
 from stevedore import extension
 
 from bandit.core import utils
+
+LOG = logging.getLogger(__name__)
 
 
 class Manager(object):
@@ -28,6 +35,35 @@ class Manager(object):
         'B001'  # Built in blacklist test
         ]
 
+    @staticmethod
+    def find_files(dir_list):
+        file_list = []
+        for rule_dir in dir_list:
+            if os.path.isdir(rule_dir):
+                rule_dir = "{}/{}".format(
+                    os.path.dirname(rule_dir),
+                    os.path.basename(rule_dir),
+                )
+                for filename in glob.glob('{}/*.py'.format(rule_dir)):
+                    if os.path.isfile(filename):
+                        file_list.append(filename)
+            elif rule_dir.endswith('.py'):
+                file_list.append(rule_dir)
+            else:
+                LOG.warning('Unsupported rule {}'.format(rule_dir))
+        return file_list
+
+    @staticmethod
+    def find_loaders(file_path):
+        f_ast = ast.parse(open(file_path).read())
+        functions = []
+        for value in f_ast.body:
+            if isinstance(value, ast.FunctionDef):
+                functions.append(value.name)
+            elif isinstance(value, ast.ClassDef):
+                functions.append(value.name)
+        return functions
+
     def __init__(self, formatters_namespace='bandit.formatters',
                  plugins_namespace='bandit.plugins',
                  blacklists_namespace='bandit.blacklists'):
@@ -35,6 +71,10 @@ class Manager(object):
         self.load_formatters(formatters_namespace)
         self.load_plugins(plugins_namespace)
         self.load_blacklists(blacklists_namespace)
+
+        self.dynamic = []
+        self.dynamic_by_id = {}
+        self.dynamic_by_name = {}
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
@@ -90,6 +130,57 @@ class Manager(object):
                 self.blacklist_by_id[b['id']] = b
                 self.blacklist_by_name[b['name']] = b
 
+    def load_dynamic(self, profile):
+        self.dynamic = []
+        self.dynamic_by_id = {}
+        self.dynamic_by_name = {}
+
+        class Wrapper(object):
+            def __init__(self, _test_id, _name, plugin):
+                self._test_id = _test_id
+                self.name = _name
+                self.plugin = plugin
+
+        dir_list = profile.get('rules', [])
+        if not dir_list:
+            return
+
+        if sys.path[0] != '':
+            sys.path.insert(0, '')
+
+        for file_path in Manager.find_files(dir_list):
+            if os.path.islink(file_path):
+                file_path = os.path.realpath(file_path)
+
+            loaders = Manager.find_loaders(file_path)
+            if not loaders:
+                LOG.debug('No functions nor class finds')
+                continue
+
+            LOG.debug('Loading {}'.format(file_path))
+            module_name = os.path.basename(file_path)[:-3]
+            rule_dir = os.path.dirname(file_path)
+            base_path = os.getcwd()
+
+            os.chdir(rule_dir)
+
+            try:
+                module = importlib.import_module(module_name)
+
+                for loader in loaders:
+                    dynamic_loader = getattr(module, loader)
+                    if callable(dynamic_loader) and hasattr(dynamic_loader, '_test_id'):
+                        test_id = dynamic_loader._test_id
+                        name = "{}_{}".format(module_name, loader)
+                        wrapper = Wrapper(test_id, name, dynamic_loader)
+                        self.dynamic.append(wrapper)
+                        self.dynamic_by_id[test_id] = wrapper
+                        self.dynamic_by_name[name] = wrapper
+            except ImportError:
+                LOG.exception('Cannot import {} on {}'.format(module_name, os.getcwd()))
+            finally:
+                os.chdir(base_path)
+
     def validate_profile(self, profile):
         '''Validate that everything in the configured profiles looks good.'''
         for inc in profile['include']:
@@ -110,6 +201,7 @@ class Manager(object):
             test in self.plugins_by_id or
             test in self.blacklist_by_id or
             test in self.builtin)
+
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
 # once, store them on the object, and have a module global object for
