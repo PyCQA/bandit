@@ -33,7 +33,7 @@ class Manager(object):
     # These IDs are for bandit built in tests
     builtin = [
         'B001'  # Built in blacklist test
-        ]
+    ]
 
     @staticmethod
     def find_files(dir_list):
@@ -81,7 +81,7 @@ class Manager(object):
             namespace=formatters_namespace,
             invoke_on_load=False,
             verify_requirements=False,
-            )
+        )
         self.formatters = list(self.formatters_mgr)
         self.formatter_names = self.formatters_mgr.names()
 
@@ -90,7 +90,7 @@ class Manager(object):
             namespace=plugins_namespace,
             invoke_on_load=False,
             verify_requirements=False,
-            )
+        )
 
         def test_has_id(plugin):
             if not hasattr(plugin.plugin, "_test_id"):
@@ -115,7 +115,7 @@ class Manager(object):
             namespace=blacklist_namespace,
             invoke_on_load=False,
             verify_requirements=False,
-            )
+        )
         self.blacklist = {}
         blacklist = list(self.blacklists_mgr)
         for item in blacklist:
@@ -197,10 +197,10 @@ class Manager(object):
                              union)
 
     def check_id(self, test):
-        return (
-            test in self.plugins_by_id or
-            test in self.blacklist_by_id or
-            test in self.builtin)
+        return (test in self.plugins_by_id or
+                test in self.blacklist_by_id or
+                test in self.dynamic_by_id or
+                test in self.builtin)
 
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
