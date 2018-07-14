@@ -16,6 +16,7 @@
 
 import _ast
 import ast
+import glob
 import logging
 import os.path
 import sys
@@ -27,8 +28,36 @@ except ImportError:
 
 LOG = logging.getLogger(__name__)
 
-
 """Various helper functions."""
+
+
+def find_files(dir_list):
+    file_list = []
+    for rule_dir in dir_list:
+        if os.path.isdir(rule_dir):
+            rule_dir = "{}/{}".format(
+                os.path.dirname(rule_dir),
+                os.path.basename(rule_dir),
+            )
+            for filename in glob.glob('{}/*.py'.format(rule_dir)):
+                if os.path.isfile(filename):
+                    file_list.append(filename)
+        elif rule_dir.endswith('.py'):
+            file_list.append(rule_dir)
+        else:
+            LOG.warning('Unsupported rule {}'.format(rule_dir))
+    return file_list
+
+
+def find_loaders(file_path):
+    f_ast = ast.parse(open(file_path).read())
+    functions = []
+    for value in f_ast.body:
+        if isinstance(value, ast.FunctionDef):
+            functions.append(value.name)
+        elif isinstance(value, ast.ClassDef):
+            functions.append(value.name)
+    return functions
 
 
 def _get_attr_qual_name(node, aliases):
@@ -106,6 +135,7 @@ class InvalidModulePath(Exception):
 
 class ConfigError(Exception):
     """Raised when the config file fails validation."""
+
     def __init__(self, message, config_file):
         self.config_file = config_file
         self.message = "{0} : {1}".format(config_file, message)
@@ -114,6 +144,7 @@ class ConfigError(Exception):
 
 class ProfileNotFound(Exception):
     """Raised when chosen profile cannot be found."""
+
     def __init__(self, config_file, profile):
         self.config_file = config_file
         self.profile = profile
@@ -252,6 +283,7 @@ def concat_string(node, stop=None):
     :param stop: (ast.Str or ast.BinOp) Optional base node to stop at
     :returns: (Tuple) the root node of the expression, the string value
     '''
+
     def _get(node, bits, stop=None):
         if node != stop:
             bits.append(

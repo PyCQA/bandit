@@ -14,8 +14,6 @@
 
 from __future__ import print_function
 
-import ast
-import glob
 import importlib
 import logging
 import os
@@ -34,35 +32,6 @@ class Manager(object):
     builtin = [
         'B001'  # Built in blacklist test
     ]
-
-    @staticmethod
-    def find_files(dir_list):
-        file_list = []
-        for rule_dir in dir_list:
-            if os.path.isdir(rule_dir):
-                rule_dir = "{}/{}".format(
-                    os.path.dirname(rule_dir),
-                    os.path.basename(rule_dir),
-                )
-                for filename in glob.glob('{}/*.py'.format(rule_dir)):
-                    if os.path.isfile(filename):
-                        file_list.append(filename)
-            elif rule_dir.endswith('.py'):
-                file_list.append(rule_dir)
-            else:
-                LOG.warning('Unsupported rule {}'.format(rule_dir))
-        return file_list
-
-    @staticmethod
-    def find_loaders(file_path):
-        f_ast = ast.parse(open(file_path).read())
-        functions = []
-        for value in f_ast.body:
-            if isinstance(value, ast.FunctionDef):
-                functions.append(value.name)
-            elif isinstance(value, ast.ClassDef):
-                functions.append(value.name)
-        return functions
 
     def __init__(self, formatters_namespace='bandit.formatters',
                  plugins_namespace='bandit.plugins',
@@ -148,11 +117,11 @@ class Manager(object):
         if sys.path[0] != '':
             sys.path.insert(0, '')
 
-        for file_path in Manager.find_files(dir_list):
+        for file_path in utils.find_files(dir_list):
             if os.path.islink(file_path):
                 file_path = os.path.realpath(file_path)
 
-            loaders = Manager.find_loaders(file_path)
+            loaders = utils.find_loaders(file_path)
             if not loaders:
                 LOG.debug('No functions nor class finds')
                 continue
