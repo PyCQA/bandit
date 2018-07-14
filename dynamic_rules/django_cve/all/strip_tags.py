@@ -21,7 +21,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-2015-2316')
 def strip_tags_used(context):
-    """**CVE007: CVE-2015-2316: Test for the use of strip_tags**
+    """**CVE-2015-2316: Test for the use of strip_tags**
 
     This plugin test checks for the use of the django.utils.html.strip_tags
     function in Django 1.6.x before 1.6.11, 1.7.x before 1.7.7, and 1.8.x

@@ -20,7 +20,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-2012-3443')
 def imagefield_used(context):
-    """**CVE001: CVE-2012-3443: Test for the use of ImageField**
+    """**CVE-2012-3443: Test for the use of ImageField**
 
     The django.forms.ImageField class in the form system in Django before
     1.3.2 and 1.4.x before 1.4.1 completely decompresses image data during

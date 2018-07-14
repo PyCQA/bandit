@@ -21,7 +21,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-2015-0222')
 def multiplechoice_with_hidden_used(context):
-    """**CVE006: CVE-2015-0222: Test for the use of ModelMultipleChoiceField**
+    """**CVE-2015-0222: Test for the use of ModelMultipleChoiceField**
 
     ModelMultipleChoiceField in Django 1.6.x before 1.6.10 and 1.7.x
     before 1.7.3, when show_hidden_initial is set to True, allows remote

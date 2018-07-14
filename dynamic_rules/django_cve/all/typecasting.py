@@ -21,7 +21,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-2014-0474')
 def typecasting_attack(context):
-    """**CVE004: CVE-2014-0474**
+    """**CVE-2014-0474**
 
     The (1) FilePathField, (2) GenericIPAddressField, and (3) IPAddressField
     model field classes in Django before 1.4.11, 1.5.x before 1.5.6, 1.6.x

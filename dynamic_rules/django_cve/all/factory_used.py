@@ -21,7 +21,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-2013-0306')
 def formset_factory_used(context):
-    """**CVE003: CVE-2013-0306: Test for the use of formset_factory**
+    """**CVE-2013-0306: Test for the use of formset_factory**
 
     The form library in Django 1.3.x before 1.3.6, 1.4.x before 1.4.4, and 1.5
     before release candidate 2 allows remote attackers to bypass intended

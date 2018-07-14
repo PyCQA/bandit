@@ -21,7 +21,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-2012-3444')
 def get_image_dimensions_used(context):
-    """**CVE002: CVE-2012-3444: Test for the use of get_image_dimensions**
+    """**CVE-2012-3444: Test for the use of get_image_dimensions**
 
     The get_image_dimensions function in the image-handling functionality in
     Django before 1.3.2 and 1.4.x before 1.4.1 uses a constant chunk size in

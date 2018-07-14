@@ -40,7 +40,7 @@ FORMAT_SETTINGS = [
 @test.checks('Call')
 @test.test_id('CVE-2015-8213')
 def get_format_used(context):
-    """**CVE008: CVE-2015-8213: Test for the use of get_format**
+    """**CVE-2015-8213: Test for the use of get_format**
 
     The get_format function in utils/formats.py in Django before 1.7.x before
     1.7.11, 1.8.x before 1.8.7, and 1.9.x before 1.9rc2 might allow remote

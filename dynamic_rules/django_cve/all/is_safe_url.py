@@ -21,7 +21,7 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('CVE-DJ-SAFE-URL')
 def is_safe_url_used(context):
-    r"""**CVE005: Test for the use of is_safe_url**
+    r"""**CVE-DJ-SAFE-URL: Test for the use of is_safe_url**
 
     Related to CVE-2013-6044, CVE-2014-3730, CVE-2015-0220, CVE-2015-2317
 
