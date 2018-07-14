@@ -169,7 +169,9 @@ class Manager(object):
 
                 for loader in loaders:
                     dynamic_loader = getattr(module, loader)
-                    if callable(dynamic_loader) and hasattr(dynamic_loader, '_test_id'):
+                    if callable(dynamic_loader) and \
+                       hasattr(dynamic_loader, '_test_id'):
+
                         test_id = dynamic_loader._test_id
                         name = "{}_{}".format(module_name, loader)
                         wrapper = Wrapper(test_id, name, dynamic_loader)
@@ -177,7 +179,8 @@ class Manager(object):
                         self.dynamic_by_id[test_id] = wrapper
                         self.dynamic_by_name[name] = wrapper
             except ImportError:
-                LOG.exception('Cannot import {} on {}'.format(module_name, os.getcwd()))
+                LOG.exception('Cannot import {} on {}'.format(module_name,
+                                                              os.getcwd()))
             finally:
                 os.chdir(base_path)
 

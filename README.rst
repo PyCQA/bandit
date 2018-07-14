@@ -145,6 +145,8 @@ Usage::
                             JSON-formatted files are accepted)
       --ini INI_PATH        path to a .bandit file that supplies command line
                             arguments
+      --rules RULES         comma-separated list of paths to load dynamic rules
+                            files
       --version             show program's version number and exit
 
     CUSTOM FORMATTING

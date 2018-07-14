@@ -246,7 +246,7 @@ def main():
     )
     parser.add_argument(
         '--rules', dest='rules', action='store', default=None,
-        help='path to dynamic rules files'
+        help='comma-separated list of paths to load dynamic rules files'
     )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
@@ -343,7 +343,11 @@ def main():
 
         profile['include'].update(args.tests.split(',') if args.tests else [])
         profile['exclude'].update(args.skips.split(',') if args.skips else [])
-        profile['rules'].update(args.rules.split(',') if args.rules else [])
+        if 'rules' in profile:
+            if args.rules:
+                profile['rules'].update(args.rules.split(','))
+        else:
+            profile['rules'] = set()
         extension_mgr.load_dynamic(profile)
         extension_mgr.validate_profile(profile)
 
