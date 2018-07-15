@@ -45,7 +45,7 @@ def find_files(dir_list):
         elif rule_dir.endswith('.py'):
             file_list.append(rule_dir)
         else:
-            LOG.warning('Unsupported rule {}'.format(rule_dir))
+            LOG.warning('Unsupported rule %s', rule_dir)
     return file_list
 
 

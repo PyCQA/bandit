@@ -68,7 +68,8 @@ class BanditTestSet(object):
             filtered.update(extman.dynamic_by_id.keys())
         return filtered - exc
 
-    def _load_dynamics(self, filtering):
+    @staticmethod
+    def _load_dynamics(filtering):
         plugins = []
         extman = extension_loader.MANAGER
         for rule in extman.dynamic:

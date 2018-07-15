@@ -126,7 +126,7 @@ class Manager(object):
                 LOG.debug('No functions nor class finds')
                 continue
 
-            LOG.debug('Loading {}'.format(file_path))
+            LOG.debug('Loading %s', file_path)
             module_name = os.path.basename(file_path)[:-3]
             rule_dir = os.path.dirname(file_path)
             base_path = os.getcwd()
@@ -148,8 +148,9 @@ class Manager(object):
                         self.dynamic_by_id[test_id] = wrapper
                         self.dynamic_by_name[name] = wrapper
             except ImportError:
-                LOG.exception('Cannot import {} on {}'.format(module_name,
-                                                              os.getcwd()))
+                LOG.exception('Cannot import %s on %s',
+                              module_name,
+                              os.getcwd())
             finally:
                 os.chdir(base_path)
 
