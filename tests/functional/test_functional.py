@@ -114,7 +114,7 @@ class FunctionalTests(testtools.TestCase):
         for issue in self.b_mgr.results:
             self.assertIn(issue.test_id, test_ids)
             rules_ids.update(issue.test_id)
-        rules_diff = rules_ids.difference(test_ids)
+        rules_diff = set(test_ids).difference(rules_ids)
         self.assertEqual(rules_diff, set())
 
     def test_binding(self):
