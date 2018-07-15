@@ -1,1 +1,0 @@
-../all/image_dimensions.py
