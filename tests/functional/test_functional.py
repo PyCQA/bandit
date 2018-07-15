@@ -421,8 +421,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         '''Test for `subprocess.Popen` with `shell=True`.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 19, 'MEDIUM': 1, 'HIGH': 11},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 30}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 21, 'MEDIUM': 1, 'HIGH': 11},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 32}
         }
         self.check_example('subprocess_shell.py', expect)
 
