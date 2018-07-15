@@ -303,3 +303,13 @@ class UtilTests(testtools.TestCase):
 
     def test_check_ast_node_bad_type(self):
         self.assertRaises(TypeError, b_utils.check_ast_node, 'walk')
+
+    def test_find_files(self):
+        result = b_utils.find_files(['dynamic_rules/rules'])
+        self.assertIn('dynamic_rules/rules/overwrite.py', result)
+        self.assertIn('dynamic_rules/rules/read_gpickle.py', result)
+        self.assertEqual(len(result), 2)
+
+    def test_find_loaders(self):
+        result = b_utils.find_loaders('dynamic_rules/rules/read_gpickle.py')
+        self.assertEqual(result, ['read_gpickle_used'])

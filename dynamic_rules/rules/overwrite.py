@@ -21,17 +21,8 @@ from bandit.core import test_properties as test
 @test.checks('Call')
 @test.test_id('B301')
 def read_gpickle_used(context):
-    description = "B301 + networkx.read_gpickle"
-    picklet_funct = [
-        'pickle.loads',
-        'pickle.load',
-        'pickle.Unpickler',
-        'cPickle.loads',
-        'cPickle.load',
-        'cPickle.Unpickler',
-        'networkx.read_gpickle'
-    ]
-    if context.call_function_name_qual in picklet_funct:
+    description = "networkx.read_gpickle call to pickle"
+    if context.call_function_name_qual == 'networkx.read_gpickle':
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,

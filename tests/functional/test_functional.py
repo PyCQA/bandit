@@ -21,13 +21,13 @@ import testtools
 
 from bandit.core import config as b_config
 from bandit.core import constants as C
+from bandit.core import extension_loader
 from bandit.core import manager as b_manager
 from bandit.core import metrics
 from bandit.core import test_set as b_test_set
 
 
 class FunctionalTests(testtools.TestCase):
-
     '''Functional tests for bandit test plugins.
 
     This set of tests runs bandit against each example file in turn
@@ -108,6 +108,14 @@ class FunctionalTests(testtools.TestCase):
                     if expect['issues'].get(criteria).get(rank):
                         expected = expect['issues'][criteria][rank]
                     self.assertEqual(expected, m['_totals'][label])
+
+    def check_rules_ids(self, test_ids):
+        rules_ids = set()
+        for issue in self.b_mgr.results:
+            self.assertIn(issue.test_id, test_ids)
+            rules_ids.update(issue.test_id)
+        rules_diff = rules_ids.difference(test_ids)
+        self.assertEqual(rules_diff, set())
 
     def test_binding(self):
         '''Test the bind-to-0.0.0.0 example.'''
@@ -404,10 +412,6 @@ class FunctionalTests(testtools.TestCase):
 
     def test_ssl_insecure_version(self):
         '''Test for insecure SSL protocol versions.'''
-        expect = {
-            'SEVERITY': {'LOW': 1, 'MEDIUM': 10, 'HIGH': 7},
-            'CONFIDENCE': {'LOW': 0, 'MEDIUM': 11, 'HIGH': 7}
-        }
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 10, 'HIGH': 7},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 11, 'HIGH': 7}
@@ -763,3 +767,106 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
         }
         self.check_example('pycryptodome.py', expect)
+
+    #######################
+    # Dynamic Rules check #
+    #######################
+    def test_load_file(self):
+        """Test load single file"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 8}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        extman = extension_loader.MANAGER
+        extman.load_dynamic({'rules': [
+            'dynamic_rules/rules/read_gpickle.py',
+        ]})
+        self.b_mgr.b_ts._load_dynamics()
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        self.check_rules_ids(['B403', 'B301', 'D001'])
+
+    def test_load_symlink(self):
+        """Test load symlink file"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 8}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        extman = extension_loader.MANAGER
+        extman.load_dynamic({'rules': [
+            'dynamic_rules/symlink/read_gpickle.py',
+        ]})
+        self.b_mgr.b_ts._load_dynamics()
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        self.check_rules_ids(['B403', 'B301', 'D001'])
+
+    def test_overwrite_rule(self):
+        """Test dynamic rule overwrite existed rule"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 8}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        extman = extension_loader.MANAGER
+        extman.load_dynamic({'rules': [
+            'dynamic_rules/rules/overwrite.py',
+        ]})
+        self.b_mgr.b_ts._load_dynamics()
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        self.check_rules_ids(['B403', 'B301', ])
+
+    def test_overwrite_rule_exclude(self):
+        """Test dynamic rule overwrite existed rule and exclude it"""
+        extman = extension_loader.MANAGER
+        extman.load_dynamic({'rules': [
+            'dynamic_rules/rules/overwrite.py',
+        ]})
+        self.b_mgr.b_ts._load_dynamics()
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 13, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 15}
+        }
+        self.check_example('dynamic_plug.py', expect)
+
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf._settings,
+            profile={'exclude': 'B301'}
+        )
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        self.check_rules_ids(['B403', ])
+
+    def test_dir(self):
+        """Test load firectory with dynamic rules"""
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 8}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        extman = extension_loader.MANAGER
+        extman.load_dynamic({'rules': [
+            'dynamic_rules/rules',
+        ]})
+        self.b_mgr.b_ts._load_dynamics()
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 14, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 16}
+        }
+        self.check_example('dynamic_plug.py', expect)
+        self.check_rules_ids(['B403', 'B301', 'D001'])

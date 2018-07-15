@@ -19,7 +19,7 @@ from bandit.core import test_properties as test
 
 
 @test.checks('Call')
-@test.test_id('B326')
+@test.test_id('D001')
 def read_gpickle_used(context):
     description = "networkx.read_gpickle call to pickle"
     if context.call_function_name_qual == 'networkx.read_gpickle':
