@@ -27,7 +27,8 @@ ast.Call nodes.
 B301: pickle
 ------------
 
-Pickle library appears to be in use, possible security issue.
+Pickle and modules that wrap it can be unsafe when used to
+unserialize untusted data, possible security issue.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
@@ -38,6 +39,9 @@ Pickle library appears to be in use, possible security issue.
 |      |                     | - cPickle.loads                    |           |
 |      |                     | - cPickle.load                     |           |
 |      |                     | - cPickle.Unpickler                |           |
+|      |                     | - dill.loads                       |           |
+|      |                     | - dill.load                        |           |
+|      |                     | - dill.Unpickler                   |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -339,8 +343,12 @@ def gen_blacklist():
          'pickle.Unpickler',
          'cPickle.loads',
          'cPickle.load',
-         'cPickle.Unpickler'],
-        'Pickle library appears to be in use, possible security issue.'
+         'cPickle.Unpickler',
+         'dill.loads',
+         'dill.load',
+         'dill.Unpickler'],
+        'Pickle and modules that wrap it can be unsafe when used to '
+        'unserialize untusted data, possible security issue.'
         ))
 
     sets.append(utils.build_conf_dict(
