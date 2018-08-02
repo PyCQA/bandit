@@ -28,7 +28,7 @@ B301: pickle
 ------------
 
 Pickle and modules that wrap it can be unsafe when used to
-unserialize untusted data, possible security issue.
+deserialize untrusted data, possible security issue.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
@@ -348,7 +348,7 @@ def gen_blacklist():
          'dill.load',
          'dill.Unpickler'],
         'Pickle and modules that wrap it can be unsafe when used to '
-        'unserialize untusted data, possible security issue.'
+        'deserialize untrusted data, possible security issue.'
         ))
 
     sets.append(utils.build_conf_dict(
