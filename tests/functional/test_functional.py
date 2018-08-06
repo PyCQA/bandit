@@ -354,6 +354,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('pickle_deserialize.py', expect)
 
+    def test_dill(self):
+        '''Test for the `dill` module.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 3}
+        }
+        self.check_example('dill.py', expect)
+
     def test_popen_wrappers(self):
         '''Test the `popen2` and `commands` modules.'''
         expect = {
