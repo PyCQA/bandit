@@ -79,7 +79,7 @@ class FunctionalTests(testtools.TestCase):
             for score_type in test_scores:
                 self.assertIn(score_type, expect)
                 for idx, rank in enumerate(C.RANKING):
-                    result[score_type][rank] = (test_scores[score_type][idx] /
+                    result[score_type][rank] = (test_scores[score_type][idx] //
                                                 C.RANKING_VALUES[rank])
 
         self.assertDictEqual(expect, result)
@@ -264,6 +264,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('mktemp.py', expect)
 
+    def test_tempnam(self):
+        '''Test for `os.tempnam` / `os.tmpnam`.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 6}
+        }
+        self.check_example('tempnam.py', expect)
+
     def test_nonsense(self):
         '''Test that a syntactically invalid module is skipped.'''
         self.run_example('nonsense.py')
@@ -346,6 +354,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('pickle_deserialize.py', expect)
 
+    def test_dill(self):
+        '''Test for the `dill` module.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 3}
+        }
+        self.check_example('dill.py', expect)
+
     def test_popen_wrappers(self):
         '''Test the `popen2` and `commands` modules.'''
         expect = {
@@ -409,8 +425,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         '''Test for `subprocess.Popen` with `shell=True`.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 19, 'MEDIUM': 1, 'HIGH': 11},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 30}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 21, 'MEDIUM': 1, 'HIGH': 11},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 32}
         }
         self.check_example('subprocess_shell.py', expect)
 
@@ -421,14 +437,6 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 14}
         }
         self.check_example('urlopen.py', expect)
-
-    def test_utils_shell(self):
-        '''Test for `utils.execute*` with `shell=True`.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 5, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
-        }
-        self.check_example('utils-shell.py', expect)
 
     def test_wildcard_injection(self):
         '''Test for wildcard injection in shell commands.'''

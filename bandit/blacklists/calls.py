@@ -27,7 +27,8 @@ ast.Call nodes.
 B301: pickle
 ------------
 
-Pickle library appears to be in use, possible security issue.
+Pickle and modules that wrap it can be unsafe when used to
+deserialize untrusted data, possible security issue.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
@@ -38,6 +39,9 @@ Pickle library appears to be in use, possible security issue.
 |      |                     | - cPickle.loads                    |           |
 |      |                     | - cPickle.load                     |           |
 |      |                     | - cPickle.Unpickler                |           |
+|      |                     | - dill.loads                       |           |
+|      |                     | - dill.load                        |           |
+|      |                     | - dill.Unpickler                   |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -297,6 +301,23 @@ behavior that does not validate certificates or perform hostname checks.
 | B323 | unverified_context  | - ssl._create_unverified_context   | Medium    |
 +------+---------------------+------------------------------------+-----------+
 
+B325: tempnam
+--------------
+
+Use of os.tempnam() and os.tmpnam() is vulnerable to symlink attacks. Consider
+using tmpfile() instead.
+
+For further information:
+    https://docs.python.org/2.7/library/os.html#os.tempnam
+    https://bugs.python.org/issue17880
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B325 | tempnam             | - os.tempnam                       | Medium    |
+|      |                     | - os.tmpnam                        |           |
++------+---------------------+------------------------------------+-----------+
+
 """
 
 from bandit.blacklists import utils
@@ -322,8 +343,12 @@ def gen_blacklist():
          'pickle.Unpickler',
          'cPickle.loads',
          'cPickle.load',
-         'cPickle.Unpickler'],
-        'Pickle library appears to be in use, possible security issue.'
+         'cPickle.Unpickler',
+         'dill.loads',
+         'dill.load',
+         'dill.Unpickler'],
+        'Pickle and modules that wrap it can be unsafe when used to '
+        'deserialize untrusted data, possible security issue.'
         ))
 
     sets.append(utils.build_conf_dict(
@@ -539,6 +564,14 @@ def gen_blacklist():
         'using an insecure context via the _create_unverified_context that '
         'reverts to the previous behavior that does not validate certificates '
         'or perform hostname checks.'
+        ))
+
+    # skipped B324 (used in bandit/plugins/hashlib_new_insecure_functions.py)
+
+    sets.append(utils.build_conf_dict(
+        'tempnam', 'B325', ['os.tempnam', 'os.tmpnam'],
+        'Use of os.tempnam() and os.tmpnam() is vulnerable to symlink '
+        'attacks. Consider using tmpfile() instead.'
         ))
 
     return {'Call': sets}

@@ -30,8 +30,7 @@ look like the following:
       popen2.popen2, popen2.popen3, popen2.popen4, popen2.Popen3,
       popen2.Popen4, commands.getoutput,  commands.getstatusoutput]
     subprocess: [subprocess.Popen, subprocess.call, subprocess.check_call,
-      subprocess.check_output,
-      utils.execute, utils.execute_with_timeout]
+      subprocess.check_output]
 
 If you require several sets of tests for specific tasks, then you should create
 several config files and pick from them using `-c`. If you only wish to control

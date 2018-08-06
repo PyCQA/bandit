@@ -17,6 +17,8 @@
 import ast
 import re
 
+import six
+
 import bandit
 from bandit.core import test_properties as test
 
@@ -44,8 +46,7 @@ def gen_config(name):
              'subprocess.call',
              'subprocess.check_call',
              'subprocess.check_output',
-             'utils.execute',
-             'utils.execute_with_timeout'],
+             'subprocess.run'],
 
             # Start a process with a function vulnerable to shell injection.
             'shell':
@@ -87,21 +88,24 @@ def gen_config(name):
 
 def has_shell(context):
     keywords = context.node.keywords
+    result = False
     if 'shell' in context.call_keywords:
         for key in keywords:
             if key.arg == 'shell':
                 val = key.value
                 if isinstance(val, ast.Num):
-                    return bool(val.n)
-                if isinstance(val, ast.List):
-                    return bool(val.elts)
-                if isinstance(val, ast.Dict):
-                    return bool(val.keys)
-                if isinstance(val, ast.Name):
-                    if val.id in ['False', 'None']:
-                        return False
-                return True
-    return False
+                    result = bool(val.n)
+                elif isinstance(val, ast.List):
+                    result = bool(val.elts)
+                elif isinstance(val, ast.Dict):
+                    result = bool(val.keys)
+                elif isinstance(val, ast.Name) and val.id in ['False', 'None']:
+                    result = False
+                elif not six.PY2 and isinstance(val, ast.NameConstant):
+                    result = val.value
+                else:
+                    result = True
+    return result
 
 
 @test.takes_config('shell_injection')
@@ -344,8 +348,8 @@ def any_other_function_with_shell_equals_true(context, config):
             # Start a process using the subprocess module, or one of its
             wrappers.
             subprocess: [subprocess.Popen, subprocess.call,
-                         subprocess.check_call, subprocess.check_output,
-                         utils.execute, utils.execute_with_timeout]
+                         subprocess.check_call, subprocess.check_output
+                         execute_with_timeout]
 
 
     :Example:
