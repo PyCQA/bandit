@@ -27,7 +27,8 @@ This formatter outputs the issues as XML.
     <testsuite name="bandit" tests="1"><testcase
     classname="examples/yaml_load.py" name="blacklist_calls"><error
     message="Use of unsafe yaml load. Allows instantiation of arbitrary
-    objects. Consider yaml.safe_load().&#10;" type="MEDIUM">Test ID: B301
+    objects. Consider yaml.safe_load().&#10;" type="MEDIUM"
+    more_info="https://bandit.readthedocs.io/en/latest/">Test ID: B301
     Severity: MEDIUM Confidence: HIGH Use of unsafe yaml load. Allows
     instantiation of arbitrary objects. Consider yaml.safe_load().
 
@@ -45,6 +46,8 @@ import sys
 from xml.etree import cElementTree as ET
 
 import six
+
+from bandit.core import docs_utils
 
 LOG = logging.getLogger(__name__)
 
@@ -70,7 +73,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         text = 'Test ID: %s Severity: %s Confidence: %s\n%s\nLocation %s:%s'
         text = text % (issue.test_id, issue.severity, issue.confidence,
                        issue.text, issue.fname, issue.lineno)
-        ET.SubElement(testcase, 'error', type=issue.severity,
+        ET.SubElement(testcase, 'error',
+                      more_info=docs_utils.get_url(issue.test_id),
+                      type=issue.severity,
                       message=issue.text).text = text
 
     tree = ET.ElementTree(root)

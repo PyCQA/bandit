@@ -82,3 +82,5 @@ class XmlFormatterTests(testtools.TestCase):
                 data['testsuite']['testcase']['error']['@message'])
             self.assertEqual(self.check_name,
                              data['testsuite']['testcase']['@name'])
+            self.assertIsNotNone(
+                data['testsuite']['testcase']['error']['@more_info'])
