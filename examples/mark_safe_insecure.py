@@ -46,9 +46,9 @@ def finally_insecure(cls='" onload="alert(\'xss\')'):
         if 1 == random.randint(0, 1):  # nosec
             raise Exception
     except Exception:
-        print "Exception"
+        print("Exception")
     else:
-        print "No Exception"
+        print("No Exception")
     finally:
         my_insecure_str = insecure_function('insecure', cls=cls)
     safestring.mark_safe(my_insecure_str)
