@@ -21,6 +21,7 @@ import testtools
 
 import bandit
 from bandit.core import config
+from bandit.core import docs_utils
 from bandit.core import issue
 from bandit.core import manager
 from bandit.formatters import text as b_text
@@ -45,7 +46,9 @@ class TextFormatterTests(testtools.TestCase):
                           format(_indent_val, _issue.severity.capitalize(),
                                  _issue.confidence.capitalize()),
                           "{}   Location: {}:{}".
-                          format(_indent_val, _issue.fname, _issue.lineno)]
+                          format(_indent_val, _issue.fname, _issue.lineno),
+                          "{}   More Info: {}".format(
+                              _indent_val, docs_utils.get_url(_issue.test_id))]
             if _code:
                 return_val.append("{}{}".format(_indent_val, _code))
             return '\n'.join(return_val)
