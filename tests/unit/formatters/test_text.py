@@ -21,6 +21,7 @@ import testtools
 
 import bandit
 from bandit.core import config
+from bandit.core import docs_utils
 from bandit.core import issue
 from bandit.core import manager
 from bandit.formatters import text as b_text
@@ -41,6 +42,8 @@ class TextFormatterTests(testtools.TestCase):
             return_val = ["{}>> Issue: [{}:{}] {}".
                           format(_indent_val, _issue.test_id, _issue.test,
                                  _issue.text),
+                          "{}   More Info: {}".format(
+                              _indent_val, docs_utils.get_url(_issue.test_id)),
                           "{}   Severity: {}   Confidence: {}".
                           format(_indent_val, _issue.severity.capitalize(),
                                  _issue.confidence.capitalize()),
