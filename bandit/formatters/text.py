@@ -27,10 +27,9 @@ This formatter outputs the issues as plain text.
     >> Issue: [B301:blacklist_calls] Use of unsafe yaml load. Allows
        instantiation of arbitrary objects. Consider yaml.safe_load().
 
-       More Info: https://bandit.readthedocs.io/en/latest/
-
        Severity: Medium   Confidence: High
        Location: examples/yaml_load.py:5
+       More Info: https://bandit.readthedocs.io/en/latest/
     4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
     5       y = yaml.load(ystr)
     6       yaml.dump(y)
@@ -84,14 +83,14 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     bits.append("%s>> Issue: [%s:%s] %s" % (
         indent, issue.test_id, issue.test, issue.text))
 
-    bits.append("%s   More Info: %s" % (
-        indent, docs_utils.get_url(issue.test_id)))
-
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))
 
     bits.append("%s   Location: %s:%s" % (
         indent, issue.fname, issue.lineno if show_lineno else ""))
+
+    bits.append("%s   More Info: %s" % (
+        indent, docs_utils.get_url(issue.test_id)))
 
     if show_code:
         bits.extend([indent + l for l in
