@@ -37,7 +37,7 @@ this Bandit processes each file, builds an AST from it, and runs appropriate
 plugins against the AST nodes. Once Bandit has finished scanning all the files
 it generates a report.
 
-Bandit was originally developed within the OpenStack Security Project and 
+Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
 
 Installation
@@ -224,6 +224,7 @@ Usage::
       B412  import_httpoxy
       B413  import_pycrypto
       B414  import_pycryptodome
+      B415  pyghmi
       B501  request_with_no_cert_validation
       B502  ssl_with_bad_version
       B503  ssl_with_bad_defaults

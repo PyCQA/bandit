@@ -771,3 +771,11 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
         }
         self.check_example('pycryptodome.py', expect)
+
+    def test_pyghmi(self):
+        '''Test calling pyghmi methods'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 1, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0}
+        }
+        self.check_example('pyghmi.py', expect)
