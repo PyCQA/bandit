@@ -29,6 +29,7 @@ This formatter outputs the issues as color coded text.
 
        Severity: Medium   Confidence: High
        Location: examples/yaml_load.py:5
+       More Info: https://bandit.readthedocs.io/en/latest/
     4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
     5       y = yaml.load(ystr)
     6       yaml.dump(y)
@@ -44,6 +45,7 @@ import logging
 import sys
 
 from bandit.core import constants
+from bandit.core import docs_utils
 from bandit.core import test_properties
 
 LOG = logging.getLogger(__name__)
@@ -99,6 +101,9 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         indent, issue.fname,
         issue.lineno if show_lineno else "",
         COLOR['DEFAULT']))
+
+    bits.append("%s   More Info: %s" % (
+        indent, docs_utils.get_url(issue.test_id)))
 
     if show_code:
         bits.extend([indent + l for l in
