@@ -18,13 +18,13 @@ r"""
 Screen formatter
 ================
 
-This formatter outputs the issues as color coded text.
+This formatter outputs the issues as color coded text to screen.
 
 :Example:
 
 .. code-block:: none
 
-    >> Issue: [B301:blacklist_calls] Use of unsafe yaml load. Allows
+    >> Issue: [B506: yaml_load] Use of unsafe yaml load. Allows
        instantiation of arbitrary objects. Consider yaml.safe_load().
 
        Severity: Medium   Confidence: High
