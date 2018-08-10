@@ -21,6 +21,7 @@ import testtools
 
 import bandit
 from bandit.core import config
+from bandit.core import docs_utils
 from bandit.core import issue
 from bandit.core import manager
 from bandit.formatters import screen
@@ -46,7 +47,9 @@ class ScreenFormatterTests(testtools.TestCase):
                                  _issue.confidence.capitalize()),
                           "{}   Location: {}:{}{}".
                           format(_indent_val, _issue.fname, _issue.lineno,
-                                 screen.COLOR['DEFAULT'])]
+                                 screen.COLOR['DEFAULT']),
+                          "{}   More Info: {}".format(
+                              _indent_val, docs_utils.get_url(_issue.test_id))]
             if _code:
                 return_val.append("{}{}".format(_indent_val, _code))
             return '\n'.join(return_val)

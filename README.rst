@@ -126,7 +126,7 @@ Usage::
                             higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
       -f {csv,custom,html,json,screen,txt,xml,yaml}, --format {csv,custom,html,json,screen,txt,xml,yaml}
                             specify output format
-      --msg-template        MSG_TEMPLATE
+      --msg-template MSG_TEMPLATE
                             specify output message template (only usable with
                             --format custom), see CUSTOM FORMAT section for list
                             of available values
@@ -184,9 +184,7 @@ Usage::
       B106  hardcoded_password_funcarg
       B107  hardcoded_password_default
       B108  hardcoded_tmp_directory
-      B109  password_config_option_not_marked_secret
       B110  try_except_pass
-      B111  execute_with_run_as_root_equals_true
       B112  try_except_continue
       B201  flask_debug_true
       B301  pickle
