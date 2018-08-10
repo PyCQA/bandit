@@ -24,12 +24,15 @@ This formatter outputs the issues in a comma separated values format.
 .. code-block:: none
 
     filename,test_name,test_id,issue_severity,issue_confidence,issue_text,
-    more_info,line_number,line_range
+    line_number,line_range,more_info
     examples/yaml_load.py,blacklist_calls,B301,MEDIUM,HIGH,"Use of unsafe yaml
     load. Allows instantiation of arbitrary objects. Consider yaml.safe_load().
-    ",https://bandit.readthedocs.io/en/latest/,5,[5]
+    ",5,[5],https://bandit.readthedocs.io/en/latest/
 
 .. versionadded:: 0.11.0
+
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
 
 """
 # Necessary for this formatter to work when imported on Python 2. Importing
@@ -65,9 +68,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
                       'issue_severity',
                       'issue_confidence',
                       'issue_text',
-                      'more_info',
                       'line_number',
-                      'line_range']
+                      'line_range',
+                      'more_info']
 
         writer = csv.DictWriter(fileobj, fieldnames=fieldnames,
                                 extrasaction='ignore')
