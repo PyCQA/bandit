@@ -15,7 +15,6 @@
 # under the License.
 
 import os
-import sys
 
 import fixtures
 import mock
@@ -161,10 +160,7 @@ class ManagerTests(testtools.TestCase):
         tmp_file = open(output_filename, 'w')
         self.manager.output_results(lines, sev_level, conf_level, tmp_file,
                                     output_format)
-        if sys.stdout.isatty():
-            self.assertFalse(os.path.isfile(output_filename))
-        else:
-            self.assertTrue(os.path.isfile(output_filename))
+        self.assertTrue(os.path.isfile(output_filename))
 
     def test_output_results_valid_format(self):
         # Test that output_results succeeds given a valid format

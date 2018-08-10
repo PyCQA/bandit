@@ -59,11 +59,6 @@ def ssl_with_bad_version(context, config):
     It is worth noting that native support for TLS 1.2 is only available in
     more recent Python versions, specifically 2.7.9 and up, and 3.x
 
-    See also:
-
-    - :doc:`../plugins/ssl_with_bad_defaults`
-    - :doc:`../plugins/ssl_with_no_version`
-
     A note on 'SSLv23':
 
     Amongst the available SSL/TLS versions provided by Python/pyOpenSSL there
@@ -77,7 +72,6 @@ def ssl_with_bad_version(context, config):
     exclude bad versions of SSL/TLS from the protocol versions considered. Both
     the Python native and pyOpenSSL modules provide the ``OP_NO_SSLv2`` and
     ``OP_NO_SSLv3`` flags for this purpose.
-
 
     **Config Options:**
 
@@ -93,7 +87,6 @@ def ssl_with_bad_version(context, config):
                 - SSLv3_METHOD    # strict option
                 - TLSv1_METHOD    # strict option
 
-
     :Example:
 
     .. code-block:: none
@@ -108,6 +101,8 @@ def ssl_with_bad_version(context, config):
 
     .. seealso::
 
+     - :func:`ssl_with_bad_defaults`
+     - :func:`ssl_with_no_version`
      - http://heartbleed.com/
      - https://poodlebleed.com/
      - https://security.openstack.org/
@@ -165,11 +160,6 @@ def ssl_with_bad_defaults(context, config):
     warning will be reported whenever known broken protocol versions are
     detected.
 
-    See also:
-
-    - :doc:`../plugins/ssl_with_bad_version`
-    - :doc:`../plugins/ssl_with_no_version`
-
     **Config Options:**
 
     This test shares the configuration provided for the standard
@@ -190,6 +180,8 @@ def ssl_with_bad_defaults(context, config):
 
     .. seealso::
 
+     - :func:`ssl_with_bad_version`
+     - :func:`ssl_with_no_version`
      - http://heartbleed.com/
      - https://poodlebleed.com/
      - https://security.openstack.org/
@@ -225,11 +217,6 @@ def ssl_with_no_version(context):
     aforementioned broken protocol versions. A LOW severity warning will be
     reported whenever this is detected.
 
-    See also:
-
-    - :doc:`../plugins/ssl_with_bad_version`
-    - :doc:`../plugins/ssl_with_bad_defaults`
-
     **Config Options:**
 
     This test shares the configuration provided for the standard
@@ -251,6 +238,8 @@ def ssl_with_no_version(context):
 
     .. seealso::
 
+     - :func:`ssl_with_bad_version`
+     - :func:`ssl_with_bad_defaults`
      - http://heartbleed.com/
      - https://poodlebleed.com/
      - https://security.openstack.org/

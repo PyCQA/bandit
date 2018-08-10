@@ -150,14 +150,21 @@ This formatter outputs the issues as HTML.
 .. versionadded:: 0.14.0
 
 """
+from __future__ import absolute_import
 
-import cgi
 import logging
 import sys
+
+import six
 
 from bandit.core import docs_utils
 from bandit.core import test_properties
 from bandit.formatters import utils
+
+if not six.PY2:
+    from html import escape as html_escape
+else:
+    from cgi import escape as html_escape
 
 LOG = logging.getLogger(__name__)
 
@@ -342,15 +349,15 @@ pre {
     for index, issue in enumerate(issues):
         if not baseline or len(issues[issue]) == 1:
             candidates = ''
-            safe_code = cgi.escape(issue.get_code(lines, True).
-                                   strip('\n').lstrip(' '))
+            safe_code = html_escape(issue.get_code(lines, True).
+                                    strip('\n').lstrip(' '))
             code = code_block.format(code=safe_code)
         else:
             candidates_str = ''
             code = ''
             for candidate in issues[issue]:
-                candidate_code = cgi.escape(candidate.get_code(lines, True).
-                                            strip('\n').lstrip(' '))
+                candidate_code = html_escape(candidate.get_code(lines, True).
+                                             strip('\n').lstrip(' '))
                 candidates_str += candidate_issue.format(code=candidate_code)
 
             candidates = candidate_block.format(candidate_list=candidates_str)
