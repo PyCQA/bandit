@@ -215,7 +215,7 @@ def main():
     )
     parser.add_argument(
         '-o', '--output', dest='output_file', action='store', nargs='?',
-        type=argparse.FileType('w'), default=sys.stdout,
+        type=argparse.FileType('w', encoding='utf-8'), default=sys.stdout,
         help='write report to filename'
     )
     parser.add_argument(
