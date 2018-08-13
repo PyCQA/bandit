@@ -1,4 +1,3 @@
-import pyghmi
 from pyghmi.ipmi import command
 
 cmd = command.Command(bmc="bmc",
