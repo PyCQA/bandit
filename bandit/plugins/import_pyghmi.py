@@ -17,6 +17,8 @@ r"""
 B415 Test for the usage of pyghmi library
 =========================================
 
+Warn the usage of pyghmi as IPMI is known to be a non-secure protocol.
+
 :Example:
 
 .. code-block:: none
@@ -28,7 +30,7 @@ B415 Test for the usage of pyghmi library
            3
            4	cmd = command.Command(bmc="bmc",
            5	                      userid="userid",
-           6	                      password="ZjE4ZjI0NTE4YmI2NGJj d")
+           6	                      password="ZjE4ZjI0NTE4YmI2NGJjd")
 
 .. seealso::
 
