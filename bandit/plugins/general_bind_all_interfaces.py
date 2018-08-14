@@ -37,8 +37,7 @@ binding to all network interfaces.
 
 .. seealso::
 
- - __TODO__ : add best practice info on binding to all interfaces, and link
-   here.
+ - https://github.com/Pylons/pyramid/issues/489
 
 .. versionadded:: 0.9.0
 
