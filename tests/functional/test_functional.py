@@ -256,6 +256,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('imports-with-importlib.py', expect)
 
+    def test_dynamic_imports(self):
+        '''Test for dynamically constructed importlib calls.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.check_example('dynamic-imports.py', expect)
+
     def test_mktemp(self):
         '''Test for `tempfile.mktemp`.'''
         expect = {
