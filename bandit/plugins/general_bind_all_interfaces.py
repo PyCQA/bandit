@@ -37,7 +37,7 @@ binding to all network interfaces.
 
 .. seealso::
 
- - https://github.com/Pylons/pyramid/issues/489
+ - https://nvd.nist.gov/vuln/detail/CVE-2018-1281
 
 .. versionadded:: 0.9.0
 
