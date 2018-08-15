@@ -35,7 +35,8 @@ Python docs succinctly describe why the use of `exec` is risky.
 .. seealso::
 
  - https://docs.python.org/2.0/ref/exec.html
- - TODO: add info on exec and similar to sec best practice and link here
+ - https://www.python.org/dev/peps/pep-0551/#background
+ - https://www.python.org/dev/peps/pep-0578/#suggested-audit-hook-locations
 
 .. versionadded:: 0.9.0
 """
