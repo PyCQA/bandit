@@ -39,7 +39,7 @@ def django_extra_used(context):
      - https://docs.djangoproject.com/en/dev/topics/
         security/#sql-injection-protection
 
-    .. versionadded:: 1.4.1
+    .. versionadded:: 1.5.0
 
     """
     description = "Use of extra potential SQL attack vector."
@@ -102,7 +102,7 @@ def django_rawsql_used(context):
      - https://docs.djangoproject.com/en/dev/topics/
         security/#sql-injection-protection
 
-    .. versionadded:: 1.4.1
+    .. versionadded:: 1.5.0
 
     """
     description = "Use of RawSQL potential SQL attack vector."
