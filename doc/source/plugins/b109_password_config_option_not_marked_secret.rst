@@ -1,5 +1,5 @@
 ---------------------------------------------------------------
-B109: Test for a password based config option not marked secret
+B109: password_config_option_not_marked_secret 
 ---------------------------------------------------------------
 
 This plugin has been removed.

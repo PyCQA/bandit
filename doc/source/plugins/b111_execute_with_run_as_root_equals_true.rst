@@ -1,5 +1,5 @@
 --------------------------------------------------
-B111: Test for the use of rootwrap running as root
+B111: execute_with_run_as_root_equals_true 
 --------------------------------------------------
 
 This plugin has been removed.
