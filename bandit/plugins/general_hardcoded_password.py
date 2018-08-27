@@ -15,11 +15,10 @@
 # under the License.
 
 import ast
-import sys
 
-import six
 import bandit
 from bandit.core import test_properties as test
+import six
 
 
 CANDIDATES = set(["password", "pass", "passwd", "pwd", "secret", "token",
@@ -209,7 +208,7 @@ def hardcoded_password_default(context):
     defs.extend(context.node.args.defaults)
 
     # go through all (param, value)s and look for candidates
-    ast_argtype = ast.Arg if not six.PY2 else ast.arguments
+    ast_argtype = ast.arg if not six.PY2 else ast.arguments
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, ast.Name) or isinstance(key, ast_argtype):
             check = key.arg if not six.PY2 else key.id
