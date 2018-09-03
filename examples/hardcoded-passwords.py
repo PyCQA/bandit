@@ -19,6 +19,9 @@ def doLogin(password="blerg"):
 def NoMatch3(a, b):
     pass
 
+def aFunctionWithTupleArg(a, (b, c)):
+    pass
+
 doLogin(password="blerg")
 password = "blerg"
 d["password"] = "blerg"
