@@ -278,7 +278,7 @@ def django_mark_safe(context):
      - https://docs.djangoproject.com/en/dev/
         ref/utils/#django.utils.html.format_html
 
-    .. versionadded:: 1.4.1
+    .. versionadded:: 1.5.0
 
     """
     if context.is_module_imported_like('django.utils.safestring'):

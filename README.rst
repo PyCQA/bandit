@@ -232,6 +232,7 @@ Usage::
       B504  ssl_with_no_version
       B505  weak_cryptographic_key
       B506  yaml_load
+      B507  ssh_no_host_key_verification
       B601  paramiko_calls
       B602  subprocess_popen_with_shell_equals_true
       B603  subprocess_without_shell_equals_true
