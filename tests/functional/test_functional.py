@@ -798,7 +798,8 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/read_gpickle.py',
         ]})
-        self.b_mgr.b_ts._load_dynamics()
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
@@ -817,7 +818,8 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/symlink/read_gpickle.py',
         ]})
-        self.b_mgr.b_ts._load_dynamics()
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
@@ -836,7 +838,8 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/overwrite.py',
         ]})
-        self.b_mgr.b_ts._load_dynamics()
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
@@ -850,7 +853,8 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/overwrite.py',
         ]})
-        self.b_mgr.b_ts._load_dynamics()
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 13, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 15}
@@ -879,7 +883,8 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules',
         ]})
-        self.b_mgr.b_ts._load_dynamics()
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 14, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 16}
