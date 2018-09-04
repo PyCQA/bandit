@@ -2,6 +2,10 @@
 B109: password_config_option_not_marked_secret 
 ---------------------------------------------------------------
 
+=========================================
+B109: Test for a password based config option not marked secret
+=========================================
+
 This plugin has been removed.
 
 Passwords are sensitive and must be protected appropriately. In OpenStack
