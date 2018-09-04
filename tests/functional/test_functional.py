@@ -798,7 +798,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/read_gpickle.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
         self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
@@ -818,7 +818,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/symlink/read_gpickle.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
         self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
@@ -838,7 +838,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/overwrite.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
         self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
@@ -853,7 +853,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/overwrite.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
         self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 13, 'HIGH': 0},
@@ -883,7 +883,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, None)
+        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
         self.b_mgr.b_ts._load_dynamics(filtering)
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 14, 'HIGH': 0},
