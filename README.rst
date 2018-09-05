@@ -95,7 +95,7 @@ Usage::
                   [-f {csv,custom,html,json,screen,txt,xml,yaml}]
                   [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d]
                   [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
-                  [--ini INI_PATH] [--version]
+                  [--ini INI_PATH] [--rules RULES] [--version]
                   [targets [targets ...]]
 
     Bandit - a Python source code security analyzer
