@@ -41,11 +41,15 @@ class FunctionalTests(testtools.TestCase):
         # NOTE(tkelsey): bandit is very sensitive to paths, so stitch
         # them up here for the testing environment.
         #
+        extension_loader.MANAGER = extension_loader.Manager()
+        self.load_setUp()
+
+    def load_setUp(self, profile=None):
         path = os.path.join(os.getcwd(), 'bandit', 'plugins')
         b_conf = b_config.BanditConfig()
         self.b_mgr = b_manager.BanditManager(b_conf, 'file')
         self.b_mgr.b_conf._settings['plugins_dir'] = path
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf)
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf, profile=profile)
 
     def run_example(self, example_script, ignore_nosec=False):
         '''A helper method to run the specified test
@@ -113,7 +117,7 @@ class FunctionalTests(testtools.TestCase):
         rules_ids = set()
         for issue in self.b_mgr.results:
             self.assertIn(issue.test_id, test_ids)
-            rules_ids.update(issue.test_id)
+            rules_ids.update([issue.test_id])
         rules_diff = set(test_ids).difference(rules_ids)
         self.assertEqual(rules_diff, set())
 
@@ -798,8 +802,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/read_gpickle.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
-        self.b_mgr.b_ts._load_dynamics(filtering)
+        self.load_setUp()
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
@@ -818,8 +821,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/symlink/read_gpickle.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
-        self.b_mgr.b_ts._load_dynamics(filtering)
+        self.load_setUp()
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
@@ -838,8 +840,7 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/overwrite.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
-        self.b_mgr.b_ts._load_dynamics(filtering)
+        self.load_setUp()
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
@@ -853,18 +854,13 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules/overwrite.py',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
-        self.b_mgr.b_ts._load_dynamics(filtering)
+        self.load_setUp()
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 13, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 15}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 7, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
         }
         self.check_example('dynamic_plug.py', expect)
-
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf._settings,
-            profile={'exclude': 'B301'}
-        )
+        self.load_setUp(profile={'exclude': ['B301']})
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 0, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
@@ -883,11 +879,10 @@ class FunctionalTests(testtools.TestCase):
         extman.load_dynamic({'rules': [
             'dynamic_rules/rules',
         ]})
-        filtering = self.b_mgr.b_ts._get_filter(self.b_mgr.b_conf, {})
-        self.b_mgr.b_ts._load_dynamics(filtering)
+        self.load_setUp()
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 14, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 16}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 8, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 10}
         }
         self.check_example('dynamic_plug.py', expect)
         self.check_rules_ids(['B403', 'B301', 'D001'])
