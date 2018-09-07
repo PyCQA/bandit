@@ -158,8 +158,7 @@ class BanditManager(object):
             report_func = formatter.plugin
             if output_format == 'custom':
                 report_func(self, fileobj=output_file, sev_level=sev_level,
-                            conf_level=conf_level, lines=lines,
-                            template=template)
+                            conf_level=conf_level, template=template)
             else:
                 report_func(self, fileobj=output_file, sev_level=sev_level,
                             conf_level=conf_level, lines=lines)
