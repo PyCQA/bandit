@@ -50,14 +50,13 @@ class SafeMapper(dict):
 
 
 @test_properties.accepts_baseline
-def report(manager, fileobj, sev_level, conf_level, lines=-1, template=None):
+def report(manager, fileobj, sev_level, conf_level, template=None):
     """Prints issues in custom format
 
     :param manager: the bandit manager object
     :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
-    :param lines: Number of lines to report, -1 for all
     :param template: Output template with non-terminal tags <N>
                     (default: '{abspath}:{line}:
                     {test_id}[bandit]: {severity}: {msg}')
@@ -149,9 +148,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1, template=None):
 
     msg_parsed_template = "".join([item for lst in msg_parsed_template_list
                                    for item in lst]) + "\n"
-    limit = lines if lines > 0 else None
     with fileobj:
-        for defect in results[:limit]:
+        for defect in results:
             evaluated_tags = SafeMapper(
                 (k, v(defect)) for k, v in tag_mapper.items()
             )
