@@ -1,0 +1,4 @@
+template: |
+  $CHANGES
+
+  [See full changelog](https://github.com/PyCQA/bandit/compare/$PREVIOUS_TAG...master)
