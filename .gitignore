@@ -1,11 +1,13 @@
 env*
 venv*
+.python-version
 *.pyc
 .DS_Store
 *.egg
 *.egg-info
 .eggs/
 .idea/
+.vscode/
 .tox
 .stestr
 build/*
