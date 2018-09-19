@@ -39,7 +39,7 @@ class BanditManager(object):
     scope = []
 
     def __init__(self, config, agg_type, debug=False, verbose=False,
-                 profile=None, ignore_nosec=False):
+                 quiet=False, profile=None, ignore_nosec=False):
         '''Get logger, config, AST handler, and result store ready
 
         :param config: config options object
@@ -47,12 +47,14 @@ class BanditManager(object):
         :param agg_type: aggregation type
         :param debug: Whether to show debug messages or not
         :param verbose: Whether to show verbose output
+        :param quiet: Whether to only show output in the case of an error
         :param profile_name: Optional name of profile to use (from cmd line)
         :param ignore_nosec: Whether to ignore #nosec or not
         :return:
         '''
         self.debug = debug
         self.verbose = verbose
+        self.quiet = quiet
         if not profile:
             profile = {}
         self.ignore_nosec = ignore_nosec

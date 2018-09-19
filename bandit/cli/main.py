@@ -30,16 +30,13 @@ BASE_CONFIG = 'bandit.yaml'
 LOG = logging.getLogger()
 
 
-def _init_logger(debug=False, log_format=None):
+def _init_logger(log_level=logging.INFO, log_format=None):
     '''Initialize the logger
 
     :param debug: Whether to enable debug mode
     :return: An instantiated logging instance
     '''
     LOG.handlers = []
-    log_level = logging.INFO
-    if debug:
-        log_level = logging.DEBUG
 
     if not log_format:
         # default log format
@@ -135,7 +132,8 @@ def _log_info(args, profile):
 
 def main():
     # bring our logging stuff up as early as possible
-    debug = ('-d' in sys.argv or '--debug' in sys.argv)
+    debug = (logging.DEBUG if '-d' in sys.argv or '--debug' in sys.argv else
+             logging.INFO)
     _init_logger(debug)
     extension_mgr = _init_extensions()
 
@@ -217,13 +215,18 @@ def main():
         type=argparse.FileType('w'), default=sys.stdout,
         help='write report to filename'
     )
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument(
         '-v', '--verbose', dest='verbose', action='store_true',
         help='output extra information like excluded and included files'
     )
     parser.add_argument(
         '-d', '--debug', dest='debug', action='store_true',
         help='turn on debug mode'
+    )
+    group.add_argument(
+        '-q', '--quiet', '--silent', dest='quiet', action='store_true',
+        help='only show output in the case of an error'
     )
     parser.add_argument(
         '--ignore-nosec', dest='ignore_nosec', action='store_true',
@@ -257,6 +260,7 @@ def main():
 
     parser.set_defaults(debug=False)
     parser.set_defaults(verbose=False)
+    parser.set_defaults(quiet=False)
     parser.set_defaults(ignore_nosec=False)
 
     plugin_info = ["%s\t%s" % (a[0], a[1].name) for a in
@@ -335,7 +339,10 @@ def main():
     # if the log format string was set in the options, reinitialize
     if b_conf.get_option('log_format'):
         log_format = b_conf.get_option('log_format')
-        _init_logger(debug, log_format=log_format)
+        _init_logger(log_level=logging.DEBUG, log_format=log_format)
+
+    if args.quiet:
+        _init_logger(log_level=logging.WARN)
 
     try:
         profile = _get_profile(b_conf, args.profile, args.config_file)
@@ -357,6 +364,7 @@ def main():
 
     b_mgr = b_manager.BanditManager(b_conf, args.agg_type, args.debug,
                                     profile=profile, verbose=args.verbose,
+                                    quiet=args.quiet,
                                     ignore_nosec=args.ignore_nosec)
 
     if args.baseline is not None:

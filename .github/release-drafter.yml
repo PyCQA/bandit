@@ -1,0 +1,7 @@
+template: |
+  $CHANGES
+
+  TODO:
+  - [ ] Replace 'master' with next tag once created
+
+  [See full changelog](https://github.com/PyCQA/bandit/compare/$PREVIOUS_TAG...master)
