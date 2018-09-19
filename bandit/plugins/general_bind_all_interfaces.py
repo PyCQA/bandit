@@ -37,8 +37,7 @@ binding to all network interfaces.
 
 .. seealso::
 
- - __TODO__ : add best practice info on binding to all interfaces, and link
-   here.
+ - https://nvd.nist.gov/vuln/detail/CVE-2018-1281
 
 .. versionadded:: 0.9.0
 

@@ -64,7 +64,7 @@ This formatter outputs the issues in a yaml format.
       test_id: B506
       test_name: yaml_load
 
-.. versionadded:: 1.4.1
+.. versionadded:: 1.5.0
 
 """
 # Necessary for this formatter to work when imported on Python 2. Importing

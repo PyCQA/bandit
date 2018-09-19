@@ -162,25 +162,27 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """
 
     bits = []
-    bits.append(header("Run started:%s", datetime.datetime.utcnow()))
+    issues = manager.get_issue_list(sev_level, conf_level)
+    if len(issues) or not manager.quiet:
+        bits.append(header("Run started:%s", datetime.datetime.utcnow()))
 
-    if manager.verbose:
-        bits.append(get_verbose_details(manager))
+        if manager.verbose:
+            bits.append(get_verbose_details(manager))
 
-    bits.append(header("\nTest results:"))
-    bits.append(get_results(manager, sev_level, conf_level, lines))
-    bits.append(header("\nCode scanned:"))
-    bits.append('\tTotal lines of code: %i' %
-                (manager.metrics.data['_totals']['loc']))
+        bits.append(header("\nTest results:"))
+        bits.append(get_results(manager, sev_level, conf_level, lines))
+        bits.append(header("\nCode scanned:"))
+        bits.append('\tTotal lines of code: %i' %
+                    (manager.metrics.data['_totals']['loc']))
 
-    bits.append('\tTotal lines skipped (#nosec): %i' %
-                (manager.metrics.data['_totals']['nosec']))
+        bits.append('\tTotal lines skipped (#nosec): %i' %
+                    (manager.metrics.data['_totals']['nosec']))
 
-    bits.append(get_metrics(manager))
-    skipped = manager.get_skipped()
-    bits.append(header("Files skipped (%i):", len(skipped)))
-    bits.extend(["\t%s (%s)" % skip for skip in skipped])
-    do_print(bits)
+        bits.append(get_metrics(manager))
+        skipped = manager.get_skipped()
+        bits.append(header("Files skipped (%i):", len(skipped)))
+        bits.extend(["\t%s (%s)" % skip for skip in skipped])
+        do_print(bits)
 
     if fileobj.name != sys.stdout.name:
         LOG.info("Screen formatter output was not written to file: %s, "

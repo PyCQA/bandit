@@ -93,7 +93,7 @@ Usage::
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
                   [-p PROFILE] [-t TESTS] [-s SKIPS] [-l] [-i]
                   [-f {csv,custom,html,json,screen,txt,xml,yaml}]
-                  [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d]
+                  [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d] [-q]
                   [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
                   [--ini INI_PATH] [--version]
                   [targets [targets ...]]
@@ -135,6 +135,8 @@ Usage::
       -v, --verbose         output extra information like excluded and included
                             files
       -d, --debug           turn on debug mode
+      -q, --quiet, --silent
+                            only show output in the case of an error
       --ignore-nosec        do not skip lines with # nosec comments
       -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
                             comma-separated list of paths to exclude from scan
@@ -230,6 +232,7 @@ Usage::
       B504  ssl_with_no_version
       B505  weak_cryptographic_key
       B506  yaml_load
+      B507  ssh_no_host_key_verification
       B601  paramiko_calls
       B602  subprocess_popen_with_shell_equals_true
       B603  subprocess_without_shell_equals_true

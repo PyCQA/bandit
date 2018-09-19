@@ -64,3 +64,4 @@ class CsvFormatterTests(testtools.TestCase):
             self.assertEqual(six.text_type(self.context['linerange']),
                              data['line_range'])
             self.assertEqual(self.check_name, data['test_name'])
+            self.assertIsNotNone(data['more_info'])

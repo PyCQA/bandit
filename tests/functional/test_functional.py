@@ -472,6 +472,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('yaml_load.py', expect)
 
+    def test_host_key_verification(self):
+        '''Test for ignoring host key verification.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0}
+        }
+        self.check_example('no_host_key_verification.py', expect)
+
     def test_jinja2_templating(self):
         '''Test jinja templating for potential XSS bugs.'''
         expect = {
