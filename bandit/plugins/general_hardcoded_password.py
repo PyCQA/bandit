@@ -15,12 +15,11 @@
 # under the License.
 
 import ast
-import sys
 import re
+import sys
 
 import bandit
 from bandit.core import test_properties as test
-
 
 RE_CANDIDATES = re.compile('pass|pwd|secret|token', re.IGNORECASE)
 
