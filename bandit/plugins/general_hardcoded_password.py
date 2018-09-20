@@ -16,13 +16,13 @@
 
 import ast
 import sys
+import re
 
 import bandit
 from bandit.core import test_properties as test
 
 
-CANDIDATES = set(["password", "pass", "passwd", "pwd", "secret", "token",
-                  "secrete"])
+RE_CANDIDATES = re.compile('pass|pwd|secret|token', re.IGNORECASE)
 
 
 def _report(value):
@@ -84,10 +84,10 @@ def hardcoded_password_string(context):
     if isinstance(node.parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node.parent.targets:
-            if isinstance(targ, ast.Name) and targ.id in CANDIDATES:
+            if isinstance(targ, ast.Name) and RE_CANDIDATES.findall(targ.id):
                 return _report(node.s)
 
-    elif isinstance(node.parent, ast.Index) and node.s in CANDIDATES:
+    elif isinstance(node.parent, ast.Index) and RE_CANDIDATES.findall(node.s):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node.parent.parent.parent
@@ -98,7 +98,7 @@ def hardcoded_password_string(context):
     elif isinstance(node.parent, ast.Compare):
         # looks for "candidate == 'some_string'"
         comp = node.parent
-        if isinstance(comp.left, ast.Name) and comp.left.id in CANDIDATES:
+        if isinstance(comp.left, ast.Name) and RE_CANDIDATES.findall(comp.left.id):
             if isinstance(comp.comparators[0], ast.Str):
                 return _report(comp.comparators[0].s)
 
@@ -150,7 +150,7 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        if isinstance(kw.value, ast.Str) and kw.arg in CANDIDATES:
+        if isinstance(kw.value, ast.Str) and RE_CANDIDATES.findall(kw.arg):
             return _report(kw.value.s)
 
 
@@ -211,5 +211,5 @@ def hardcoded_password_default(context):
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, ast.Name) or isinstance(key, ast.arg):
             check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-            if isinstance(val, ast.Str) and check in CANDIDATES:
+            if isinstance(val, ast.Str) and RE_CANDIDATES.findall(check):
                 return _report(val.s)
