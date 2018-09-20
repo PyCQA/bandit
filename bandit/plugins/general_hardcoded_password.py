@@ -97,9 +97,10 @@ def hardcoded_password_string(context):
     elif isinstance(node.parent, ast.Compare):
         # looks for "candidate == 'some_string'"
         comp = node.parent
-        if isinstance(comp.left, ast.Name) and RE_CANDIDATES.findall(comp.left.id):
-            if isinstance(comp.comparators[0], ast.Str):
-                return _report(comp.comparators[0].s)
+        if isinstance(comp.left, ast.Name):
+            if RE_CANDIDATES.findall(comp.left.id):
+                if isinstance(comp.comparators[0], ast.Str):
+                    return _report(comp.comparators[0].s)
 
 
 @test.checks('Call')
