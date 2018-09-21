@@ -708,8 +708,8 @@ class FunctionalTests(testtools.TestCase):
 
     def test_nosec(self):
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
         }
         self.check_example('nosec.py', expect)
 
