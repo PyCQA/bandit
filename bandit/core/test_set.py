@@ -45,7 +45,7 @@ class BanditTestSet(object):
         exc = set(profile.get('exclude', []))
 
         all_blacklist_tests = set()
-        for _node, tests in extman.blacklist.items():
+        for _, tests in extman.blacklist.items():
             all_blacklist_tests.update(t['id'] for t in tests)
 
         # this block is purely for backwards compatibility, the rules are as
