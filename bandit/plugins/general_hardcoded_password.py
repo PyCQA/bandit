@@ -21,7 +21,9 @@ import sys
 import bandit
 from bandit.core import test_properties as test
 
-RE_CANDIDATES = re.compile('pass|pwd|secret|token', re.IGNORECASE)
+
+RE_WORDS = "(pas+wo?r?d|pass|pwd|token|secrete?)"
+RE_CANDIDATES = re.compile('(^{0}$|_{0}_|^{0}_|_{0}$)'.format(RE_WORDS), re.IGNORECASE)
 
 
 def _report(value):
@@ -83,10 +85,10 @@ def hardcoded_password_string(context):
     if isinstance(node.parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node.parent.targets:
-            if isinstance(targ, ast.Name) and RE_CANDIDATES.findall(targ.id):
+            if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
 
-    elif isinstance(node.parent, ast.Index) and RE_CANDIDATES.findall(node.s):
+    elif isinstance(node.parent, ast.Index) and RE_CANDIDATES.search(node.s):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node.parent.parent.parent
@@ -98,7 +100,7 @@ def hardcoded_password_string(context):
         # looks for "candidate == 'some_string'"
         comp = node.parent
         if isinstance(comp.left, ast.Name):
-            if RE_CANDIDATES.findall(comp.left.id):
+            if RE_CANDIDATES.search(comp.left.id):
                 if isinstance(comp.comparators[0], ast.Str):
                     return _report(comp.comparators[0].s)
 
@@ -150,7 +152,7 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        if isinstance(kw.value, ast.Str) and RE_CANDIDATES.findall(kw.arg):
+        if isinstance(kw.value, ast.Str) and RE_CANDIDATES.search(kw.arg):
             return _report(kw.value.s)
 
 
@@ -211,5 +213,5 @@ def hardcoded_password_default(context):
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, ast.Name) or isinstance(key, ast.arg):
             check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-            if isinstance(val, ast.Str) and RE_CANDIDATES.findall(check):
+            if isinstance(val, ast.Str) and RE_CANDIDATES.search(check):
                 return _report(val.s)
