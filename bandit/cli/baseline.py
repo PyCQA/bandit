@@ -170,7 +170,7 @@ def initialize():
                         default='terminal', help='specify output format',
                         choices=valid_baseline_formats)
 
-    args, unknown = parser.parse_known_args()
+    args, _ = parser.parse_known_args()
 
     # #################### Setup Output #######################################
     # set the output format, or use a default if not provided
