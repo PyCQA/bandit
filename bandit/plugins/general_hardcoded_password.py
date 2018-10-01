@@ -17,6 +17,8 @@
 import ast
 import sys
 
+import six
+
 import bandit
 from bandit.core import test_properties as test
 
@@ -210,6 +212,10 @@ def hardcoded_password_default(context):
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, ast.Name) or isinstance(key, ast.arg):
-            check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-            if isinstance(val, ast.Str) and check in CANDIDATES:
+            check = key.arg if not six.PY2 else key.id  # Py3
+
+            if (sys.version_info >= (3, 8) and isinstance(val, ast.Constant)
+                    and check in CANDIDATES):
+                return _report(val.value)
+            elif isinstance(val, ast.Str) and check in CANDIDATES:
                 return _report(val.s)
