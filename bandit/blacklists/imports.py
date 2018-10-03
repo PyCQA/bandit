@@ -200,26 +200,6 @@ library.
 |      |                     | - Crypto.Util                      |           |
 +------+---------------------+------------------------------------+-----------+
 
-B414: import_pycryptodome
--------------------------
-pycryptodome is a direct fork of pycrypto that has not fully addressed
-the issues inherent in PyCrypto.  It seems to exist, mainly, as an API
-compatible continuation of pycrypto and should be deprecated in favor
-of pyca/cryptography which has more support among the Python community.
-
-+------+---------------------+------------------------------------+-----------+
-| ID   |  Name               |  Imports                           |  Severity |
-+======+=====================+====================================+===========+
-| B414 | import_pycryptodome | - Cryptodome.Cipher                | high      |
-|      |                     | - Cryptodome.Hash                  |           |
-|      |                     | - Cryptodome.IO                    |           |
-|      |                     | - Cryptodome.Protocol              |           |
-|      |                     | - Cryptodome.PublicKey             |           |
-|      |                     | - Cryptodome.Random                |           |
-|      |                     | - Cryptodome.Signature             |           |
-|      |                     | - Cryptodome.Util                  |           |
-+------+---------------------+------------------------------------+-----------+
-
 """
 
 from bandit.blacklists import utils
@@ -321,20 +301,6 @@ def gen_blacklist():
          'Crypto.Util'],
         'The pyCrypto library and its module {name} are no longer actively '
         'maintained and have been deprecated. '
-        'Consider using pyca/cryptography library.', 'HIGH'))
-
-    sets.append(utils.build_conf_dict(
-        'import_pycryptodome', 'B414',
-        ['Cryptodome.Cipher',
-         'Cryptodome.Hash',
-         'Cryptodome.IO',
-         'Cryptodome.Protocol',
-         'Cryptodome.PublicKey',
-         'Cryptodome.Random',
-         'Cryptodome.Signature',
-         'Cryptodome.Util'],
-        'The pycryptodome library is not considered a secure alternative '
-        'to pycrypto.'
         'Consider using pyca/cryptography library.', 'HIGH'))
 
     return {'Import': sets, 'ImportFrom': sets, 'Call': sets}
