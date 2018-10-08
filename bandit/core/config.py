@@ -46,12 +46,21 @@ class BanditConfig(object):
                 raise utils.ConfigError("Could not read config file.",
                                         config_file)
 
-            try:
-                self._config = yaml.safe_load(f)
-                self.validate(config_file)
-            except yaml.YAMLError as err:
-                LOG.error(err)
-                raise utils.ConfigError("Error parsing file.", config_file)
+            if config_file.endswith('.toml'):
+                import toml
+                try:
+                    self._config = toml.load(f)['tool']['bandit']
+                except toml.TomlDecodeError as err:
+                    LOG.error(err)
+                    raise utils.ConfigError("Error parsing file.", config_file)
+            else:
+                try:
+                    self._config = yaml.safe_load(f)
+                except yaml.YAMLError as err:
+                    LOG.error(err)
+                    raise utils.ConfigError("Error parsing file.", config_file)
+
+            self.validate(config_file)
 
             # valid config must be a dict
             if not isinstance(self._config, dict):
