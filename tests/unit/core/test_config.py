@@ -34,7 +34,8 @@ class TempFile(fixtures.Fixture):
     def setUp(self):
         super(TempFile, self).setUp()
 
-        with tempfile.NamedTemporaryFile(suffix=self.suffix, mode='wt', delete=False) as f:
+        with tempfile.NamedTemporaryFile(suffix=self.suffix, mode='wt',
+                                         delete=False) as f:
             if self.contents:
                 f.write(self.contents)
 
