@@ -37,6 +37,44 @@ several config files and pick from them using `-c`. If you only wish to control
 the specific tests that are to be run (and not their parameters) then using
 `-s` or `-t` on the command line may be more appropriate.
 
+Also you can configure bandit via
+`pyproject.toml <https://www.python.org/dev/peps/pep-0518/>`_ file. In this
+case you should explicitly specify path to configvia `-s` too.File example:
+
+.. code-block:: python
+    [tool.bandit.profiles.test_1]
+    include = [
+      "any_other_function_with_shell_equals_true",
+      "assert_used",
+    ]
+
+    [tool.bandit.profiles.test_2]
+    include = ["blacklist_calls"]
+
+    [tool.bandit.profiles.test_3]
+    include = ["blacklist_imports"]
+
+    [tool.bandit.profiles.test_4]
+    exclude = ["assert_used"]
+
+    [tool.bandit.profiles.test_5]
+    exclude = ["blacklist_calls", "blacklist_imports"]
+
+    [tool.bandit.profiles.test_6]
+    include = ["blacklist_calls"]
+    exclude = ["blacklist_imports"]
+
+    [[tool.bandit.blacklist_calls.bad_name_sets]]
+      [tool.bandit.blacklist_calls.bad_name_sets.pickle]
+      qualnames = ["pickle.loads"]
+      message = "{func} library appears to be in use."
+
+    [[tool.bandit.blacklist_imports.bad_import_sets]]
+      [tool.bandit.blacklist_imports.bad_import_sets.telnet]
+      imports = ["telnetlib"]
+      level = "HIGH"
+      message = "{module} is considered insecure."
+
 Skipping Tests
 --------------
 The bandit config may contain optional lists of test IDs to either include
