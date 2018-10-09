@@ -63,7 +63,7 @@ def _get_options_from_ini(ini_path, target):
         bandit_files = []
 
         for t in target:
-            for root, dirnames, filenames in os.walk(t):
+            for root, _, filenames in os.walk(t):
                 for filename in fnmatch.filter(filenames, '.bandit'):
                     bandit_files.append(os.path.join(root, filename))
 
