@@ -1,16 +1,16 @@
 # The order of packages is significant, because pip processes them in the order
 # of appearance. Changing the order has an impact on the overall integration
 # process, which may cause wedges in the gate later.
-coverage!=4.4,>=4.0   # Apache-2.0
-fixtures>=3.0.0       # Apache-2.0/BSD
-hacking>=1.0.0        # Apache-2.0
-mock>=2.0.0           # BSD
-stestr>=1.0.0         # Apache-2.0
-testscenarios>=0.4    # Apache-2.0/BSD
-testtools>=2.2.0      # MIT
-oslotest>=3.2.0       # Apache-2.0
-toml                  # MIT
+coverage!=4.4,>=4.0 # Apache-2.0
+fixtures>=3.0.0 # Apache-2.0/BSD
+hacking>=1.0.0 # Apache-2.0
+mock>=2.0.0 # BSD
+stestr>=1.0.0 # Apache-2.0
+testscenarios>=0.4 # Apache-2.0/BSD
+testtools>=2.2.0 # MIT
+toml # MIT
+oslotest>=3.2.0 # Apache-2.0
 
 beautifulsoup4>=4.6.0 # MIT
 
-pylint==1.4.5         # GPLv2
+pylint==1.4.5 # GPLv2
