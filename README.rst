@@ -233,7 +233,8 @@ Usage::
       B505  weak_cryptographic_key
       B506  yaml_load
       B507  ssh_no_host_key_verification
-      B508  snmp_weak_cryptography_used
+      B508  snmp_insecure_version
+      B509  snmp_weak_cryptography
       B601  paramiko_calls
       B602  subprocess_popen_with_shell_equals_true
       B603  subprocess_without_shell_equals_true

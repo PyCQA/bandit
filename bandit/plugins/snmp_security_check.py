@@ -14,25 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-r"""
------------------------------
-B508: snmp_security_check
------------------------------
 
-This test is for checking for the usage of insecure SNMP version such as:
-  v1, v2c and v3 using noAuthNoPriv.
-
-Using the pysnmp documentation:
-  http://snmplabs.com/pysnmp/examples/hlapi/asyncore/sync/manager/cmdgen/snmp-versions.html
-
-Please update your code to use more secure versions of SNMP. For example:
-
-Instead of:
-  `CommunityData('public', mpModel=0)`
-
-Use (Defaults to usmHMACMD5AuthProtocol and usmDESPrivProtocol
-  `UsmUserData("securityName","authName","privName")`
-"""
 
 import bandit
 from bandit.core import test_properties as test
@@ -41,6 +23,25 @@ from bandit.core import test_properties as test
 @test.checks("Call")
 @test.test_id('B508')
 def snmp_insecure_version_check(context):
+    r"""
+    -----------------------------
+    B508: snmp_insecure_version
+    -----------------------------
+
+    This test is for checking for the usage of insecure SNMP version such as:
+      v1, v2c and v3 using noAuthNoPriv.
+
+    Using the pysnmp documentation:
+      http://snmplabs.com/pysnmp/examples/hlapi/asyncore/sync/manager/cmdgen/snmp-versions.html
+
+    Please update your code to use more secure versions of SNMP. For example:
+
+    Instead of:
+      `CommunityData('public', mpModel=0)`
+
+    Use (Defaults to usmHMACMD5AuthProtocol and usmDESPrivProtocol
+      `UsmUserData("securityName","authName","privName")`
+    """
     if context.call_function_name_qual == 'CommunityData':
         # We called community data. Lets check our args
         if context.check_call_arg_value("mpModel", 0) or \
@@ -55,8 +56,27 @@ def snmp_insecure_version_check(context):
 
 
 @test.checks("Call")
-@test.test_id('B508')
+@test.test_id('B509')
 def snmp_crypto_check(context):
+    r"""
+    -----------------------------
+    B509: snmp_weak_cryptography
+    -----------------------------
+
+    This test is for checking for the usage of insecure SNMP cryptography such as:
+      v3 using noAuthNoPriv.
+
+    Using the pysnmp documentation:
+      http://snmplabs.com/pysnmp/examples/hlapi/asyncore/sync/manager/cmdgen/snmp-versions.html
+
+    Please update your code to use more secure versions of SNMP. For example:
+
+    Instead of:
+      `CommunityData('public', mpModel=0)`
+
+    Use (Defaults to usmHMACMD5AuthProtocol and usmDESPrivProtocol
+      `UsmUserData("securityName","authName","privName")`
+    """
     if context.call_function_name_qual == 'UsmUserData':
         if context.call_args_count == 1 or context.call_args_count == 1:
             return bandit.Issue(

@@ -1,3 +1,0 @@
-[report]
-include = bandit/*
-omit = bandit/tests/functional/*
