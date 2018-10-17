@@ -1,5 +1,4 @@
-from pysnmp.hlapi import UsmUserData
-from pysnmp.hlapi import CommunityData
+from pysnmp.hlapi import CommunityData, UsmUserData
 
 # SHOULD FAIL
 a = CommunityData('public', mpModel=0)
