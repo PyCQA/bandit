@@ -253,7 +253,7 @@ Version control integration
 ---------------------------
 
 Use `pre-commit <https://pre-commit.com/>`_. Once you `have it
-installed <https://pre-commit.com/#install)>`_, add this to the
+installed <https://pre-commit.com/#install>`_, add this to the
 `.pre-commit-config.yaml` in your repository
 (be sure to update `rev` to point to a real git tag/revision!)::
 
