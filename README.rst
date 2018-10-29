@@ -37,7 +37,7 @@ this Bandit processes each file, builds an AST from it, and runs appropriate
 plugins against the AST nodes. Once Bandit has finished scanning all the files
 it generates a report.
 
-Bandit was originally developed within the OpenStack Security Project and 
+Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
 
 Installation
@@ -262,6 +262,23 @@ This is useful for ignoring known vulnerabilities that you believe are non-issue
 
     bandit -f json -o PATH_TO_OUTPUT_FILE
 
+
+Version control integration
+---------------------------
+
+Use `pre-commit <https://pre-commit.com/>`_. Once you `have it
+installed <https://pre-commit.com/#install)>`_, add this to the
+`.pre-commit-config.yaml` in your repository
+(be sure to update `rev` to point to a real git tag/revision!)::
+
+    repos:
+    -   repo: https://github.com/PyCQA/bandit
+        rev: '' # Update me!
+        hooks:
+        - id: bandit
+
+
+Then run `pre-commit install` and you're ready to go.
 
 Configuration
 -------------
