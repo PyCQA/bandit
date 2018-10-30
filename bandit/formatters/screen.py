@@ -78,7 +78,7 @@ def get_verbose_details(manager):
 def get_metrics(manager):
     bits = []
     bits.append(header("\nRun metrics:"))
-    for (criteria, default) in constants.CRITERIA:
+    for (criteria, _) in constants.CRITERIA:
         bits.append("\tTotal issues (by %s):" % (criteria.lower()))
         for rank in constants.RANKING:
             bits.append("\t\t%s: %s" % (
