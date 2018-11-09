@@ -318,6 +318,27 @@ For further information:
 |      |                     | - os.tmpnam                        |           |
 +------+---------------------+------------------------------------+-----------+
 
+B326: ast_overflow
+-------------------
+
+It is possible to crash the Python interpreter by passing sufficiently
+large/complex strings to ast.literal_eval(), ast.parse(), compile(),
+dbm.dumb.open(), eval() or exec() due to stack depth limitations in Python’s
+AST compiler. Ensure these functions are not used on untrusted data.
+
+For further information:
+    https://docs.python.org/3.7/library/ast.html#ast.parse
+    https://bugs.python.org/issue32758
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B326 | ast_overflow        | - ast.literal_eval                 | Medium    |
+|      |                     | - ast.parse                        |           |
+|      |                     | - compile                          |           |
+|      |                     | - dbm.dumb.open                    |           |
++------+---------------------+------------------------------------+-----------+
+
 """
 
 from bandit.blacklists import utils
@@ -572,6 +593,20 @@ def gen_blacklist():
         'tempnam', 'B325', ['os.tempnam', 'os.tmpnam'],
         'Use of os.tempnam() and os.tmpnam() is vulnerable to symlink '
         'attacks. Consider using tmpfile() instead.'
+        ))
+
+    # omitted eval() and exec() as they are already covered by B307 and B102
+    sets.append(utils.build_conf_dict(
+        'ast_overflow', 'B326',
+        ['ast.literal_eval',
+         'ast.parse',
+         'compile',
+         'dbm.dumb.open'],
+        'It is possible to crash the Python interpreter by passing '
+        'sufficiently large/complex strings to ast.literal_eval(), '
+        'ast.parse(), compile(), dbm.dumb.open(), eval() or exec() due to '
+        'stack depth limitations in Python’s AST compiler. Ensure these '
+        'functions are not used on untrusted data.'
         ))
 
     return {'Call': sets}

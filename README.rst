@@ -212,6 +212,7 @@ Usage::
       B323  unverified_context
       B324  hashlib_new_insecure_functions
       B325  tempnam
+      B326  ast_overflow
       B401  import_telnetlib
       B402  import_ftplib
       B403  import_pickle
