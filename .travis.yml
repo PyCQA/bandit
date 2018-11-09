@@ -1,8 +1,7 @@
-language: python
-
 cache: pip
 
-sudo: false
+before_install:
+  - ./.travis/install.sh
 
 install:
   - pip install tox
@@ -11,28 +10,66 @@ script: tox
 
 matrix:
   include:
-    - python: 2.7
+    - os: linux
+      language: python
+      python: 2.7
       env: TOXENV=pylint
-    - python: 2.7
+    - os: linux
+      language: python
+      python: 2.7
       env: TOXENV=pep8
-    - python: 2.7
+    - os: linux
+      language: python
+      python: 2.7
       env: TOXENV=py27
-    - python: 3.5
+    - os: osx
+      language: generic
+      python: 2.7
+      env: TOXENV=py27
+    - os: linux
+      language: python
+      python: 3.5
       env: TOXENV=py35
-    - python: 3.6
+    - os: osx
+      language: generic
+      python: 3.5
+      env: TOXENV=py35
+    - os: linux
+      language: python
+      python: 3.6
       env: TOXENV=py36
-    - python: 3.7
+    - os: osx
+      language: generic
+      python: 3.6
+      env: TOXENV=py36
+    - os: linux
+      language: python
+      python: 3.7
       env: TOXENV=py37
       dist: xenial
       sudo: true
-    - python: 3.8-dev
+    - os: osx
+      language: generic
+      python: 3.7
+      env: TOXENV=py37
+    - os: linux
+      language: python
+      python: 3.8-dev
       env: TOXENV=py38
       dist: xenial
       sudo: true
-    - python: pypy
+    - os: linux
+      language: python
+      python: pypy
+      env: TOXENV=pypy
+    - os: osx
+      language: generic
+      python: pypy
       env: TOXENV=pypy
   allow_failures:
-    - python: 3.8-dev
+    - os: linux
+      language: python
+      python: 3.8-dev
       env: TOXENV=py38
       dist: xenial
       sudo: true
