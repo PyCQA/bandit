@@ -26,3 +26,4 @@ d["password"] = "blerg"
 EMAIL_PASSWORD = "secret"
 email_pwd = 'emails_secret'
 my_secret_password_for_email = 'd6s$f9g!j8mg7hw?n&2'
+passphrase='1234'
