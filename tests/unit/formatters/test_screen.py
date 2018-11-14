@@ -45,11 +45,11 @@ class ScreenFormatterTests(testtools.TestCase):
                           "{}   Severity: {}   Confidence: {}".
                           format(_indent_val, _issue.severity.capitalize(),
                                  _issue.confidence.capitalize()),
-                          "{}   Location: {}:{}{}".
-                          format(_indent_val, _issue.fname, _issue.lineno,
-                                 screen.COLOR['DEFAULT']),
-                          "{}   More Info: {}".format(
-                              _indent_val, docs_utils.get_url(_issue.test_id))]
+                          "{}   Location: {}:{}".
+                          format(_indent_val, _issue.fname, _issue.lineno),
+                          "{}   More Info: {}{}".format(
+                              _indent_val, docs_utils.get_url(_issue.test_id),
+                              screen.COLOR['DEFAULT'])]
             if _code:
                 return_val.append("{}{}".format(_indent_val, _code))
             return '\n'.join(return_val)
