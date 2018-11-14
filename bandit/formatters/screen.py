@@ -78,7 +78,7 @@ def get_verbose_details(manager):
 def get_metrics(manager):
     bits = []
     bits.append(header("\nRun metrics:"))
-    for (criteria, default) in constants.CRITERIA:
+    for (criteria, _) in constants.CRITERIA:
         bits.append("\tTotal issues (by %s):" % (criteria.lower()))
         for rank in constants.RANKING:
             bits.append("\t\t%s: %s" % (
@@ -97,13 +97,12 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))
 
-    bits.append("%s   Location: %s:%s%s" % (
+    bits.append("%s   Location: %s:%s" % (
         indent, issue.fname,
-        issue.lineno if show_lineno else "",
-        COLOR['DEFAULT']))
+        issue.lineno if show_lineno else ""))
 
-    bits.append("%s   More Info: %s" % (
-        indent, docs_utils.get_url(issue.test_id)))
+    bits.append("%s   More Info: %s%s" % (
+        indent, docs_utils.get_url(issue.test_id), COLOR['DEFAULT']))
 
     if show_code:
         bits.extend([indent + l for l in
@@ -162,25 +161,27 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """
 
     bits = []
-    bits.append(header("Run started:%s", datetime.datetime.utcnow()))
+    issues = manager.get_issue_list(sev_level, conf_level)
+    if len(issues) or not manager.quiet:
+        bits.append(header("Run started:%s", datetime.datetime.utcnow()))
 
-    if manager.verbose:
-        bits.append(get_verbose_details(manager))
+        if manager.verbose:
+            bits.append(get_verbose_details(manager))
 
-    bits.append(header("\nTest results:"))
-    bits.append(get_results(manager, sev_level, conf_level, lines))
-    bits.append(header("\nCode scanned:"))
-    bits.append('\tTotal lines of code: %i' %
-                (manager.metrics.data['_totals']['loc']))
+        bits.append(header("\nTest results:"))
+        bits.append(get_results(manager, sev_level, conf_level, lines))
+        bits.append(header("\nCode scanned:"))
+        bits.append('\tTotal lines of code: %i' %
+                    (manager.metrics.data['_totals']['loc']))
 
-    bits.append('\tTotal lines skipped (#nosec): %i' %
-                (manager.metrics.data['_totals']['nosec']))
+        bits.append('\tTotal lines skipped (#nosec): %i' %
+                    (manager.metrics.data['_totals']['nosec']))
 
-    bits.append(get_metrics(manager))
-    skipped = manager.get_skipped()
-    bits.append(header("Files skipped (%i):", len(skipped)))
-    bits.extend(["\t%s (%s)" % skip for skip in skipped])
-    do_print(bits)
+        bits.append(get_metrics(manager))
+        skipped = manager.get_skipped()
+        bits.append(header("Files skipped (%i):", len(skipped)))
+        bits.extend(["\t%s (%s)" % skip for skip in skipped])
+        do_print(bits)
 
     if fileobj.name != sys.stdout.name:
         LOG.info("Screen formatter output was not written to file: %s, "
