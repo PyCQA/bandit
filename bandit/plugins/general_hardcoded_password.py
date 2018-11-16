@@ -214,7 +214,9 @@ def hardcoded_password_default(context):
 
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
-        py3_is_arg = isinstance(key, ast.arg) if sys.version_info.major > 2 else True  # Py3
+        py3_is_arg = True
+        if sys.version_info.major > 2:
+            py3_is_arg = isinstance(key, ast.arg)
         if isinstance(key, ast.Name) or py3_is_arg:
             check = key.arg if sys.version_info.major > 2 else key.id  # Py3
             if isinstance(val, ast.Str) and RE_CANDIDATES.search(check):
