@@ -333,7 +333,7 @@ For further information:
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
-| B326 | ast_overflow        | - ast.literal_eval                 | Medium    |
+| B326 | ast_overflow        | - ast.literal_eval                 | Low       |
 |      |                     | - ast.parse                        |           |
 |      |                     | - compile                          |           |
 |      |                     | - dbm.dumb.open                    |           |
@@ -606,7 +606,8 @@ def gen_blacklist():
         'sufficiently large/complex strings to ast.literal_eval(), '
         'ast.parse(), compile(), dbm.dumb.open(), eval() or exec() due to '
         'stack depth limitations in Python’s AST compiler. Ensure these '
-        'functions are not used on untrusted data.'
+        'functions are not used on untrusted data.',
+        'LOW'
         ))
 
     return {'Call': sets}

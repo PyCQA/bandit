@@ -275,7 +275,7 @@ class FunctionalTests(testtools.TestCase):
     def test_ast_overflow(self):
         '''Test for functions susceptible to AST stack overflow.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 4, 'HIGH': 0},
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 4, 'MEDIUM': 0, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 4}
         }
         self.check_example('ast_overflow.py', expect)
