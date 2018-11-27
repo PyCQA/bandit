@@ -78,7 +78,7 @@ def get_verbose_details(manager):
 def get_metrics(manager):
     bits = []
     bits.append(header("\nRun metrics:"))
-    for (criteria, default) in constants.CRITERIA:
+    for (criteria, _) in constants.CRITERIA:
         bits.append("\tTotal issues (by %s):" % (criteria.lower()))
         for rank in constants.RANKING:
             bits.append("\t\t%s: %s" % (
@@ -97,13 +97,12 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))
 
-    bits.append("%s   Location: %s:%s%s" % (
+    bits.append("%s   Location: %s:%s" % (
         indent, issue.fname,
-        issue.lineno if show_lineno else "",
-        COLOR['DEFAULT']))
+        issue.lineno if show_lineno else ""))
 
-    bits.append("%s   More Info: %s" % (
-        indent, docs_utils.get_url(issue.test_id)))
+    bits.append("%s   More Info: %s%s" % (
+        indent, docs_utils.get_url(issue.test_id), COLOR['DEFAULT']))
 
     if show_code:
         bits.extend([indent + l for l in
