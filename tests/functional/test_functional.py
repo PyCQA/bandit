@@ -174,6 +174,10 @@ class FunctionalTests(testtools.TestCase):
                 'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
                                'HIGH': 1}
             }
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf,
+            profile={'exclude': ['B326']}
+        )
         self.check_example(filename, expect)
 
     def test_hardcoded_passwords(self):
@@ -274,11 +278,26 @@ class FunctionalTests(testtools.TestCase):
 
     def test_ast_overflow(self):
         '''Test for functions susceptible to AST stack overflow.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 4, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 4}
-        }
-        self.check_example('ast_overflow.py', expect)
+        filename = 'ast_overflow-{}.py'
+        if six.PY2:
+            filename = filename.format('py2')
+            expect = {
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 7, 'MEDIUM': 0, 'HIGH': 0},
+                'CONFIDENCE': {
+                    'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 7}
+            }
+        else:
+            filename = filename.format('py3')
+            expect = {
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 6, 'MEDIUM': 0, 'HIGH': 0},
+                'CONFIDENCE': {
+                    'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 6}
+            }
+        self.b_mgr.b_ts = b_test_set.BanditTestSet(
+            config=self.b_mgr.b_conf,
+            profile={'exclude': ['B102', 'B307']}
+        )
+        self.check_example(filename, expect)
 
     def test_nonsense(self):
         '''Test that a syntactically invalid module is skipped.'''

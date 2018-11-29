@@ -337,6 +337,8 @@ For further information:
 |      |                     | - ast.parse                        |           |
 |      |                     | - compile                          |           |
 |      |                     | - dbm.dumb.open                    |           |
+|      |                     | - eval                             |           |
+|      |                     | - exec                             |           |
 +------+---------------------+------------------------------------+-----------+
 
 """
@@ -595,13 +597,13 @@ def gen_blacklist():
         'attacks. Consider using tmpfile() instead.'
         ))
 
-    # omitted eval() and exec() as they are already covered by B307 and B102
     sets.append(utils.build_conf_dict(
         'ast_overflow', 'B326',
         ['ast.literal_eval',
          'ast.parse',
          'compile',
-         'dbm.dumb.open'],
+         'dbm.dumb.open',
+         'eval'],
         'It is possible to crash the Python interpreter by passing '
         'sufficiently large/complex strings to ast.literal_eval(), '
         'ast.parse(), compile(), dbm.dumb.open(), eval() or exec() due to '
