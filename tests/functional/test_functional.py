@@ -16,8 +16,8 @@
 
 import os
 
-import sys
 import six
+import sys
 import testtools
 
 from bandit.core import config as b_config
@@ -409,14 +409,18 @@ class FunctionalTests(testtools.TestCase):
         if sys.version[0] == 3 and sys.version[1] >= 6:
             filename = filename.format('-py36')
             expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 16, 'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 9, 'MEDIUM': 7, 'HIGH': 0}
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 16,
+                             'HIGH': 0},
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 9, 'MEDIUM': 7,
+                               'HIGH': 0}
             }
         else:
             filename = filename.format('')
             expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14, 'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6, 'HIGH': 0}
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14,
+                             'HIGH': 0},
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6,
+                               'HIGH': 0}
             }
 
         self.check_example(filename, expect)
