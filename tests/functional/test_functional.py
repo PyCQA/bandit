@@ -406,8 +406,7 @@ class FunctionalTests(testtools.TestCase):
     def test_sql_statements(self):
         '''Test for SQL injection through string building.'''
         filename = 'sql_statements{}.py'
-        if (sys.version_info[0] == 3 and sys.version_info[1] < 6) \
-                or (sys.version_info[0] <= 2):
+        if sys.version_info <= (3, 6):
             filename = filename.format('')
             expect = {
                 'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14,
