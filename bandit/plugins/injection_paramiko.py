@@ -23,9 +23,8 @@ Paramiko is a Python library designed to work with the SSH2 protocol for secure
 (encrypted and authenticated) connections to remote machines. It is intended to
 run commands on a remote host. These commands are run within a shell on the
 target and are thus vulnerable to various shell injection attacks. Bandit
-reports a MEDIUM issue when it detects the use of Paramiko's "exec_command" or
-"invoke_shell" methods advising the user to check inputs are correctly
-sanitized.
+reports a MEDIUM issue when it detects the use of Paramiko's "exec_command"
+method advising the user to check inputs are correctly sanitized.
 
 :Example:
 
@@ -36,16 +35,8 @@ sanitized.
        Severity: Medium   Confidence: Medium
        Location: ./examples/paramiko_injection.py:4
     3    # this is not safe
-    4    paramiko.exec_command('something; reallly; unsafe')
+    4    paramiko.exec_command('something; really; unsafe')
     5
-
-    >> Issue: Possible shell injection via Paramiko call, check inputs are
-       properly sanitized.
-       Severity: Medium   Confidence: Medium
-       Location: ./examples/paramiko_injection.py:10
-    9    # this is not safe
-    10   SSHClient.invoke_shell('something; bad; here\n')
-    11
 
 .. seealso::
 
@@ -68,7 +59,7 @@ def paramiko_calls(context):
                   'are properly sanitized.')
     for module in ['paramiko']:
         if context.is_module_imported_like(module):
-            if context.call_function_name in ['exec_command', 'invoke_shell']:
+            if context.call_function_name in ['exec_command']:
                 return bandit.Issue(severity=bandit.MEDIUM,
                                     confidence=bandit.MEDIUM,
                                     text=issue_text)
