@@ -74,7 +74,7 @@ class BanditCLIMainLoggerTests(testtools.TestCase):
 
     def test_init_logger(self):
         # Test that a logger was properly initialized
-        bandit._init_logger(False)
+        bandit._init_logger()
 
         self.assertIsNotNone(self.logger)
         self.assertNotEqual(self.logger.handlers, [])
@@ -82,7 +82,7 @@ class BanditCLIMainLoggerTests(testtools.TestCase):
 
     def test_init_logger_debug_mode(self):
         # Test that the logger's level was set at 'DEBUG'
-        bandit._init_logger(True)
+        bandit._init_logger(logging.DEBUG)
         self.assertEqual(logging.DEBUG, self.logger.level)
 
 

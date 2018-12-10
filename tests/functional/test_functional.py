@@ -15,6 +15,7 @@
 # under the License.
 
 import os
+import sys
 
 import six
 import testtools
@@ -404,11 +405,25 @@ class FunctionalTests(testtools.TestCase):
 
     def test_sql_statements(self):
         '''Test for SQL injection through string building.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6, 'HIGH': 0}
-        }
-        self.check_example('sql_statements.py', expect)
+        filename = 'sql_statements{}.py'
+        if sys.version_info <= (3, 6):
+            filename = filename.format('')
+            expect = {
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14,
+                             'HIGH': 0},
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6,
+                               'HIGH': 0}
+            }
+        else:
+            filename = filename.format('-py36')
+            expect = {
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 16,
+                             'HIGH': 0},
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 9, 'MEDIUM': 7,
+                               'HIGH': 0}
+            }
+
+        self.check_example(filename, expect)
 
     def test_ssl_insecure_version(self):
         '''Test for insecure SSL protocol versions.'''
@@ -471,6 +486,14 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
         }
         self.check_example('yaml_load.py', expect)
+
+    def test_host_key_verification(self):
+        '''Test for ignoring host key verification.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0}
+        }
+        self.check_example('no_host_key_verification.py', expect)
 
     def test_jinja2_templating(self):
         '''Test jinja templating for potential XSS bugs.'''

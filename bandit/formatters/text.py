@@ -67,7 +67,7 @@ def get_verbose_details(manager):
 def get_metrics(manager):
     bits = []
     bits.append("\nRun metrics:")
-    for (criteria, default) in constants.CRITERIA:
+    for (criteria, _) in constants.CRITERIA:
         bits.append("\tTotal issues (by %s):" % (criteria.lower()))
         for rank in constants.RANKING:
             bits.append("\t\t%s: %s" % (
@@ -141,29 +141,32 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """
 
     bits = []
-    bits.append("Run started:%s" % datetime.datetime.utcnow())
+    issues = manager.get_issue_list(sev_level, conf_level)
 
-    if manager.verbose:
-        bits.append(get_verbose_details(manager))
+    if len(issues) or not manager.quiet:
+        bits.append("Run started:%s" % datetime.datetime.utcnow())
 
-    bits.append("\nTest results:")
-    bits.append(get_results(manager, sev_level, conf_level, lines))
-    bits.append("\nCode scanned:")
-    bits.append('\tTotal lines of code: %i' %
-                (manager.metrics.data['_totals']['loc']))
+        if manager.verbose:
+            bits.append(get_verbose_details(manager))
 
-    bits.append('\tTotal lines skipped (#nosec): %i' %
-                (manager.metrics.data['_totals']['nosec']))
+        bits.append("\nTest results:")
+        bits.append(get_results(manager, sev_level, conf_level, lines))
+        bits.append("\nCode scanned:")
+        bits.append('\tTotal lines of code: %i' %
+                    (manager.metrics.data['_totals']['loc']))
 
-    skipped = manager.get_skipped()
-    bits.append(get_metrics(manager))
-    bits.append("Files skipped (%i):" % len(skipped))
-    bits.extend(["\t%s (%s)" % skip for skip in skipped])
-    result = '\n'.join([bit for bit in bits]) + '\n'
+        bits.append('\tTotal lines skipped (#nosec): %i' %
+                    (manager.metrics.data['_totals']['nosec']))
 
-    with fileobj:
-        wrapped_file = utils.wrap_file_object(fileobj)
-        wrapped_file.write(utils.convert_file_contents(result))
+        skipped = manager.get_skipped()
+        bits.append(get_metrics(manager))
+        bits.append("Files skipped (%i):" % len(skipped))
+        bits.extend(["\t%s (%s)" % skip for skip in skipped])
+        result = '\n'.join([bit for bit in bits]) + '\n'
+
+        with fileobj:
+            wrapped_file = utils.wrap_file_object(fileobj)
+            wrapped_file.write(utils.convert_file_contents(result))
 
     if fileobj.name != sys.stdout.name:
         LOG.info("Text output written to file: %s", fileobj.name)
