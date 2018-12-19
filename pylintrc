@@ -12,6 +12,7 @@
 # TODO(browne): fix these in the future
 # C0103: invalid-name
 # E1101: no-member
+# E1111: assignment-from-no-return
 # R0902: too-many-instance-attributes
 # R0912: too-many-branches
 # R0913: too-many-arguments
@@ -26,7 +27,7 @@
 # W0613: unused-argument
 # W0621: redefined-outer-name
 # W0703: broad-except
-disable=C0111,C0301,C0325,F0401,W0511,W0142,W0622,C0103,E1101,R0902,R0912,R0913,R0914,R0915,W0110,W0141,W0201,W0401,W0603,W0212,W0613,W0621,W0703
+disable=C0111,C0301,C0325,F0401,W0511,W0142,W0622,C0103,E1101,E1111,R0902,R0912,R0913,R0914,R0915,W0110,W0141,W0201,W0401,W0603,W0212,W0613,W0621,W0703
 
 [Basic]
 # Variable names can be 1 to 31 characters long, with lowercase and underscores
