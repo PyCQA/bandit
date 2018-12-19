@@ -1,11 +1,10 @@
 import paramiko
 
+
+client = paramiko.client.SSHClient()
+
 # this is not safe
-paramiko.exec_command('something; really; unsafe')
+client.exec_command('something; really; unsafe')
 
 # this is safe
-paramiko.connect('somehost')
-
-# this is not safe
-SSHClient.invoke_shell('something; bad; here\n')
-
+client.connect('somehost')
