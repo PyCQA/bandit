@@ -7,6 +7,10 @@
     :target: https://travis-ci.org/PyCQA/bandit/
     :alt: Build Status
 
+.. image:: https://readthedocs.org/projects/bandit/badge/?version=latest
+    :target: https://readthedocs.org/projects/bandit/
+    :alt: Docs Status
+
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.org/project/bandit/
     :alt: Latest Version

@@ -28,6 +28,7 @@ some form of string building operation. For example:
  - "SELECT thing FROM " + tab
  - "SELECT " + val + " FROM " + tab + ...
  - "SELECT {} FROM derp;".format(var)
+ - f"SELECT foo FROM bar WHERE id = {product}"
 
 Unless care is taken to sanitize and control the input data when building such
 SQL statement strings, an injection attack becomes possible. If strings of this
@@ -93,6 +94,9 @@ def _evaluate_ast(node):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node.parent.parent.parent
+    elif isinstance(node.parent, ast.JoinedStr):
+        statement = node.s
+        wrapper = node.parent.parent
 
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
         names = ['execute', 'executemany']

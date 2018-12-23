@@ -24,7 +24,7 @@ pyflakes==0.8.1
 pylint==1.4.5
 python-mimeparse==1.6.0
 python-subunit==1.0.0
-PyYAML==3.12
+PyYAML==3.13
 requests==2.14.2
 requestsexceptions==1.2.0
 six==1.10.0
