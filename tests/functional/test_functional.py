@@ -15,6 +15,7 @@
 # under the License.
 
 import os
+import sys
 
 import six
 import testtools
@@ -404,11 +405,25 @@ class FunctionalTests(testtools.TestCase):
 
     def test_sql_statements(self):
         '''Test for SQL injection through string building.'''
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6, 'HIGH': 0}
-        }
-        self.check_example('sql_statements.py', expect)
+        filename = 'sql_statements{}.py'
+        if sys.version_info <= (3, 6):
+            filename = filename.format('')
+            expect = {
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14,
+                             'HIGH': 0},
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6,
+                               'HIGH': 0}
+            }
+        else:
+            filename = filename.format('-py36')
+            expect = {
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 16,
+                             'HIGH': 0},
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 9, 'MEDIUM': 7,
+                               'HIGH': 0}
+            }
+
+        self.check_example(filename, expect)
 
     def test_ssl_insecure_version(self):
         '''Test for insecure SSL protocol versions.'''
@@ -597,8 +612,8 @@ class FunctionalTests(testtools.TestCase):
     def test_paramiko_injection(self):
         '''Test paramiko command execution.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0}
         }
         self.check_example('paramiko_injection.py', expect)
 
@@ -708,8 +723,8 @@ class FunctionalTests(testtools.TestCase):
 
     def test_nosec(self):
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
         }
         self.check_example('nosec.py', expect)
 
