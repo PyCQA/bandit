@@ -252,15 +252,15 @@ class UtilTests(testtools.TestCase):
         self.assertEqual(res, b"ascii")
 
     def test_escaped_representation_valid_not_printable(self):
-        res = b_utils.escaped_bytes_representation(b"\u0000")
+        res = b_utils.escaped_bytes_representation(b"\\u0000")
         self.assertEqual(res, b"\\x00")
 
     def test_escaped_representation_invalid(self):
-        res = b_utils.escaped_bytes_representation(b"\uffff")
+        res = b_utils.escaped_bytes_representation(b"\\uffff")
         self.assertEqual(res, b"\\uffff")
 
     def test_escaped_representation_mixed(self):
-        res = b_utils.escaped_bytes_representation(b"ascii\u0000\uffff")
+        res = b_utils.escaped_bytes_representation(b"ascii\\u0000\\uffff")
         self.assertEqual(res, b"ascii\\x00\\uffff")
 
     def test_deepgetattr(self):
