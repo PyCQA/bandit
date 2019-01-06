@@ -1,21 +1,16 @@
-f = open('/tmp/abc', 'w')
-f.write('def')
-f.close()
+with open('/tmp/abc', 'w') as f:
+    f.write('def')
 
 # ok
-f = open('/abc/tmp', 'w')
-f.write('def')
-f.close()
+with open('/abc/tmp', 'w') as f:
+    f.write('def')
 
-f = open('/var/tmp/123', 'w')
-f.write('def')
-f.close()
+with open('/var/tmp/123', 'w') as f:
+    f.write('def')
 
-f = open('/dev/shm/unit/test', 'w')
-f.write('def')
-f.close()
+with open('/dev/shm/unit/test', 'w') as f:
+    f.write('def')
 
 # Negative test
-f = open('/foo/bar', 'w')
-f.write('def')
-f.close()
+with open('/foo/bar', 'w') as f:
+    f.write('def')

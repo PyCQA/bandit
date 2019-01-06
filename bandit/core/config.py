@@ -47,7 +47,8 @@ class BanditConfig(object):
                                         config_file)
 
             try:
-                self._config = yaml.safe_load(f)
+                with f:
+                    self._config = yaml.safe_load(f)
                 self.validate(config_file)
             except yaml.YAMLError as err:
                 LOG.error(err)

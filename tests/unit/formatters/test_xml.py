@@ -69,9 +69,9 @@ class XmlFormatterTests(testtools.TestCase):
         return d
 
     def test_report(self):
-        tmp_file = open(self.tmp_fname, 'wb')
-        b_xml.report(self.manager, tmp_file, self.issue.severity,
-                     self.issue.confidence)
+        with open(self.tmp_fname, 'wb') as tmp_file:
+            b_xml.report(self.manager, tmp_file, self.issue.severity,
+                         self.issue.confidence)
 
         with open(self.tmp_fname) as f:
             data = self._xml_to_dict(ET.XML(f.read()))

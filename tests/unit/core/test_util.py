@@ -28,8 +28,7 @@ from bandit.core import utils as b_utils
 
 def _touch(path):
     '''Create an empty file at ``path``.'''
-    newf = open(path, 'w')
-    newf.close()
+    open(path, 'w').close()
 
 
 class UtilTests(testtools.TestCase):
@@ -225,10 +224,10 @@ class UtilTests(testtools.TestCase):
         # self.assertEqual(name, 'a.list[0]')
 
     def test_linerange(self):
-        self.test_file = open("./examples/jinja2_templating.py")
-        self.tree = ast.parse(self.test_file.read())
+        with open("./examples/jinja2_templating.py") as test_file:
+            tree = ast.parse(test_file.read())
         # Check linerange returns corrent number of lines
-        line = self.tree.body[8]
+        line = tree.body[8]
         lrange = b_utils.linerange(line)
 
         # line 9 should be three lines long
@@ -287,9 +286,8 @@ class UtilTests(testtools.TestCase):
 
         with tempfile.NamedTemporaryFile('r+') as t:
             for test in tests:
-                f = open(t.name, 'w')
-                f.write(test['content'])
-                f.close()
+                with open(t.name, 'w') as f:
+                    f.write(test['content'])
 
                 self.assertEqual(b_utils.parse_ini_file(t.name),
                                  test['expected'])

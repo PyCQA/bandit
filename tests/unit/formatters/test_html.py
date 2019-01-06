@@ -41,9 +41,9 @@ class HtmlFormatterTests(testtools.TestCase):
     def test_report_with_skipped(self):
         self.manager.skipped = [('abc.py', 'File is bad')]
 
-        tmp_file = open(self.tmp_fname, 'w')
-        b_html.report(
-            self.manager, tmp_file, bandit.LOW, bandit.LOW)
+        with open(self.tmp_fname, 'w') as tmp_file:
+            b_html.report(
+                self.manager, tmp_file, bandit.LOW, bandit.LOW)
 
         with open(self.tmp_fname) as f:
             soup = bs4.BeautifulSoup(f.read(), 'html.parser')
@@ -78,9 +78,9 @@ class HtmlFormatterTests(testtools.TestCase):
             [(issue_a, [issue_x, issue_y]),
              (issue_b, [issue_x]), (issue_c, [issue_y])])
 
-        tmp_file = open(self.tmp_fname, 'w')
-        b_html.report(
-            self.manager, tmp_file, bandit.LOW, bandit.LOW)
+        with open(self.tmp_fname, 'w') as tmp_file:
+            b_html.report(
+                self.manager, tmp_file, bandit.LOW, bandit.LOW)
 
         with open(self.tmp_fname) as f:
             soup = bs4.BeautifulSoup(f.read(), 'html.parser')
@@ -143,9 +143,9 @@ class HtmlFormatterTests(testtools.TestCase):
 
         get_issue_list.return_value = {issue_a: [issue_x]}
 
-        tmp_file = open(self.tmp_fname, 'w')
-        b_html.report(
-            self.manager, tmp_file, bandit.LOW, bandit.LOW)
+        with open(self.tmp_fname, 'w') as tmp_file:
+            b_html.report(
+                self.manager, tmp_file, bandit.LOW, bandit.LOW)
 
         with open(self.tmp_fname) as f:
             contents = f.read()
