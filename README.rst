@@ -7,6 +7,10 @@
     :target: https://travis-ci.org/PyCQA/bandit/
     :alt: Build Status
 
+.. image:: https://readthedocs.org/projects/bandit/badge/?version=latest
+    :target: https://readthedocs.org/projects/bandit/
+    :alt: Docs Status
+
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.org/project/bandit/
     :alt: Latest Version
@@ -37,7 +41,7 @@ this Bandit processes each file, builds an AST from it, and runs appropriate
 plugins against the AST nodes. Once Bandit has finished scanning all the files
 it generates a report.
 
-Bandit was originally developed within the OpenStack Security Project and 
+Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
 
 Installation
@@ -250,6 +254,37 @@ Usage::
       B702  use_of_mako_templates
       B703  django_mark_safe
 
+Baseline
+--------
+Bandit allows specifying the path of a baseline report to compare against using the base line argument (i.e. ``-b BASELINE`` or ``--baseline BASELINE``). 
+
+::
+  
+   bandit -b BASELINE
+
+This is useful for ignoring known vulnerabilities that you believe are non-issues (e.g. a cleartext password in a unit test). To generate a baseline report simply run Bandit with the output format set to ``json`` (only JSON-formatted files are accepted as a baseline) an output file path specified:
+
+::
+
+    bandit -f json -o PATH_TO_OUTPUT_FILE
+
+
+Version control integration
+---------------------------
+
+Use `pre-commit <https://pre-commit.com/>`_. Once you `have it
+installed <https://pre-commit.com/#install>`_, add this to the
+`.pre-commit-config.yaml` in your repository
+(be sure to update `rev` to point to a real git tag/revision!)::
+
+    repos:
+    -   repo: https://github.com/PyCQA/bandit
+        rev: '' # Update me!
+        hooks:
+        - id: bandit
+
+
+Then run `pre-commit install` and you're ready to go.
 
 Configuration
 -------------

@@ -48,6 +48,17 @@ from bandit.core import constants
 from bandit.core import docs_utils
 from bandit.core import test_properties
 
+# This fixes terminal colors not displaying properly on Windows systems.
+# Colorama will intercept any ANSI escape codes and convert them to the
+# proper Windows console API calls to change text color.
+if sys.platform.startswith('win32'):
+    try:
+        import colorama
+    except ImportError:
+        pass
+    else:
+        colorama.init()
+
 LOG = logging.getLogger(__name__)
 
 COLOR = {
@@ -97,13 +108,12 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))
 
-    bits.append("%s   Location: %s:%s%s" % (
+    bits.append("%s   Location: %s:%s" % (
         indent, issue.fname,
-        issue.lineno if show_lineno else "",
-        COLOR['DEFAULT']))
+        issue.lineno if show_lineno else ""))
 
-    bits.append("%s   More Info: %s" % (
-        indent, docs_utils.get_url(issue.test_id)))
+    bits.append("%s   More Info: %s%s" % (
+        indent, docs_utils.get_url(issue.test_id), COLOR['DEFAULT']))
 
     if show_code:
         bits.extend([indent + l for l in

@@ -157,9 +157,9 @@ class ManagerTests(testtools.TestCase):
         conf_level = constants.LOW
         output_filename = os.path.join(temp_directory, "_temp_output")
         output_format = "invalid"
-        tmp_file = open(output_filename, 'w')
-        self.manager.output_results(lines, sev_level, conf_level, tmp_file,
-                                    output_format)
+        with open(output_filename, 'w') as tmp_file:
+            self.manager.output_results(lines, sev_level, conf_level,
+                                        tmp_file, output_format)
         self.assertTrue(os.path.isfile(output_filename))
 
     def test_output_results_valid_format(self):
@@ -170,9 +170,9 @@ class ManagerTests(testtools.TestCase):
         conf_level = constants.LOW
         output_filename = os.path.join(temp_directory, "_temp_output.txt")
         output_format = "txt"
-        tmp_file = open(output_filename, 'w')
-        self.manager.output_results(lines, sev_level, conf_level, tmp_file,
-                                    output_format)
+        with open(output_filename, 'w') as tmp_file:
+            self.manager.output_results(lines, sev_level, conf_level,
+                                        tmp_file, output_format)
         self.assertTrue(os.path.isfile(output_filename))
 
     @mock.patch('os.path.isdir')
