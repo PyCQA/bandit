@@ -75,9 +75,9 @@ class YamlFormatterTests(testtools.TestCase):
         get_issue_list.return_value = collections.OrderedDict(
             [(self.issue, self.candidates)])
 
-        tmp_file = open(self.tmp_fname, 'w')
-        b_json.report(self.manager, tmp_file, self.issue.severity,
-                      self.issue.confidence)
+        with open(self.tmp_fname, 'w') as tmp_file:
+            b_json.report(self.manager, tmp_file, self.issue.severity,
+                          self.issue.confidence)
 
         with open(self.tmp_fname) as f:
             data = yaml.load(f.read())

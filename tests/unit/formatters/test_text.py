@@ -77,8 +77,9 @@ class TextFormatterTests(testtools.TestCase):
         self.manager.out_file = self.tmp_fname
 
         get_issue_list.return_value = collections.OrderedDict()
-        tmp_file = open(self.tmp_fname, 'w')
-        b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW, lines=5)
+        with open(self.tmp_fname, 'w') as tmp_file:
+            b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
+                          lines=5)
 
         with open(self.tmp_fname) as f:
             data = f.read()
@@ -117,9 +118,9 @@ class TextFormatterTests(testtools.TestCase):
         with mock.patch(output_str_fn) as output_str:
             output_str.return_value = 'ISSUE_OUTPUT_TEXT'
 
-            tmp_file = open(self.tmp_fname, 'w')
-            b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                          lines=5)
+            with open(self.tmp_fname, 'w') as tmp_file:
+                b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
+                              lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
                      mock.call(issue_b, '', lines=5)]
@@ -128,9 +129,9 @@ class TextFormatterTests(testtools.TestCase):
 
         # Validate that we're outputting all of the expected fields and the
         # correct values
-        tmp_file = open(self.tmp_fname, 'w')
-        b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                      lines=5)
+        with open(self.tmp_fname, 'w') as tmp_file:
+            b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
+                          lines=5)
         with open(self.tmp_fname) as f:
             data = f.read()
 
@@ -182,9 +183,9 @@ class TextFormatterTests(testtools.TestCase):
         with mock.patch(output_str_fn) as output_str:
             output_str.return_value = 'ISSUE_OUTPUT_TEXT'
 
-            tmp_file = open(self.tmp_fname, 'w')
-            b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                          lines=5)
+            with open(self.tmp_fname, 'w') as tmp_file:
+                b_text.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
+                              lines=5)
 
             calls = [mock.call(issue_a, '', lines=5),
                      mock.call(issue_b, '', show_code=False,
