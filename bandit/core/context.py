@@ -14,7 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import _ast
+import ast
 
 import six
 
@@ -187,48 +187,48 @@ class Context(object):
         :param literal: The AST literal to convert
         :return: The value of the AST literal
         '''
-        if isinstance(literal, _ast.Num):
+        if isinstance(literal, ast.Num):
             literal_value = literal.n
 
-        elif isinstance(literal, _ast.Str):
+        elif isinstance(literal, ast.Str):
             literal_value = literal.s
 
-        elif isinstance(literal, _ast.List):
+        elif isinstance(literal, ast.List):
             return_list = list()
             for li in literal.elts:
                 return_list.append(self._get_literal_value(li))
             literal_value = return_list
 
-        elif isinstance(literal, _ast.Tuple):
+        elif isinstance(literal, ast.Tuple):
             return_tuple = tuple()
             for ti in literal.elts:
                 return_tuple = return_tuple + (self._get_literal_value(ti),)
             literal_value = return_tuple
 
-        elif isinstance(literal, _ast.Set):
+        elif isinstance(literal, ast.Set):
             return_set = set()
             for si in literal.elts:
                 return_set.add(self._get_literal_value(si))
             literal_value = return_set
 
-        elif isinstance(literal, _ast.Dict):
+        elif isinstance(literal, ast.Dict):
             literal_value = dict(zip(literal.keys, literal.values))
 
-        elif isinstance(literal, _ast.Ellipsis):
+        elif isinstance(literal, ast.Ellipsis):
             # what do we want to do with this?
             literal_value = None
 
-        elif isinstance(literal, _ast.Name):
+        elif isinstance(literal, ast.Name):
             literal_value = literal.id
 
         # NOTE(sigmavirus24): NameConstants are only part of the AST in Python
         # 3. NameConstants tend to refer to things like True and False. This
         # prevents them from being re-assigned in Python 3.
-        elif six.PY3 and isinstance(literal, _ast.NameConstant):
+        elif six.PY3 and isinstance(literal, ast.NameConstant):
             literal_value = str(literal.value)
 
         # NOTE(sigmavirus24): Bytes are only part of the AST in Python 3
-        elif six.PY3 and isinstance(literal, _ast.Bytes):
+        elif six.PY3 and isinstance(literal, ast.Bytes):
             literal_value = literal.s
 
         else:
