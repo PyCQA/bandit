@@ -57,11 +57,12 @@ class Context(object):
         :return: A list of function args
         '''
         args = []
-        for arg in self._context['call'].args:
-            if hasattr(arg, 'attr'):
-                args.append(arg.attr)
-            else:
-                args.append(self._get_literal_value(arg))
+        if 'call' in self._context and hasattr(self._context['call'], 'args'):
+            for arg in self._context['call'].args:
+                if hasattr(arg, 'attr'):
+                    args.append(arg.attr)
+                else:
+                    args.append(self._get_literal_value(arg))
         return args
 
     @property
@@ -186,7 +187,9 @@ class Context(object):
         :return: List of defaults
         '''
         defaults = []
-        if 'node' in self._context:
+        if ('node' in self._context and
+                hasattr(self._context['node'], 'args') and
+                hasattr(self._context['node'].args, 'defaults')):
             for default in self._context['node'].args.defaults:
                 defaults.append(utils.get_qual_attr(
                     default,
@@ -288,9 +291,10 @@ class Context(object):
         :param argument_name: A string - name of the argument to look for
         :return: Integer - the line number of the found argument, or -1
         '''
-        for key in self.node.keywords:
-            if key.arg == argument_name:
-                return key.value.lineno
+        if hasattr(self.node, 'keywords'):
+            for key in self.node.keywords:
+                if key.arg == argument_name:
+                    return key.value.lineno
 
     def get_call_arg_at_position(self, position_num):
         '''Returns positional argument at the specified position (if it exists)
