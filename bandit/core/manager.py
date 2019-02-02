@@ -20,7 +20,10 @@ import json
 import logging
 import os
 import sys
+import tokenize
 import traceback
+
+import six
 
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
@@ -271,10 +274,18 @@ class BanditManager(object):
             if self.ignore_nosec:
                 nosec_lines = set()
             else:
-                nosec_lines = set(
-                    lineno + 1 for
-                    (lineno, line) in enumerate(lines)
-                    if b'#nosec' in line or b'# nosec' in line)
+                try:
+                    fdata.seek(0)
+                    if six.PY2:
+                        tokens = tokenize.generate_tokens(fdata.readline)
+                    else:
+                        tokens = tokenize.tokenize(fdata.readline)
+                    nosec_lines = set(
+                        lineno for toktype, tokval, (lineno, _), _, _ in tokens
+                        if toktype == tokenize.COMMENT and
+                        '#nosec' in tokval or '# nosec' in tokval)
+                except tokenize.TokenError as e:
+                    nosec_lines = set()
             score = self._execute_ast_visitor(fname, data, nosec_lines)
             self.scores.append(score)
             self.metrics.count_issues([score, ])
@@ -321,7 +332,7 @@ def _get_files_from_dir(files_dir, included_globs=None,
     files_list = set()
     excluded_files = set()
 
-    for root, subdirs, files in os.walk(files_dir):
+    for root, _, files in os.walk(files_dir):
         for filename in files:
             path = os.path.join(root, filename)
             if _is_file_included(path, included_globs, excluded_path_strings):
