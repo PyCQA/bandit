@@ -116,7 +116,7 @@ class Context(object):
 
         :return: The raw AST node associated with the context
         '''
-        self._context.get('node')
+        return self._context.get('node')
 
     @property
     def string_val(self):
