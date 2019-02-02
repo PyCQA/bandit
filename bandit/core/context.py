@@ -69,7 +69,7 @@ class Context(object):
     def call_args_count(self):
         '''Get the number of args a function call has
 
-        :return: The number of args a function call has
+        :return: The number of args a function call has or None
         '''
         if 'call' in self._context and hasattr(self._context['call'], 'args'):
             return len(self._context['call'].args)
@@ -82,10 +82,7 @@ class Context(object):
 
         :return: The name (not FQ) of a function call
         '''
-        if 'name' in self._context:
-            return self._context['name']
-        else:
-            return None
+        return self._context.get('name')
 
     @property
     def call_function_name_qual(self):
@@ -93,10 +90,7 @@ class Context(object):
 
         :return: The FQ name of a function call
         '''
-        if 'qualname' in self._context:
-            return self._context['qualname']
-        else:
-            return None
+        return self._context.get('qualname')
 
     @property
     def call_keywords(self):
@@ -122,10 +116,7 @@ class Context(object):
 
         :return: The raw AST node associated with the context
         '''
-        if 'node' in self._context:
-            return self._context['node']
-        else:
-            return None
+        self._context.get('node')
 
     @property
     def string_val(self):
@@ -133,10 +124,7 @@ class Context(object):
 
         :return: value of a standalone unicode or string object
         '''
-        if 'str' in self._context:
-            return self._context['str']
-        else:
-            return None
+        return self._context.get('str')
 
     @property
     def bytes_val(self):
@@ -175,10 +163,7 @@ class Context(object):
 
         :return: The raw AST for the current statement
         '''
-        if 'statement' in self._context:
-            return self._context['statement']
-        else:
-            return None
+        return self._context.get('statement')
 
     @property
     def function_def_defaults_qual(self):
@@ -302,9 +287,8 @@ class Context(object):
         :param position_num: The index of the argument to return the value for
         :return: Value of the argument at the specified position if it exists
         '''
-        if ('call' in self._context and
-                hasattr(self._context['call'], 'args') and
-                position_num < len(self._context['call'].args)):
+        max_args = self.call_args_count
+        if max_args and position_num < max_args:
             return self._get_literal_value(
                 self._context['call'].args[position_num]
             )
@@ -317,7 +301,7 @@ class Context(object):
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
-        return 'module' in self._context and self._context['module'] == module
+        return self._context.get('module') == module
 
     def is_module_imported_exact(self, module):
         '''Check if a specified module has been imported; only exact matches.
@@ -325,8 +309,7 @@ class Context(object):
         :param module: The module name to look for
         :return: True if the module is found, False otherwise
         '''
-        return ('imports' in self._context and
-                module in self._context['imports'])
+        return module in self._context.get('imports', [])
 
     def is_module_imported_like(self, module):
         '''Check if a specified module has been imported
