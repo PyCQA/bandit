@@ -227,7 +227,6 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(['a.py', 'test.py'], self.manager.files_list)
         self.assertEqual(['test_a.py'], self.manager.excluded_files)
 
-
     @mock.patch('os.path.isdir')
     def test_discover_files_include(self, isdir):
         isdir.return_value = False
