@@ -110,6 +110,10 @@ def jinja2_autoescape_false(context):
                         elif isinstance(value, ast.Call) and getattr(
                                 value.func, 'id', None) == 'select_autoescape':
                             return
+                        elif isinstance(value, ast.Call) and getattr(
+                                value.func, 'attr', None) == \
+                                'select_autoescape':
+                            return
                         else:
                             return bandit.Issue(
                                 severity=bandit.HIGH,
