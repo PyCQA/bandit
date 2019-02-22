@@ -175,7 +175,7 @@ Usage::
         "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
 
         See python documentation for more information about formatting style:
-        https://docs.python.org/3.4/library/string.html
+        https://docs.python.org/3/library/string.html
 
     The following tests were discovered and loaded:
     -----------------------------------------------
@@ -254,10 +254,10 @@ Usage::
 
 Baseline
 --------
-Bandit allows specifying the path of a baseline report to compare against using the base line argument (i.e. ``-b BASELINE`` or ``--baseline BASELINE``). 
+Bandit allows specifying the path of a baseline report to compare against using the base line argument (i.e. ``-b BASELINE`` or ``--baseline BASELINE``).
 
 ::
-  
+
    bandit -b BASELINE
 
 This is useful for ignoring known vulnerabilities that you believe are non-issues (e.g. a cleartext password in a unit test). To generate a baseline report simply run Bandit with the output format set to ``json`` (only JSON-formatted files are accepted as a baseline) and output file path specified:
@@ -469,7 +469,7 @@ References
 
 Bandit docs: https://bandit.readthedocs.io/en/latest/
 
-Python AST module documentation: https://docs.python.org/2/library/ast.html
+Python AST module documentation: https://docs.python.org/3/library/ast.html
 
 Green Tree Snakes - the missing Python AST docs:
 https://greentreesnakes.readthedocs.org/en/latest/
