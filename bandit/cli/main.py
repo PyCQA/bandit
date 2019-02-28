@@ -290,7 +290,7 @@ def main():
         "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
 
         See python documentation for more information about formatting style:
-        https://docs.python.org/3.4/library/string.html
+        https://docs.python.org/3/library/string.html
 
     The following tests were discovered and loaded:
     -----------------------------------------------
