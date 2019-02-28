@@ -83,7 +83,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.commit('Initial commit')
         os.chdir(repo_directory)
 
-        with open('bandit.yaml', 'wt') as fd:
+        with open('bandit.yml', 'wt') as fd:
             fd.write(config)
 
         # create three branches, first has only benign, second adds malicious,
@@ -102,8 +102,7 @@ class BanditBaselineToolTests(testtools.TestCase):
                                'benign_two.py'],
                      'expected_return': 0}]
 
-        baseline_command = ['bandit-baseline', '-c', 'bandit.yaml', '-r', '.',
-                            '-p', 'test']
+        baseline_command = ['bandit-baseline', '-r', '.', '-p', 'test']
 
         for branch in branches:
             branch['branch'] = git_repo.create_head(branch['name'])

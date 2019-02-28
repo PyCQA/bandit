@@ -28,7 +28,6 @@ from bandit.core import manager as b_manager
 from bandit.core import utils
 
 
-BASE_CONFIG = 'bandit.yaml'
 LOG = logging.getLogger()
 
 

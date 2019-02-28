@@ -15,6 +15,7 @@
 # under the License.
 
 import logging
+import os.path
 
 import yaml
 
@@ -23,6 +24,7 @@ from bandit.core import extension_loader
 from bandit.core import utils
 
 
+BASE_CONFIG = 'bandit.yml'
 LOG = logging.getLogger(__name__)
 
 
@@ -39,6 +41,8 @@ class BanditConfig(object):
         self.config_file = config_file
         self._config = {}
 
+        if config_file is None and os.path.exists(BASE_CONFIG):
+            config_file = BASE_CONFIG
         if config_file:
             try:
                 f = open(config_file, 'r')
