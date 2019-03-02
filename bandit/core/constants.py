@@ -35,7 +35,7 @@ CONFIDENCE_DEFAULT = 'UNDEFINED'
 # We don't handle the case of user-defined classes being false.
 # These are only useful when we have a constant in code. If we
 # have a variable we cannot determine if False.
-# See https://docs.python.org/3/library/stdtypes.html#truth-value-testing
+# See https://docs.python.org/2/library/stdtypes.html#truth-value-testing
 FALSE_VALUES = [None, False, 'False', 0, 0.0, 0j, '', (), [], {}]
 
 # override with "log_format" option in config file
