@@ -309,7 +309,6 @@ using tmpfile() instead.
 
 For further information:
     https://docs.python.org/2.7/library/os.html#os.tempnam
-    https://docs.python.org/3/whatsnew/3.0.html?highlight=tempnam
     https://bugs.python.org/issue17880
 
 +------+---------------------+------------------------------------+-----------+
