@@ -13,20 +13,24 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-r"""
+"""
 ================
 Custom Formatter
 ================
 
 This formatter outputs the issues in custom machine-readable format.
 
-default template: {abspath}:{line}: {test_id}[bandit]: {severity}: {msg}
+default template: ``{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}``
 
 :Example:
 
-/usr/lib/python3.6/site-packages/openlp/core/utils/__init__.py: \
+.. code-block:: none
+
+    /usr/lib/python3.6/site-packages/openlp/core/utils/__init__.py:\
 405: B310[bandit]: MEDIUM: Audit url open for permitted schemes. \
 Allowing use of file:/ or custom schemes is often unexpected.
+
+.. versionadded:: 1.5.0
 
 """
 

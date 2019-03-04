@@ -49,13 +49,15 @@ class BanditConfig(object):
             if config_file.endswith('.toml'):
                 import toml
                 try:
-                    self._config = toml.load(f)['tool']['bandit']
+                    with f:
+                        self._config = toml.load(f)['tool']['bandit']
                 except toml.TomlDecodeError as err:
                     LOG.error(err)
                     raise utils.ConfigError("Error parsing file.", config_file)
             else:
                 try:
-                    self._config = yaml.safe_load(f)
+                    with f:
+                        self._config = yaml.safe_load(f)
                 except yaml.YAMLError as err:
                     LOG.error(err)
                     raise utils.ConfigError("Error parsing file.", config_file)
