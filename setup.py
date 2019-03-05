@@ -26,8 +26,4 @@ except ImportError:
 
 setuptools.setup(
     setup_requires=['pbr>=2.0.0'],
-    extras_require={
-        'yaml': ['PyYAML'],
-        'toml': ['toml'],
-    },
     pbr=True)
