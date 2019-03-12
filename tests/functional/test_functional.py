@@ -479,6 +479,15 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('django_sql_injection_raw.py', expect)
 
+    def test_insecure_format(self):
+        """Test insecure format string."""
+
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+        }
+        self.check_example('insecure_format.py', expect)
+
     def test_yaml(self):
         '''Test for `yaml.load`.'''
         expect = {
