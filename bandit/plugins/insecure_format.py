@@ -21,65 +21,61 @@ import bandit
 from bandit.core import test_properties as test
 
 
-HIT_VALUE = bandit.Issue(
-    severity=bandit.MEDIUM,
-    confidence=bandit.HIGH,
-    text="Wrong use of format string can discover internal reprs"
-)
-
-
 def is_param(node, name):
-    if (isinstance(node, ast.Name) and
-            isinstance(node, ast.FunctionDef)):
-        for name in node.args.args:
-            arg_name = name.id if six.PY2 else name.arg
+    if isinstance(node, ast.FunctionDef):
+        for param_name in node.args.args:
+            arg_name = param_name.id if six.PY2 else param_name.arg
             if arg_name == name:
                 return True
     return False
 
 
-def is_assigned_to_str(node, name):
+def is_no_assigned_to_str(node, name):
     if isinstance(node, ast.AugAssign):
         if isinstance(node.target, ast.Name):
             if node.target.id == name:
-                return isinstance(node.value, ast.Str)
+                return not isinstance(node.value, ast.Str)
     elif isinstance(node, ast.Assign) and node.targets:
         for target in node.targets:
             if isinstance(target, ast.Name):
                 if target.id == name:
-                    return isinstance(node.value, ast.Str)
+                    return not isinstance(node.value, ast.Str)
             elif isinstance(target, ast.Tuple):
                 pos = 0
-                for name in target.elts:
-                    if name.id == name:
+                for tg in target.elts:
+                    if tg.id == name:
                         value = node.value.elts[pos]
-                        return isinstance(value, ast.Str)
+                        return not isinstance(value, ast.Str)
                     pos += 1
 
 
-def find_assigned_to_str(node, name, lineno):
-    assigned = None
+def find_no_assigned_to_str(node, name, lineno):
+    no_assigned = None
     for field in node._fields:
         nodes = getattr(node, field)
         if isinstance(nodes, (list, tuple)):
             for child in nodes:
-                if lineno > child.lineno:
+                if hasattr(child, 'lineno') and lineno < child.lineno:
+                    continue
+                if isinstance(child, (ast.Module, ast.FunctionDef, ast.ClassDef)):
                     continue
                 if isinstance(child, ast.AST):
-                    assigned = is_assigned_to_str(child, name)
-                    if assigned is None:
-                        assigned = find_assigned_to_str(child, name, lineno)
-                if assigned is False:
+                    no_assigned = is_no_assigned_to_str(child, name)
+                    if no_assigned is None:
+                        no_assigned = find_no_assigned_to_str(child, name, lineno)
+                if no_assigned:
                     break
         elif isinstance(nodes, ast.AST):
-            if lineno > nodes.lineno:
+            if hasattr(nodes, 'lineno') and lineno < nodes.lineno:
                 return
-            assigned = is_assigned_to_str(nodes, name)
-            if assigned is None:
-                assigned = find_assigned_to_str(nodes, name, lineno)
+            if isinstance(nodes, (ast.Module, ast.FunctionDef, ast.ClassDef)):
+                continue
+            no_assigned = is_no_assigned_to_str(nodes, name)
+            if no_assigned is None:
+                no_assigned = find_no_assigned_to_str(nodes, name, lineno)
 
-        if assigned is False:
-            return assigned
+        if no_assigned:
+            return no_assigned
 
 
 def check_risk(node, name):
@@ -87,12 +83,12 @@ def check_risk(node, name):
     while not isinstance(start_scope, (ast.Module, ast.FunctionDef)):
         start_scope = start_scope.parent
 
-    if not is_param(start_scope, name):
-        return HIT_VALUE
+    if is_param(start_scope, name):
+        return True
 
-    secure = find_assigned_to_str(start_scope, name, node.lineno)
-    if not secure:
-        return HIT_VALUE
+    found_other = find_no_assigned_to_str(start_scope, name, node.lineno)
+    if found_other:
+        return True
 
 
 @test.checks('Call')
@@ -109,13 +105,20 @@ def insecure_format(context):
     """
     if context.call_function_name == 'format':
         if isinstance(context.node, ast.Call):
-            if isinstance(context.node.func, ast.Attribute):
-                value = context.node.func.value
-                if isinstance(value, ast.Str):
-                    return None  # Hard-code string is secure
-                elif isinstance(value, ast.Name):
-                    return check_risk(context.node, value.id)
-                else:
-                    return HIT_VALUE
+            description = "Wrong use of format string can discover internal reprs"
+            value = context.node.func.value
+            if isinstance(value, ast.Str):
+                return None  # Hard-code string is secure
+            elif isinstance(value, ast.Name):
+                if check_risk(context.node, value.id):
+                    return bandit.Issue(
+                        severity=bandit.MEDIUM,
+                        confidence=bandit.HIGH,
+                        text=description
+                    )
             else:
-                return HIT_VALUE
+                return bandit.Issue(
+                    severity=bandit.MEDIUM,
+                    confidence=bandit.HIGH,
+                    text=description
+                )

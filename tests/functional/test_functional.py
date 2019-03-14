@@ -483,8 +483,8 @@ class FunctionalTests(testtools.TestCase):
         """Test insecure format string."""
 
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 6, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 6}
         }
         self.check_example('insecure_format.py', expect)
 
