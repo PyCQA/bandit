@@ -57,12 +57,15 @@ def find_no_assigned_to_str(node, name, lineno):
             for child in nodes:
                 if hasattr(child, 'lineno') and lineno < child.lineno:
                     continue
-                if isinstance(child, (ast.Module, ast.FunctionDef, ast.ClassDef)):
+                if isinstance(child,
+                              (ast.Module, ast.FunctionDef, ast.ClassDef)):
                     continue
                 if isinstance(child, ast.AST):
                     no_assigned = is_no_assigned_to_str(child, name)
                     if no_assigned is None:
-                        no_assigned = find_no_assigned_to_str(child, name, lineno)
+                        no_assigned = find_no_assigned_to_str(
+                            child, name, lineno
+                        )
                 if no_assigned:
                     break
         elif isinstance(nodes, ast.AST):
@@ -80,7 +83,8 @@ def find_no_assigned_to_str(node, name, lineno):
 
 def check_risk(node, name):
     start_scope = node.parent
-    while not isinstance(start_scope, (ast.Module, ast.FunctionDef)):
+    while not isinstance(start_scope,
+                         (ast.Module, ast.FunctionDef, ast.ClassDef)):
         start_scope = start_scope.parent
 
     if is_param(start_scope, name):
@@ -103,9 +107,9 @@ def insecure_format(context):
     .. versionadded:: 1.5.2
 
     """
+    description = "Wrong use of format string can discover internal reprs"
     if context.call_function_name == 'format':
         if isinstance(context.node, ast.Call):
-            description = "Wrong use of format string can discover internal reprs"
             value = context.node.func.value
             if isinstance(value, ast.Str):
                 return None  # Hard-code string is secure
