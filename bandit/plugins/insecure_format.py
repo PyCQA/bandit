@@ -107,7 +107,8 @@ def insecure_format(context):
     .. versionadded:: 1.5.2
 
     """
-    description = "Wrong use of format string can discover internal reprs"
+    description = "Wrong use of format string can discover internal reprs " \
+                  "as the recommended way to solve it use string.Template"
     if context.call_function_name == 'format':
         if isinstance(context.node, ast.Call):
             value = context.node.func.value
