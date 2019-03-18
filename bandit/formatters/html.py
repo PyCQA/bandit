@@ -153,6 +153,8 @@ This formatter outputs the issues as HTML.
 from __future__ import absolute_import
 
 import logging
+import os
+import string
 import sys
 
 import six
@@ -190,7 +192,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 <title>
     Bandit Report
 </title>
-
+$base_html
 <style>
 
 html * {
@@ -387,7 +389,10 @@ pre {
 
     with fileobj:
         wrapped_file = utils.wrap_file_object(fileobj)
-        wrapped_file.write(utils.convert_file_contents(header_block))
+        base_html = '<base href = "file://{}/"/>'.format(os.getcwd())
+        template = string.Template(header_block)
+        header = template.safe_substitute(base_html=base_html)
+        wrapped_file.write(utils.convert_file_contents(header))
         wrapped_file.write(utils.convert_file_contents(report_contents))
 
     if fileobj.name != sys.stdout.name:
