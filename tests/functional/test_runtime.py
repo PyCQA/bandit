@@ -15,6 +15,7 @@
 import os
 import subprocess
 
+import six
 import testtools
 
 
@@ -111,11 +112,13 @@ class RuntimeTests(testtools.TestCase):
             ['bandit', ], ['nonsense2.py', ]
         )
         self.assertEqual(0, retcode)
-        self.assertIn(
-            "Exception occurred when executing tests against", output
-        )
         self.assertIn("Files skipped (1):", output)
-        self.assertIn("nonsense2.py (exception while scanning file)", output)
+        if six.PY2:
+            self.assertIn("nonsense2.py (exception while scanning file)",
+                          output)
+        else:
+            self.assertIn("nonsense2.py (syntax error while parsing AST",
+                          output)
 
     def test_example_imports(self):
         (retcode, output) = self._test_example(['bandit', ], ['imports.py', ])

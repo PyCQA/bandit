@@ -15,14 +15,18 @@
 # under the License.
 
 import ast
+import re
 import sys
 
 import bandit
 from bandit.core import test_properties as test
 
 
-CANDIDATES = set(["password", "pass", "passwd", "pwd", "secret", "token",
-                  "secrete"])
+RE_WORDS = "(pas+wo?r?d|pass(phrase)?|pwd|token|secrete?)"
+RE_CANDIDATES = re.compile(
+    '(^{0}$|_{0}_|^{0}_|_{0}$)'.format(RE_WORDS),
+    re.IGNORECASE
+)
 
 
 def _report(value):
@@ -84,10 +88,10 @@ def hardcoded_password_string(context):
     if isinstance(node.parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node.parent.targets:
-            if isinstance(targ, ast.Name) and targ.id in CANDIDATES:
+            if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
 
-    elif isinstance(node.parent, ast.Index) and node.s in CANDIDATES:
+    elif isinstance(node.parent, ast.Index) and RE_CANDIDATES.search(node.s):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node.parent.parent.parent
@@ -98,9 +102,10 @@ def hardcoded_password_string(context):
     elif isinstance(node.parent, ast.Compare):
         # looks for "candidate == 'some_string'"
         comp = node.parent
-        if isinstance(comp.left, ast.Name) and comp.left.id in CANDIDATES:
-            if isinstance(comp.comparators[0], ast.Str):
-                return _report(comp.comparators[0].s)
+        if isinstance(comp.left, ast.Name):
+            if RE_CANDIDATES.search(comp.left.id):
+                if isinstance(comp.comparators[0], ast.Str):
+                    return _report(comp.comparators[0].s)
 
 
 @test.checks('Call')
@@ -150,7 +155,7 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        if isinstance(kw.value, ast.Str) and kw.arg in CANDIDATES:
+        if isinstance(kw.value, ast.Str) and RE_CANDIDATES.search(kw.arg):
             return _report(kw.value.s)
 
 
@@ -209,7 +214,10 @@ def hardcoded_password_default(context):
 
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
-        if isinstance(key, ast.Name) or isinstance(key, ast.arg):
+        py3_is_arg = True
+        if sys.version_info.major > 2:
+            py3_is_arg = isinstance(key, ast.arg)
+        if isinstance(key, ast.Name) or py3_is_arg:
             check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-            if isinstance(val, ast.Str) and check in CANDIDATES:
+            if isinstance(val, ast.Str) and RE_CANDIDATES.search(check):
                 return _report(val.s)

@@ -7,6 +7,10 @@
     :target: https://travis-ci.org/PyCQA/bandit/
     :alt: Build Status
 
+.. image:: https://readthedocs.org/projects/bandit/badge/?version=latest
+    :target: https://readthedocs.org/projects/bandit/
+    :alt: Docs Status
+
 .. image:: https://img.shields.io/pypi/v/bandit.svg
     :target: https://pypi.org/project/bandit/
     :alt: Latest Version
@@ -246,6 +250,20 @@ Usage::
       B701  jinja2_autoescape_false
       B702  use_of_mako_templates
       B703  django_mark_safe
+
+Baseline
+--------
+Bandit allows specifying the path of a baseline report to compare against using the base line argument (i.e. ``-b BASELINE`` or ``--baseline BASELINE``). 
+
+::
+  
+   bandit -b BASELINE
+
+This is useful for ignoring known vulnerabilities that you believe are non-issues (e.g. a cleartext password in a unit test). To generate a baseline report simply run Bandit with the output format set to ``json`` (only JSON-formatted files are accepted as a baseline) and output file path specified:
+
+::
+
+    bandit -f json -o PATH_TO_OUTPUT_FILE
 
 
 Version control integration
