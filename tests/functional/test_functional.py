@@ -788,7 +788,10 @@ class FunctionalTests(testtools.TestCase):
         self.check_example('pycrypto.py', expect)
 
     def test_no_blacklist_pycryptodome(self):
-        '''Test importing pycryptodome module to make sure it's no longer blacklisted'''
+        '''Test importing pycryptodome module to make sure it's no longer
+        blacklisted
+        '''
+        
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
