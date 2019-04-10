@@ -41,8 +41,8 @@ of the Patreon breach in 2015 [3]_.
 
 .. seealso::
 
- .. [1] http://flask.pocoo.org/docs/0.10/quickstart/#debug-mode
- .. [2] http://werkzeug.pocoo.org/docs/0.10/debug/
+ .. [1] http://flask.pocoo.org/docs/1.0/quickstart/#debug-mode
+ .. [2] http://werkzeug.palletsprojects.com/en/0.15.x/debug/
  .. [3] http://labs.detectify.com/post/130332638391/how-patreon-got-hacked-publicly-exposed-werkzeug  # noqa
 
 .. versionadded:: 0.15.0
