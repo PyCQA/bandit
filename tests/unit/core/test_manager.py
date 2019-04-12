@@ -70,24 +70,34 @@ class ManagerTests(testtools.TestCase):
 
     def test_is_file_included(self):
         a = manager._is_file_included(path='a.py', included_globs=['*.py'],
-                                      excluded_path_strings='',
+                                      excluded_path_strings=[],
                                       enforce_glob=True)
 
         b = manager._is_file_included(path='a.dd', included_globs=['*.py'],
-                                      excluded_path_strings='',
+                                      excluded_path_strings=[],
                                       enforce_glob=False)
 
         c = manager._is_file_included(path='a.py', included_globs=['*.py'],
-                                      excluded_path_strings='a.py',
+                                      excluded_path_strings=['a.py'],
                                       enforce_glob=True)
 
         d = manager._is_file_included(path='a.dd', included_globs=['*.py'],
-                                      excluded_path_strings='',
+                                      excluded_path_strings=[],
+                                      enforce_glob=True)
+
+        e = manager._is_file_included(path='x_a.py', included_globs=['*.py'],
+                                      excluded_path_strings=['x_*.py'],
+                                      enforce_glob=True)
+
+        f = manager._is_file_included(path='x.py', included_globs=['*.py'],
+                                      excluded_path_strings=['x_*.py'],
                                       enforce_glob=True)
         self.assertTrue(a)
         self.assertTrue(b)
         self.assertFalse(c)
         self.assertFalse(d)
+        self.assertFalse(e)
+        self.assertTrue(f)
 
     @mock.patch('os.walk')
     def test_get_files_from_dir(self, os_walk):
@@ -208,6 +218,14 @@ class ManagerTests(testtools.TestCase):
                                         excluded_paths='a,b')
             m.assert_called_with('c', ['*.py', '*.pyw'], ['a', 'b'],
                                  enforce_glob=False)
+
+    @mock.patch('os.path.isdir')
+    def test_discover_files_exclude_glob(self, isdir):
+        isdir.return_value = False
+        self.manager.discover_files(['a.py', 'test_a.py', 'test.py'], True,
+                                    excluded_paths='test_*.py')
+        self.assertEqual(['a.py', 'test.py'], self.manager.files_list)
+        self.assertEqual(['test_a.py'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_include(self, isdir):
