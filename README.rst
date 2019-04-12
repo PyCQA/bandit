@@ -143,9 +143,9 @@ Usage::
                             only show output in the case of an error
       --ignore-nosec        do not skip lines with # nosec comments
       -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
-                            comma-separated list of paths to exclude from scan
-                            (note that these are in addition to the excluded paths
-                            provided in the config file)
+                            comma-separated list of paths (glob patterns supported)
+                            to exclude from scan (note that these are in addition
+                            to the excluded paths provided in the config file)
       -b BASELINE, --baseline BASELINE
                             path of a baseline report to compare against (only
                             JSON-formatted files are accepted)
@@ -288,7 +288,7 @@ Configuration
 An optional config file may be supplied and may include:
  - lists of tests which should or shouldn't be run
  - exclude_dirs - sections of the path, that if matched, will be excluded from
-   scanning
+   scanning (glob patterns supported)
  - overridden plugin settings - may provide different settings for some
    plugins
 
