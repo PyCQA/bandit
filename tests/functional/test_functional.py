@@ -121,16 +121,16 @@ class FunctionalTests(testtools.TestCase):
     def test_crypto_md5(self):
         '''Test the `hashlib.md5` example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15, 'HIGH': 8},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 23}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15, 'HIGH': 4},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 19}
         }
         self.check_example('crypto-md5.py', expect)
 
     def test_ciphers(self):
         '''Test the `Crypto.Cipher` example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 26},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 27}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 21},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 22}
         }
         self.check_example('ciphers.py', expect)
 
@@ -678,8 +678,8 @@ class FunctionalTests(testtools.TestCase):
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 8, 'HIGH': 10},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 18}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 8, 'HIGH': 8},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 16}
         }
         self.check_example('weak_cryptographic_key_sizes.py', expect)
 
@@ -787,10 +787,13 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('pycrypto.py', expect)
 
-    def test_blacklist_pycryptodome(self):
-        '''Test importing pycryptodome module'''
+    def test_no_blacklist_pycryptodome(self):
+        '''Test importing pycryptodome module
+
+        make sure it's no longer blacklisted
+        '''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
         }
         self.check_example('pycryptodome.py', expect)
