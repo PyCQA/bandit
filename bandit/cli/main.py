@@ -196,7 +196,7 @@ def main():
         default=1, help='report only issues of a given confidence level or '
                         'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
     )
-    output_format = ['screen' if sys.stdout.isatty() else 'txt']
+    output_format = 'screen' if sys.stdout.isatty() else 'txt'
     # Instead of specifying a default here, we check if the
     # argument list is empty and then attach the default
     # Python Issue 16399
