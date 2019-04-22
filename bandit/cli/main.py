@@ -321,17 +321,21 @@ def main():
 
     # Before we error check, check if screen was specified and if
     # there was no stdout specified
-    if any(f == 'screen' for f in args.output_format) and all(o != sys.stdout for o in args.output_file):
+    if any(f == 'screen' for f in args.output_format) \
+            and all(o != sys.stdout for o in args.output_file):
         # Lets specify stdout for the screen format
         # We'll remove all instances of screen, and insert it back in
-        # Screen should only be specified once, so we don't care if we remove duplicates
-        args.output_format = list(filter(lambda f: f != 'screen', args.output_format))
+        # Screen should only be specified once, so we don't care if
+        # we remove duplicates
+        args.output_format = list(filter(
+            lambda f: f != 'screen', args.output_format))
 
         # Now append both screen and stdout to the end
         args.output_format.append('screen')
         args.output_file.append(sys.stdout)
 
-    # Ensure we have the same number of formats and outputs. If we don't then error
+    # Ensure we have the same number of formats and outputs. If we don't
+    # then error
     if len(args.output_format) != len(args.output_file):
         LOG.warning('You must specify an output for each format. '
                     'formats: ' + str(args.output_format)
@@ -445,7 +449,8 @@ def main():
                              conf_level,
                              out_file,
                              out_format,
-                             args.msg_template if out_format == 'custom' else None)
+                             args.msg_template if out_format == 'custom'
+                             else None)
 
     # return an exit code of 1 if there are results, 0 otherwise
     if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:
