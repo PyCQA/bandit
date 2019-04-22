@@ -97,7 +97,7 @@ Usage::
     usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
                   [-p PROFILE] [-t TESTS] [-s SKIPS] [-l] [-i]
                   [-f {csv,custom,html,json,screen,txt,xml,yaml}]
-                  [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d] [-q]
+                  [--msg-template MSG_TEMPLATE] [-o OUTPUT_FILE] [-v] [-d] [-q]
                   [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
                   [--ini INI_PATH] [--version]
                   [targets [targets ...]]
