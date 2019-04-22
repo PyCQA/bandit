@@ -131,4 +131,3 @@ class RuntimeTests(testtools.TestCase):
                       output)
         self.assertIn("imports.py:2", output)
         self.assertIn("imports.py:4", output)
-
