@@ -220,10 +220,10 @@ def main():
     parser.add_argument(
         '-o', '--output', dest='output_file', action='append',
         type=argparse.FileType('w'),
-        help='write report to filename, should be the same length and order '
-             'as -f argument. If only 1 format is specified and no output '
-             'is specified, then STDOUT will be used as the default '
-             'output. You can use "-o -" to output to STDOUT'
+        help='write report to filename, should be used the same number of '
+             'times as -f argument. If only 1 format is specified '
+             'and no output is specified, then STDOUT will be used '
+             'as the default output.'
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(

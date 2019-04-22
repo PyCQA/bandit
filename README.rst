@@ -129,13 +129,17 @@ Usage::
       -i, --confidence      report only issues of a given confidence level or
                             higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
       -f {csv,custom,html,json,screen,txt,xml,yaml}, --format {csv,custom,html,json,screen,txt,xml,yaml}
-                            specify output format
+                            specify output format, can be specified multiple times
+                            to output multiple formats
       --msg-template MSG_TEMPLATE
                             specify output message template (only usable with
                             --format custom), see CUSTOM FORMAT section for list
                             of available values
-      -o [OUTPUT_FILE], --output [OUTPUT_FILE]
-                            write report to filename
+      -o OUTPUT_FILE, --output OUTPUT_FILE
+                            write report to filename, should be used the same
+                            number of times as -f argument. If only 1 format is
+                            specified and no output is specified, then STDOUT will
+                            be used as the default output.
       -v, --verbose         output extra information like excluded and included
                             files
       -d, --debug           turn on debug mode
