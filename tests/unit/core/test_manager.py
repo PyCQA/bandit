@@ -209,6 +209,20 @@ class ManagerTests(testtools.TestCase):
             self.manager.discover_files(['thing'], True)
             self.assertEqual([], self.manager.files_list)
             self.assertEqual(['thing'], self.manager.excluded_files)
+    
+    @mock.patch('os.path.isdir')
+    def test_discover_files_exclude_dir(self, isdir):
+        isdir.return_value = False
+        
+        # Test exclude dir using wildcard
+        self.manager.discover_files(['./x/y.py'], True, './x/*')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without wildcard
+        self.manager.discover_files(['./x/y.py'], True, './x/')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_exclude_cmdline(self, isdir):

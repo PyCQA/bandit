@@ -190,6 +190,9 @@ class BanditManager(object):
         # if there are command line provided exclusions add them to the list
         if excluded_paths:
             for path in excluded_paths.split(','):
+                if path.endswith(os.sep):
+                    path += '*'
+
                 excluded_path_globs.append(path)
 
         # build list of files we will analyze
