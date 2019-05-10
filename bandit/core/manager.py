@@ -366,7 +366,7 @@ def _is_file_included(path, included_globs, excluded_path_strings,
     # if this is matches a glob of files we look at, and it isn't in an
     # excluded path
     if _matches_glob_list(path, included_globs) or not enforce_glob:
-        if not _matches_glob_list(path, excluded_path_strings):
+        if not _matches_glob_list(path, excluded_path_strings) and not any(x in path for x in excluded_path_strings):
             return_value = True
 
     return return_value

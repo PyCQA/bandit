@@ -231,6 +231,12 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual([], self.manager.files_list)
         self.assertEqual(['./x/y.py'], self.manager.excluded_files)
 
+        # Test exclude dir without prefix or suffix
+        isdir.side_effect = [False, False]
+        self.manager.discover_files(['./x/y/z.py'], True, 'y')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y/z.py'], self.manager.excluded_files)
+
     @mock.patch('os.path.isdir')
     def test_discover_files_exclude_cmdline(self, isdir):
         isdir.return_value = False
