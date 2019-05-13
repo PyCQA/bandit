@@ -91,9 +91,8 @@ def hardcoded_password_string(context):
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
 
-    elif isinstance(node.bandit_parent, ast.Index) and RE_CANDIDATES.search(
-        node.s
-    ):
+    elif (isinstance(node.bandit_parent, ast.Index)
+          and RE_CANDIDATES.search(node.s)):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node.bandit_parent.bandit_parent.bandit_parent

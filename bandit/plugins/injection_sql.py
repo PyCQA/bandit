@@ -94,9 +94,8 @@ def _evaluate_ast(node):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node.bandit_parent.bandit_parent.bandit_parent
-    elif hasattr(ast, 'JoinedStr') and isinstance(
-        node.bandit_parent, ast.JoinedStr
-    ):
+    elif (hasattr(ast, 'JoinedStr')
+          and isinstance(node.bandit_parent, ast.JoinedStr)):
         statement = node.s
         wrapper = node.bandit_parent.bandit_parent
 
