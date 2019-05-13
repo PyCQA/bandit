@@ -233,13 +233,13 @@ def linerange_fix(node):
     """Try and work around a known Python bug with multi-line strings."""
     # deal with multiline strings lineno behavior (Python issue #16806)
     lines = linerange(node)
-    if hasattr(node, 'bandit_sibling') and hasattr(
-            node.bandit_sibling, 'lineno'
+    if hasattr(node, '_bandit_sibling') and hasattr(
+            node._bandit_sibling, 'lineno'
     ):
         start = min(lines)
-        delta = node.bandit_sibling.lineno - start
+        delta = node._bandit_sibling.lineno - start
         if delta > 1:
-            return list(range(start, node.bandit_sibling.lineno))
+            return list(range(start, node._bandit_sibling.lineno))
     return lines
 
 
@@ -266,8 +266,8 @@ def concat_string(node, stop=None):
                 else node.right)
 
     bits = [node]
-    while isinstance(node.bandit_parent, ast.BinOp):
-        node = node.bandit_parent
+    while isinstance(node._bandit_parent, ast.BinOp):
+        node = node._bandit_parent
     if isinstance(node, ast.BinOp):
         _get(node, bits, stop)
     return (node, " ".join([x.s for x in bits if isinstance(x, ast.Str)]))
