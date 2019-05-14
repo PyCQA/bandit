@@ -85,23 +85,24 @@ def hardcoded_password_string(context):
 
     """
     node = context.node
-    if isinstance(node.parent, ast.Assign):
+    if isinstance(node._bandit_parent, ast.Assign):
         # looks for "candidate='some_string'"
-        for targ in node.parent.targets:
+        for targ in node._bandit_parent.targets:
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
 
-    elif isinstance(node.parent, ast.Index) and RE_CANDIDATES.search(node.s):
+    elif (isinstance(node._bandit_parent, ast.Index)
+          and RE_CANDIDATES.search(node.s)):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
-        assign = node.parent.parent.parent
+        assign = node._bandit_parent._bandit_parent._bandit_parent
         if isinstance(assign, ast.Assign) and isinstance(assign.value,
                                                          ast.Str):
             return _report(assign.value.s)
 
-    elif isinstance(node.parent, ast.Compare):
+    elif isinstance(node._bandit_parent, ast.Compare):
         # looks for "candidate == 'some_string'"
-        comp = node.parent
+        comp = node._bandit_parent
         if isinstance(comp.left, ast.Name):
             if RE_CANDIDATES.search(comp.left.id):
                 if isinstance(comp.comparators[0], ast.Str):
