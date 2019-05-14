@@ -251,7 +251,6 @@ class BanditNodeVisitor(object):
             elif isinstance(value, ast.AST):
                 value._bandit_sibling = None
                 value._bandit_parent = node
-
                 if self.pre_visit(value):
                     self.visit(value)
                     self.generic_visit(value)
