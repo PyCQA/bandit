@@ -247,7 +247,7 @@ class BanditManager(object):
             try:
                 if fname == '-':
                     sys.stdin = _Seeker(os.fdopen(sys.stdin.fileno(), 'rb', 0))
-                    self._parse_file('<stdin>', sys.stdin, new_files_list)
+                    self._parse_file(fname, sys.stdin, new_files_list)
                 else:
                     with open(fname, 'rb') as fdata:
                         self._parse_file(fname, fdata, new_files_list)
