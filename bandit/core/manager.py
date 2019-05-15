@@ -22,6 +22,7 @@ import os
 import sys
 import tokenize
 import traceback
+import io
 
 import six
 
@@ -245,7 +246,7 @@ class BanditManager(object):
                     sys.stderr.flush()
             try:
                 if fname == '-':
-                    sys.stdin = os.fdopen(sys.stdin.fileno(), 'rb', 0)
+                    sys.stdin = _Seeker(os.fdopen(sys.stdin.fileno(), 'rb', 0))
                     self._parse_file('<stdin>', sys.stdin, new_files_list)
                 else:
                     with open(fname, 'rb') as fdata:
@@ -320,6 +321,39 @@ class BanditManager(object):
         score = res.process(data)
         self.results.extend(res.tester.results)
         return score
+
+
+class _Seeker(object):
+    def __init__(self, fileobj):
+        self.fileobj = fileobj
+        self.buf = io.BytesIO()
+
+    def _append_to_buf(self, contents):
+        oldpos = self.buf.tell()
+        self.buf.seek(0, os.SEEK_END)
+        self.buf.write(contents)
+        self.buf.seek(oldpos)
+
+    def seek(self, size):
+        contents = self.fileobj.read(size)
+        self._append_to_buf(contents)
+        return contents
+
+    def read(self, size=None):
+        if size is None:
+            return self.buf.read() + self.fileobj.read()
+        contents = self.buf.read(size)
+        if len(contents) < size:
+            contents += self.fileobj.read(size - len(contents))
+        return contents
+
+    def readline(self):
+        line = self.buf.readline()
+        if not line.endswith("\n".encode()):
+        # if not line.endswith(bytes("\n", "utf-8")):
+            line += self.fileobj.readline()
+        return line
+
 
 
 def _get_files_from_dir(files_dir, included_globs=None,
@@ -409,3 +443,4 @@ def _find_candidate_matches(unmatched_issues, results_list):
                                         unmatched == i])
 
     return issue_candidates
+
