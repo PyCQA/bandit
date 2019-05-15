@@ -161,7 +161,6 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['str'] = node.s
-
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context['linerange'] = b_utils.linerange_fix(
                 node._bandit_parent
