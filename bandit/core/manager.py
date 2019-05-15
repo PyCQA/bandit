@@ -16,13 +16,13 @@
 
 import collections
 import fnmatch
+import io
 import json
 import logging
 import os
 import sys
 import tokenize
 import traceback
-import io
 
 import six
 
@@ -350,10 +350,8 @@ class _Seeker(object):
     def readline(self):
         line = self.buf.readline()
         if not line.endswith("\n".encode()):
-        # if not line.endswith(bytes("\n", "utf-8")):
             line += self.fileobj.readline()
         return line
-
 
 
 def _get_files_from_dir(files_dir, included_globs=None,
@@ -443,4 +441,3 @@ def _find_candidate_matches(unmatched_issues, results_list):
                                         unmatched == i])
 
     return issue_candidates
-
