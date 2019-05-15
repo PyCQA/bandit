@@ -99,6 +99,7 @@ def hardcoded_password_string(context):
         if isinstance(assign, ast.Assign) and isinstance(assign.value,
                                                          ast.Str):
             return _report(assign.value.s)
+
     elif isinstance(node._bandit_parent, ast.Compare):
         # looks for "candidate == 'some_string'"
         comp = node._bandit_parent
