@@ -161,9 +161,10 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['str'] = node.s
-        if not isinstance(node.bandit_parent, ast.Expr):  # docstring
+
+        if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context['linerange'] = b_utils.linerange_fix(
-                node.bandit_parent
+                node._bandit_parent
             )
             self.update_scores(self.tester.run_tests(self.context, 'Str'))
 
@@ -176,9 +177,9 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['bytes'] = node.s
-        if not isinstance(node.bandit_parent, ast.Expr):  # docstring
+        if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context['linerange'] = b_utils.linerange_fix(
-                node.bandit_parent
+                node._bandit_parent
             )
             self.update_scores(self.tester.run_tests(self.context, 'Bytes'))
 
@@ -238,10 +239,10 @@ class BanditNodeVisitor(object):
                 for idx, item in enumerate(value):
                     if isinstance(item, ast.AST):
                         if idx < max_idx:
-                            setattr(item, 'bandit_sibling', value[idx + 1])
+                            setattr(item, '_bandit_sibling', value[idx + 1])
                         else:
-                            setattr(item, 'bandit_sibling', None)
-                        setattr(item, 'bandit_parent', node)
+                            setattr(item, '_bandit_sibling', None)
+                        setattr(item, '_bandit_parent', node)
 
                         if self.pre_visit(item):
                             self.visit(item)
@@ -249,8 +250,8 @@ class BanditNodeVisitor(object):
                             self.post_visit(item)
 
             elif isinstance(value, ast.AST):
-                setattr(value, 'bandit_sibling', None)
-                setattr(value, 'bandit_parent', node)
+                setattr(value, '_bandit_sibling', None)
+                setattr(value, '_bandit_parent', node)
 
                 if self.pre_visit(value):
                     self.visit(value)
