@@ -235,7 +235,8 @@ def main():
     )
     parser.add_argument(
         '-x', '--exclude', dest='excluded_paths', action='store',
-        default='', help='comma-separated list of paths to exclude from scan '
+        default='', help='comma-separated list of paths (glob patterns '
+                         'supported) to exclude from scan '
                          '(note that these are in addition to the excluded '
                          'paths provided in the config file)'
     )
