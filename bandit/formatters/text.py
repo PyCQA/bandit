@@ -142,7 +142,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 
     bits = []
 
-    if not manager.quiet:
+    if not manager.quiet or manager.results_count(sev_level, conf_level):
         bits.append("Run started:%s" % datetime.datetime.utcnow())
 
         if manager.verbose:
