@@ -211,6 +211,33 @@ class ManagerTests(testtools.TestCase):
             self.assertEqual(['thing'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
+    def test_discover_files_exclude_dir(self, isdir):
+        isdir.return_value = False
+
+        # Test exclude dir using wildcard
+        self.manager.discover_files(['./x/y.py'], True, './x/*')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without wildcard
+        isdir.side_effect = [True, False]
+        self.manager.discover_files(['./x/y.py'], True, './x/')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without wildcard or trailing slash
+        isdir.side_effect = [True, False]
+        self.manager.discover_files(['./x/y.py'], True, './x')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without prefix or suffix
+        isdir.side_effect = [False, False]
+        self.manager.discover_files(['./x/y/z.py'], True, 'y')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y/z.py'], self.manager.excluded_files)
+
+    @mock.patch('os.path.isdir')
     def test_discover_files_exclude_cmdline(self, isdir):
         isdir.return_value = False
         with mock.patch.object(manager, '_is_file_included') as m:
