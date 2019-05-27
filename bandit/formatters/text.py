@@ -141,9 +141,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """
 
     bits = []
-    issues = manager.get_issue_list(sev_level, conf_level)
 
-    if len(issues) or not manager.quiet:
+    if not manager.quiet:
         bits.append("Run started:%s" % datetime.datetime.utcnow())
 
         if manager.verbose:
