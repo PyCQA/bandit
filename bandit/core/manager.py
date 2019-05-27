@@ -190,6 +190,9 @@ class BanditManager(object):
         # if there are command line provided exclusions add them to the list
         if excluded_paths:
             for path in excluded_paths.split(','):
+                if os.path.isdir(path):
+                    path = os.path.join(path, '*')
+
                 excluded_path_globs.append(path)
 
         # build list of files we will analyze
@@ -363,7 +366,8 @@ def _is_file_included(path, included_globs, excluded_path_strings,
     # if this is matches a glob of files we look at, and it isn't in an
     # excluded path
     if _matches_glob_list(path, included_globs) or not enforce_glob:
-        if not _matches_glob_list(path, excluded_path_strings):
+        if (not _matches_glob_list(path, excluded_path_strings) and
+                not any(x in path for x in excluded_path_strings)):
             return_value = True
 
     return return_value
