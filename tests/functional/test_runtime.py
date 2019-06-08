@@ -91,6 +91,13 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("Files skipped (0):", output)
         self.assertIn("No issues identified.", output)
 
+    def test_recurse(self):
+        (retcode, output) = self._test_runtime(['bandit', '-r', 'examples/recursive1'])
+        self.assertEqual(0, retcode)
+        self.assertIn("Total lines of code: 2", output)
+        self.assertIn("Files skipped (0):", output)
+        self.assertIn("No issues identified.", output)
+
     def test_example_nonsense(self):
         (retcode, output) = self._test_example(
             [
