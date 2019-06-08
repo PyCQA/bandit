@@ -12,6 +12,14 @@ try:
 except ImportError:
     import ConfigParser as configparser
 
+BOOL_PARAMS = [
+    'recursive',
+    'verbose',
+    'debug',
+    'quiet',
+    'ignore-nosec',
+    'exit-zero'
+]
 LOG = logging.getLogger(__name__)
 
 
@@ -349,12 +357,18 @@ def parse_ini_file(f_loc):
     config = configparser.ConfigParser()
     try:
         config.read(f_loc)
-        return {k: v for k, v in config.items("bandit")}
+        options = {k: v for k, v in config['bandit'].items()}
+        for bool_param in BOOL_PARAMS:
+            if config['bandit'].getboolean(bool_param) is not None:
+                options.update(
+                    {bool_param: config['bandit'].getboolean(bool_param)}
+                )
+
+        return options
 
     except (configparser.Error, KeyError, TypeError):
-        LOG.warning(
-            "Unable to parse config file %s or missing [bandit] " "section",
-            f_loc,
+        LOG.debug("Config file %s not found or missing [bandit] "
+                  "section", f_loc,
         )
 
     return None

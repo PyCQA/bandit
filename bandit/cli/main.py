@@ -15,6 +15,7 @@ from bandit.core import config as b_config
 from bandit.core import constants
 from bandit.core import manager as b_manager
 from bandit.core import utils
+from bandit.core.utils import BOOL_PARAMS
 
 BASE_CONFIG = "bandit.yaml"
 LOG = logging.getLogger()
@@ -43,36 +44,51 @@ def _init_logger(log_level=logging.INFO, log_format=None):
     LOG.debug("logging initialized")
 
 
-def _get_options_from_ini(ini_path, target):
-    """Return a dictionary of config options or None if we can't load any."""
-    ini_file = None
+def _find_ini_file(target):
+    """Tries to find a working ini file
 
+    Parses target directories to find a filename matching `.bandit*`.
+    If nothing is found, looks for a standard ini file
+    with a `[bandit]` section
+
+    :return: the filename as a string or `None` if no ini file found
+    """
+    bandit_files = []
+
+    for t in target:
+        for root, _, filenames in os.walk(t):
+            for filename in fnmatch.filter(filenames, ".bandit"):
+                bandit_files.append(os.path.join(root, filename))
+
+    if len(bandit_files) > 1:
+        LOG.error("Multiple .bandit files found - scan separately or "
+                  "choose one with --ini\n\t%s",
+                ", ".join(bandit_files),)
+        sys.exit(2)
+    elif len(bandit_files) == 1:
+        LOG.info("Found project level .bandit file: %s", bandit_files[0])
+        return bandit_files[0]
+
+    # No .bandit* file found, let's try standard files in current directory
+    for filename in ["setup.cfg", "tox.ini"]:
+        filename = os.path.join('.', filename)
+        if os.path.isfile(filename) and utils.parse_ini_file(filename):
+            return filename
+
+    return None
+
+
+def _get_options_from_ini(ini_path, target):
+    """Return a dictionary of config options we could find"""
     if ini_path:
         ini_file = ini_path
     else:
-        bandit_files = []
-
-        for t in target:
-            for root, _, filenames in os.walk(t):
-                for filename in fnmatch.filter(filenames, ".bandit"):
-                    bandit_files.append(os.path.join(root, filename))
-
-        if len(bandit_files) > 1:
-            LOG.error(
-                "Multiple .bandit files found - scan separately or "
-                "choose one with --ini\n\t%s",
-                ", ".join(bandit_files),
-            )
-            sys.exit(2)
-
-        elif len(bandit_files) == 1:
-            ini_file = bandit_files[0]
-            LOG.info("Found project level .bandit file: %s", bandit_files[0])
+        ini_file = _find_ini_file(target)
 
     if ini_file:
         return utils.parse_ini_file(ini_file)
     else:
-        return None
+        return {}
 
 
 def _init_extensions():
@@ -131,6 +147,115 @@ def _log_info(args, profile):
     LOG.info("cli exclude tests: %s", args.skips)
 
 
+def _handle_bool_in_ini(ini_options, args):
+    """Sets args values from cli, ini file or default value
+
+    To enable setting bool options in the ini file, their default values
+    can only be set after comparing cli and ini options
+    Current default for bool params is False
+
+    :param ini_options:
+    :param args:
+    :return:
+    """
+
+    for option in BOOL_PARAMS:
+        ini_value = ini_options.get(option)
+        cli_value = getattr(args, option.replace('-', '_'))
+        _log_option_source(False, cli_value, ini_value, option)
+
+        if ini_value is not None and cli_value is None:
+            setattr(args, option.replace('-', '_'), ini_value)
+        elif ini_value is None and cli_value is None:
+            setattr(args, option.replace('-', '_'), False)
+
+
+def _handle_ini_options(ini_options, args, parser):
+    # prefer command line, then ini file
+    args.excluded_paths = _log_option_source(
+        parser.get_default('excluded_paths'),
+        args.excluded_paths,
+        ini_options.get('exclude'),
+        'excluded paths')
+
+    args.skips = _log_option_source(
+        parser.get_default('skips'),
+        args.skips,
+        ini_options.get('skips'),
+        'skipped tests')
+
+    args.tests = _log_option_source(
+        parser.get_default('tests'),
+        args.tests,
+        ini_options.get('tests'),
+        'selected tests')
+
+    ini_targets = ini_options.get('targets')
+    if ini_targets:
+        ini_targets = ini_targets.split(',')
+
+    args.targets = _log_option_source(
+        parser.get_default('targets'),
+        args.targets,
+        ini_targets,
+        'selected targets')
+
+    args.agg_type = _log_option_source(
+        parser.get_default('agg_type'),
+        args.agg_type,
+        ini_options.get('aggregate'),
+        'aggregate output type')
+
+    args.context_lines = _log_option_source(
+        parser.get_default('context_lines'),
+        args.context_lines,
+        ini_options.get('number'),
+        'max code lines output for issue')
+
+    args.profile = _log_option_source(
+        parser.get_default('profile'),
+        args.profile,
+        ini_options.get('profile'),
+        'profile')
+
+    args.severity = _log_option_source(
+        parser.get_default('severity'),
+        args.severity,
+        ini_options.get('level'),
+        'severity level')
+
+    args.confidence = _log_option_source(
+        parser.get_default('confidence'),
+        args.confidence,
+        ini_options.get('confidence'),
+        'confidence level')
+
+    args.output_format = _log_option_source(
+        parser.get_default('output_format'),
+        args.output_format,
+        ini_options.get('format'),
+        'output format')
+
+    args.msg_template = _log_option_source(
+        parser.get_default('msg_template'),
+        args.msg_template,
+        ini_options.get('msg-template'),
+        'output message template')
+
+    args.output_file = _log_option_source(
+        parser.get_default('output_file'),
+        args.output_file,
+        ini_options.get('output'),
+        'output file')
+
+    args.baseline = _log_option_source(
+        parser.get_default('baseline'),
+        args.baseline,
+        ini_options.get('baseline'),
+        'path of a baseline report')
+    _handle_bool_in_ini(ini_options, args)
+
+
 def main():
     """Bandit CLI."""
     # bring our logging stuff up as early as possible
@@ -167,6 +292,7 @@ def main():
         "--recursive",
         dest="recursive",
         action="store_true",
+        default=None,
         help="find and process files in subdirectories",
     )
     parser.add_argument(
@@ -308,6 +434,7 @@ def main():
         "--verbose",
         dest="verbose",
         action="store_true",
+        default=None,
         help="output extra information like excluded and included files",
     )
     parser.add_argument(
@@ -315,6 +442,7 @@ def main():
         "--debug",
         dest="debug",
         action="store_true",
+        default=None,
         help="turn on debug mode",
     )
     group.add_argument(
@@ -323,12 +451,14 @@ def main():
         "--silent",
         dest="quiet",
         action="store_true",
+        default=None,
         help="only show output in the case of an error",
     )
     parser.add_argument(
         "--ignore-nosec",
         dest="ignore_nosec",
         action="store_true",
+        default=None,
         help="do not skip lines with # nosec comments",
     )
     parser.add_argument(
@@ -358,13 +488,13 @@ def main():
         dest="ini_path",
         action="store",
         default=None,
-        help="path to a .bandit file that supplies command line arguments",
+        help="path to an ini file that supplies command line arguments",
     )
     parser.add_argument(
         "--exit-zero",
         action="store_true",
         dest="exit_zero",
-        default=False,
+        default=None,
         help="exit with 0, " "even with results found",
     )
     python_ver = sys.version.replace("\n", "")
@@ -375,11 +505,6 @@ def main():
             version=bandit.__version__, python=python_ver
         ),
     )
-
-    parser.set_defaults(debug=False)
-    parser.set_defaults(verbose=False)
-    parser.set_defaults(quiet=False)
-    parser.set_defaults(ignore_nosec=False)
 
     plugin_info = [
         f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()
@@ -459,143 +584,11 @@ def main():
 
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
-    if ini_options:
-        # prefer command line, then ini file
-        args.excluded_paths = _log_option_source(
-            parser.get_default("excluded_paths"),
-            args.excluded_paths,
-            ini_options.get("exclude"),
-            "excluded paths",
-        )
+    _handle_ini_options(ini_options, args, parser)
 
-        args.skips = _log_option_source(
-            parser.get_default("skips"),
-            args.skips,
-            ini_options.get("skips"),
-            "skipped tests",
-        )
-
-        args.tests = _log_option_source(
-            parser.get_default("tests"),
-            args.tests,
-            ini_options.get("tests"),
-            "selected tests",
-        )
-
-        ini_targets = ini_options.get("targets")
-        if ini_targets:
-            ini_targets = ini_targets.split(",")
-
-        args.targets = _log_option_source(
-            parser.get_default("targets"),
-            args.targets,
-            ini_targets,
-            "selected targets",
-        )
-
-        # TODO(tmcpeak): any other useful options to pass from .bandit?
-
-        args.recursive = _log_option_source(
-            parser.get_default("recursive"),
-            args.recursive,
-            ini_options.get("recursive"),
-            "recursive scan",
-        )
-
-        args.agg_type = _log_option_source(
-            parser.get_default("agg_type"),
-            args.agg_type,
-            ini_options.get("aggregate"),
-            "aggregate output type",
-        )
-
-        args.context_lines = _log_option_source(
-            parser.get_default("context_lines"),
-            args.context_lines,
-            ini_options.get("number"),
-            "max code lines output for issue",
-        )
-
-        args.profile = _log_option_source(
-            parser.get_default("profile"),
-            args.profile,
-            ini_options.get("profile"),
-            "profile",
-        )
-
-        args.severity = _log_option_source(
-            parser.get_default("severity"),
-            args.severity,
-            ini_options.get("level"),
-            "severity level",
-        )
-
-        args.confidence = _log_option_source(
-            parser.get_default("confidence"),
-            args.confidence,
-            ini_options.get("confidence"),
-            "confidence level",
-        )
-
-        args.output_format = _log_option_source(
-            parser.get_default("output_format"),
-            args.output_format,
-            ini_options.get("format"),
-            "output format",
-        )
-
-        args.msg_template = _log_option_source(
-            parser.get_default("msg_template"),
-            args.msg_template,
-            ini_options.get("msg-template"),
-            "output message template",
-        )
-
-        args.output_file = _log_option_source(
-            parser.get_default("output_file"),
-            args.output_file,
-            ini_options.get("output"),
-            "output file",
-        )
-
-        args.verbose = _log_option_source(
-            parser.get_default("verbose"),
-            args.verbose,
-            ini_options.get("verbose"),
-            "output extra information",
-        )
-
-        args.debug = _log_option_source(
-            parser.get_default("debug"),
-            args.debug,
-            ini_options.get("debug"),
-            "debug mode",
-        )
-
-        args.quiet = _log_option_source(
-            parser.get_default("quiet"),
-            args.quiet,
-            ini_options.get("quiet"),
-            "silent mode",
-        )
-
-        args.ignore_nosec = _log_option_source(
-            parser.get_default("ignore_nosec"),
-            args.ignore_nosec,
-            ini_options.get("ignore-nosec"),
-            "do not skip lines with # nosec",
-        )
-
-        args.baseline = _log_option_source(
-            parser.get_default("baseline"),
-            args.baseline,
-            ini_options.get("baseline"),
-            "path of a baseline report",
-        )
-
+    # If no target has been set through args or ini file, then use a default
     if not args.targets:
-        parser.print_usage()
-        sys.exit(2)
+        args.targets = '.'
 
     # if the log format string was set in the options, reinitialize
     if b_conf.get_option("log_format"):
