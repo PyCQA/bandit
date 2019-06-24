@@ -23,10 +23,12 @@ class UtilTests(testtools.TestCase):
     '''This set of tests exercises bandit.core.docs_util functions.'''
 
     def test_overwrite_bib_info(self):
-        expected_url = BASE_URL + "blacklists/blacklist_call.html#b304-b305-ciphers-and-modes"
+        expected_url = BASE_URL + "blacklists/blacklist_call.html" \
+                                  "#b304-b305-ciphers-and-modes"
         self.assertEqual(get_url('b304'), get_url('b305'))
         self.assertEqual(get_url('b304'), expected_url)
 
     def test_normal_call_bib(self):
-        expected_url = BASE_URL + "blacklists/blacklist_call.html#b401-import-telnetlib"
+        expected_url = BASE_URL + "blacklists/blacklist_call.html" \
+                                  "#b401-import-telnetlib"
         self.assertEqual(get_url('b401'), expected_url)
