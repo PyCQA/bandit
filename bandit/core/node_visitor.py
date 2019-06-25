@@ -168,12 +168,6 @@ class BanditNodeVisitor(object):
             self.visit_Str(node)
         elif isinstance(node.value, bytes):
             self.visit_Bytes(node)
-        elif node.value in {True, False}:
-            self.visit_NameConstant(node)
-        elif node.value is Ellipsis:
-            self.visit_Ellipsis(node)
-        elif isinstance(node.value, (int, float)):
-            self.visit_Num(node)
 
     def visit_Str(self, node):
         '''Visitor for AST String nodes
