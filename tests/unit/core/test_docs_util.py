@@ -16,7 +16,8 @@
 
 import testtools
 
-from bandit.core.docs_utils import BASE_URL, get_url
+from bandit.core.docs_utils import BASE_URL
+from bandit.core.docs_utils import get_url
 
 
 class UtilTests(testtools.TestCase):
