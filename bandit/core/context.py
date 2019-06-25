@@ -40,10 +40,10 @@ class Context(object):
         the string version of _context.
 
         Example string returned:
-        <Context {'node': <_ast.Call object at 0x110252510>, 'function': None,
+        <Context {'node': <ast.Call object at 0x110252510>, 'function': None,
         'name': 'socket', 'imports': set(['socket']), 'module': None,
         'filename': 'examples/binding.py',
-        'call': <_ast.Call object at 0x110252510>, 'lineno': 3,
+        'call': <ast.Call object at 0x110252510>, 'lineno': 3,
         'import_aliases': {}, 'qualname': 'socket.socket'}>
 
         :return: A string representation of the object

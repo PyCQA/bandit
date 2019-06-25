@@ -19,3 +19,4 @@ doc/source/api
 .*.sw?
 AUTHORS
 releasenotes/build
+.mypy_cache
