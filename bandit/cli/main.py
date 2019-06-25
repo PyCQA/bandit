@@ -315,51 +315,81 @@ def main():
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
         # prefer command line, then ini file
-        args.excluded_paths = _log_option_source(args.excluded_paths,
-                                                 ini_options.get('exclude'),
-                                                 'excluded paths')
+        args.excluded_paths = _log_option_source(
+            args.excluded_paths,
+            ini_options.get('exclude'),
+            'excluded paths')
 
-        args.skips = _log_option_source(args.skips, ini_options.get('skips'),
-                                        'skipped tests')
+        args.skips = _log_option_source(
+            args.skips,
+            ini_options.get('skips'),
+            'skipped tests')
 
-        args.tests = _log_option_source(args.tests, ini_options.get('tests'),
-                                        'selected tests')
+        args.tests = _log_option_source(
+            args.tests,
+            ini_options.get('tests'),
+            'selected tests')
+
         ini_targets = ini_options.get('targets')
         if ini_targets:
             ini_targets = ini_targets.split(',')
-        args.targets = _log_option_source(args.targets, ini_targets,
-                                          'selected targets')
+
+        args.targets = _log_option_source(
+            args.targets,
+            ini_targets,
+            'selected targets')
+
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
-        args.recursive = _log_option_source(args.recursive, ini_options.get('recursive'),
-                                            'recursive scan')
+        args.recursive = _log_option_source(
+            args.recursive,
+            ini_options.get('recursive'),
+            'recursive scan')
 
-        args.agg_type = _log_option_source(args.agg_type, ini_options.get('aggregate'),
-                                           'aggregate output type')
+        args.agg_type = _log_option_source(
+            args.agg_type,
+            ini_options.get('aggregate'),
+            'aggregate output type')
 
-        args.context_lines = _log_option_source(args.context_lines, ini_options.get('number'),
-                                                'max code lines output for issue')
+        args.context_lines = _log_option_source(
+            args.context_lines,
+            ini_options.get('number'),
+            'max code lines output for issue')
 
-        args.profile = _log_option_source(args.profile, ini_options.get('profile'),
-                                          'profile')
+        args.profile = _log_option_source(
+            args.profile,
+            ini_options.get('profile'),
+            'profile')
 
-        args.severity = _log_option_source(args.severity, ini_options.get('level'),
-                                           'severity level')
+        args.severity = _log_option_source(
+            args.severity,
+            ini_options.get('level'),
+            'severity level')
 
-        args.confidence = _log_option_source(args.confidence, ini_options.get('confidence'),
-                                             'confidence level')
+        args.confidence = _log_option_source(
+            args.confidence,
+            ini_options.get('confidence'),
+            'confidence level')
 
-        args.output_format = _log_option_source(args.output_format, ini_options.get('format'),
-                                                'output format')
+        args.output_format = _log_option_source(
+            args.output_format,
+            ini_options.get('format'),
+            'output format')
 
-        args.output_file = _log_option_source(args.output_file, ini_options.get('output'),
-                                              'output file')
+        args.output_file = _log_option_source(
+            args.output_file,
+            ini_options.get('output'),
+            'output file')
 
-        args.debug = _log_option_source(args.debug, ini_options.get('debug'),
-                                        'debug mode')
+        args.debug = _log_option_source(
+            args.debug,
+            ini_options.get('debug'),
+            'debug mode')
 
-        args.quiet = _log_option_source(args.quiet, ini_options.get('quiet'),
-                                        'silent mode')
+        args.quiet = _log_option_source(
+            args.quiet,
+            ini_options.get('quiet'),
+            'silent mode')
 
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
