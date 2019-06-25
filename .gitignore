@@ -20,3 +20,4 @@ doc/source/api
 AUTHORS
 releasenotes/build
 .mypy_cache
+.pytest_cache
