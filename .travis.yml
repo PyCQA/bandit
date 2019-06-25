@@ -31,17 +31,4 @@ matrix:
       sudo: true
     - python: pypy
       env: TOXENV=pypy
-  allow_failures:
-    - python: 3.8-dev
-      env: TOXENV=py38
-      dist: xenial
-      sudo: true
 
-notifications:
-  email:
-    - lhinds@protonmail.com
-  irc:
-    channels:
-      - "irc.freenode.org##python-code-quality"
-    use_notice: true
-    skip_join: true
