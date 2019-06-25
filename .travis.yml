@@ -31,4 +31,11 @@ matrix:
       sudo: true
     - python: pypy
       env: TOXENV=pypy
-
+notifications:
+  email:
+    - lhinds@protonmail.com
+  irc:
+    channels:
+      - "irc.freenode.org##python-code-quality"
+    use_notice: true
+    skip_join: true
