@@ -331,6 +331,36 @@ def main():
                                           'selected targets')
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
+        args.recursive = _log_option_source(args.quiet, ini_options.get('recursive'),
+                                            'recursive scan')
+
+        args.agg_type = _log_option_source(args.agg_type, ini_options.get('aggregate'),
+                                           'aggregate output type')
+
+        args.context_lines = _log_option_source(args.context_lines, ini_options.get('number'),
+                                                'max code lines output for issue')
+
+        args.profile = _log_option_source(args.profile, ini_options.get('profile'),
+                                          'profile')
+
+        args.severity = _log_option_source(args.severity, ini_options.get('level'),
+                                           'severity level')
+
+        args.confidence = _log_option_source(args.confidence, ini_options.get('confidence'),
+                                             'confidence level')
+
+        args.output_format = _log_option_source(args.output_format, ini_options.get('format'),
+                                                'output format')
+
+        args.output_file = _log_option_source(args.output_file, ini_options.get('output'),
+                                              'output file')
+
+        args.debug = _log_option_source(args.debug, ini_options.get('debug'),
+                                        'debug mode')
+
+        args.quiet = _log_option_source(args.quiet, ini_options.get('quiet'),
+                                        'silent mode')
+
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
         sys.exit(2)
