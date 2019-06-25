@@ -26,10 +26,14 @@ class UtilTests(testtools.TestCase):
     def test_overwrite_bib_info(self):
         expected_url = BASE_URL + "blacklists/blacklist_call.html" \
                                   "#b304-b305-ciphers-and-modes"
-        self.assertEqual(get_url('b304'), get_url('b305'))
-        self.assertEqual(get_url('b304'), expected_url)
+        self.assertEqual(get_url('B304'), get_url('B305'))
+        self.assertEqual(get_url('B304'), expected_url)
 
-    def test_normal_call_bib(self):
-        expected_url = BASE_URL + "blacklists/blacklist_call.html" \
-                                  "#b401-import-telnetlib"
-        self.assertEqual(get_url('b401'), expected_url)
+    def test_plugin_call_bib(self):
+        expected_url = BASE_URL + "plugins/b101_assert_used.html'"
+        self.assertEqual(get_url('B101'), expected_url)
+
+    def test_import_call_bib(self):
+        expected_url = BASE_URL + "blacklists/blacklist_imports.html" \
+                                  "#b413-import-pycrypto"
+        self.assertEqual(get_url('B413'), expected_url)
