@@ -331,7 +331,7 @@ def main():
                                           'selected targets')
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
-        args.recursive = _log_option_source(args.quiet, ini_options.get('recursive'),
+        args.recursive = _log_option_source(args.recursive, ini_options.get('recursive'),
                                             'recursive scan')
 
         args.agg_type = _log_option_source(args.agg_type, ini_options.get('aggregate'),
