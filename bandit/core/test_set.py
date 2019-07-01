@@ -93,9 +93,10 @@ class BanditTestSet(object):
         # this dresses up the blacklist to look like a plugin, but
         # the '_checks' data comes from the blacklist information.
         # the '_config' is the filtered blacklist data set.
-        setattr(blacklisting.blacklist, "_test_id", 'B001')
-        setattr(blacklisting.blacklist, "_checks", blacklist.keys())
-        setattr(blacklisting.blacklist, "_config", blacklist)
+        blacklisting.blacklist._test_id = "B001"
+        blacklisting.blacklist._checks = blacklist.keys()
+        blacklisting.blacklist._config = blacklist
+
         return [Wrapper('blacklist', blacklisting.blacklist)]
 
     def _load_tests(self, config, plugins):
