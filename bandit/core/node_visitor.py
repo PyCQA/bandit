@@ -152,6 +152,23 @@ class BanditNodeVisitor(object):
             self.context['name'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'ImportFrom'))
 
+    def visit_Constant(self, node):
+        '''Visitor for AST Constant nodes
+
+        call the appropriate method for the node type.
+        this maintains compatibility with <3.6 and 3.8+
+
+        This code is heavily influenced by Anthony Sottile (@asottile) here:
+        https://bugs.python.org/msg342486
+
+        :param node: The node that is being inspected
+        :return: -
+        '''
+        if isinstance(node.value, str):
+            self.visit_Str(node)
+        elif isinstance(node.value, bytes):
+            self.visit_Bytes(node)
+
     def visit_Str(self, node):
         '''Visitor for AST String nodes
 

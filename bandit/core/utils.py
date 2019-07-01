@@ -14,7 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import _ast
 import ast
 import logging
 import os.path
@@ -46,11 +45,11 @@ def _get_attr_qual_name(node, aliases):
     :param aliases: Import aliases dictionary
     :returns: Qualified name referred to by the attribute or name.
     '''
-    if isinstance(node, _ast.Name):
+    if isinstance(node, ast.Name):
         if node.id in aliases:
             return aliases[node.id]
         return node.id
-    elif isinstance(node, _ast.Attribute):
+    elif isinstance(node, ast.Attribute):
         name = '%s.%s' % (_get_attr_qual_name(node.value, aliases), node.attr)
         if name in aliases:
             return aliases[name]
@@ -60,11 +59,11 @@ def _get_attr_qual_name(node, aliases):
 
 
 def get_call_name(node, aliases):
-    if isinstance(node.func, _ast.Name):
+    if isinstance(node.func, ast.Name):
         if deepgetattr(node, 'func.id') in aliases:
             return aliases[deepgetattr(node, 'func.id')]
         return deepgetattr(node, 'func.id')
-    elif isinstance(node.func, _ast.Attribute):
+    elif isinstance(node.func, ast.Attribute):
         return _get_attr_qual_name(node.func, aliases)
     else:
         return ""
@@ -76,7 +75,7 @@ def get_func_name(node):
 
 def get_qual_attr(node, aliases):
     prefix = ""
-    if isinstance(node, _ast.Attribute):
+    if isinstance(node, ast.Attribute):
         try:
             val = deepgetattr(node, 'value.id')
             if val in aliases:
