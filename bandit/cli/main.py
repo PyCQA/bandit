@@ -248,8 +248,8 @@ def main():
         help='path to a .bandit file that supplies command line arguments'
     )
     parser.add_argument('--exit-zero', action='store_true', dest='exit_zero',
-                        default=False, help='Exit with 0, '
-                                            'even with results found.')
+                        default=False, help='exit with 0, '
+                                            'even with results found')
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
