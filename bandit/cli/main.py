@@ -20,13 +20,11 @@ import os
 import sys
 import textwrap
 
-
 import bandit
 from bandit.core import config as b_config
 from bandit.core import constants
 from bandit.core import manager as b_manager
 from bandit.core import utils
-
 
 BASE_CONFIG = 'bandit.yaml'
 LOG = logging.getLogger()
@@ -249,6 +247,9 @@ def main():
         '--ini', dest='ini_path', action='store', default=None,
         help='path to a .bandit file that supplies command line arguments'
     )
+    parser.add_argument('--exit-zero', action='store_true', dest='exit_zero',
+                        default=False, help='Exit with 0, '
+                                            'even with results found.')
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
@@ -403,7 +404,8 @@ def main():
                          args.msg_template)
 
     # return an exit code of 1 if there are results, 0 otherwise
-    if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:
+    if (b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
+            and not args.exit_zero):
         sys.exit(1)
     else:
         sys.exit(0)
