@@ -15,7 +15,6 @@
 import os
 import subprocess
 
-import six
 import testtools
 
 
