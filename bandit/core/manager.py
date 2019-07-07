@@ -274,9 +274,8 @@ class BanditManager(object):
             lines = data.splitlines()
             self.metrics.begin(fname)
             self.metrics.count_locs(lines)
-            if self.ignore_nosec:
-                nosec_lines = set()
-            else:
+            nosec_lines = set()
+            if not self.ignore_nosec and 'nosec' in data:
                 try:
                     fdata.seek(0)
                     if six.PY2:
