@@ -117,7 +117,7 @@ class RuntimeTests(testtools.TestCase):
             self.assertIn("nonsense2.py (exception while scanning file)",
                           output)
         else:
-            self.assertIn("nonsense2.py (syntax error while parsing AST",
+            self.assertIn(b"nonsense2.py (syntax error while parsing AST",
                           output)
 
     def test_example_imports(self):
