@@ -82,10 +82,10 @@ def find_no_assigned_to_str(node, name, lineno):
 
 
 def check_risk(node, name):
-    start_scope = node.parent
+    start_scope = node._bandit_parent
     while not isinstance(start_scope,
                          (ast.Module, ast.FunctionDef, ast.ClassDef)):
-        start_scope = start_scope.parent
+        start_scope = start_scope._bandit_parent
 
     if is_param(start_scope, name):
         return True
