@@ -201,7 +201,7 @@ class BanditNodeVisitor(object):
 
     def visit_Dict(self, node):
         for idx, key in enumerate(node.keys):
-            key.value = node.values[idx]
+            setattr(key, 'rvalue', node.values[idx])
         self.update_scores(self.tester.run_tests(self.context, 'Dict'))
 
     def pre_visit(self, node):
