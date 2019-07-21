@@ -48,3 +48,5 @@ matchnested ={
   },
   'pwd': 'nested_pwd'
 }
+
+log({"server": server, "password": 'pass', "user": user})
