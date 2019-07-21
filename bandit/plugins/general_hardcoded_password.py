@@ -108,6 +108,11 @@ def hardcoded_password_string(context):
                 if isinstance(comp.comparators[0], ast.Str):
                     return _report(comp.comparators[0].s)
 
+    elif isinstance(node._bandit_parent, ast.Dict) and hasattr(node, 'value'):
+        # looks for "'candidate': 'some_string'"
+        if isinstance(node.value, ast.Str) and RE_CANDIDATES.search(node.s):
+            return _report(node.value.s)
+
 
 @test.checks('Call')
 @test.test_id('B106')

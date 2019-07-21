@@ -199,6 +199,11 @@ class BanditNodeVisitor(object):
             )
             self.update_scores(self.tester.run_tests(self.context, 'Bytes'))
 
+    def visit_Dict(self, node):
+        for idx, key in enumerate(node.keys):
+            key.value = node.values[idx]
+        self.update_scores(self.tester.run_tests(self.context, 'Dict'))
+
     def pre_visit(self, node):
         self.context = {}
         self.context['imports'] = self.imports

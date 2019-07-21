@@ -27,3 +27,24 @@ EMAIL_PASSWORD = "secret"
 email_pwd = 'emails_secret'
 my_secret_password_for_email = 'd6s$f9g!j8mg7hw?n&2'
 passphrase='1234'
+
+user= {
+  'username': 'donotdetect',
+  'passWord': 'detectmeisecret'
+}
+
+nomatchnested = {
+  'nomatch': 'dontdetect',
+  'pasS': {
+    'nomatch2': 'nomatch3'
+  }
+}
+
+matchnested ={
+  'nomatch': 'dontdetect',
+  'nomatch2': {
+    'user': 'nomatch3',
+    'PASSphrase': 'secretpassword'
+  },
+  'pwd': 'nested_pwd'
+}
