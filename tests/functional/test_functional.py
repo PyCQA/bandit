@@ -526,8 +526,8 @@ class FunctionalTests(testtools.TestCase):
     def test_django_xss_insecure(self):
         """Test for Django XSS via django.utils.safestring"""
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 28, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 28}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 21, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 21}
         }
         self.b_mgr.b_ts = b_test_set.BanditTestSet(
             config=self.b_mgr.b_conf,

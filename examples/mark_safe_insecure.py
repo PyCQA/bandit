@@ -14,6 +14,14 @@ safestring.SafeString(my_insecure_str)
 safestring.SafeBytes(my_insecure_str)
 
 
+text, url = choice(['a', 'b'])
+safestring.mark_safe(
+    '<a href="{0}">{1}</a>'.format(
+        url, text
+    )
+)
+
+
 def try_insecure(cls='" onload="alert(\'xss\')'):
     try:
         my_insecure_str = insecure_function('insecure', cls=cls)
