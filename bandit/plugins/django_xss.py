@@ -101,7 +101,8 @@ class DeepAssignation(object):
                 pos = 0
                 for name in target.elts:
                     if name.id == self.var_name.id:
-                        assigned = node.value.elts[pos]
+                        if hasattr(node.value, 'elts'):
+                            assigned = node.value.elts[pos]
                         break
                     pos += 1
         return assigned
