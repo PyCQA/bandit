@@ -229,7 +229,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
 @test.checks('Call')
 @test.test_id('B603')
 def subprocess_without_shell_equals_true(context, config):
-    """**B603: Test for use of subprocess with shell equals true**
+    """**B603: Test for use of subprocess without shell equals true**
 
     Python possesses many mechanisms to invoke an external executable. However,
     doing so may present a security issue if appropriate care is not taken to
