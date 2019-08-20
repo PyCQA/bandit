@@ -67,7 +67,7 @@ OPTIONS
                         JSON-formatted files are accepted)
   --ini INI_PATH        path to a .bandit file that supplies command line
                         arguments
-  --exit-zero           return 0 upon exit regardless of results being found.
+  --exit-zero           exit with 0, even with results found
   --version             show program's version number and exit
 
 CUSTOM FORMATTING
