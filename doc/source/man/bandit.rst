@@ -10,7 +10,7 @@ bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
             [-f {csv,custom,html,json,screen,txt,xml,yaml}]
             [--msg-template MSG_TEMPLATE] [-o OUTPUT_FILE] [-v] [-d] [-q]
             [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
-            [--ini INI_PATH] [--version]
+            [--ini INI_PATH] [--version] [--exit-zero]
             targets [targets ...]
 
 DESCRIPTION
@@ -68,6 +68,7 @@ OPTIONS
   --ini INI_PATH        path to a .bandit file that supplies command line
                         arguments
   --version             show program's version number and exit
+  --exit-zero           return 0 regardless of results being found
 
 CUSTOM FORMATTING
 -----------------
