@@ -152,6 +152,23 @@ class BanditNodeVisitor(object):
             self.context['name'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'ImportFrom'))
 
+    def visit_Constant(self, node):
+        '''Visitor for AST Constant nodes
+
+        call the appropriate method for the node type.
+        this maintains compatibility with <3.6 and 3.8+
+
+        This code is heavily influenced by Anthony Sottile (@asottile) here:
+        https://bugs.python.org/msg342486
+
+        :param node: The node that is being inspected
+        :return: -
+        '''
+        if isinstance(node.value, str):
+            self.visit_Str(node)
+        elif isinstance(node.value, bytes):
+            self.visit_Bytes(node)
+
     def visit_Str(self, node):
         '''Visitor for AST String nodes
 
@@ -227,7 +244,7 @@ class BanditNodeVisitor(object):
 
         # HACK(tkelsey): this is needed to clean up post-recursion stuff that
         # gets setup in the visit methods for these node types.
-        if isinstance(node, ast.FunctionDef) or isinstance(node, ast.ClassDef):
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
             self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
     def generic_visit(self, node):
@@ -238,10 +255,10 @@ class BanditNodeVisitor(object):
                 for idx, item in enumerate(value):
                     if isinstance(item, ast.AST):
                         if idx < max_idx:
-                            setattr(item, '_bandit_sibling', value[idx + 1])
+                            item._bandit_sibling = value[idx + 1]
                         else:
-                            setattr(item, '_bandit_sibling', None)
-                        setattr(item, '_bandit_parent', node)
+                            item._bandit_sibling = None
+                        item._bandit_parent = node
 
                         if self.pre_visit(item):
                             self.visit(item)
@@ -249,9 +266,8 @@ class BanditNodeVisitor(object):
                             self.post_visit(item)
 
             elif isinstance(value, ast.AST):
-                setattr(value, '_bandit_sibling', None)
-                setattr(value, '_bandit_parent', node)
-
+                value._bandit_sibling = None
+                value._bandit_parent = node
                 if self.pre_visit(value):
                     self.visit(value)
                     self.generic_visit(value)
