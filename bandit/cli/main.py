@@ -403,7 +403,6 @@ def main():
                          args.output_format,
                          args.msg_template)
 
-    # return an exit code of 1 if there are results, 0 otherwise
     if (b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
             and not args.exit_zero):
         sys.exit(1)
