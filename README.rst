@@ -342,8 +342,8 @@ string, import, etc).
 Tests are executed by the ``BanditNodeVisitor`` object as it visits each node
 in the AST.
 
-Test results are maintained in the ``BanditResultStore`` and aggregated for
-output at the completion of a test run.
+Test results are managed in the ``Manager`` and aggregated for
+output at the completion of a test run through the method `output_result` from ``Manager`` instance.
 
 
 Writing Tests
@@ -378,12 +378,14 @@ Bandit will load plugins from two entry-points:
 - `bandit.formatters`
 - `bandit.plugins`
 
-Formatters need to accept 4 things:
+Formatters need to accept 5 things:
 
-- `result_store`: An instance of `bandit.core.BanditResultStore`
-- `file_list`: The list of files which were inspected in the scope
-- `scores`: The scores awarded to each file in the scope
-- `excluded_files`: The list of files that were excluded from the scope
+manager, fileobj, sev_level, conf_level, lines=-1
+- `manager`: An instance of `bandit manager`
+- `fileobj`: output file object
+- `sev_level` : Filtering severity level
+- `conf_level`: Filtering confidence level
+- `lines=-1`: Number of lines to report
 
 Plugins tend to take advantage of the `bandit.checks` decorator which allows
 the author to register a check for a particular type of AST node. For example
