@@ -9,7 +9,21 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7]
+        include:
+          - python: 2.7
+            env: TOXENV=pylint
+          - python: 2.7
+            env: TOXENV=pep8
+          - python: 2.7
+            env: TOXENV=py27
+          - python: 3.5
+            env: TOXENV=py35
+          - python: 3.6
+            env: TOXENV=py36
+          - python: 3.7
+            env: TOXENV=py37
+          - python: pypy
+            env: TOXENV=pypy
 
     steps:
     - uses: actions/checkout@v1
@@ -23,38 +37,6 @@ jobs:
         pip install -r requirements.txt
         pip install -r test-requirements.txt
         pip install tox
-    - name: pylint
+    - name: Run tox
       run: |
         tox
-      env:
-        TOXENV: pylint
-    - name: pep8
-      run: |
-        tox
-      env:
-        TOXENV: pep8
-    - name: py27
-      run: |
-        tox
-      env:
-        TOXENV: py27
-    - name: py35
-      run: |
-        tox
-      env:
-        TOXENV: py35
-    - name: py36
-      run: |
-        tox
-      env:
-        TOXENV: py36
-    - name: py37
-      run: |
-        tox
-      env:
-        TOXENV: py37
-    - name: pypy
-      run: |
-        tox
-      env:
-        TOXENV: pypy
