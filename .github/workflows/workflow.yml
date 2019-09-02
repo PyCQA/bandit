@@ -10,19 +10,26 @@ jobs:
       max-parallel: 4
       matrix:
         include:
-          - python: 2.7
+          - os: ubuntu-18.04
+            python: 2.7
             env: TOXENV=pylint
-          - python: 2.7
+          - os: ubuntu-18.04
+            python: 2.7
             env: TOXENV=pep8
-          - python: 2.7
+          - os: ubuntu-18.04
+            python: 2.7
             env: TOXENV=py27
-          - python: 3.5
+          - os: ubuntu-18.04
+            python: 3.5
             env: TOXENV=py35
-          - python: 3.6
+          - os: ubuntu-18.04
+            python: 3.6
             env: TOXENV=py36
-          - python: 3.7
+          - os: ubuntu-18.04
+            python: 3.7
             env: TOXENV=py37
-          - python: pypy
+          - os: ubuntu-18.04
+            python: pypy
             env: TOXENV=pypy
 
     steps:
@@ -38,5 +45,4 @@ jobs:
         pip install -r test-requirements.txt
         pip install tox
     - name: Run tox
-      run: |
-        tox
+      run: tox
