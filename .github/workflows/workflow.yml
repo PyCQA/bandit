@@ -9,29 +9,36 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        os: [ubuntu-18.04]
+        os: [ubuntu-latest]
         include:
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             python: 2.7
-            env: TOXENV=pylint
-          - os: ubuntu-18.04
+            env:
+              TOXENV: pylint
+          - os: ubuntu-latest
             python: 2.7
-            env: TOXENV=pep8
-          - os: ubuntu-18.04
+            env:
+              TOXENV: pep8
+          - os: ubuntu-latest
             python: 2.7
-            env: TOXENV=py27
-          - os: ubuntu-18.04
+            env:
+              TOXENV: py27
+          - os: ubuntu-latest
             python: 3.5
-            env: TOXENV=py35
-          - os: ubuntu-18.04
+            env:
+              TOXENV: py35
+          - os: ubuntu-latest
             python: 3.6
-            env: TOXENV=py36
-          - os: ubuntu-18.04
+            env:
+              TOXENV: py36
+          - os: ubuntu-latest
             python: 3.7
-            env: TOXENV=py37
-          - os: ubuntu-18.04
+            env:
+              TOXENV: py37
+          - os: ubuntu-latest
             python: pypy
-            env: TOXENV=pypy
+            env:
+              TOXENV: pypy
 
     steps:
     - uses: actions/checkout@v1
