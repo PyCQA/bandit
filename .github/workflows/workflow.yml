@@ -22,16 +22,39 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r test-requirements.txt
-    - name: Lint with pylint
+        pip install tox
+    - name: pylint
       run: |
-        pylint --rcfile=pylintrc bandit
-    - name: Lint with flake8
+        tox
+      env:
+        TOXENV: pylint
+    - name: pep8
       run: |
-        flake8 . --show-source --exclude=.venv,.git,.tox,dist,doc,*lib/python*,*egg,build,releasenotes --enable-extensions=H106,H203 bandit
-        flake8 . --show-source --exclude=.venv,.git,.tox,dist,doc,*lib/python*,*egg,build,releasenotes --enable-extensions=H106,H203 tests
-    - name: Test with stestr
+        tox
+      env:
+        TOXENV: pep8
+    - name: py27
       run: |
-        stestr run
-    - name: Build docs
+        tox
+      env:
+        TOXENV: py27
+    - name: py35
       run: |
-        python setup.py build_sphinx
+        tox
+      env:
+        TOXENV: py35
+    - name: py36
+      run: |
+        tox
+      env:
+        TOXENV: py36
+    - name: py37
+      run: |
+        tox
+      env:
+        TOXENV: py37
+    - name: pypy
+      run: |
+        tox
+      env:
+        TOXENV: pypy
