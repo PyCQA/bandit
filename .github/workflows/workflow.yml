@@ -1,46 +1,13 @@
-name: Python package
+name: Build and Test Bandit
 
 on: [push]
 
 jobs:
-  build:
-
-    runs-on: ${{ matrix.os }}
+  pylint:
+    runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        os: [ubuntu-latest]
-        python-version: [2.7, 3.5, 3.6, 3.7, pypy]
-        include:
-          - os: ubuntu-latest
-            python: 2.7
-            env:
-              TOXENV: pylint
-          - os: ubuntu-latest
-            python: 2.7
-            env:
-              TOXENV: pep8
-          - os: ubuntu-latest
-            python: 2.7
-            env:
-              TOXENV: py27
-          - os: ubuntu-latest
-            python: 3.5
-            env:
-              TOXENV: py35
-          - os: ubuntu-latest
-            python: 3.6
-            env:
-              TOXENV: py36
-          - os: ubuntu-latest
-            python: 3.7
-            env:
-              TOXENV: py37
-          - os: ubuntu-latest
-            python: pypy
-            env:
-              TOXENV: pypy
-
+        python-version: 2.7
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python ${{ matrix.python-version }}
@@ -54,4 +21,126 @@ jobs:
         pip install -r test-requirements.txt
         pip install tox
     - name: Run tox
-      run: tox
+      run: tox -e pylint
+      
+  pep8:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: 2.7
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test-requirements.txt
+        pip install tox
+    - name: Run tox
+      run: tox -e pep8
+
+  py27:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: 2.7
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test-requirements.txt
+        pip install tox
+    - name: Run tox
+      run: tox -e py27
+
+  py35:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: 3.5
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test-requirements.txt
+        pip install tox
+    - name: Run tox
+      run: tox -e py35
+
+  py36:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: 3.6
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test-requirements.txt
+        pip install tox
+    - name: Run tox
+      run: tox -e py36
+  
+  py37:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: 3.7
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test-requirements.txt
+        pip install tox
+    - name: Run tox
+      run: tox -e py37
+
+  pypy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: pypy
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r test-requirements.txt
+        pip install tox
+    - name: Run tox
+      run: tox -e pypy
+
+
