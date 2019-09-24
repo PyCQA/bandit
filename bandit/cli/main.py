@@ -377,10 +377,20 @@ def main():
             ini_options.get('format'),
             'output format')
 
+        args.msg_template = _log_option_source(
+            args.msg_template,
+            ini_options.get('msg-template'),
+            'output message template')
+
         args.output_file = _log_option_source(
             args.output_file,
             ini_options.get('output'),
             'output file')
+
+        args.verbose = _log_option_source(
+            args.verbose,
+            ini_options.get('verbose'),
+            'output extra information')
 
         args.debug = _log_option_source(
             args.debug,
@@ -391,6 +401,16 @@ def main():
             args.quiet,
             ini_options.get('quiet'),
             'silent mode')
+
+        args.ignore_nosec = _log_option_source(
+            args.ignore_nosec,
+            ini_options.get('ignore-nosec'),
+            'do not skip lines with # nosec')
+
+        args.baseline = _log_option_source(
+            args.baseline,
+            ini_options.get('baseline'),
+            'path of a baseline report')
 
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
