@@ -42,6 +42,8 @@ deserialize untrusted data, possible security issue.
 |      |                     | - dill.loads                       |           |
 |      |                     | - dill.load                        |           |
 |      |                     | - dill.Unpickler                   |           |
+|      |                     | - shelve.open                      |           |
+|      |                     | - shelve.DbfilenameShelf           |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -347,7 +349,9 @@ def gen_blacklist():
          'cPickle.Unpickler',
          'dill.loads',
          'dill.load',
-         'dill.Unpickler'],
+         'dill.Unpickler',
+         'shelve.open',
+         'shelve.DbfilenameShelf'],
         'Pickle and modules that wrap it can be unsafe when used to '
         'deserialize untrusted data, possible security issue.'
         ))

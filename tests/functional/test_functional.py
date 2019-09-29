@@ -363,6 +363,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('dill.py', expect)
 
+    def test_shelve(self):
+        '''Test for the `shelve` module.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 3}
+        }
+        self.check_example('shelve_open.py', expect)
+
     def test_popen_wrappers(self):
         '''Test the `popen2` and `commands` modules.'''
         expect = {
