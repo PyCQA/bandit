@@ -380,12 +380,11 @@ Bandit will load plugins from two entry-points:
 
 Formatters need to accept 5 things:
 
-manager, fileobj, sev_level, conf_level, lines=-1
-- `manager`: An instance of `bandit manager`
-- `fileobj`: output file object
+- `manager`: an instance of `bandit manager`
+- `fileobj`: the output file object, which may be sys.stdout
 - `sev_level` : Filtering severity level
 - `conf_level`: Filtering confidence level
-- `lines=-1`: Number of lines to report
+- `lines=-1`: number of lines to report
 
 Plugins tend to take advantage of the `bandit.checks` decorator which allows
 the author to register a check for a particular type of AST node. For example
