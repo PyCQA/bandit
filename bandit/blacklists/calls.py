@@ -42,6 +42,8 @@ deserialize untrusted data, possible security issue.
 |      |                     | - dill.loads                       |           |
 |      |                     | - dill.load                        |           |
 |      |                     | - dill.Unpickler                   |           |
+|      |                     | - shelve.open                      |           |
+|      |                     | - shelve.DbfilenameShelf           |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -309,6 +311,7 @@ using tmpfile() instead.
 
 For further information:
     https://docs.python.org/2.7/library/os.html#os.tempnam
+    https://docs.python.org/3/whatsnew/3.0.html?highlight=tempnam
     https://bugs.python.org/issue17880
 
 +------+---------------------+------------------------------------+-----------+
@@ -346,7 +349,9 @@ def gen_blacklist():
          'cPickle.Unpickler',
          'dill.loads',
          'dill.load',
-         'dill.Unpickler'],
+         'dill.Unpickler',
+         'shelve.open',
+         'shelve.DbfilenameShelf'],
         'Pickle and modules that wrap it can be unsafe when used to '
         'deserialize untrusted data, possible security issue.'
         ))
