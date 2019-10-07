@@ -40,3 +40,16 @@ FALSE_VALUES = [None, False, 'False', 0, 0.0, 0j, '', (), [], {}]
 
 # override with "log_format" option in config file
 log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
+
+# Directories to exclude by default
+EXCLUDE = (
+    ".svn",
+    "CVS",
+    ".bzr",
+    ".hg",
+    ".git",
+    "__pycache__",
+    ".tox",
+    ".eggs",
+    "*.egg",
+)
