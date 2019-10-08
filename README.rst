@@ -99,7 +99,7 @@ Usage::
                   [-f {csv,custom,html,json,screen,txt,xml,yaml}]
                   [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d] [-q]
                   [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
-                  [--ini INI_PATH] [--version]
+                  [--ini INI_PATH] [--exit-zero] [--version]
                   [targets [targets ...]]
 
     Bandit - a Python source code security analyzer
@@ -151,6 +151,7 @@ Usage::
                             JSON-formatted files are accepted)
       --ini INI_PATH        path to a .bandit file that supplies command line
                             arguments
+      --exit-zero           exit with 0, even with results found
       --version             show program's version number and exit
 
     CUSTOM FORMATTING
@@ -175,7 +176,7 @@ Usage::
         "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
 
         See python documentation for more information about formatting style:
-        https://docs.python.org/3.4/library/string.html
+        https://docs.python.org/3/library/string.html
 
     The following tests were discovered and loaded:
     -----------------------------------------------
@@ -253,10 +254,10 @@ Usage::
 
 Baseline
 --------
-Bandit allows specifying the path of a baseline report to compare against using the base line argument (i.e. ``-b BASELINE`` or ``--baseline BASELINE``). 
+Bandit allows specifying the path of a baseline report to compare against using the base line argument (i.e. ``-b BASELINE`` or ``--baseline BASELINE``).
 
 ::
-  
+
    bandit -b BASELINE
 
 This is useful for ignoring known vulnerabilities that you believe are non-issues (e.g. a cleartext password in a unit test). To generate a baseline report simply run Bandit with the output format set to ``json`` (only JSON-formatted files are accepted as a baseline) and output file path specified:
@@ -341,8 +342,8 @@ string, import, etc).
 Tests are executed by the ``BanditNodeVisitor`` object as it visits each node
 in the AST.
 
-Test results are maintained in the ``BanditResultStore`` and aggregated for
-output at the completion of a test run.
+Test results are managed in the ``Manager`` and aggregated for
+output at the completion of a test run through the method `output_result` from ``Manager`` instance.
 
 
 Writing Tests
@@ -377,12 +378,13 @@ Bandit will load plugins from two entry-points:
 - `bandit.formatters`
 - `bandit.plugins`
 
-Formatters need to accept 4 things:
+Formatters need to accept 5 things:
 
-- `result_store`: An instance of `bandit.core.BanditResultStore`
-- `file_list`: The list of files which were inspected in the scope
-- `scores`: The scores awarded to each file in the scope
-- `excluded_files`: The list of files that were excluded from the scope
+- `manager`: an instance of `bandit manager`
+- `fileobj`: the output file object, which may be sys.stdout
+- `sev_level` : Filtering severity level
+- `conf_level`: Filtering confidence level
+- `lines=-1`: number of lines to report
 
 Plugins tend to take advantage of the `bandit.checks` decorator which allows
 the author to register a check for a particular type of AST node. For example
@@ -468,7 +470,7 @@ References
 
 Bandit docs: https://bandit.readthedocs.io/en/latest/
 
-Python AST module documentation: https://docs.python.org/2/library/ast.html
+Python AST module documentation: https://docs.python.org/3/library/ast.html
 
 Green Tree Snakes - the missing Python AST docs:
 https://greentreesnakes.readthedocs.org/en/latest/

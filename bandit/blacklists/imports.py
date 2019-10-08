@@ -60,6 +60,7 @@ Consider possible security implications associated with these modules.
 | B403 | import_pickle       | - pickle                           | low       |
 |      |                     | - cPickle                          |           |
 |      |                     | - dill                             |           |
+|      |                     | - shelve                           |           |
 +------+---------------------+------------------------------------+-----------+
 
 B404: import_subprocess
@@ -256,7 +257,7 @@ def gen_blacklist():
         ))
 
     sets.append(utils.build_conf_dict(
-        'import_pickle', 'B403', ['pickle', 'cPickle', 'dill'],
+        'import_pickle', 'B403', ['pickle', 'cPickle', 'dill', 'shelve'],
         'Consider possible security implications associated with '
         '{name} module.', 'LOW'
         ))
