@@ -184,13 +184,16 @@ class BanditManager(object):
         files_list = set()
         excluded_files = set()
 
-        excluded_path_strings = self.b_conf.get_option('exclude_dirs') or []
+        excluded_path_globs = self.b_conf.get_option('exclude_dirs') or []
         included_globs = self.b_conf.get_option('include') or ['*.py']
 
         # if there are command line provided exclusions add them to the list
         if excluded_paths:
             for path in excluded_paths.split(','):
-                excluded_path_strings.append(path)
+                if os.path.isdir(path):
+                    path = os.path.join(path, '*')
+
+                excluded_path_globs.append(path)
 
         # build list of files we will analyze
         for fname in targets:
@@ -200,7 +203,7 @@ class BanditManager(object):
                     new_files, newly_excluded = _get_files_from_dir(
                         fname,
                         included_globs=included_globs,
-                        excluded_path_strings=excluded_path_strings
+                        excluded_path_strings=excluded_path_globs
                     )
                     files_list.update(new_files)
                     excluded_files.update(newly_excluded)
@@ -213,7 +216,7 @@ class BanditManager(object):
                 # we'll scan it, regardless of whether it's in the included
                 # file types list
                 if _is_file_included(fname, included_globs,
-                                     excluded_path_strings,
+                                     excluded_path_globs,
                                      enforce_glob=False):
                     files_list.add(fname)
                 else:
@@ -353,7 +356,8 @@ def _is_file_included(path, included_globs, excluded_path_strings,
 
     :param path: Full path of file to check
     :param parsed_extensions: List of parsed extensions
-    :param excluded_paths: List of paths from which we should not include files
+    :param excluded_paths: List of paths (globbing supported) from which we
+        should not include files
     :param enforce_glob: Can set to false to bypass extension check
     :return: Boolean indicating whether a file should be included
     '''
@@ -362,7 +366,8 @@ def _is_file_included(path, included_globs, excluded_path_strings,
     # if this is matches a glob of files we look at, and it isn't in an
     # excluded path
     if _matches_glob_list(path, included_globs) or not enforce_glob:
-        if not any(x in path for x in excluded_path_strings):
+        if (not _matches_glob_list(path, excluded_path_strings) and
+                not any(x in path for x in excluded_path_strings)):
             return_value = True
 
     return return_value
