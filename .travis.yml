@@ -2,8 +2,6 @@ language: python
 
 cache: pip
 
-sudo: false
-
 install:
   - pip install tox
 
@@ -24,19 +22,11 @@ matrix:
     - python: 3.7
       env: TOXENV=py37
       dist: xenial
-      sudo: true
-    - python: 3.8-dev
+    - python: 3.8
       env: TOXENV=py38
       dist: xenial
-      sudo: true
     - python: pypy
       env: TOXENV=pypy
-  allow_failures:
-    - python: 3.8-dev
-      env: TOXENV=py38
-      dist: xenial
-      sudo: true
-
 notifications:
   email:
     - lhinds@protonmail.com

@@ -227,9 +227,9 @@ def check_risk(node):
 
     if isinstance(xss_var, ast.Name):
         # Check if the var are secure
-        parent = node.parent
+        parent = node._bandit_parent
         while not isinstance(parent, (ast.Module, ast.FunctionDef)):
-            parent = parent.parent
+            parent = parent._bandit_parent
 
         is_param = False
         if isinstance(parent, ast.FunctionDef):
@@ -242,17 +242,17 @@ def check_risk(node):
         if not is_param:
             secure = evaluate_var(xss_var, parent, node.lineno)
     elif isinstance(xss_var, ast.Call):
-        parent = node.parent
+        parent = node._bandit_parent
         while not isinstance(parent, (ast.Module, ast.FunctionDef)):
-            parent = parent.parent
+            parent = parent._bandit_parent
         secure = evaluate_call(xss_var, parent)
     elif isinstance(xss_var, ast.BinOp):
         is_mod = isinstance(xss_var.op, ast.Mod)
         is_left_str = isinstance(xss_var.left, ast.Str)
         if is_mod and is_left_str:
-            parent = node.parent
+            parent = node._bandit_parent
             while not isinstance(parent, (ast.Module, ast.FunctionDef)):
-                parent = parent.parent
+                parent = parent._bandit_parent
             new_call = transform2call(xss_var)
             secure = evaluate_call(new_call, parent)
 
