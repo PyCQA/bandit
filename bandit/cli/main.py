@@ -258,6 +258,9 @@ def main():
         '--ini', dest='ini_path', action='store', default=None,
         help='path to a .bandit file that supplies command line arguments'
     )
+    parser.add_argument('--exit-zero', action='store_true', dest='exit_zero',
+                        default=False, help='exit with 0, '
+                                            'even with results found')
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
@@ -301,7 +304,7 @@ def main():
         "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
 
         See python documentation for more information about formatting style:
-        https://docs.python.org/3.4/library/string.html
+        https://docs.python.org/3/library/string.html
 
     The following tests were discovered and loaded:
     -----------------------------------------------
@@ -356,21 +359,101 @@ def main():
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
         # prefer command line, then ini file
-        args.excluded_paths = _log_option_source(args.excluded_paths,
-                                                 ini_options.get('exclude'),
-                                                 'excluded paths')
+        args.excluded_paths = _log_option_source(
+            args.excluded_paths,
+            ini_options.get('exclude'),
+            'excluded paths')
 
-        args.skips = _log_option_source(args.skips, ini_options.get('skips'),
-                                        'skipped tests')
+        args.skips = _log_option_source(
+            args.skips,
+            ini_options.get('skips'),
+            'skipped tests')
 
-        args.tests = _log_option_source(args.tests, ini_options.get('tests'),
-                                        'selected tests')
+        args.tests = _log_option_source(
+            args.tests,
+            ini_options.get('tests'),
+            'selected tests')
+
         ini_targets = ini_options.get('targets')
         if ini_targets:
             ini_targets = ini_targets.split(',')
-        args.targets = _log_option_source(args.targets, ini_targets,
-                                          'selected targets')
+
+        args.targets = _log_option_source(
+            args.targets,
+            ini_targets,
+            'selected targets')
+
         # TODO(tmcpeak): any other useful options to pass from .bandit?
+
+        args.recursive = _log_option_source(
+            args.recursive,
+            ini_options.get('recursive'),
+            'recursive scan')
+
+        args.agg_type = _log_option_source(
+            args.agg_type,
+            ini_options.get('aggregate'),
+            'aggregate output type')
+
+        args.context_lines = _log_option_source(
+            args.context_lines,
+            ini_options.get('number'),
+            'max code lines output for issue')
+
+        args.profile = _log_option_source(
+            args.profile,
+            ini_options.get('profile'),
+            'profile')
+
+        args.severity = _log_option_source(
+            args.severity,
+            ini_options.get('level'),
+            'severity level')
+
+        args.confidence = _log_option_source(
+            args.confidence,
+            ini_options.get('confidence'),
+            'confidence level')
+
+        args.output_format = _log_option_source(
+            args.output_format,
+            ini_options.get('format'),
+            'output format')
+
+        args.msg_template = _log_option_source(
+            args.msg_template,
+            ini_options.get('msg-template'),
+            'output message template')
+
+        args.output_file = _log_option_source(
+            args.output_file,
+            ini_options.get('output'),
+            'output file')
+
+        args.verbose = _log_option_source(
+            args.verbose,
+            ini_options.get('verbose'),
+            'output extra information')
+
+        args.debug = _log_option_source(
+            args.debug,
+            ini_options.get('debug'),
+            'debug mode')
+
+        args.quiet = _log_option_source(
+            args.quiet,
+            ini_options.get('quiet'),
+            'silent mode')
+
+        args.ignore_nosec = _log_option_source(
+            args.ignore_nosec,
+            ini_options.get('ignore-nosec'),
+            'do not skip lines with # nosec')
+
+        args.baseline = _log_option_source(
+            args.baseline,
+            ini_options.get('baseline'),
+            'path of a baseline report')
 
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
@@ -452,8 +535,8 @@ def main():
                              args.msg_template if out_format == 'custom'
                              else None)
 
-    # return an exit code of 1 if there are results, 0 otherwise
-    if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:
+    if (b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
+            and not args.exit_zero):
         sys.exit(1)
     else:
         sys.exit(0)
