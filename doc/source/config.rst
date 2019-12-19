@@ -56,8 +56,8 @@ Suppressing Individual Lines
 ----------------------------
 
 If you have lines in your code triggering vulnerability errors and you are
-certain that this is acceptable in your code they can be individually silenced
-by appending ``# nosec`` to the line::
+certain that this is acceptable, they can be individually silenced by appending
+``# nosec`` to the line::
 
     # The following hash is not used in any security context. It is only used
     # to generate unique values, collisions are acceptable and "data" is not
