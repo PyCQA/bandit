@@ -80,6 +80,7 @@ SIMPLE_SQL_RE = re.compile(
 def _check_string(data):
     return SIMPLE_SQL_RE.search(data) is not None
 
+
 def _bin_op_string(node):
     def _gather_nodes(node, leaves):
         if isinstance(node.left, ast.BinOp):
