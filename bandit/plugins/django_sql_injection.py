@@ -36,8 +36,7 @@ def django_extra_used(context):
 
     .. seealso::
 
-     - https://docs.djangoproject.com/en/dev/topics/
-        security/#sql-injection-protection
+     - https://docs.djangoproject.com/en/dev/topics/security/#sql-injection-protection
 
     .. versionadded:: 1.5.0
 
@@ -99,8 +98,7 @@ def django_rawsql_used(context):
 
     .. seealso::
 
-     - https://docs.djangoproject.com/en/dev/topics/
-        security/#sql-injection-protection
+     - https://docs.djangoproject.com/en/dev/topics/security/#sql-injection-protection
 
     .. versionadded:: 1.5.0
 
