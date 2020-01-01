@@ -417,17 +417,17 @@ class FunctionalTests(testtools.TestCase):
         if sys.version_info <= (3, 6):
             filename = filename.format('')
             expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 14,
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15,
                              'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 8, 'MEDIUM': 6,
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 9, 'MEDIUM': 6,
                                'HIGH': 0}
             }
         else:
             filename = filename.format('-py36')
             expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 16,
+                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 17,
                              'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 9, 'MEDIUM': 7,
+                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 10, 'MEDIUM': 7,
                                'HIGH': 0}
             }
 
