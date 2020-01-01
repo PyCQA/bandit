@@ -111,6 +111,7 @@ class Manager(object):
             test in self.blacklist_by_id or
             test in self.builtin)
 
+
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
 # once, store them on the object, and have a module global object for
 # accessing them. After the first time this module is imported, it should save
