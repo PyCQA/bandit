@@ -44,7 +44,7 @@ def hashlib_new(context):
             args = context.call_args
             keywords = context.call_keywords
             name = args[0] if args else keywords['name']
-            if name.lower() in ('md4', 'md5'):
+            if isinstance(name, str) and name.lower() in ('md4', 'md5'):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,

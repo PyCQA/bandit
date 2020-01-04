@@ -261,12 +261,12 @@ def django_mark_safe(context):
 
     .. seealso::
 
-     - https://docs.djangoproject.com/en/dev/topics/
-        security/#cross-site-scripting-xss-protection
-     - https://docs.djangoproject.com/en/dev/
-        ref/utils/#module-django.utils.safestring
-     - https://docs.djangoproject.com/en/dev/
-        ref/utils/#django.utils.html.format_html
+     - https://docs.djangoproject.com/en/dev/topics/security/\
+#cross-site-scripting-xss-protection
+     - https://docs.djangoproject.com/en/dev/ref/utils/\
+#module-django.utils.safestring
+     - https://docs.djangoproject.com/en/dev/ref/utils/\
+#django.utils.html.format_html
 
     .. versionadded:: 1.5.0
 

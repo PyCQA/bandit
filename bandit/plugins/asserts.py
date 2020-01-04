@@ -16,7 +16,7 @@ producing \*.pyo files). This caused various protections to be removed. The use
 of assert is also considered as general bad practice in OpenStack codebases.
 
 Please see
-https://docs.python.org/2/reference/simple_stmts.html#the-assert-statement for
+https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement for
 more info on ``assert``
 
 :Example:
@@ -34,7 +34,7 @@ more info on ``assert``
 
  - https://bugs.launchpad.net/juniperopenstack/+bug/1456193
  - https://bugs.launchpad.net/heat/+bug/1397883
- - https://docs.python.org/2/reference/simple_stmts.html#the-assert-statement
+ - https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement
 
 .. versionadded:: 0.11.0
 
