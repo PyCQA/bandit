@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 import linecache
 
 from six import moves
+from collections import Counter
 
 from bandit.core import constants
 
@@ -132,6 +133,26 @@ class Issue(object):
         self.lineno = data["line_number"]
         self.linerange = data["line_range"]
 
+class HashableIssue:
+    '''A hashable issue class to allow us to do comparisions between
+    different issues/count the frequency using a Collection Counter
+
+    '''
+    def __init__(self, issue):
+        self.issue = issue
+
+    def __hash__(self):
+        issue_hash = 0
+        for prop in ['text', 'severity', 'confidence', 'fname', 'test',
+                       'test_id']:
+            issue_hash ^= hash(self.issue.__dict__[prop])
+        return issue_hash
+
+    def __eq__(self, other):
+        return (self.issue.__eq__(other.issue))
+
+    def convert_issues_hashable(issues):
+        return Counter([HashableIssue(issue) for issue in issues])
 
 def issue_from_dict(data):
     i = Issue(severity=data["issue_severity"])
