@@ -132,10 +132,12 @@ def issue_from_dict(data):
 
 
 class HashableIssue(object):
+
     '''A hashable issue class to allow us to do comparisions between
     different issues/count the frequency using a Collection Counter
 
     '''
+    
     def __init__(self, issue):
         self.issue = issue
 
