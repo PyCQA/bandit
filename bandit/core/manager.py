@@ -384,7 +384,7 @@ def _compare_baseline_results(baseline, results):
     """Compare a baseline list of issues to list of results
 
     This function compares a baseline set of issues to a current set of issues
-    to find results that weren't present in the baseline. If the frequency of 
+    to find results that weren't present in the baseline. If the frequency of
     an issue increases above the baseline, this will also be returned.
 
     :param baseline: Baseline list of issues
@@ -392,13 +392,14 @@ def _compare_baseline_results(baseline, results):
     :return: List of unmatched issues
     """
 
-    hashable_results = issue.HashableIssue.convert_issues_hashable(results)
-    hashable_baseline = issue.HashableIssue.convert_issues_hashable(baseline)
+    hashable_results = issue.convert_issues_hashable(results)
+    hashable_baseline = issue.convert_issues_hashable(baseline)
     hashable_results.subtract(hashable_baseline)
 
     # For any issue where the count is < 0, either its a new issue or the
     # count has gone up, so return the issue
-    return [k.issue for k,v in hashable_results.items() if v > 0]
+    return [k.issue for k, v in hashable_results.items() if v > 0]
+
 
 def _find_candidate_matches(unmatched_issues, results_list):
     """Returns a dictionary with issue candidates
