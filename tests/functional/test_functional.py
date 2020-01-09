@@ -772,8 +772,8 @@ class FunctionalTests(testtools.TestCase):
     def test_hashlib_new_insecure_functions(self):
         '''Test insecure hash functions created by `hashlib.new`.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 5, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 9, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
         }
         self.check_example('hashlib_new_insecure_functions.py', expect)
 

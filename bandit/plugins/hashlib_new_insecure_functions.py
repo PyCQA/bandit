@@ -3,15 +3,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 r"""
-==========================================================================
-B324: Test for use of insecure md4 and md5 hash functions in hashlib.new()
-==========================================================================
+============================================================================
+B324: Test use of insecure md4, md5, or sha1 hash functions in hashlib.new()
+============================================================================
 
-This plugin checks for the usage of the insecure MD4 and MD5 hash functions
-in ``hashlib.new`` function. The ``hashlib.new`` function provides the ability
-to construct a new hashing object using the named algorithm. This can be used
-to create insecure hash functions like MD4 and MD5 if they are passed as
-algorithm names to this function.
+This plugin checks for the usage of the insecure MD4, MD5, or SHA1 hash
+functions in ``hashlib.new`` function. The ``hashlib.new`` function provides
+the ability to construct a new hashing object using the named algorithm. This
+can be used to create insecure hash functions like MD4 and MD5 if they are
+passed as algorithm names to this function.
 
 This is similar to B303 blacklist check, except that this checks for insecure
 hash functions created using ``hashlib.new`` function.
@@ -44,7 +44,8 @@ def hashlib_new(context):
             args = context.call_args
             keywords = context.call_keywords
             name = args[0] if args else keywords['name']
-            if isinstance(name, str) and name.lower() in ('md4', 'md5'):
+            if (isinstance(name, str) and
+                    name.lower() in ('md4', 'md5', 'sha', 'sha1')):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,
