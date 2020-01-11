@@ -2,17 +2,7 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 import ast
 import re
@@ -196,7 +186,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
 
@@ -287,7 +277,7 @@ def subprocess_without_shell_equals_true(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
@@ -449,8 +439,8 @@ def start_process_with_a_shell(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/2/library/os.html#os.system
-     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/os.html#os.system
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.10.0
@@ -547,8 +537,8 @@ def start_process_with_no_shell(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/2/library/os.html#os.system
-     - https://docs.python.org/2/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/os.html#os.system
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.10.0
@@ -633,7 +623,7 @@ def start_process_with_partial_path(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/2/library/os.html#process-management
+     - https://docs.python.org/3/library/os.html#process-management
 
     .. versionadded:: 0.13.0
     """

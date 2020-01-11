@@ -2,17 +2,7 @@
 #
 # Copyright 2016 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 r"""
 ====================================================
@@ -42,6 +32,8 @@ deserialize untrusted data, possible security issue.
 |      |                     | - dill.loads                       |           |
 |      |                     | - dill.load                        |           |
 |      |                     | - dill.Unpickler                   |           |
+|      |                     | - shelve.open                      |           |
+|      |                     | - shelve.DbfilenameShelf           |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -278,7 +270,7 @@ B322: input
 
 The input method in Python 2 will read from standard input, evaluate and
 run the resulting string as python source code. This is similar, though in
-many ways worse, then using eval. On Python 2, use raw_input instead, input
+many ways worse, than using eval. On Python 2, use raw_input instead, input
 is safe in Python 3.
 
 +------+---------------------+------------------------------------+-----------+
@@ -309,6 +301,7 @@ using tmpfile() instead.
 
 For further information:
     https://docs.python.org/2.7/library/os.html#os.tempnam
+    https://docs.python.org/3/whatsnew/3.0.html?highlight=tempnam
     https://bugs.python.org/issue17880
 
 +------+---------------------+------------------------------------+-----------+
@@ -346,7 +339,9 @@ def gen_blacklist():
          'cPickle.Unpickler',
          'dill.loads',
          'dill.load',
-         'dill.Unpickler'],
+         'dill.Unpickler',
+         'shelve.open',
+         'shelve.DbfilenameShelf'],
         'Pickle and modules that wrap it can be unsafe when used to '
         'deserialize untrusted data, possible security issue.'
         ))
@@ -552,7 +547,7 @@ def gen_blacklist():
         'input', 'B322', ['input'],
         'The input method in Python 2 will read from standard input, '
         'evaluate and run the resulting string as python source code. This '
-        'is similar, though in many ways worse, then using eval. On Python '
+        'is similar, though in many ways worse, than using eval. On Python '
         '2, use raw_input instead, input is safe in Python 3.',
         'HIGH'
         ))
