@@ -2,17 +2,7 @@
 #
 # Copyright 2015 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 
@@ -70,24 +60,34 @@ class ManagerTests(testtools.TestCase):
 
     def test_is_file_included(self):
         a = manager._is_file_included(path='a.py', included_globs=['*.py'],
-                                      excluded_path_strings='',
+                                      excluded_path_strings=[],
                                       enforce_glob=True)
 
         b = manager._is_file_included(path='a.dd', included_globs=['*.py'],
-                                      excluded_path_strings='',
+                                      excluded_path_strings=[],
                                       enforce_glob=False)
 
         c = manager._is_file_included(path='a.py', included_globs=['*.py'],
-                                      excluded_path_strings='a.py',
+                                      excluded_path_strings=['a.py'],
                                       enforce_glob=True)
 
         d = manager._is_file_included(path='a.dd', included_globs=['*.py'],
-                                      excluded_path_strings='',
+                                      excluded_path_strings=[],
+                                      enforce_glob=True)
+
+        e = manager._is_file_included(path='x_a.py', included_globs=['*.py'],
+                                      excluded_path_strings=['x_*.py'],
+                                      enforce_glob=True)
+
+        f = manager._is_file_included(path='x.py', included_globs=['*.py'],
+                                      excluded_path_strings=['x_*.py'],
                                       enforce_glob=True)
         self.assertTrue(a)
         self.assertTrue(b)
         self.assertFalse(c)
         self.assertFalse(d)
+        self.assertFalse(e)
+        self.assertTrue(f)
 
     @mock.patch('os.walk')
     def test_get_files_from_dir(self, os_walk):
@@ -201,6 +201,33 @@ class ManagerTests(testtools.TestCase):
             self.assertEqual(['thing'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
+    def test_discover_files_exclude_dir(self, isdir):
+        isdir.return_value = False
+
+        # Test exclude dir using wildcard
+        self.manager.discover_files(['./x/y.py'], True, './x/*')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without wildcard
+        isdir.side_effect = [True, False]
+        self.manager.discover_files(['./x/y.py'], True, './x/')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without wildcard or trailing slash
+        isdir.side_effect = [True, False]
+        self.manager.discover_files(['./x/y.py'], True, './x')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y.py'], self.manager.excluded_files)
+
+        # Test exclude dir without prefix or suffix
+        isdir.side_effect = [False, False]
+        self.manager.discover_files(['./x/y/z.py'], True, 'y')
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(['./x/y/z.py'], self.manager.excluded_files)
+
+    @mock.patch('os.path.isdir')
     def test_discover_files_exclude_cmdline(self, isdir):
         isdir.return_value = False
         with mock.patch.object(manager, '_is_file_included') as m:
@@ -208,6 +235,14 @@ class ManagerTests(testtools.TestCase):
                                         excluded_paths='a,b')
             m.assert_called_with('c', ['*.py', '*.pyw'], ['a', 'b'],
                                  enforce_glob=False)
+
+    @mock.patch('os.path.isdir')
+    def test_discover_files_exclude_glob(self, isdir):
+        isdir.return_value = False
+        self.manager.discover_files(['a.py', 'test_a.py', 'test.py'], True,
+                                    excluded_paths='test_*.py')
+        self.assertEqual(['a.py', 'test.py'], self.manager.files_list)
+        self.assertEqual(['test_a.py'], self.manager.excluded_files)
 
     @mock.patch('os.path.isdir')
     def test_discover_files_include(self, isdir):

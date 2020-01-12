@@ -2,17 +2,7 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 r"""
 ============================
@@ -85,18 +75,19 @@ def _evaluate_ast(node):
     wrapper = None
     statement = ''
 
-    if isinstance(node.parent, ast.BinOp):
-        out = utils.concat_string(node, node.parent)
-        wrapper = out[0].parent
+    if isinstance(node._bandit_parent, ast.BinOp):
+        out = utils.concat_string(node, node._bandit_parent)
+        wrapper = out[0]._bandit_parent
         statement = out[1]
-    elif (isinstance(node.parent, ast.Attribute)
-          and node.parent.attr == 'format'):
+    elif (isinstance(node._bandit_parent, ast.Attribute)
+          and node._bandit_parent.attr == 'format'):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
-        wrapper = node.parent.parent.parent
-    elif hasattr(ast, 'JoinedStr') and isinstance(node.parent, ast.JoinedStr):
+        wrapper = node._bandit_parent._bandit_parent._bandit_parent
+    elif (hasattr(ast, 'JoinedStr')
+          and isinstance(node._bandit_parent, ast.JoinedStr)):
         statement = node.s
-        wrapper = node.parent.parent
+        wrapper = node._bandit_parent._bandit_parent
 
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
         names = ['execute', 'executemany']
