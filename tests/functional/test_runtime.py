@@ -1,20 +1,11 @@
 # Copyright (c) 2015 VMware, Inc.
 #
-#  Licensed under the Apache License, Version 2.0 (the "License"); you may
-#  not use this file except in compliance with the License. You may obtain
-#  a copy of the License at
-#
-#       http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#  License for the specific language governing permissions and limitations
-#  under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 import subprocess
 
+import six
 import testtools
 
 
@@ -111,11 +102,13 @@ class RuntimeTests(testtools.TestCase):
             ['bandit', ], ['nonsense2.py', ]
         )
         self.assertEqual(0, retcode)
-        self.assertIn(
-            "Exception occurred when executing tests against", output
-        )
         self.assertIn("Files skipped (1):", output)
-        self.assertIn("nonsense2.py (exception while scanning file)", output)
+        if six.PY2:
+            self.assertIn("nonsense2.py (exception while scanning file)",
+                          output)
+        else:
+            self.assertIn("nonsense2.py (syntax error while parsing AST",
+                          output)
 
     def test_example_imports(self):
         (retcode, output) = self._test_example(['bandit', ], ['imports.py', ])

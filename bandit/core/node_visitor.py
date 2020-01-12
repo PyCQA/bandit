@@ -2,17 +2,7 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 import ast
 import logging
@@ -152,6 +142,23 @@ class BanditNodeVisitor(object):
             self.context['name'] = nodename.name
         self.update_scores(self.tester.run_tests(self.context, 'ImportFrom'))
 
+    def visit_Constant(self, node):
+        '''Visitor for AST Constant nodes
+
+        call the appropriate method for the node type.
+        this maintains compatibility with <3.6 and 3.8+
+
+        This code is heavily influenced by Anthony Sottile (@asottile) here:
+        https://bugs.python.org/msg342486
+
+        :param node: The node that is being inspected
+        :return: -
+        '''
+        if isinstance(node.value, str):
+            self.visit_Str(node)
+        elif isinstance(node.value, bytes):
+            self.visit_Bytes(node)
+
     def visit_Str(self, node):
         '''Visitor for AST String nodes
 
@@ -161,8 +168,10 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['str'] = node.s
-        if not isinstance(node.parent, ast.Expr):  # docstring
-            self.context['linerange'] = b_utils.linerange_fix(node.parent)
+        if not isinstance(node._bandit_parent, ast.Expr):  # docstring
+            self.context['linerange'] = b_utils.linerange_fix(
+                node._bandit_parent
+            )
             self.update_scores(self.tester.run_tests(self.context, 'Str'))
 
     def visit_Bytes(self, node):
@@ -174,8 +183,10 @@ class BanditNodeVisitor(object):
         :return: -
         '''
         self.context['bytes'] = node.s
-        if not isinstance(node.parent, ast.Expr):  # docstring
-            self.context['linerange'] = b_utils.linerange_fix(node.parent)
+        if not isinstance(node._bandit_parent, ast.Expr):  # docstring
+            self.context['linerange'] = b_utils.linerange_fix(
+                node._bandit_parent
+            )
             self.update_scores(self.tester.run_tests(self.context, 'Bytes'))
 
     def pre_visit(self, node):
@@ -223,7 +234,7 @@ class BanditNodeVisitor(object):
 
         # HACK(tkelsey): this is needed to clean up post-recursion stuff that
         # gets setup in the visit methods for these node types.
-        if isinstance(node, ast.FunctionDef) or isinstance(node, ast.ClassDef):
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
             self.namespace = b_utils.namespace_path_split(self.namespace)[0]
 
     def generic_visit(self, node):
@@ -234,10 +245,10 @@ class BanditNodeVisitor(object):
                 for idx, item in enumerate(value):
                     if isinstance(item, ast.AST):
                         if idx < max_idx:
-                            setattr(item, 'sibling', value[idx + 1])
+                            item._bandit_sibling = value[idx + 1]
                         else:
-                            setattr(item, 'sibling', None)
-                        setattr(item, 'parent', node)
+                            item._bandit_sibling = None
+                        item._bandit_parent = node
 
                         if self.pre_visit(item):
                             self.visit(item)
@@ -245,9 +256,8 @@ class BanditNodeVisitor(object):
                             self.post_visit(item)
 
             elif isinstance(value, ast.AST):
-                setattr(value, 'sibling', None)
-                setattr(value, 'parent', node)
-
+                value._bandit_sibling = None
+                value._bandit_parent = node
                 if self.pre_visit(value):
                     self.visit(value)
                     self.generic_visit(value)
