@@ -2,19 +2,8 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
-import _ast
 import ast
 import logging
 import os.path
@@ -46,11 +35,11 @@ def _get_attr_qual_name(node, aliases):
     :param aliases: Import aliases dictionary
     :returns: Qualified name referred to by the attribute or name.
     '''
-    if isinstance(node, _ast.Name):
+    if isinstance(node, ast.Name):
         if node.id in aliases:
             return aliases[node.id]
         return node.id
-    elif isinstance(node, _ast.Attribute):
+    elif isinstance(node, ast.Attribute):
         name = '%s.%s' % (_get_attr_qual_name(node.value, aliases), node.attr)
         if name in aliases:
             return aliases[name]
@@ -60,11 +49,11 @@ def _get_attr_qual_name(node, aliases):
 
 
 def get_call_name(node, aliases):
-    if isinstance(node.func, _ast.Name):
+    if isinstance(node.func, ast.Name):
         if deepgetattr(node, 'func.id') in aliases:
             return aliases[deepgetattr(node, 'func.id')]
         return deepgetattr(node, 'func.id')
-    elif isinstance(node.func, _ast.Attribute):
+    elif isinstance(node.func, ast.Attribute):
         return _get_attr_qual_name(node.func, aliases)
     else:
         return ""
@@ -76,7 +65,7 @@ def get_func_name(node):
 
 def get_qual_attr(node, aliases):
     prefix = ""
-    if isinstance(node, _ast.Attribute):
+    if isinstance(node, ast.Attribute):
         try:
             val = deepgetattr(node, 'value.id')
             if val in aliases:
@@ -211,7 +200,7 @@ def linerange(node):
     for key in strip.keys():
         if hasattr(node, key):
             strip[key] = getattr(node, key)
-            setattr(node, key, [])
+            node.key = []
 
     lines_min = 9999999999
     lines_max = -1
@@ -222,7 +211,7 @@ def linerange(node):
 
     for key in strip.keys():
         if strip[key] is not None:
-            setattr(node, key, strip[key])
+            node.key = strip[key]
 
     if lines_max > -1:
         return list(range(lines_min, lines_max + 1))
@@ -233,11 +222,13 @@ def linerange_fix(node):
     """Try and work around a known Python bug with multi-line strings."""
     # deal with multiline strings lineno behavior (Python issue #16806)
     lines = linerange(node)
-    if hasattr(node, 'sibling') and hasattr(node.sibling, 'lineno'):
+    if hasattr(node, '_bandit_sibling') and hasattr(
+            node._bandit_sibling, 'lineno'
+    ):
         start = min(lines)
-        delta = node.sibling.lineno - start
+        delta = node._bandit_sibling.lineno - start
         if delta > 1:
-            return list(range(start, node.sibling.lineno))
+            return list(range(start, node._bandit_sibling.lineno))
     return lines
 
 
@@ -264,8 +255,8 @@ def concat_string(node, stop=None):
                 else node.right)
 
     bits = [node]
-    while isinstance(node.parent, ast.BinOp):
-        node = node.parent
+    while isinstance(node._bandit_parent, ast.BinOp):
+        node = node._bandit_parent
     if isinstance(node, ast.BinOp):
         _get(node, bits, stop)
     return (node, " ".join([x.s for x in bits if isinstance(x, ast.Str)]))
