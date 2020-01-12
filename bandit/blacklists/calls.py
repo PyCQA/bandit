@@ -270,7 +270,7 @@ B322: input
 
 The input method in Python 2 will read from standard input, evaluate and
 run the resulting string as python source code. This is similar, though in
-many ways worse, then using eval. On Python 2, use raw_input instead, input
+many ways worse, than using eval. On Python 2, use raw_input instead, input
 is safe in Python 3.
 
 +------+---------------------+------------------------------------+-----------+
@@ -547,7 +547,7 @@ def gen_blacklist():
         'input', 'B322', ['input'],
         'The input method in Python 2 will read from standard input, '
         'evaluate and run the resulting string as python source code. This '
-        'is similar, though in many ways worse, then using eval. On Python '
+        'is similar, though in many ways worse, than using eval. On Python '
         '2, use raw_input instead, input is safe in Python 3.',
         'HIGH'
         ))
