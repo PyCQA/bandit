@@ -3,17 +3,7 @@
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 # Copyright 2015 Nebula, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 import ast
 import os
@@ -28,8 +18,7 @@ from bandit.core import utils as b_utils
 
 def _touch(path):
     '''Create an empty file at ``path``.'''
-    newf = open(path, 'w')
-    newf.close()
+    open(path, 'w').close()
 
 
 class UtilTests(testtools.TestCase):
@@ -225,10 +214,10 @@ class UtilTests(testtools.TestCase):
         # self.assertEqual(name, 'a.list[0]')
 
     def test_linerange(self):
-        self.test_file = open("./examples/jinja2_templating.py")
-        self.tree = ast.parse(self.test_file.read())
+        with open("./examples/jinja2_templating.py") as test_file:
+            tree = ast.parse(test_file.read())
         # Check linerange returns corrent number of lines
-        line = self.tree.body[8]
+        line = tree.body[8]
         lrange = b_utils.linerange(line)
 
         # line 9 should be three lines long
@@ -252,15 +241,15 @@ class UtilTests(testtools.TestCase):
         self.assertEqual(res, b"ascii")
 
     def test_escaped_representation_valid_not_printable(self):
-        res = b_utils.escaped_bytes_representation(b"\u0000")
+        res = b_utils.escaped_bytes_representation(b"\\u0000")
         self.assertEqual(res, b"\\x00")
 
     def test_escaped_representation_invalid(self):
-        res = b_utils.escaped_bytes_representation(b"\uffff")
+        res = b_utils.escaped_bytes_representation(b"\\uffff")
         self.assertEqual(res, b"\\uffff")
 
     def test_escaped_representation_mixed(self):
-        res = b_utils.escaped_bytes_representation(b"ascii\u0000\uffff")
+        res = b_utils.escaped_bytes_representation(b"ascii\\u0000\\uffff")
         self.assertEqual(res, b"ascii\\x00\\uffff")
 
     def test_deepgetattr(self):
@@ -287,9 +276,8 @@ class UtilTests(testtools.TestCase):
 
         with tempfile.NamedTemporaryFile('r+') as t:
             for test in tests:
-                f = open(t.name, 'w')
-                f.write(test['content'])
-                f.close()
+                with open(t.name, 'w') as f:
+                    f.write(test['content'])
 
                 self.assertEqual(b_utils.parse_ini_file(t.name),
                                  test['expected'])
