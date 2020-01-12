@@ -447,6 +447,24 @@ Reporting Bugs
 Bugs should be reported on github. To file a bug against Bandit, visit:
 https://github.com/PyCQA/bandit/issues
 
+Show Your Style
+---------------
+.. image:: https://img.shields.io/badge/security-bandit-yellow.svg
+    :target: https://github.com/PyCQA/bandit
+    :alt: Security Status
+
+Use our badge in your project's README!
+
+using Markdown::
+
+    [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
+
+using RST::
+
+    .. image:: https://img.shields.io/badge/security-bandit-yellow.svg
+        :target: https://github.com/PyCQA/bandit
+        :alt: Security Status
+
 Under Which Version of Python Should I Install Bandit?
 ------------------------------------------------------
 The answer to this question depends on the project(s) you will be running
