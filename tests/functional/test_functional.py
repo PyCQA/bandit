@@ -2,17 +2,7 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 import os
 import sys
@@ -121,16 +111,16 @@ class FunctionalTests(testtools.TestCase):
     def test_crypto_md5(self):
         '''Test the `hashlib.md5` example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15, 'HIGH': 8},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 23}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 15, 'HIGH': 4},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 19}
         }
         self.check_example('crypto-md5.py', expect)
 
     def test_ciphers(self):
         '''Test the `Crypto.Cipher` example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 26},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 27}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 21},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 22}
         }
         self.check_example('ciphers.py', expect)
 
@@ -362,6 +352,14 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 3}
         }
         self.check_example('dill.py', expect)
+
+    def test_shelve(self):
+        '''Test for the `shelve` module.'''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 2, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 3}
+        }
+        self.check_example('shelve_open.py', expect)
 
     def test_popen_wrappers(self):
         '''Test the `popen2` and `commands` modules.'''
@@ -678,8 +676,8 @@ class FunctionalTests(testtools.TestCase):
     def test_weak_cryptographic_key(self):
         '''Test for weak key sizes.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 8, 'HIGH': 10},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 18}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 8, 'HIGH': 8},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 16}
         }
         self.check_example('weak_cryptographic_key_sizes.py', expect)
 
@@ -774,8 +772,8 @@ class FunctionalTests(testtools.TestCase):
     def test_hashlib_new_insecure_functions(self):
         '''Test insecure hash functions created by `hashlib.new`.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 5, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 5}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 9, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 9}
         }
         self.check_example('hashlib_new_insecure_functions.py', expect)
 
@@ -787,10 +785,13 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('pycrypto.py', expect)
 
-    def test_blacklist_pycryptodome(self):
-        '''Test importing pycryptodome module'''
+    def test_no_blacklist_pycryptodome(self):
+        '''Test importing pycryptodome module
+
+        make sure it's no longer blacklisted
+        '''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
         }
         self.check_example('pycryptodome.py', expect)

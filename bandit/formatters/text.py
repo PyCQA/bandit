@@ -1,17 +1,7 @@
 # Copyright (c) 2015 Hewlett Packard Enterprise
 # -*- coding:utf-8 -*-
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 r"""
 ==============
@@ -141,9 +131,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """
 
     bits = []
-    issues = manager.get_issue_list(sev_level, conf_level)
 
-    if len(issues) or not manager.quiet:
+    if not manager.quiet or manager.results_count(sev_level, conf_level):
         bits.append("Run started:%s" % datetime.datetime.utcnow())
 
         if manager.verbose:
