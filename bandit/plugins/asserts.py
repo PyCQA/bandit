@@ -2,17 +2,7 @@
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 r"""
 ============================
@@ -26,7 +16,7 @@ producing \*.pyo files). This caused various protections to be removed. The use
 of assert is also considered as general bad practice in OpenStack codebases.
 
 Please see
-https://docs.python.org/2/reference/simple_stmts.html#the-assert-statement for
+https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement for
 more info on ``assert``
 
 :Example:
@@ -44,7 +34,7 @@ more info on ``assert``
 
  - https://bugs.launchpad.net/juniperopenstack/+bug/1456193
  - https://bugs.launchpad.net/heat/+bug/1397883
- - https://docs.python.org/2/reference/simple_stmts.html#the-assert-statement
+ - https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement
 
 .. versionadded:: 0.11.0
 
