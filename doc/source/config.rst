@@ -91,6 +91,22 @@ Note that command line options `-t`/`-s` can still be used in conjunction with
 `tests` and `skips` given in a config. The result is to concatenate `-t` with
 `tests` and likewise for `-s` and `skips` before working out the tests to run.
 
+Suppressing Individual Lines
+----------------------------
+
+If you have lines in your code triggering vulnerability errors and you are
+certain that this is acceptable, they can be individually silenced by appending
+``# nosec`` to the line::
+
+    # The following hash is not used in any security context. It is only used
+    # to generate unique values, collisions are acceptable and "data" is not
+    # coming from user-generated input
+    the_hash = md5(data).hexdigest()  # nosec
+
+
+In such cases, it is good practice to add a comment explaining *why* a given
+line was excluded from security checks.
+
 Generating a Config
 -------------------
 Bandit ships the tool `bandit-config-generator` designed to take the leg work
