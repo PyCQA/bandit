@@ -1,17 +1,7 @@
 #
 # Copyright 2018 Victor Torre
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 
 import ast
@@ -227,9 +217,9 @@ def check_risk(node):
 
     if isinstance(xss_var, ast.Name):
         # Check if the var are secure
-        parent = node.parent
+        parent = node._bandit_parent
         while not isinstance(parent, (ast.Module, ast.FunctionDef)):
-            parent = parent.parent
+            parent = parent._bandit_parent
 
         is_param = False
         if isinstance(parent, ast.FunctionDef):
@@ -242,17 +232,17 @@ def check_risk(node):
         if not is_param:
             secure = evaluate_var(xss_var, parent, node.lineno)
     elif isinstance(xss_var, ast.Call):
-        parent = node.parent
+        parent = node._bandit_parent
         while not isinstance(parent, (ast.Module, ast.FunctionDef)):
-            parent = parent.parent
+            parent = parent._bandit_parent
         secure = evaluate_call(xss_var, parent)
     elif isinstance(xss_var, ast.BinOp):
         is_mod = isinstance(xss_var.op, ast.Mod)
         is_left_str = isinstance(xss_var.left, ast.Str)
         if is_mod and is_left_str:
-            parent = node.parent
+            parent = node._bandit_parent
             while not isinstance(parent, (ast.Module, ast.FunctionDef)):
-                parent = parent.parent
+                parent = parent._bandit_parent
             new_call = transform2call(xss_var)
             secure = evaluate_call(new_call, parent)
 
@@ -271,14 +261,14 @@ def django_mark_safe(context):
 
     .. seealso::
 
-     - https://docs.djangoproject.com/en/dev/topics/
-        security/#cross-site-scripting-xss-protection
-     - https://docs.djangoproject.com/en/dev/
-        ref/utils/#module-django.utils.safestring
-     - https://docs.djangoproject.com/en/dev/
-        ref/utils/#django.utils.html.format_html
+     - https://docs.djangoproject.com/en/dev/topics/security/\
+#cross-site-scripting-xss-protection
+     - https://docs.djangoproject.com/en/dev/ref/utils/\
+#module-django.utils.safestring
+     - https://docs.djangoproject.com/en/dev/ref/utils/\
+#django.utils.html.format_html
 
-    .. versionadded:: 1.4.1
+    .. versionadded:: 1.5.0
 
     """
     if context.is_module_imported_like('django.utils.safestring'):

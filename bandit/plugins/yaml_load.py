@@ -2,17 +2,7 @@
 #
 # Copyright (c) 2016 Rackspace, Inc.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 r"""
 ===============================
@@ -57,15 +47,21 @@ from bandit.core import test_properties as test
 def yaml_load(context):
     imported = context.is_module_imported_exact('yaml')
     qualname = context.call_function_name_qual
-    if imported and isinstance(qualname, str):
-        qualname_list = qualname.split('.')
-        func = qualname_list[-1]
-        if 'yaml' in qualname_list and func == 'load':
-            if not context.check_call_arg_value('Loader', 'SafeLoader'):
-                return bandit.Issue(
-                    severity=bandit.MEDIUM,
-                    confidence=bandit.HIGH,
-                    text="Use of unsafe yaml load. Allows instantiation of"
-                         " arbitrary objects. Consider yaml.safe_load().",
-                    lineno=context.node.lineno,
-                )
+    if not imported and isinstance(qualname, str):
+        return
+
+    qualname_list = qualname.split('.')
+    func = qualname_list[-1]
+    if all([
+            'yaml' in qualname_list,
+            func == 'load',
+            not context.check_call_arg_value('Loader', 'SafeLoader'),
+            not context.check_call_arg_value('Loader', 'CSafeLoader'),
+    ]):
+        return bandit.Issue(
+            severity=bandit.MEDIUM,
+            confidence=bandit.HIGH,
+            text="Use of unsafe yaml load. Allows instantiation of"
+                 " arbitrary objects. Consider yaml.safe_load().",
+            lineno=context.node.lineno,
+        )

@@ -2,17 +2,7 @@
 #
 # Copyright 2016 Hewlett-Packard Development Company, L.P.
 #
-# Licensed under the Apache License, Version 2.0 (the "License"); you may
-# not use this file except in compliance with the License. You may obtain
-# a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-# License for the specific language governing permissions and limitations
-# under the License.
+# SPDX-License-Identifier: Apache-2.0
 
 r"""
 ======================================================
@@ -60,6 +50,7 @@ Consider possible security implications associated with these modules.
 | B403 | import_pickle       | - pickle                           | low       |
 |      |                     | - cPickle                          |           |
 |      |                     | - dill                             |           |
+|      |                     | - shelve                           |           |
 +------+---------------------+------------------------------------+-----------+
 
 B404: import_subprocess
@@ -202,6 +193,9 @@ library.
 
 B414: import_pycryptodome
 -------------------------
+This import blacklist has been removed. The information here has been
+left for historical purposes.
+
 pycryptodome is a direct fork of pycrypto that has not fully addressed
 the issues inherent in PyCrypto.  It seems to exist, mainly, as an API
 compatible continuation of pycrypto and should be deprecated in favor
@@ -253,7 +247,7 @@ def gen_blacklist():
         ))
 
     sets.append(utils.build_conf_dict(
-        'import_pickle', 'B403', ['pickle', 'cPickle', 'dill'],
+        'import_pickle', 'B403', ['pickle', 'cPickle', 'dill', 'shelve'],
         'Consider possible security implications associated with '
         '{name} module.', 'LOW'
         ))
@@ -321,20 +315,6 @@ def gen_blacklist():
          'Crypto.Util'],
         'The pyCrypto library and its module {name} are no longer actively '
         'maintained and have been deprecated. '
-        'Consider using pyca/cryptography library.', 'HIGH'))
-
-    sets.append(utils.build_conf_dict(
-        'import_pycryptodome', 'B414',
-        ['Cryptodome.Cipher',
-         'Cryptodome.Hash',
-         'Cryptodome.IO',
-         'Cryptodome.Protocol',
-         'Cryptodome.PublicKey',
-         'Cryptodome.Random',
-         'Cryptodome.Signature',
-         'Cryptodome.Util'],
-        'The pycryptodome library is not considered a secure alternative '
-        'to pycrypto.'
         'Consider using pyca/cryptography library.', 'HIGH'))
 
     return {'Import': sets, 'ImportFrom': sets, 'Call': sets}
