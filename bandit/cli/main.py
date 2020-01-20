@@ -307,7 +307,7 @@ def main():
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
-        # prefer command line, then ini file
+        # prefer ini file, then command line
         args.excluded_paths = _log_option_source(
             args.excluded_paths,
             ini_options.get('exclude'),
