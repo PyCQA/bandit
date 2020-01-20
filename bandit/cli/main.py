@@ -79,12 +79,12 @@ def _init_extensions():
 
 def _log_option_source(arg_val, ini_val, option_name):
     """It's useful to show the source of each option."""
-    if arg_val:
-        LOG.info("Using command line arg for %s", option_name)
-        return arg_val
-    elif ini_val:
+    if ini_val:
         LOG.info("Using ini file for %s", option_name)
         return ini_val
+    elif arg_val:
+        LOG.info("Using command line arg for %s", option_name)
+        return arg_val
     else:
         return None
 
