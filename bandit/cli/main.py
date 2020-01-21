@@ -234,10 +234,12 @@ def main():
     )
     parser.add_argument(
         '-x', '--exclude', dest='excluded_paths', action='store',
-        default='', help='comma-separated list of paths (glob patterns '
-                         'supported) to exclude from scan '
-                         '(note that these are in addition to the excluded '
-                         'paths provided in the config file)'
+        default=','.join(constants.EXCLUDE),
+        help='comma-separated list of paths (glob patterns '
+             'supported) to exclude from scan '
+             '(note that these are in addition to the excluded '
+             'paths provided in the config file) (default: ' +
+        ','.join(constants.EXCLUDE) + ')'
     )
     parser.add_argument(
         '-b', '--baseline', dest='baseline', action='store',
