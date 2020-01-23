@@ -18,6 +18,7 @@ class Issue(object):
     def __init__(self, severity, confidence=constants.CONFIDENCE_DEFAULT,
                  text="", ident=None, lineno=None, test_id=""):
         self.severity = severity
+        self.code = ""
         self.confidence = confidence
         if isinstance(text, bytes):
             text = text.decode('utf-8')
@@ -92,7 +93,7 @@ class Issue(object):
             if not len(text):
                 break
             lines.append(tmplt % (line, text))
-        return ''.join(lines)
+        return ''.join(lines) or self.code
 
     def as_dict(self, with_code=True):
         '''Convert the issue to a dict of values for outputting.'''
