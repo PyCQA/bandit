@@ -61,9 +61,11 @@ def set_bad_file_permissions(context):
             mode = context.get_call_arg_at_position(1)
 
             if (mode is not None and isinstance(mode, int) and
-                    (mode & stat.S_IWOTH or mode & stat.S_IXGRP)):
-                # world writable is an HIGH, group executable is a MEDIUM
-                if mode & stat.S_IWOTH:
+                    (mode & stat.S_IWOTH
+                     or mode & stat.S_IXGRP
+                     or mode & stat.S_IXOTH)):
+                # world write or exec is a HIGH, group exec is a MEDIUM
+                if mode & stat.S_IWOTH or mode & stat.S_IXOTH:
                     sev_level = bandit.HIGH
                 else:
                     sev_level = bandit.MEDIUM
