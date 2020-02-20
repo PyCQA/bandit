@@ -138,9 +138,9 @@ class HashableIssue(object):
 
     def __hash__(self):
         issue_hash = 0
-        for prop in ['text', 'severity', 'confidence', 'fname', 'test',
+        for field in ['severity', 'confidence', 'fname', 'test',
                      'test_id']:
-            issue_hash ^= hash(self.issue.__dict__[prop])
+            issue_hash ^= hash(getattr(self.issue, field))
         return issue_hash
 
     def __eq__(self, other):
