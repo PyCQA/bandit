@@ -138,8 +138,7 @@ class HashableIssue(object):
 
     def __hash__(self):
         issue_hash = 0
-        for field in ['severity', 'confidence', 'fname', 'test',
-                     'test_id']:
+        for field in ['severity', 'confidence', 'fname', 'test', 'test_id']:
             issue_hash ^= hash(getattr(self.issue, field))
         return issue_hash
 
