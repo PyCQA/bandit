@@ -16,8 +16,8 @@ flags sets. Python provides ``chmod`` to manipulate POSIX style permissions.
 
 This plugin test looks for the use of ``chmod`` and will alert when it is used
 to set particularly permissive control flags. A MEDIUM warning is generated if
-a file is set to group executable and a HIGH warning is reported if a file is
-set world writable. Warnings are given with HIGH confidence.
+a file is set to group write or executable and a HIGH warning is reported if a
+file is set world write or executable. Warnings are given with HIGH confidence.
 
 :Example:
 
@@ -62,9 +62,10 @@ def set_bad_file_permissions(context):
 
             if (mode is not None and isinstance(mode, int) and
                     (mode & stat.S_IWOTH
+                     or mode & stat.S_IWGRP
                      or mode & stat.S_IXGRP
                      or mode & stat.S_IXOTH)):
-                # world write or exec is a HIGH, group exec is a MEDIUM
+                # world write or exec is a HIGH, group write exec is a MEDIUM
                 if mode & stat.S_IWOTH or mode & stat.S_IXOTH:
                     sev_level = bandit.HIGH
                 else:
