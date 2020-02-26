@@ -292,8 +292,8 @@ class FunctionalTests(testtools.TestCase):
         else:
             filename = filename.format('py3')
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 8},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 9}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 4, 'HIGH': 8},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 11}
         }
         self.check_example(filename, expect)
 
