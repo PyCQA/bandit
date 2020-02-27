@@ -271,7 +271,7 @@ class BanditManager(object):
             else:
                 has_nosec = 'nosec' in data
 
-            if self.ignore_nosec and has_nosec:
+            if not self.ignore_nosec and has_nosec:
                 try:
                     fdata.seek(0)
                     if six.PY2:
