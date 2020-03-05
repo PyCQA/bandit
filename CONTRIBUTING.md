@@ -1,5 +1,5 @@
 # Contributing to Bandit
-Thanks for considering to take part in the improvement of Bandit project, contributions are always welcome!  
+Thanks for considering to take part in the improvement of the Bandit project, contributions are always welcome!  
 Here are guidelines and rules that can be helpful if you plan to want to get involved in the project.
 
 #### Table Of Contents
@@ -13,6 +13,9 @@ Here are guidelines and rules that can be helpful if you plan to want to get inv
     * [Commit Message Guidelines](#commit-message-guidelines)
     * [Squash Commits](#squash-commits)
   * [Things You Should Know Before Getting Started](#things-you-should-know-before-getting-started)
+    * [Vulnerability Tests](#vulnerability-tests)
+    * [Writing Tests](#writing-tests)
+    * [Extending Bandit](#extending-bandit)
 
 ## Code of Conduct
 Everyone who participates in this project is governed by [Bandit Code of Conduct](https://github.com/Glyphack/bandit/blob/master/CODE_OF_CONDUCT.md#contributor-covenant-code-of-conduct).
@@ -20,7 +23,7 @@ Everyone who participates in this project is governed by [Bandit Code of Conduct
 ## Reporting Bugs
 If you encountered a bug and want to let us know use [GitHub issues](https://guides.github.com/features/issues/).
 
-**Before submitting a new issue** you might want to check [existsing issue](https://github.com/PyCQA/bandit/issues) to know if there is already a reported issue and the issue is still open
+**Before submitting a new issue** you might want to check [existing issue](https://github.com/PyCQA/bandit/issues) to know if there is already a reported issue and the issue is still open, 
 in that case you can add a comment to the existing issue instead of creating a new one.
 
 ### Submitting your first issue
