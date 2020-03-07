@@ -1,6 +1,6 @@
 name: Build and Test Bandit
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   pylint:

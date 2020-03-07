@@ -33,7 +33,7 @@ A security linter from PyCQA
 * Documentation: https://bandit.readthedocs.io/en/latest/
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
-
+* Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
 Overview
 --------
 Bandit is a tool designed to find common security issues in Python code. To do
@@ -143,9 +143,11 @@ Usage::
                             only show output in the case of an error
       --ignore-nosec        do not skip lines with # nosec comments
       -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
-                            comma-separated list of paths (glob patterns supported)
-                            to exclude from scan (note that these are in addition
-                            to the excluded paths provided in the config file)
+                            comma-separated list of paths (glob patterns
+                            supported) to exclude from scan (note that these are
+                            in addition to the excluded paths provided in the
+                            config file) (default:
+                            .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
       -b BASELINE, --baseline BASELINE
                             path of a baseline report to compare against (only
                             JSON-formatted files are accepted)
@@ -422,25 +424,8 @@ To register your plugin, you have two options:
 
 Contributing
 ------------
-Contributions to Bandit are always welcome!
-
-The best way to get started with Bandit is to grab the source::
-
-    git clone https://github.com/PyCQA/bandit.git
-
-You can test any changes with tox::
-
-    pip install tox
-    tox -e pep8
-    tox -e py27
-    tox -e py35
-    tox -e docs
-    tox -e cover
-
-Please make PR requests using your own branch, and not master::
-
-    git checkout -b mychange
-    git push origin mychange
+Follow our Contributing file:
+https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
 
 Reporting Bugs
 --------------
