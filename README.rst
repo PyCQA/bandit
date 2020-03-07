@@ -33,7 +33,7 @@ A security linter from PyCQA
 * Documentation: https://bandit.readthedocs.io/en/latest/
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
-
+* Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
 Overview
 --------
 Bandit is a tool designed to find common security issues in Python code. To do
@@ -424,25 +424,8 @@ To register your plugin, you have two options:
 
 Contributing
 ------------
-Contributions to Bandit are always welcome!
-
-The best way to get started with Bandit is to grab the source::
-
-    git clone https://github.com/PyCQA/bandit.git
-
-You can test any changes with tox::
-
-    pip install tox
-    tox -e pep8
-    tox -e py27
-    tox -e py35
-    tox -e docs
-    tox -e cover
-
-Please make PR requests using your own branch, and not master::
-
-    git checkout -b mychange
-    git push origin mychange
+Follow our Contributing file:
+https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
 
 Reporting Bugs
 --------------
