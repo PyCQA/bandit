@@ -55,7 +55,7 @@ Create a virtual environment (optional)::
     # Or if you're working with a Python 3 project
     python3 -m venv bandit-env
     # And activate it:
-    source bandit-venv/bin/activate
+    source bandit-env/bin/activate
 
 Install Bandit::
 
