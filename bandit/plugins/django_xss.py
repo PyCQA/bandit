@@ -87,7 +87,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
     if isinstance(xss_var, ast.Name):
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.id
+                arg_name = name.arg
                 if arg_name == xss_var.id:
                     return False  # Params are not secure
 
