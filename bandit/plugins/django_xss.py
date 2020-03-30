@@ -139,10 +139,6 @@ def evaluate_call(call, parent, ignore_nodes=None):
 
     if evaluate:
         args = list(call.args)
-        if call.starargs and isinstance(call.starargs,
-                                                    (ast.List, ast.Tuple)):
-            args.extend(call.starargs.elts)
-
         num_secure = 0
         for arg in args:
             if isinstance(arg, ast.Str):
