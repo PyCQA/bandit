@@ -32,8 +32,6 @@ Python docs succinctly describe why the use of `exec` is risky.
 .. versionadded:: 0.9.0
 """
 
-import six
-
 import bandit
 from bandit.core import test_properties as test
 
@@ -45,15 +43,8 @@ def exec_issue():
         text="Use of exec detected."
     )
 
-
-if six.PY2:
-    @test.checks('Exec')
-    @test.test_id('B102')
-    def exec_used(context):
+@test.checks('Call')
+@test.test_id('B102')
+def exec_used(context):
+    if context.call_function_name_qual == 'exec':
         return exec_issue()
-else:
-    @test.checks('Call')
-    @test.test_id('B102')
-    def exec_used(context):
-        if context.call_function_name_qual == 'exec':
-            return exec_issue()
