@@ -205,7 +205,7 @@ def check_risk(node):
         is_param = False
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.id
+                arg_name = name.arg
                 if arg_name == xss_var.id:
                     is_param = True
                     break
