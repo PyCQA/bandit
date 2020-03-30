@@ -87,7 +87,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
     if isinstance(xss_var, ast.Name):
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.id if six.PY2 else name.arg
+                arg_name = name.id
                 if arg_name == xss_var.id:
                     return False  # Params are not secure
 
@@ -205,7 +205,7 @@ def check_risk(node):
         is_param = False
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.id if six.PY2 else name.arg
+                arg_name = name.id
                 if arg_name == xss_var.id:
                     is_param = True
                     break
