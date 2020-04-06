@@ -30,13 +30,15 @@ class BanditTester:
 
         :param raw_context: Raw context dictionary
         :param checktype: The type of checks to run
-        :param nosec_lines: Lines which should be skipped because of nosec
-        :return: a score based on the number and type of test results
+        :return: a score based on the number and type of test results with
+                extra metrics about nosec comments
         """
 
         scores = {
             "SEVERITY": [0] * len(constants.RANKING),
             "CONFIDENCE": [0] * len(constants.RANKING),
+            "nosecs_by_tests": 0,
+            "failed_nosecs_by_test": 0
         }
 
         tests = self.testset.get_tests(checktype)
@@ -51,12 +53,24 @@ class BanditTester:
                 else:
                     result = test(context)
 
-                # if we have a result, record it and update scores
-                if (
-                    result is not None
-                    and result.lineno not in self.nosec_lines
-                    and temp_context["lineno"] not in self.nosec_lines
-                ):
+                if result is not None:
+                    nosec_tests_to_skip = set()
+                    base_tests = self.nosec_lines.get(result.lineno, None)
+                    context_tests = self.nosec_lines.get(
+                        temp_context["lineno"], None)
+
+                    # if both are non there are were no comments
+                    # this is explicitly different than being empty
+                    # empty set indicates blanket nosec comment without
+                    # individual test names or ids
+                    if base_tests is None and context_tests is None:
+                        nosec_tests_to_skip = None
+
+                    # combine tests from current line and context line
+                    if base_tests is not None:
+                        nosec_tests_to_skip.update(base_tests)
+                    if context_tests is not None:
+                        nosec_tests_to_skip.update(context_tests)
 
                     if isinstance(temp_context["filename"], bytes):
                         result.fname = temp_context["filename"].decode("utf-8")
@@ -70,6 +84,25 @@ class BanditTester:
                     result.test = name
                     if result.test_id == "":
                         result.test_id = test._test_id
+
+                    # don't skip a the test if there was no nosec comment
+                    if nosec_tests_to_skip is not None:
+                        # if the set is empty or the test id is in the set of
+                        # tests to skip, log and increment the skip by test
+                        # count
+                        if not nosec_tests_to_skip or \
+                                (result.test_id in nosec_tests_to_skip):
+                            LOG.debug("skipped, nosec for test %s"
+                                      % result.test_id)
+                            scores['nosecs_by_tests'] += 1
+                            continue
+                        # otherwise this test was not called out explicitly by
+                        # a nosec BXX type comment and should fail. Log and
+                        # increment the failed test count
+                        else:
+                            LOG.debug("uncaught test %s in nosec comment"
+                                      % result.test_id)
+                            scores['failed_nosecs_by_test'] += 1
 
                     self.results.append(result)
 

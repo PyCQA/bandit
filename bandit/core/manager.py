@@ -7,6 +7,7 @@ import fnmatch
 import json
 import logging
 import os
+import re
 import sys
 import tokenize
 import traceback
@@ -21,6 +22,8 @@ from bandit.core import test_set as b_test_set
 
 
 LOG = logging.getLogger(__name__)
+NOSEC_SPECIFIC_IDS_IGNORE = re.compile(r"([bB][\d]+),?[ ]?")
+NOSEC_SPECIFIC_NAMES_IGNORE = re.compile(r"([a-z_]+),?[ ]?")
 
 
 class BanditManager:
@@ -308,21 +311,20 @@ class BanditManager:
             lines = data.splitlines()
             self.metrics.begin(fname)
             self.metrics.count_locs(lines)
-            if self.ignore_nosec:
-                nosec_lines = set()
-            else:
-                try:
-                    fdata.seek(0)
-                    tokens = tokenize.tokenize(fdata.readline)
-                    nosec_lines = {
-                        lineno
-                        for toktype, tokval, (lineno, _), _, _ in tokens
-                        if toktype == tokenize.COMMENT
-                        and "#nosec" in tokval
-                        or "# nosec" in tokval
-                    }
-                except tokenize.TokenError:
-                    nosec_lines = set()
+            # nosec_lines is a dict of line number -> set of tests to ignore
+            #                                         for the line
+            nosec_lines = dict()
+            try:
+                fdata.seek(0)
+                tokens = tokenize.tokenize(fdata.readline)
+
+                if not self.ignore_nosec:
+                    for toktype, tokval, (lineno, _), _, _ in tokens:
+                        if toktype == tokenize.COMMENT:
+                            nosec_lines[lineno] = _parse_nosec_comment(tokval)
+
+            except tokenize.TokenError:
+                pass
             score = self._execute_ast_visitor(fname, data, nosec_lines)
             self.scores.append(score)
             self.metrics.count_issues(
@@ -460,3 +462,63 @@ def _find_candidate_matches(unmatched_issues, results_list):
         ]
 
     return issue_candidates
+
+
+def _get_tests_from_nosec_comment(comment):
+    nosec_no_space = '#nosec'
+    nosec_space = '# nosec'
+    nospace = comment.find(nosec_no_space)
+    space = comment.find(nosec_space)
+    if nospace > -1:
+        start_comment = nospace
+        nosec_length = len(nosec_no_space)
+    elif space > -1:
+        start_comment = space
+        nosec_length = len(nosec_space)
+    else:
+        # None is explicitly different to empty set, None indicates no
+        # nosec comment on a line
+        return None
+
+    # find the next # separator
+    end = comment.find('#', start_comment + 1)
+    # if we don't find one, set end index to the length
+    if end == -1:
+        end = len(comment)
+
+    # extract text after #[ ]?nosec and the end index, this is just the
+    # list of potential test ids or names
+    return comment[start_comment + nosec_length:end]
+
+
+def _parse_nosec_comment(comment):
+    nosec_tests = _get_tests_from_nosec_comment(comment)
+    if nosec_tests is None:
+        return None
+    # empty set indicates that there was a nosec comment without specific
+    # test ids or names
+    test_ids = set()
+    if nosec_tests:
+        extman = extension_loader.MANAGER
+        # check for IDS to ignore (e.g. B602)
+        for test in re.finditer(NOSEC_SPECIFIC_IDS_IGNORE,
+                                nosec_tests):
+            test_id_match = test.group(1)
+            plugin_id = extman.check_id(test_id_match)
+            if plugin_id:
+                test_ids.add(test_id_match)
+            else:
+                LOG.warning("Test in comment: %s is not a test id",
+                            test_id_match)
+        # check for NAMES to ignore (e.g. assert_used)
+        for test in re.finditer(NOSEC_SPECIFIC_NAMES_IGNORE,
+                                nosec_tests):
+            plugin_id = extman.get_plugin_id(test.group(1))
+            if plugin_id:
+                test_ids.add(plugin_id)
+            else:
+                LOG.warning(
+                    "Test in comment: %s is not a test name, ignoring",
+                    test.group(1))
+
+    return test_ids
