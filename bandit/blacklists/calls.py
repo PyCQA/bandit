@@ -265,20 +265,6 @@ SSH/SFTP/SCP or some other encrypted protocol.
 | B321 | ftplib              | - ftplib.\*                        | High      |
 +------+---------------------+------------------------------------+-----------+
 
-B322: input
-------------
-
-The input method in Python 2 will read from standard input, evaluate and
-run the resulting string as python source code. This is similar, though in
-many ways worse, than using eval. On Python 2, use raw_input instead, input
-is safe in Python 3.
-
-+------+---------------------+------------------------------------+-----------+
-| ID   |  Name               |  Calls                             |  Severity |
-+======+=====================+====================================+===========+
-| B322 | input               | - input                            | High      |
-+------+---------------------+------------------------------------+-----------+
-
 B323: unverified_context
 ------------------------
 
@@ -540,15 +526,6 @@ def gen_blacklist():
         'ftplib', 'B321', ['ftplib.*'],
         'FTP-related functions are being called. FTP is considered '
         'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
-        'HIGH'
-        ))
-
-    sets.append(utils.build_conf_dict(
-        'input', 'B322', ['input'],
-        'The input method in Python 2 will read from standard input, '
-        'evaluate and run the resulting string as python source code. This '
-        'is similar, though in many ways worse, than using eval. On Python '
-        '2, use raw_input instead, input is safe in Python 3.',
         'HIGH'
         ))
 

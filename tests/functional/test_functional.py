@@ -151,8 +151,7 @@ class FunctionalTests(testtools.TestCase):
         '''Test the `exec` example.'''
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
-                            'HIGH': 1}
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
         }
         self.check_example('exec.py', expect)
 

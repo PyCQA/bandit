@@ -102,8 +102,7 @@ class RuntimeTests(testtools.TestCase):
         )
         self.assertEqual(0, retcode)
         self.assertIn("Files skipped (1):", output)
-        self.assertIn("nonsense2.py (syntax error while parsing AST",
-                        output)
+        self.assertIn("nonsense2.py (syntax error while parsing AST", output)
 
     def test_example_imports(self):
         (retcode, output) = self._test_example(['bandit', ], ['imports.py', ])
