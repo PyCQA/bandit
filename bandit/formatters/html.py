@@ -145,11 +145,11 @@ from __future__ import absolute_import
 import logging
 import sys
 
+from html import escape as html_escape
+
 from bandit.core import docs_utils
 from bandit.core import test_properties
 from bandit.formatters import utils
-
-from html import escape as html_escape
 
 LOG = logging.getLogger(__name__)
 

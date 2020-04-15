@@ -43,6 +43,7 @@ def exec_issue():
         text="Use of exec detected."
     )
 
+
 @test.checks('Call')
 @test.test_id('B102')
 def exec_used(context):

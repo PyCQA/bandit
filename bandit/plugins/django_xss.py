@@ -6,8 +6,6 @@
 
 import ast
 
-import six
-
 import bandit
 from bandit.core import test_properties as test
 
