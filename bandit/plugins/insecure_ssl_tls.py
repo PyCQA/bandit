@@ -105,6 +105,7 @@ def ssl_with_bad_version(context, config):
         if context.check_call_arg_value('ssl_version', bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=326,
                 confidence=bandit.HIGH,
                 text="ssl.wrap_socket call with insecure SSL/TLS protocol "
                      "version identified, security issue.",
@@ -114,6 +115,7 @@ def ssl_with_bad_version(context, config):
         if context.check_call_arg_value('method', bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=326,
                 confidence=bandit.HIGH,
                 text="SSL.Context call with insecure SSL/TLS protocol "
                      "version identified, security issue.",
@@ -128,6 +130,7 @@ def ssl_with_bad_version(context, config):
                       context.get_lineno_for_call_arg('ssl_version'))
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=326,
                 confidence=bandit.MEDIUM,
                 text="Function call with insecure SSL/TLS protocol "
                      "identified, possible security issue.",
@@ -186,6 +189,7 @@ def ssl_with_bad_defaults(context, config):
         if val in bad_ssl_versions:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=326,
                 confidence=bandit.MEDIUM,
                 text="Function definition identified with insecure SSL/TLS "
                      "protocol version by default, possible security "
@@ -245,6 +249,7 @@ def ssl_with_no_version(context):
             # tests for that (ssl_version is not specified).
             return bandit.Issue(
                 severity=bandit.LOW,
+                cwe=326,
                 confidence=bandit.MEDIUM,
                 text="ssl.wrap_socket call with no SSL/TLS protocol version "
                      "specified, the default SSLv23 could be insecure, "

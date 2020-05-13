@@ -46,6 +46,7 @@ def ssh_no_host_key_verification(context):
                 context.call_args[0] in ['AutoAddPolicy', 'WarningPolicy']):
             issue = bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=295,
                 confidence=bandit.MEDIUM,
                 text='Paramiko call with policy set to automatically trust '
                      'the unknown host key.',

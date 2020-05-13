@@ -41,6 +41,7 @@ from bandit.core import test_properties as test
 def exec_issue():
     return bandit.Issue(
         severity=bandit.MEDIUM,
+        cwe=78,
         confidence=bandit.HIGH,
         text="Use of exec detected."
     )

@@ -142,8 +142,9 @@ class HtmlFormatterTests(testtools.TestCase):
         self.assertNotIn(marker, contents)
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
-    new_issue = issue.Issue(severity, confidence, 'Test issue')
+def _get_issue_instance(severity=bandit.MEDIUM, cwe=123,
+                        confidence=bandit.MEDIUM):
+    new_issue = issue.Issue(severity, cwe, confidence, 'Test issue')
     new_issue.fname = 'code.py'
     new_issue.test = 'bandit_plugin'
     new_issue.lineno = 1

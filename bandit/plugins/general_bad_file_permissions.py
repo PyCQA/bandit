@@ -73,6 +73,7 @@ def set_bad_file_permissions(context):
                     filename = 'NOT PARSED'
                 return bandit.Issue(
                     severity=sev_level,
+                    cwe=78,
                     confidence=bandit.HIGH,
                     text="Chmod setting a permissive mask %s on file (%s)." %
                     (oct(mode), filename)

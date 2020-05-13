@@ -56,6 +56,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
                       'test_name',
                       'test_id',
                       'issue_severity',
+                      'issue_cwe',
                       'issue_confidence',
                       'issue_text',
                       'line_number',

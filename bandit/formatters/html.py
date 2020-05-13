@@ -266,6 +266,7 @@ pre {
     <b>{test_name}: </b> {test_text}<br>
     <b>Test ID:</b> {test_id}<br>
     <b>Severity: </b>{severity}<br>
+    <b>CWE: </b>{cwe}<br>
     <b>Confidence: </b>{confidence}<br>
     <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
@@ -360,6 +361,7 @@ pre {
                                           test_id=issue.test_id,
                                           test_text=issue.text,
                                           severity=issue.severity,
+                                          cwe=issue.cwe,
                                           confidence=issue.confidence,
                                           path=issue.fname, code=code,
                                           candidates=candidates,

@@ -21,8 +21,8 @@ class IssueTests(testtools.TestCase):
     def test_issue_str(self):
         test_issue = _get_issue_instance()
         self.assertEqual(
-            ("Issue: 'Test issue' from B999:bandit_plugin: Severity: MEDIUM "
-             "Confidence: MEDIUM at code.py:1"),
+            ("Issue: 'Test issue' from B999:bandit_plugin: CWE: 123,"
+             " Severity: MEDIUM Confidence: MEDIUM at code.py:1"),
             str(test_issue)
         )
 
@@ -41,7 +41,7 @@ class IssueTests(testtools.TestCase):
 
     def test_issue_filter_severity(self):
         levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
-        issues = [_get_issue_instance(l, bandit.HIGH) for l in levels]
+        issues = [_get_issue_instance(x, bandit.HIGH) for x in levels]
 
         for level in levels:
             rank = constants.RANKING.index(level)
@@ -52,7 +52,7 @@ class IssueTests(testtools.TestCase):
 
     def test_issue_filter_confidence(self):
         levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
-        issues = [_get_issue_instance(bandit.HIGH, l) for l in levels]
+        issues = [_get_issue_instance(bandit.HIGH, x) for x in levels]
 
         for level in levels:
             rank = constants.RANKING.index(level)
@@ -108,7 +108,7 @@ class IssueTests(testtools.TestCase):
     @mock.patch('linecache.getline')
     def test_get_code(self, getline):
         getline.return_value = b'\x08\x30'
-        new_issue = issue.Issue(bandit.MEDIUM, lineno=1)
+        new_issue = issue.Issue(bandit.MEDIUM, cwe=123, lineno=1)
 
         try:
             new_issue.get_code()
@@ -116,8 +116,9 @@ class IssueTests(testtools.TestCase):
             self.fail('Bytes not properly decoded in issue.get_code()')
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
-    new_issue = issue.Issue(severity, confidence, 'Test issue')
+def _get_issue_instance(severity=bandit.MEDIUM, cwe=123,
+                        confidence=bandit.MEDIUM):
+    new_issue = issue.Issue(severity, cwe, confidence, 'Test issue')
     new_issue.fname = 'code.py'
     new_issue.test = 'bandit_plugin'
     new_issue.test_id = 'B999'

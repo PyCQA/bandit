@@ -51,5 +51,6 @@ def paramiko_calls(context):
         if context.is_module_imported_like(module):
             if context.call_function_name in ['exec_command']:
                 return bandit.Issue(severity=bandit.MEDIUM,
+                                    cwe=78,
                                     confidence=bandit.MEDIUM,
                                     text=issue_text)

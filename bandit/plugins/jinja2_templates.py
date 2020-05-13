@@ -83,6 +83,7 @@ def jinja2_autoescape_false(context):
                              getattr(node.value, 'value', None) is False)):
                         return bandit.Issue(
                             severity=bandit.HIGH,
+                            cwe=94,
                             confidence=bandit.HIGH,
                             text="Using jinja2 templates with autoescape="
                                  "False is dangerous and can lead to XSS. "
@@ -103,6 +104,7 @@ def jinja2_autoescape_false(context):
                         else:
                             return bandit.Issue(
                                 severity=bandit.HIGH,
+                                cwe=94,
                                 confidence=bandit.MEDIUM,
                                 text="Using jinja2 templates with autoescape="
                                      "False is dangerous and can lead to XSS. "
@@ -114,6 +116,7 @@ def jinja2_autoescape_false(context):
             # behavior
             return bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=94,
                 confidence=bandit.HIGH,
                 text="By default, jinja2 sets autoescape to False. Consider "
                      "using autoescape=True or use the select_autoescape "

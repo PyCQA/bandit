@@ -18,6 +18,7 @@ class BlacklistingTests(testtools.TestCase):
         self.assertIsInstance(issue_dict, dict)
         self.assertEqual('B000', issue_dict['test_id'])
         self.assertEqual('HIGH', issue_dict['issue_severity'])
+        self.assertEqual(0, issue_dict['issue_cwe'])
         self.assertEqual('HIGH', issue_dict['issue_confidence'])
         self.assertEqual('test name', issue_dict['issue_text'])
 
@@ -29,5 +30,6 @@ class BlacklistingTests(testtools.TestCase):
         self.assertIsInstance(issue_dict, dict)
         self.assertEqual('LEGACY', issue_dict['test_id'])
         self.assertEqual('MEDIUM', issue_dict['issue_severity'])
+        self.assertEqual(0, issue_dict['issue_cwe'])
         self.assertEqual('HIGH', issue_dict['issue_confidence'])
         self.assertEqual('test name', issue_dict['issue_text'])

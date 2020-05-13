@@ -48,6 +48,7 @@ def hashlib_new(context):
                     name.lower() in ('md4', 'md5', 'sha', 'sha1')):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
+                    cwe=327,
                     confidence=bandit.HIGH,
                     text="Use of insecure MD4 or MD5 hash function.",
                     lineno=context.node.lineno,

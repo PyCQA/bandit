@@ -250,6 +250,7 @@ def check_risk(node):
     if not secure:
         return bandit.Issue(
             severity=bandit.MEDIUM,
+            cwe=80,
             confidence=bandit.HIGH,
             text=description
         )

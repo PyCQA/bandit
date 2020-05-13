@@ -18,8 +18,9 @@ from bandit.core import manager
 
 class ManagerTests(testtools.TestCase):
 
-    def _get_issue_instance(self, sev=constants.MEDIUM, conf=constants.MEDIUM):
-        new_issue = issue.Issue(sev, conf, 'Test issue')
+    def _get_issue_instance(self, sev=constants.MEDIUM, cwe=123,
+                            conf=constants.MEDIUM):
+        new_issue = issue.Issue(sev, cwe, conf, 'Test issue')
         new_issue.fname = 'code.py'
         new_issue.test = 'bandit_plugin'
         new_issue.lineno = 1
@@ -111,6 +112,7 @@ class ManagerTests(testtools.TestCase):
                     "code": "test code",
                     "filename": "example_file.py",
                     "issue_severity": "low",
+                    "issue_cwe": "123",
                     "issue_confidence": "low",
                     "issue_text": "test issue",
                     "test_name": "some_test",
@@ -122,7 +124,9 @@ class ManagerTests(testtools.TestCase):
         }
         """
         issue_dictionary = {"code": "test code", "filename": "example_file.py",
-                            "issue_severity": "low", "issue_confidence": "low",
+                            "issue_severity": "low",
+                            "issue_cwe": "123",
+                            "issue_confidence": "low",
                             "issue_text": "test issue", "test_name":
                             "some_test", "test_id": "x", "line_number": "n",
                             "line_range": "n-m"}
@@ -142,10 +146,10 @@ class ManagerTests(testtools.TestCase):
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = (
-            [issue.Issue(severity=l, confidence=l) for l in levels])
+            [issue.Issue(severity=x, cwe=123, confidence=x) for x in levels])
 
-        r = [self.manager.results_count(sev_filter=l, conf_filter=l)
-             for l in levels]
+        r = [self.manager.results_count(sev_filter=x, conf_filter=x)
+             for x in levels]
 
         self.assertEqual([3, 2, 1], r)
 

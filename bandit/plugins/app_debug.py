@@ -51,6 +51,7 @@ def flask_debug_true(context):
             if context.check_call_arg_value('debug', 'True'):
                 return bandit.Issue(
                     severity=bandit.HIGH,
+                    cwe=94,
                     confidence=bandit.MEDIUM,
                     text="A Flask app appears to be run with debug=True, "
                          "which exposes the Werkzeug debugger and allows "

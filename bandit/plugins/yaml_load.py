@@ -60,6 +60,7 @@ def yaml_load(context):
     ]):
         return bandit.Issue(
             severity=bandit.MEDIUM,
+            cwe=20,
             confidence=bandit.HIGH,
             text="Use of unsafe yaml load. Allows instantiation of"
                  " arbitrary objects. Consider yaml.safe_load().",

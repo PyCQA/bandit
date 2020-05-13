@@ -95,6 +95,7 @@ def try_except_pass(context, config):
         if isinstance(node.body[0], ast.Pass):
             return bandit.Issue(
                 severity=bandit.LOW,
+                cwe=703,
                 confidence=bandit.HIGH,
                 text=("Try, Except, Pass detected.")
             )

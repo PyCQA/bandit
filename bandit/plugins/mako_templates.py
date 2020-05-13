@@ -57,6 +57,7 @@ def use_of_mako_templates(context):
             # feature and thus each variable must be carefully sanitized.
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=94,
                 confidence=bandit.HIGH,
                 text="Mako templates allow HTML/JS rendering by default and "
                      "are inherently open to XSS attacks. Ensure variables "

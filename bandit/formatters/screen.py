@@ -97,10 +97,12 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     # returns a list of lines that should be added to the existing lines list
     bits = []
     bits.append("%s%s>> Issue: [%s:%s] %s" % (
-        indent, COLOR[issue.severity], issue.test_id, issue.test, issue.text))
+        indent, COLOR[issue.severity], issue.test_id, issue.test,
+        issue.text))
 
-    bits.append("%s   Severity: %s   Confidence: %s" % (
-        indent, issue.severity.capitalize(), issue.confidence.capitalize()))
+    bits.append("%s   Severity: %s CWE: %i Confidence: %s" % (
+        indent, issue.severity.capitalize(), issue.cwe,
+        issue.confidence.capitalize()))
 
     bits.append("%s   Location: %s:%s" % (
         indent, issue.fname,
@@ -110,7 +112,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         indent, docs_utils.get_url(issue.test_id), COLOR['DEFAULT']))
 
     if show_code:
-        bits.extend([indent + l for l in
+        bits.extend([indent + x for x in
                      issue.get_code(lines, True).split('\n')])
 
     return '\n'.join([bit for bit in bits])

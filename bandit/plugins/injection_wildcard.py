@@ -132,6 +132,7 @@ def linux_commands_wildcard_injection(context, config):
                     ):
                         return bandit.Issue(
                             severity=bandit.HIGH,
+                            cwe=155,
                             confidence=bandit.MEDIUM,
                             text="Possible wildcard injection in call: %s" %
                             context.call_function_name_qual,

@@ -71,6 +71,7 @@ def hardcoded_tmp_directory(context, config):
     if any(context.string_val.startswith(s) for s in tmp_dirs):
         return bandit.Issue(
             severity=bandit.MEDIUM,
+            cwe=377,
             confidence=bandit.MEDIUM,
             text="Probable insecure usage of temp file/directory."
         )

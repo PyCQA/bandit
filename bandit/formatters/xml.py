@@ -60,9 +60,11 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         testcase = ET.SubElement(root, 'testcase',
                                  classname=issue.fname, name=test)
 
-        text = 'Test ID: %s Severity: %s Confidence: %s\n%s\nLocation %s:%s'
-        text = text % (issue.test_id, issue.severity, issue.confidence,
-                       issue.text, issue.fname, issue.lineno)
+        text = 'Test ID: %s Severity: %s CWE: %s ' \
+               'Confidence: %s\n%s\nLocation %s:%s'
+        text = text % (issue.test_id, issue.severity, issue.cwe,
+                       issue.confidence, issue.text, issue.fname,
+                       issue.lineno)
         ET.SubElement(testcase, 'error',
                       more_info=docs_utils.get_url(issue.test_id),
                       type=issue.severity,

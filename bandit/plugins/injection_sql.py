@@ -104,6 +104,7 @@ def hardcoded_sql_expressions(context):
     if _check_string(val[1]):
         return bandit.Issue(
             severity=bandit.MEDIUM,
+            cwe=89,
             confidence=bandit.MEDIUM if val[0] else bandit.LOW,
             text="Possible SQL injection vector through string-based "
                  "query construction."

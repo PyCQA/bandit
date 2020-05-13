@@ -54,6 +54,7 @@ def request_with_no_cert_validation(context):
         if context.check_call_arg_value('verify', 'False'):
             issue = bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=295,
                 confidence=bandit.HIGH,
                 text="Requests call with verify=False disabling SSL "
                      "certificate checks, security issue.",

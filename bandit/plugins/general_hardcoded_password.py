@@ -22,6 +22,7 @@ RE_CANDIDATES = re.compile(
 def _report(value):
     return bandit.Issue(
         severity=bandit.LOW,
+        cwe=259,
         confidence=bandit.MEDIUM,
         text=("Possible hardcoded password: '%s'" % value))
 

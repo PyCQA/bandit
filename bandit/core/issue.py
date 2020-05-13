@@ -15,9 +15,11 @@ from bandit.core import constants
 
 
 class Issue(object):
-    def __init__(self, severity, confidence=constants.CONFIDENCE_DEFAULT,
+    def __init__(self, severity, cwe,
+                 confidence=constants.CONFIDENCE_DEFAULT,
                  text="", ident=None, lineno=None, test_id=""):
         self.severity = severity
+        self.cwe = cwe
         self.confidence = confidence
         if isinstance(text, bytes):
             text = text.decode('utf-8')
@@ -30,16 +32,17 @@ class Issue(object):
         self.linerange = []
 
     def __str__(self):
-        return ("Issue: '%s' from %s:%s: Severity: %s Confidence: "
+        return ("Issue: '%s' from %s:%s: CWE: %i, Severity: %s Confidence: "
                 "%s at %s:%i") % (self.text, self.test_id,
-                                  (self.ident or self.test), self.severity,
-                                  self.confidence, self.fname, self.lineno)
+                                  (self.ident or self.test), self.cwe,
+                                  self.severity, self.confidence, self.fname,
+                                  self.lineno)
 
     def __eq__(self, other):
         # if the issue text, severity, confidence, and filename match, it's
         # the same issue from our perspective
-        match_types = ['text', 'severity', 'confidence', 'fname', 'test',
-                       'test_id']
+        match_types = ['text', 'severity', 'cwe', 'confidence', 'fname',
+                       'test', 'test_id']
         return all(getattr(self, field) == getattr(other, field)
                    for field in match_types)
 
@@ -101,11 +104,12 @@ class Issue(object):
             'test_name': self.test,
             'test_id': self.test_id,
             'issue_severity': self.severity,
+            'issue_cwe': self.cwe,
             'issue_confidence': self.confidence,
             'issue_text': self.text.encode('utf-8').decode('utf-8'),
             'line_number': self.lineno,
             'line_range': self.linerange,
-            }
+        }
 
         if with_code:
             out['code'] = self.get_code()
@@ -115,6 +119,7 @@ class Issue(object):
         self.code = data["code"]
         self.fname = data["filename"]
         self.severity = data["issue_severity"]
+        self.cwe = int(data["issue_cwe"])
         self.confidence = data["issue_confidence"]
         self.text = data["issue_text"]
         self.test = data["test_name"]
@@ -124,6 +129,6 @@ class Issue(object):
 
 
 def issue_from_dict(data):
-    i = Issue(severity=data["issue_severity"])
+    i = Issue(severity=data["issue_severity"], cwe=int(data["issue_cwe"]))
     i.from_dict(data)
     return i

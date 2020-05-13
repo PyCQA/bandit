@@ -43,6 +43,7 @@ def hardcoded_bind_all_interfaces(context):
     if context.string_val == '0.0.0.0':
         return bandit.Issue(
             severity=bandit.MEDIUM,
+            cwe=605,
             confidence=bandit.MEDIUM,
             text="Possible binding to all interfaces."
         )

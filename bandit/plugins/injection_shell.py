@@ -199,6 +199,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
                 if sev == bandit.LOW:
                     return bandit.Issue(
                         severity=bandit.LOW,
+                        cwe=78,
                         confidence=bandit.HIGH,
                         text='subprocess call with shell=True seems safe, but '
                              'may be changed in the future, consider '
@@ -208,6 +209,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
                 else:
                     return bandit.Issue(
                         severity=bandit.HIGH,
+                        cwe=78,
                         confidence=bandit.HIGH,
                         text='subprocess call with shell=True identified, '
                              'security issue.',
@@ -287,6 +289,7 @@ def subprocess_without_shell_equals_true(context, config):
         if not has_shell(context):
             return bandit.Issue(
                 severity=bandit.LOW,
+                cwe=78,
                 confidence=bandit.HIGH,
                 text='subprocess call - check for execution of untrusted '
                      'input.',
@@ -365,6 +368,7 @@ def any_other_function_with_shell_equals_true(context, config):
         if has_shell(context):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=78,
                 confidence=bandit.LOW,
                 text='Function call with shell=True parameter identified, '
                      'possible security issue.',
@@ -451,6 +455,7 @@ def start_process_with_a_shell(context, config):
             if sev == bandit.LOW:
                 return bandit.Issue(
                     severity=bandit.LOW,
+                    cwe=78,
                     confidence=bandit.HIGH,
                     text='Starting a process with a shell: '
                          'Seems safe, but may be changed in the future, '
@@ -459,6 +464,7 @@ def start_process_with_a_shell(context, config):
             else:
                 return bandit.Issue(
                     severity=bandit.HIGH,
+                    cwe=78,
                     confidence=bandit.HIGH,
                     text='Starting a process with a shell, possible injection'
                          ' detected, security issue.'
@@ -547,6 +553,7 @@ def start_process_with_no_shell(context, config):
     if config and context.call_function_name_qual in config['no_shell']:
         return bandit.Issue(
             severity=bandit.LOW,
+            cwe=78,
             confidence=bandit.MEDIUM,
             text='Starting a process without a shell.'
         )
@@ -642,6 +649,7 @@ def start_process_with_partial_path(context, config):
             if isinstance(node, ast.Str) and not full_path_match.match(node.s):
                 return bandit.Issue(
                     severity=bandit.LOW,
+                    cwe=78,
                     confidence=bandit.HIGH,
                     text='Starting a process with a partial executable path'
                 )

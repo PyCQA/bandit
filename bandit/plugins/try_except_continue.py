@@ -96,5 +96,6 @@ def try_except_continue(context, config):
         if isinstance(node.body[0], ast.Continue):
             return bandit.Issue(
                 severity=bandit.LOW,
+                cwe=703,
                 confidence=bandit.HIGH,
                 text=("Try, Except, Continue detected."))
