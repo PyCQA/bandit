@@ -11,6 +11,7 @@ import testtools
 import bandit
 from bandit.core import config
 from bandit.core import issue
+from bandit.core.issue import Cwe as Cwe
 from bandit.core import manager
 from bandit.formatters import xml as b_xml
 
@@ -26,7 +27,8 @@ class XmlFormatterTests(testtools.TestCase):
                         'lineno': 4,
                         'linerange': [4]}
         self.check_name = 'hardcoded_bind_all_interfaces'
-        self.issue = issue.Issue(bandit.MEDIUM, 123, bandit.MEDIUM,
+        self.issue = issue.Issue(bandit.MEDIUM, Cwe.MULTIPLE_BINDS,
+                                 bandit.MEDIUM,
                                  'Possible binding to all interfaces.')
         self.manager.out_file = self.tmp_fname
 

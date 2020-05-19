@@ -68,6 +68,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         writer.writeheader()
         for result in results:
             r = result.as_dict(with_code=False)
+            r['issue_cwe'] = r['issue_cwe']['link']
             r['more_info'] = docs_utils.get_url(r['test_id'])
             writer.writerow(r)
 

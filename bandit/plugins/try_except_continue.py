@@ -74,6 +74,7 @@ following would not generate a warning if the configuration option
 import ast
 
 import bandit
+from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
 
 
@@ -96,6 +97,6 @@ def try_except_continue(context, config):
         if isinstance(node.body[0], ast.Continue):
             return bandit.Issue(
                 severity=bandit.LOW,
-                cwe=703,
+                cwe=Cwe.IMPROPER_CHECK_OF_EXEPT_COND,
                 confidence=bandit.HIGH,
                 text=("Try, Except, Continue detected."))

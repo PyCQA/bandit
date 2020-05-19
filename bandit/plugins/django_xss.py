@@ -9,6 +9,7 @@ import ast
 import six
 
 import bandit
+from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
 
 
@@ -250,7 +251,7 @@ def check_risk(node):
     if not secure:
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=80,
+            cwe=Cwe.BASIC_XSS,
             confidence=bandit.HIGH,
             text=description
         )

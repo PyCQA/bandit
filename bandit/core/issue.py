@@ -14,12 +14,71 @@ from six import moves
 from bandit.core import constants
 
 
+class Cwe(object):
+    UNDEF = 0
+    IMPROPER_INPUT_VALIDATION = 20
+    OS_COMMAND_INJECTION = 78
+    BASIC_XSS = 80
+    SQL_INJECTION = 89
+    CODE_INJECTION = 94
+    IMPROPER_WILDCARD_NEUTRALIZATION = 155
+    HARD_CODED_PASSWORD = 259
+    IMPROPER_CERT_VALIDATION = 295
+    INADEQUATE_ENCRYPTION_STRENGH = 326
+    BROKEN_CRYPTO = 327
+    INSECURE_TEMP_FILE = 377
+    MULTIPLE_BINDS = 605
+    IMPROPER_CHECK_OF_EXEPT_COND = 703
+    INCORRECT_PERMISSION_ASSIGNMENT = 732
+
+    MITRE_URL_PATTERN = "https://cwe.mitre.org/data/definitions/%s.html"
+
+    def __init__(self, id=UNDEF):
+        self.id = id
+
+    def link(self):
+        if self.id == Cwe.UNDEF:
+            return ""
+
+        return Cwe.MITRE_URL_PATTERN % str(self.id)
+
+    def __str__(self):
+        if self.id == Cwe.UNDEF:
+            return ""
+
+        return "CWE-%i (%s)" % (self.id, self.link())
+
+    def as_dict(self):
+        return {
+            "id": self.id,
+            "link": self.link()
+        } if self.id != Cwe.UNDEF else {}
+
+    def as_jsons(self):
+        return str(self.as_dict())
+
+    def from_dict(self, data):
+        if 'id' in data:
+            self.id = int(data['id'])
+        else:
+            self.id = Cwe.UNDEF
+
+    def __eq__(self, other):
+        return self.id == other.id
+
+    def __ne__(self, other):
+        return self.id != other.id
+
+    def __hash__(self):
+        return id(self)
+
+
 class Issue(object):
-    def __init__(self, severity, cwe,
+    def __init__(self, severity, cwe=0,
                  confidence=constants.CONFIDENCE_DEFAULT,
                  text="", ident=None, lineno=None, test_id=""):
         self.severity = severity
-        self.cwe = cwe
+        self.cwe = Cwe(cwe)
         self.confidence = confidence
         if isinstance(text, bytes):
             text = text.decode('utf-8')
@@ -32,9 +91,9 @@ class Issue(object):
         self.linerange = []
 
     def __str__(self):
-        return ("Issue: '%s' from %s:%s: CWE: %i, Severity: %s Confidence: "
+        return ("Issue: '%s' from %s:%s: CWE: %s, Severity: %s Confidence: "
                 "%s at %s:%i") % (self.text, self.test_id,
-                                  (self.ident or self.test), self.cwe,
+                                  (self.ident or self.test), str(self.cwe),
                                   self.severity, self.confidence, self.fname,
                                   self.lineno)
 
@@ -104,7 +163,7 @@ class Issue(object):
             'test_name': self.test,
             'test_id': self.test_id,
             'issue_severity': self.severity,
-            'issue_cwe': self.cwe,
+            'issue_cwe': self.cwe.as_dict(),
             'issue_confidence': self.confidence,
             'issue_text': self.text.encode('utf-8').decode('utf-8'),
             'line_number': self.lineno,
@@ -119,7 +178,7 @@ class Issue(object):
         self.code = data["code"]
         self.fname = data["filename"]
         self.severity = data["issue_severity"]
-        self.cwe = int(data["issue_cwe"])
+        self.cwe = cwe_from_dict(data["issue_cwe"])
         self.confidence = data["issue_confidence"]
         self.text = data["issue_text"]
         self.test = data["test_name"]
@@ -128,7 +187,13 @@ class Issue(object):
         self.linerange = data["line_range"]
 
 
+def cwe_from_dict(data):
+    cwe = Cwe()
+    cwe.from_dict(data)
+    return cwe
+
+
 def issue_from_dict(data):
-    i = Issue(severity=data["issue_severity"], cwe=int(data["issue_cwe"]))
+    i = Issue(severity=data["issue_severity"])
     i.from_dict(data)
     return i

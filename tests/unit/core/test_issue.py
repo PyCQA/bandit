@@ -10,6 +10,7 @@ import testtools
 import bandit
 from bandit.core import constants
 from bandit.core import issue
+from bandit.core.issue import Cwe as Cwe
 
 
 class IssueTests(testtools.TestCase):
@@ -20,9 +21,13 @@ class IssueTests(testtools.TestCase):
 
     def test_issue_str(self):
         test_issue = _get_issue_instance()
+        expect = ("Issue: 'Test issue' from B999:bandit_plugin:"
+                  ' CWE: %s,'
+                  " Severity: MEDIUM "
+                  "Confidence: MEDIUM at code.py:1")
+
         self.assertEqual(
-            ("Issue: 'Test issue' from B999:bandit_plugin: CWE: 123,"
-             " Severity: MEDIUM Confidence: MEDIUM at code.py:1"),
+            expect % str(Cwe(Cwe.MULTIPLE_BINDS)),
             str(test_issue)
         )
 
@@ -108,7 +113,9 @@ class IssueTests(testtools.TestCase):
     @mock.patch('linecache.getline')
     def test_get_code(self, getline):
         getline.return_value = b'\x08\x30'
-        new_issue = issue.Issue(bandit.MEDIUM, cwe=123, lineno=1)
+        new_issue = issue.Issue(bandit.MEDIUM,
+                                cwe=Cwe.MULTIPLE_BINDS,
+                                lineno=1)
 
         try:
             new_issue.get_code()
@@ -116,7 +123,7 @@ class IssueTests(testtools.TestCase):
             self.fail('Bytes not properly decoded in issue.get_code()')
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, cwe=123,
+def _get_issue_instance(severity=bandit.MEDIUM, cwe=Cwe.MULTIPLE_BINDS,
                         confidence=bandit.MEDIUM):
     new_issue = issue.Issue(severity, cwe, confidence, 'Test issue')
     new_issue.fname = 'code.py'

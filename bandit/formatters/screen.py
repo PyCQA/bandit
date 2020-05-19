@@ -100,8 +100,8 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         indent, COLOR[issue.severity], issue.test_id, issue.test,
         issue.text))
 
-    bits.append("%s   Severity: %s CWE: %i Confidence: %s" % (
-        indent, issue.severity.capitalize(), issue.cwe,
+    bits.append("%s   Severity: %s CWE: %s Confidence: %s" % (
+        indent, issue.severity.capitalize(), str(issue.cwe),
         issue.confidence.capitalize()))
 
     bits.append("%s   Location: %s:%s" % (

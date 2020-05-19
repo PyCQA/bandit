@@ -8,6 +8,7 @@
 import ast
 
 import bandit
+from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
 
 
@@ -77,7 +78,7 @@ def django_extra_used(context):
         if insecure:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
-                cwe=89,
+                cwe=Cwe.SQL_INJECTION,
                 confidence=bandit.MEDIUM,
                 text=description
             )
@@ -103,7 +104,7 @@ def django_rawsql_used(context):
             if not isinstance(sql, ast.Str):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
-                    cwe=89,
+                    cwe=Cwe.SQL_INJECTION,
                     confidence=bandit.MEDIUM,
                     text=description
                 )
