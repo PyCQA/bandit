@@ -146,11 +146,12 @@ class ManagerTests(testtools.TestCase):
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = (
-            [issue.Issue(severity=x, cwe=123, confidence=x) for x in levels])
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
 
-        r = [self.manager.results_count(sev_filter=x, conf_filter=x)
-             for x in levels]
-
+        r = [self.manager.results_count(sev_filter=level, conf_filter=level)
+             for level in levels]
+        
         self.assertEqual([3, 2, 1], r)
 
     def test_output_results_invalid_format(self):

@@ -41,7 +41,7 @@ class IssueTests(testtools.TestCase):
 
     def test_issue_filter_severity(self):
         levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
-        issues = [_get_issue_instance(x, bandit.HIGH) for x in levels]
+        issues = [_get_issue_instance(level, bandit.HIGH) for level in levels]
 
         for level in levels:
             rank = constants.RANKING.index(level)
@@ -52,7 +52,7 @@ class IssueTests(testtools.TestCase):
 
     def test_issue_filter_confidence(self):
         levels = [bandit.LOW, bandit.MEDIUM, bandit.HIGH]
-        issues = [_get_issue_instance(bandit.HIGH, x) for x in levels]
+        issues = [_get_issue_instance(bandit.HIGH, level) for level in levels]
 
         for level in levels:
             rank = constants.RANKING.index(level)

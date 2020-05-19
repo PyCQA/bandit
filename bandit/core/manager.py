@@ -277,14 +277,14 @@ class BanditManager(object):
                         lineno for toktype, tokval, (lineno, _), _, _ in tokens
                         if toktype == tokenize.COMMENT and
                         '#nosec' in tokval or '# nosec' in tokval)
-                except tokenize.TokenError as e:
+                except tokenize.TokenError:
                     nosec_lines = set()
             score = self._execute_ast_visitor(fname, data, nosec_lines)
             self.scores.append(score)
             self.metrics.count_issues([score, ])
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:
             sys.exit(2)
-        except SyntaxError as e:
+        except SyntaxError:
             self.skipped.append((fname,
                                  "syntax error while parsing AST from file"))
             new_files_list.remove(fname)
