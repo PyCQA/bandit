@@ -142,10 +142,11 @@ class ManagerTests(testtools.TestCase):
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = (
-            [issue.Issue(severity=l, confidence=l) for l in levels])
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
 
-        r = [self.manager.results_count(sev_filter=l, conf_filter=l)
-             for l in levels]
+        r = [self.manager.results_count(sev_filter=level, conf_filter=level)
+             for level in levels]
 
         self.assertEqual([3, 2, 1], r)
 
