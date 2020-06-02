@@ -123,7 +123,7 @@ class Issue(object):
         self.test_id = data["test_id"]
         self.lineno = data["line_number"]
         self.linerange = data["line_range"]
-        self.col_offset = data["col_offset"]
+        self.col_offset = data.get("col_offset", 0)
 
 
 def issue_from_dict(data):
