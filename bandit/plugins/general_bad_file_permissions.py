@@ -53,6 +53,13 @@ import bandit
 from bandit.core import test_properties as test
 
 
+def _stat_is_dangerous(mode):
+    return (mode & stat.S_IWOTH
+            or mode & stat.S_IWGRP
+            or mode & stat.S_IXGRP
+            or mode & stat.S_IXOTH)
+
+
 @test.checks('Call')
 @test.test_id('B103')
 def set_bad_file_permissions(context):
@@ -60,11 +67,8 @@ def set_bad_file_permissions(context):
         if context.call_args_count == 2:
             mode = context.get_call_arg_at_position(1)
 
-            if (mode is not None and isinstance(mode, int) and
-                    (mode & stat.S_IWOTH
-                     or mode & stat.S_IWGRP
-                     or mode & stat.S_IXGRP
-                     or mode & stat.S_IXOTH)):
+            if (mode is not None and isinstance(mode, int)
+                    and _stat_is_dangerous(mode)):
                 # world write or exec is a HIGH, group write exec is a MEDIUM
                 if mode & stat.S_IWOTH or mode & stat.S_IXOTH:
                     sev_level = bandit.HIGH
