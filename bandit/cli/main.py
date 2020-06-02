@@ -268,7 +268,7 @@ def main():
 
     Available tags:
 
-        {abspath}, {relpath}, {line},  {test_id},
+        {abspath}, {relpath}, {line}, {col}, {test_id},
         {severity}, {msg}, {confidence}, {range}
 
     Example usage:

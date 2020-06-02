@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import tempfile
 import csv
+import tempfile
 
 import six
 import testtools
