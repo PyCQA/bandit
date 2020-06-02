@@ -15,16 +15,16 @@ from bandit.core import utils
 class Manager(object):
     # These IDs are for bandit built in tests
     builtin = [
-        'B001'  # Built in blacklist test
+        'B001'  # Built in banlist test
         ]
 
     def __init__(self, formatters_namespace='bandit.formatters',
                  plugins_namespace='bandit.plugins',
-                 blacklists_namespace='bandit.blacklists'):
+                 banlists_namespace='bandit.banlists'):
         # Cache the extension managers, loaded extensions, and extension names
         self.load_formatters(formatters_namespace)
         self.load_plugins(plugins_namespace)
-        self.load_blacklists(blacklists_namespace)
+        self.load_banlists(banlists_namespace)
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
@@ -60,25 +60,25 @@ class Manager(object):
             return self.plugins_by_name[plugin_name].plugin._test_id
         return None
 
-    def load_blacklists(self, blacklist_namespace):
-        self.blacklists_mgr = extension.ExtensionManager(
-            namespace=blacklist_namespace,
+    def load_banlists(self, banlist_namespace):
+        self.banlists_mgr = extension.ExtensionManager(
+            namespace=banlist_namespace,
             invoke_on_load=False,
             verify_requirements=False,
             )
-        self.blacklist = {}
-        blacklist = list(self.blacklists_mgr)
-        for item in blacklist:
+        self.banlist = {}
+        banlist = list(self.banlists_mgr)
+        for item in banlist:
             for key, val in item.plugin().items():
                 utils.check_ast_node(key)
-                self.blacklist.setdefault(key, []).extend(val)
+                self.banlist.setdefault(key, []).extend(val)
 
-        self.blacklist_by_id = {}
-        self.blacklist_by_name = {}
-        for val in six.itervalues(self.blacklist):
+        self.banlist_by_id = {}
+        self.banlist_by_name = {}
+        for val in six.itervalues(self.banlist):
             for b in val:
-                self.blacklist_by_id[b['id']] = b
-                self.blacklist_by_name[b['name']] = b
+                self.banlist_by_id[b['id']] = b
+                self.banlist_by_name[b['name']] = b
 
     def validate_profile(self, profile):
         '''Validate that everything in the configured profiles looks good.'''
@@ -98,7 +98,7 @@ class Manager(object):
     def check_id(self, test):
         return (
             test in self.plugins_by_id or
-            test in self.blacklist_by_id or
+            test in self.banlist_by_id or
             test in self.builtin)
 
 

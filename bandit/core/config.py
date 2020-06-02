@@ -111,11 +111,11 @@ class BanditConfig(object):
 
     def convert_legacy_config(self):
         updated_profiles = self.convert_names_to_ids()
-        bad_calls, bad_imports = self.convert_legacy_blacklist_data()
+        bad_calls, bad_imports = self.convert_legacy_banlist_data()
 
         if updated_profiles:
-            self.convert_legacy_blacklist_tests(updated_profiles,
-                                                bad_calls, bad_imports)
+            self.convert_legacy_banlist_tests(updated_profiles,
+                                              bad_calls, bad_imports)
             self._config['profiles'] = updated_profiles
 
     def convert_names_to_ids(self):
@@ -134,12 +134,12 @@ class BanditConfig(object):
             updated_profiles[name] = {'include': include, 'exclude': exclude}
         return updated_profiles
 
-    def convert_legacy_blacklist_data(self):
-        '''Detect legacy blacklist data and convert it to new format.'''
+    def convert_legacy_banlist_data(self):
+        '''Detect legacy banlist data and convert it to new format.'''
         bad_calls_list = []
         bad_imports_list = []
 
-        bad_calls = self.get_option('blacklist_calls') or {}
+        bad_calls = self.get_option('banlist_calls') or {}
         bad_calls = bad_calls.get('bad_name_sets', {})
         for item in bad_calls:
             for key, val in item.items():
@@ -147,7 +147,7 @@ class BanditConfig(object):
                 val['message'] = val['message'].replace('{func}', '{name}')
                 bad_calls_list.append(val)
 
-        bad_imports = self.get_option('blacklist_imports') or {}
+        bad_imports = self.get_option('banlist_imports') or {}
         bad_imports = bad_imports.get('bad_import_sets', {})
         for item in bad_imports:
             for key, val in item.items():
@@ -158,47 +158,47 @@ class BanditConfig(object):
                 bad_imports_list.append(val)
 
         if bad_imports_list or bad_calls_list:
-            LOG.warning('Legacy blacklist data found in config, overriding '
+            LOG.warning('Legacy banlist data found in config, overriding '
                         'data plugins')
         return bad_calls_list, bad_imports_list
 
     @staticmethod
-    def convert_legacy_blacklist_tests(profiles, bad_imports, bad_calls):
-        '''Detect old blacklist tests, convert to use new builtin.'''
+    def convert_legacy_banlist_tests(profiles, bad_imports, bad_calls):
+        '''Detect old banlist tests, convert to use new builtin.'''
         def _clean_set(name, data):
             if name in data:
                 data.remove(name)
                 data.add('B001')
 
         for name, profile in profiles.items():
-            blacklist = {}
+            banlist = {}
             include = profile['include']
             exclude = profile['exclude']
 
-            name = 'blacklist_calls'
+            name = 'banlist_calls'
             if name in include and name not in exclude:
-                blacklist.setdefault('Call', []).extend(bad_calls)
+                banlist.setdefault('Call', []).extend(bad_calls)
 
             _clean_set(name, include)
             _clean_set(name, exclude)
 
-            name = 'blacklist_imports'
+            name = 'banlist_imports'
             if name in include and name not in exclude:
-                blacklist.setdefault('Import', []).extend(bad_imports)
-                blacklist.setdefault('ImportFrom', []).extend(bad_imports)
-                blacklist.setdefault('Call', []).extend(bad_imports)
+                banlist.setdefault('Import', []).extend(bad_imports)
+                banlist.setdefault('ImportFrom', []).extend(bad_imports)
+                banlist.setdefault('Call', []).extend(bad_imports)
 
             _clean_set(name, include)
             _clean_set(name, exclude)
-            _clean_set('blacklist_import_func', include)
-            _clean_set('blacklist_import_func', exclude)
+            _clean_set('banlist_import_func', include)
+            _clean_set('banlist_import_func', exclude)
 
             # This can happen with a legacy config that includes
-            # blacklist_calls but exclude blacklist_imports for example
+            # banlist_calls but exclude banlist_imports for example
             if 'B001' in include and 'B001' in exclude:
                 exclude.remove('B001')
 
-            profile['blacklist'] = blacklist
+            profile['banlist'] = banlist
 
     def validate(self, path):
         '''Validate the config data.'''
@@ -221,9 +221,9 @@ class BanditConfig(object):
                 inc = profile.get('include') or set()
                 exc = profile.get('exclude') or set()
 
-                _test('blacklist_imports', 'blacklist_imports', inc, exc)
-                _test('blacklist_import_func', 'blacklist_imports', inc, exc)
-                _test('blacklist_calls', 'blacklist_calls', inc, exc)
+                _test('banlist_imports', 'banlist_imports', inc, exc)
+                _test('banlist_import_func', 'banlist_imports', inc, exc)
+                _test('banlist_calls', 'banlist_calls', inc, exc)
 
         # show deprecation message
         if legacy:

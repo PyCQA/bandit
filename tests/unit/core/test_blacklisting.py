@@ -4,16 +4,16 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from bandit.core import blacklisting
+from bandit.core import banlisting
 
 import testtools
 
 
-class BlacklistingTests(testtools.TestCase):
+class BanlistingTests(testtools.TestCase):
     def test_report_issue(self):
         data = {'level': 'HIGH', 'message': 'test {name}', 'id': 'B000'}
 
-        issue = blacklisting.report_issue(data, 'name')
+        issue = banlisting.report_issue(data, 'name')
         issue_dict = issue.as_dict(with_code=False)
         self.assertIsInstance(issue_dict, dict)
         self.assertEqual('B000', issue_dict['test_id'])
@@ -24,7 +24,7 @@ class BlacklistingTests(testtools.TestCase):
     def test_report_issue_defaults(self):
         data = {'message': 'test {name}'}
 
-        issue = blacklisting.report_issue(data, 'name')
+        issue = banlisting.report_issue(data, 'name')
         issue_dict = issue.as_dict(with_code=False)
         self.assertIsInstance(issue_dict, dict)
         self.assertEqual('LEGACY', issue_dict['test_id'])

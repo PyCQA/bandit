@@ -6,11 +6,11 @@
 
 r"""
 ====================================================
-Blacklist various Python calls known to be dangerous
+Banlist various Python calls known to be dangerous
 ====================================================
 
-This blacklist data checks for a number of Python calls known to have possible
-security implications. The following blacklist tests are run against any
+This banlist data checks for a number of Python calls known to have possible
+security implications. The following banlist tests are run against any
 function calls encoutered in the scanned code base, triggered by encoutering
 ast.Call nodes.
 
@@ -313,19 +313,19 @@ For further information:
 
 """
 
-from bandit.blacklists import utils
+from bandit.banlists import utils
 
 
-def gen_blacklist():
-    """Generate a list of items to blacklist.
+def gen_banlist():
+    """Generate a list of items to banlist.
 
-    Methods of this type, "bandit.blacklist" plugins, are used to build a list
-    of items that bandit's built in blacklisting tests will use to trigger
-    issues. They replace the older blacklist* test plugins and allow
-    blacklisted items to have a unique bandit ID for filtering and profile
+    Methods of this type, "bandit.banlist" plugins, are used to build a list
+    of items that bandit's built in banlisting tests will use to trigger
+    issues. They replace the older banlist* test plugins and allow
+    banlisted items to have a unique bandit ID for filtering and profile
     usage.
 
-    :return: a dictionary mapping node types to a list of blacklist data
+    :return: a dictionary mapping node types to a list of banlist data
     """
 
     sets = []

@@ -9,7 +9,7 @@ import importlib
 import logging
 
 
-from bandit.core import blacklisting
+from bandit.core import banlisting
 from bandit.core import extension_loader
 
 
@@ -34,22 +34,22 @@ class BanditTestSet(object):
         inc = set(profile.get('include', []))
         exc = set(profile.get('exclude', []))
 
-        all_blacklist_tests = set()
-        for _, tests in extman.blacklist.items():
-            all_blacklist_tests.update(t['id'] for t in tests)
+        all_banlist_tests = set()
+        for _, tests in extman.banlist.items():
+            all_banlist_tests.update(t['id'] for t in tests)
 
         # this block is purely for backwards compatibility, the rules are as
         # follows:
         # B001,B401 means B401
         # B401 means B401
-        # B001 means all blacklist tests
+        # B001 means all banlist tests
         if 'B001' in inc:
-            if not inc.intersection(all_blacklist_tests):
-                inc.update(all_blacklist_tests)
+            if not inc.intersection(all_banlist_tests):
+                inc.update(all_banlist_tests)
             inc.discard('B001')
         if 'B001' in exc:
-            if not exc.intersection(all_blacklist_tests):
-                exc.update(all_blacklist_tests)
+            if not exc.intersection(all_banlist_tests):
+                exc.update(all_banlist_tests)
             exc.discard('B001')
 
         if inc:
@@ -57,7 +57,7 @@ class BanditTestSet(object):
         else:
             filtered = set(extman.plugins_by_id.keys())
             filtered.update(extman.builtin)
-            filtered.update(all_blacklist_tests)
+            filtered.update(all_banlist_tests)
         return filtered - exc
 
     def _load_builtins(self, filtering, profile):
@@ -69,25 +69,25 @@ class BanditTestSet(object):
                 self.plugin = plugin
 
         extman = extension_loader.MANAGER
-        blacklist = profile.get('blacklist')
-        if not blacklist:  # not overridden by legacy data
-            blacklist = {}
-            for node, tests in extman.blacklist.items():
+        banlist = profile.get('banlist')
+        if not banlist:  # not overridden by legacy data
+            banlist = {}
+            for node, tests in extman.banlist.items():
                 values = [t for t in tests if t['id'] in filtering]
                 if values:
-                    blacklist[node] = values
+                    banlist[node] = values
 
-        if not blacklist:
+        if not banlist:
             return []
 
-        # this dresses up the blacklist to look like a plugin, but
-        # the '_checks' data comes from the blacklist information.
-        # the '_config' is the filtered blacklist data set.
-        blacklisting.blacklist._test_id = "B001"
-        blacklisting.blacklist._checks = blacklist.keys()
-        blacklisting.blacklist._config = blacklist
+        # this dresses up the banlist to look like a plugin, but
+        # the '_checks' data comes from the banlist information.
+        # the '_config' is the filtered banlist data set.
+        banlisting.banlist._test_id = "B001"
+        banlisting.banlist._checks = banlist.keys()
+        banlisting.banlist._config = banlist
 
-        return [Wrapper('blacklist', blacklisting.blacklist)]
+        return [Wrapper('banlist', banlisting.banlist)]
 
     def _load_tests(self, config, plugins):
         '''Builds a dict mapping tests to node types.'''

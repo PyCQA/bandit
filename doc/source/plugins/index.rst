@@ -102,8 +102,8 @@ ID       Description
 =======  ===========
 B1xx     misc tests
 B2xx     application/framework misconfiguration
-B3xx     blacklists (calls)
-B4xx     blacklists (imports)
+B3xx     banlists (calls)
+B4xx     banlists (imports)
 B5xx     cryptography
 B6xx     injection
 B7xx     XSS

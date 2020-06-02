@@ -74,6 +74,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
         'abspath': lambda issue: os.path.abspath(issue.fname),
         'relpath': lambda issue: os.path.relpath(issue.fname),
         'line': lambda issue: issue.lineno,
+        'col_offset': lambda issue: issue.col_offset,
         'test_id': lambda issue: issue.test_id,
         'severity': lambda issue: issue.severity,
         'msg': lambda issue: issue.text,
@@ -107,7 +108,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
                            for t, t_set in tag_sim_dict.items()]
         return sorted(similarity_list)[-1][1]
 
-    tag_blacklist = []
+    tag_banlist = []
     for tag in tag_set:
         # check if the tag is in dictionary
         if tag not in tag_mapper:
@@ -116,7 +117,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
                 "Tag '%s' was not recognized and will be skipped, "
                 "did you mean to use '%s'?", tag, similar_tag
             )
-            tag_blacklist += [tag]
+            tag_banlist += [tag]
 
     # Compose the message template back with the valid values only
     msg_parsed_template_list = []
@@ -128,7 +129,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
             msg_parsed_template_list.append(literal_text)
 
         if field_name is not None:
-            if field_name in tag_blacklist:
+            if field_name in tag_banlist:
                 msg_parsed_template_list.append(field_name)
                 continue
             # Append the fmt_spec part
