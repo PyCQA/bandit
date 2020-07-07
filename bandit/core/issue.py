@@ -15,7 +15,7 @@ from bandit.core import constants
 
 
 class Cwe(object):
-    UNDEF = 0
+    NOTSET = 0
     IMPROPER_INPUT_VALIDATION = 20
     PATH_TRAVERSAL = 22
     OS_COMMAND_INJECTION = 78
@@ -39,17 +39,17 @@ class Cwe(object):
 
     MITRE_URL_PATTERN = "https://cwe.mitre.org/data/definitions/%s.html"
 
-    def __init__(self, id=UNDEF):
+    def __init__(self, id=NOTSET):
         self.id = id
 
     def link(self):
-        if self.id == Cwe.UNDEF:
+        if self.id == Cwe.NOTSET:
             return ""
 
         return Cwe.MITRE_URL_PATTERN % str(self.id)
 
     def __str__(self):
-        if self.id == Cwe.UNDEF:
+        if self.id == Cwe.NOTSET:
             return ""
 
         return "CWE-%i (%s)" % (self.id, self.link())
@@ -58,7 +58,7 @@ class Cwe(object):
         return {
             "id": self.id,
             "link": self.link()
-        } if self.id != Cwe.UNDEF else {}
+        } if self.id != Cwe.NOTSET else {}
 
     def as_jsons(self):
         return str(self.as_dict())
@@ -67,7 +67,7 @@ class Cwe(object):
         if 'id' in data:
             self.id = int(data['id'])
         else:
-            self.id = Cwe.UNDEF
+            self.id = Cwe.NOTSET
 
     def __eq__(self, other):
         return self.id == other.id
