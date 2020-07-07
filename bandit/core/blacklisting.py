@@ -7,8 +7,8 @@
 import ast
 import fnmatch
 
-from bandit.core import issue
 from bandit.core.cwemap import CWEMAP
+from bandit.core import issue
 
 
 def report_issue(check, name):
