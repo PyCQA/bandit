@@ -71,7 +71,7 @@ def _classify_key_size(config, key_type, key_size):
         if key_size < size:
             return bandit.Issue(
                 severity=level,
-                cwe=Cwe.INADEQUATE_ENCRYPTION_STRENGH,
+                cwe=Cwe.INADEQUATE_ENCRYPTION_STRENGTH,
                 confidence=bandit.HIGH,
                 text='%s key sizes below %d bits are considered breakable. ' %
                 (key_type, size))

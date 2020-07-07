@@ -50,7 +50,7 @@ from bandit.core import test_properties as test
 def assert_used(context):
     return bandit.Issue(
         severity=bandit.LOW,
-        cwe=Cwe.IMPROPER_CHECK_OF_EXEPT_COND,
+        cwe=Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
         confidence=bandit.HIGH,
         text=("Use of assert detected. The enclosed code "
               "will be removed when compiling to optimised byte code.")
