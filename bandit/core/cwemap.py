@@ -1,9 +1,8 @@
-from bandit.core.issue import Cwe as Cwe
+# -*- coding:utf-8 -*-
+#
+# SPDX-License-Identifier: Apache-2.0
 
-# We can broadly classify all calls and imports from the denylist as
-# being covered by CWE-829 https://cwe.mitre.org/data/definitions/829.html.
-# However, as we have more contextual information, we use the most detailed and suitable
-# CWE for every call/import.
+from bandit.core.issue import Cwe as Cwe
 
 CWEMAP = {
     # Plugins

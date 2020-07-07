@@ -42,7 +42,6 @@ more info on ``assert``
 
 import bandit
 from bandit.core.cwemap import CWEMAP
-from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
 
 

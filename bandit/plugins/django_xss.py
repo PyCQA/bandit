@@ -9,8 +9,8 @@ import ast
 import six
 
 import bandit
-from bandit.core import test_properties as test
 from bandit.core.cwemap import CWEMAP
+from bandit.core import test_properties as test
 
 
 class DeepAssignation(object):

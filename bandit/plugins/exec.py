@@ -35,8 +35,8 @@ Python docs succinctly describe why the use of `exec` is risky.
 import six
 
 import bandit
-from bandit.core import test_properties as test
 from bandit.core.cwemap import CWEMAP
+from bandit.core import test_properties as test
 
 
 def exec_issue():

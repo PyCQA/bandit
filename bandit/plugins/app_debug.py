@@ -40,8 +40,8 @@ of the Patreon breach in 2015 [3]_.
 """
 
 import bandit
-from bandit.core import test_properties as test
 from bandit.core.cwemap import CWEMAP
+from bandit.core import test_properties as test
 
 
 @test.test_id('B201')
