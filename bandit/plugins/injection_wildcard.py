@@ -97,7 +97,7 @@ methods are fully qualified and de-aliased prior to checking.
 """
 
 import bandit
-from bandit.core.issue import Cwe as Cwe
+from bandit.core.cwemap import CWEMAP
 from bandit.core import test_properties as test
 from bandit.plugins import injection_shell  # NOTE(tkelsey): shared config
 
@@ -132,7 +132,7 @@ def linux_commands_wildcard_injection(context, config):
                     ):
                         return bandit.Issue(
                             severity=bandit.HIGH,
-                            cwe=Cwe.IMPROPER_WILDCARD_NEUTRALIZATION,
+                            cwe=CWEMAP["B609"],
                             confidence=bandit.MEDIUM,
                             text="Possible wildcard injection in call: %s" %
                             context.call_function_name_qual,

@@ -51,7 +51,7 @@ issue.
 """
 
 import bandit
-from bandit.core.issue import Cwe as Cwe
+from bandit.core.cwemap import CWEMAP
 from bandit.core import test_properties as test
 
 
@@ -72,7 +72,7 @@ def hardcoded_tmp_directory(context, config):
     if any(context.string_val.startswith(s) for s in tmp_dirs):
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=Cwe.INSECURE_TEMP_FILE,
+            cwe=CWEMAP["B108"],
             confidence=bandit.MEDIUM,
             text="Probable insecure usage of temp file/directory."
         )

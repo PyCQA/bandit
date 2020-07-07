@@ -41,6 +41,7 @@ more info on ``assert``
 """
 
 import bandit
+from bandit.core.cwemap import CWEMAP
 from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
 
@@ -50,7 +51,7 @@ from bandit.core import test_properties as test
 def assert_used(context):
     return bandit.Issue(
         severity=bandit.LOW,
-        cwe=Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
+        cwe=CWEMAP["B101"],
         confidence=bandit.HIGH,
         text=("Use of assert detected. The enclosed code "
               "will be removed when compiling to optimised byte code.")

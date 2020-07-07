@@ -9,7 +9,7 @@ import re
 import sys
 
 import bandit
-from bandit.core.issue import Cwe as Cwe
+from bandit.core.cwemap import CWEMAP
 from bandit.core import test_properties as test
 
 
@@ -23,7 +23,7 @@ RE_CANDIDATES = re.compile(
 def _report(value):
     return bandit.Issue(
         severity=bandit.LOW,
-        cwe=Cwe.HARD_CODED_PASSWORD,
+        cwe=CWEMAP["B105"],
         confidence=bandit.MEDIUM,
         text=("Possible hardcoded password: '%s'" % value))
 

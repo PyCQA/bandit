@@ -9,8 +9,8 @@ import ast
 import six
 
 import bandit
-from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
+from bandit.core.cwemap import CWEMAP
 
 
 class DeepAssignation(object):
@@ -251,7 +251,7 @@ def check_risk(node):
     if not secure:
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=Cwe.BASIC_XSS,
+            cwe=CWEMAP["B703"],
             confidence=bandit.HIGH,
             text=description
         )

@@ -39,7 +39,7 @@ method advising the user to check inputs are correctly sanitized.
 """
 
 import bandit
-from bandit.core.issue import Cwe as Cwe
+from bandit.core.cwemap import CWEMAP
 from bandit.core import test_properties as test
 
 
@@ -52,6 +52,6 @@ def paramiko_calls(context):
         if context.is_module_imported_like(module):
             if context.call_function_name in ['exec_command']:
                 return bandit.Issue(severity=bandit.MEDIUM,
-                                    cwe=Cwe.OS_COMMAND_INJECTION,
+                                    cwe=CWEMAP["B601"],
                                     confidence=bandit.MEDIUM,
                                     text=issue_text)

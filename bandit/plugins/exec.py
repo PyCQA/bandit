@@ -35,14 +35,14 @@ Python docs succinctly describe why the use of `exec` is risky.
 import six
 
 import bandit
-from bandit.core.issue import Cwe as Cwe
 from bandit.core import test_properties as test
+from bandit.core.cwemap import CWEMAP
 
 
 def exec_issue():
     return bandit.Issue(
         severity=bandit.MEDIUM,
-        cwe=Cwe.OS_COMMAND_INJECTION,
+        cwe=CWEMAP["B102"],
         confidence=bandit.HIGH,
         text="Use of exec detected."
     )
