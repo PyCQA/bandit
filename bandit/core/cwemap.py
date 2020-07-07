@@ -5,6 +5,9 @@
 from bandit.core.issue import Cwe as Cwe
 
 CWEMAP = {
+    "B000": Cwe.UNDEF,
+    "LEGACY": Cwe.UNDEF,
+
     # Plugins
     "B101": Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
     "B102": Cwe.OS_COMMAND_INJECTION,
