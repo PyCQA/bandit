@@ -122,11 +122,11 @@ class TestConfigCompat(testtools.TestCase):
 
             test_2:
                 include:
-                    - banlist_calls
+                    - blacklist_calls
 
             test_3:
                 include:
-                    - banlist_imports
+                    - blacklist_imports
 
             test_4:
                 exclude:
@@ -134,23 +134,23 @@ class TestConfigCompat(testtools.TestCase):
 
             test_5:
                 exclude:
-                    - banlist_calls
-                    - banlist_imports
+                    - blacklist_calls
+                    - blacklist_imports
 
             test_6:
                 include:
-                    - banlist_calls
+                    - blacklist_calls
 
                 exclude:
-                    - banlist_imports
+                    - blacklist_imports
 
-        banlist_calls:
+        blacklist_calls:
             bad_name_sets:
                 - pickle:
                     qualnames: [pickle.loads]
                     message: "{func} library appears to be in use."
 
-        banlist_imports:
+        blacklist_imports:
             bad_import_sets:
                 - telnet:
                     imports: [telnetlib]
@@ -228,16 +228,16 @@ class TestConfigCompat(testtools.TestCase):
             self.config.validate('')
             self.assertEqual((msg, ''), m.call_args_list[0][0])
 
-    def test_banlist_error(self):
+    def test_blacklist_error(self):
         msg = (" : Config file has an include or exclude reference to legacy "
                "test '%s' but no configuration data for it. Configuration "
                "data is required for this test. Please consider switching to "
                "the new config file format, the tool "
                "'bandit-config-generator' can help you with this.")
 
-        for name in ["banlist_call",
-                     "banlist_imports",
-                     "banlist_imports_func"]:
+        for name in ["blacklist_call",
+                     "blacklist_imports",
+                     "blacklist_imports_func"]:
 
             self.config._config = (
                 {"profiles": {"test": {"include": [name]}}})

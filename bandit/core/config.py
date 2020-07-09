@@ -117,12 +117,6 @@ class BanditConfig(object):
             self.convert_legacy_blacklist_tests(updated_profiles,
                                               bad_calls, bad_imports)
             self._config['profiles'] = updated_profiles
-        self.convert_blacklist_to_banlist()
-
-    def convert_blacklist_to_banlist(self):
-        '''Blacklist was renamed to banlist, migrate any legacy config'''
-        # TODO : Copy any 'blacklist' config properties to banlist
-        pass
 
     def convert_names_to_ids(self):
         '''Convert test names to IDs, unknown names are left unchanged.'''
@@ -227,9 +221,9 @@ class BanditConfig(object):
                 inc = profile.get('include') or set()
                 exc = profile.get('exclude') or set()
 
-                _test('banlist_imports', 'banlist_imports', inc, exc)
-                _test('banlist_import_func', 'banlist_imports', inc, exc)
-                _test('banlist_calls', 'banlist_calls', inc, exc)
+                _test('blacklist_imports', 'blacklist_imports', inc, exc)
+                _test('blacklist_import_func', 'blacklist_imports', inc, exc)
+                _test('blacklist_calls', 'blacklist_calls', inc, exc)
 
         # show deprecation message
         if legacy:
