@@ -115,7 +115,7 @@ class BanditConfig(object):
 
         if updated_profiles:
             self.convert_legacy_blacklist_tests(updated_profiles,
-                                              bad_calls, bad_imports)
+                                                bad_calls, bad_imports)
             self._config['profiles'] = updated_profiles
 
     def convert_names_to_ids(self):
