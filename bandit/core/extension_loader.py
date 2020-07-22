@@ -5,6 +5,7 @@
 from __future__ import print_function
 
 import sys
+import warnings
 
 import six
 from stevedore import extension
@@ -25,9 +26,7 @@ class Manager(object):
         # Cache the extension managers, loaded extensions, and extension names
         self.load_formatters(formatters_namespace)
         self.load_plugins(plugins_namespace)
-        self.load_banlists(banlists_namespace)
-        if load_legacy_blacklists:
-            self.load_banlists('bandit.blacklists')
+        self.load_banlists(banlists_namespace, load_legacy_blacklists)
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
@@ -63,7 +62,7 @@ class Manager(object):
             return self.plugins_by_name[plugin_name].plugin._test_id
         return None
 
-    def load_banlists(self, banlist_namespace):
+    def load_banlists(self, banlist_namespace, load_legacy_blacklists=True):
         self.banlists_mgr = extension.ExtensionManager(
             namespace=banlist_namespace,
             invoke_on_load=False,
@@ -71,6 +70,20 @@ class Manager(object):
             )
         self.banlist = {}
         banlist = list(self.banlists_mgr)
+
+        if load_legacy_blacklists:
+            self.legacy_banlists_mgr = extension.ExtensionManager(
+                namespace='bandit.blacklists',
+                invoke_on_load=False,
+                verify_requirements=False,
+            )
+            legacy_banlist = list(self.legacy_banlists_mgr)
+            if len(legacy_banlist) > 0:
+                warnings.warn(
+                    "bandit.blacklists will be deprecated in future versions, use bandit.banlists instead.",
+                    PendingDeprecationWarning)
+            banlist = banlist + legacy_banlist
+
         for item in banlist:
             for key, val in item.plugin().items():
                 utils.check_ast_node(key)
