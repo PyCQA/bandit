@@ -7,7 +7,7 @@
 r"""
 ====================================================
 Banlist various Python imports known to be dangerous
-======================================================
+====================================================
 
 This banlist data checks for a number of Python modules known to have
 possible security implications. The following banlist tests are run against
