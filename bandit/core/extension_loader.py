@@ -20,11 +20,14 @@ class Manager(object):
 
     def __init__(self, formatters_namespace='bandit.formatters',
                  plugins_namespace='bandit.plugins',
-                 banlists_namespace='bandit.banlists'):
+                 banlists_namespace='bandit.banlists',
+                 load_legacy_blacklists=True):
         # Cache the extension managers, loaded extensions, and extension names
         self.load_formatters(formatters_namespace)
         self.load_plugins(plugins_namespace)
         self.load_banlists(banlists_namespace)
+        if load_legacy_blacklists:
+            self.load_banlists('bandit.blacklists')
 
     def load_formatters(self, formatters_namespace):
         self.formatters_mgr = extension.ExtensionManager(
