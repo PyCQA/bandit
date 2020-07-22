@@ -80,7 +80,8 @@ class Manager(object):
             legacy_banlist = list(self.legacy_banlists_mgr)
             if len(legacy_banlist) > 0:
                 warnings.warn(
-                    "bandit.blacklists will be deprecated in future versions, use bandit.banlists instead.",
+                    "bandit.blacklists will be deprecated in future versions,"
+                    " use bandit.banlists instead.",
                     PendingDeprecationWarning)
             banlist = banlist + legacy_banlist
 
