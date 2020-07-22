@@ -82,7 +82,7 @@ class Manager(object):
                 warnings.warn(
                     "bandit.blacklists will be deprecated in future versions,"
                     " use bandit.banlists instead.",
-                    PendingDeprecationWarning)
+                    DeprecationWarning)
             banlist = banlist + legacy_banlist
 
         for item in banlist:
