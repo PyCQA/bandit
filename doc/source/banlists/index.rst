@@ -30,7 +30,7 @@ Items in the data lists are Python dictionaries with the following structure:
 | 'name'      | The issue name string.                             |
 +-------------+----------------------------------------------------+
 | 'id'        | The bandit ID of the check, this must be unique    |
-|             | and is used for filtering banlist checks.        |
+|             | and is used for filtering banlist checks.          |
 +-------------+----------------------------------------------------+
 | 'qualnames' | A Python list of fully qualified name strings.     |
 +-------------+----------------------------------------------------+
