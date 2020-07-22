@@ -7,7 +7,7 @@
 r"""
 ==================================================
 Banlist various Python calls known to be dangerous
-====================================================
+==================================================
 
 This banlist data checks for a number of Python calls known to have possible
 security implications. The following banlist tests are run against any
