@@ -214,7 +214,7 @@ def calc_linerange(node):
 
     setattr(node, '_bandit_linerange', (lines_min, lines_max))
 
-    return [lines_min, lines_max]
+    return (lines_min, lines_max)
 
 
 def linerange(node):
