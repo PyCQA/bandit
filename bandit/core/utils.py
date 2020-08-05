@@ -208,7 +208,7 @@ def calc_linerange(node):
         lines_min = min(lines_min, lines_minmax[0])
         lines_max = max(lines_max, lines_minmax[1])
 
-    node._bandit_linerange = (lines_min, lines_max)
+    #node._bandit_linerange = (lines_min, lines_max)
 
     return (lines_min, lines_max)
 
@@ -241,7 +241,7 @@ def linerange(node):
         lines_min = 0
         lines_max = 1
 
-    #  setattr(node, '_bandit_linerange_stripped', (lines_min, lines_max))
+    #  node._bandit_linerange_stripped = (lines_min, lines_max)
 
     return list(range(lines_min, lines_max + 1))
 
