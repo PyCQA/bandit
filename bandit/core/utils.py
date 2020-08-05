@@ -224,7 +224,7 @@ def linerange(node):
     for key in strip.keys():
         if hasattr(node, key):
             strip[key] = getattr(node, key)
-            node.key = []
+            setattr(node, key, [])
 
     lines_min = 9999999999
     lines_max = -1
@@ -235,7 +235,7 @@ def linerange(node):
 
     for key in strip.keys():
         if strip[key] is not None:
-            node.key = strip[key]
+            setattr(node, key, strip[key])
 
     if lines_max == -1:
         lines_min = 0
