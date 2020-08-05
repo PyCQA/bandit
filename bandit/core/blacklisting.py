@@ -6,6 +6,7 @@
 
 import ast
 import fnmatch
+import re
 
 from bandit.core import issue
 
@@ -48,9 +49,13 @@ def blacklist(context, config):
             # Will produce None if argument is not a literal or identifier
             if name in ["importlib.import_module", "importlib.__import__"]:
                 name = context.call_args[0]
-        for check in blacklists[node_type]:
-            for qn in check['qualnames']:
-                if name is not None and fnmatch.fnmatch(name, qn):
+
+        if name is not None:
+            reqn = 'qualnames_re_cache'
+            for check in blacklists[node_type]:
+                if reqn not in check:
+                    check[reqn] = re.compile('|'.join(fnmatch.translate(x) for x in check['qualnames']))
+                if check[reqn].match(name):
                     return report_issue(check, name)
 
     if node_type.startswith('Import'):
