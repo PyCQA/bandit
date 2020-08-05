@@ -216,6 +216,7 @@ def calc_linerange(node):
 
     return [lines_min, lines_max]
 
+
 def linerange(node):
     """Get line number range from a node."""
     strip = {"body": None, "orelse": None,
@@ -239,7 +240,6 @@ def linerange(node):
     if lines_max > -1:
         return list(range(lines_min, lines_max + 1))
     return [0, 1]
-
 
 
 def linerange_fix(node):
