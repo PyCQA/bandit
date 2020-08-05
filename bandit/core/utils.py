@@ -237,9 +237,9 @@ def linerange(node):
         if strip[key] is not None:
             setattr(node, key, strip[key])
 
-    if lines_max == -1:
+    if lines_max <= -1:
         lines_min = 0
-        lines_max = 1
+        lines_max = 0
 
     setattr(node, '_bandit_linerange_stripped', (lines_min, lines_max))
 
