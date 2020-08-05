@@ -196,7 +196,7 @@ def escaped_bytes_representation(b):
 def calc_linerange(node):
     """Calculate linerange for subtree"""
     if hasattr(node, '_bandit_linerange'):
-        return getattr(node, '_bandit_linerange')
+        return node._bandit_linerange
 
     lines_min = 9999999999
     lines_max = -1
@@ -208,7 +208,7 @@ def calc_linerange(node):
         lines_min = min(lines_min, lines_minmax[0])
         lines_max = max(lines_max, lines_minmax[1])
 
-    setattr(node, '_bandit_linerange', (lines_min, lines_max))
+    node._bandit_linerange = (lines_min, lines_max)
 
     return (lines_min, lines_max)
 
@@ -216,7 +216,7 @@ def calc_linerange(node):
 def linerange(node):
     """Get line number range from a node."""
     if hasattr(node, '_bandit_linerange_stripped'):
-        lines_minmax = getattr(node, '_bandit_linerange_stripped')
+        lines_minmax = node._bandit_linerange_stripped
         return list(range(lines_minmax[0], lines_minmax[1] + 1))
 
     strip = {"body": None, "orelse": None,
@@ -224,7 +224,7 @@ def linerange(node):
     for key in strip.keys():
         if hasattr(node, key):
             strip[key] = getattr(node, key)
-            node.key = []
+            setattr(node, key, [])
 
     lines_min = 9999999999
     lines_max = -1
@@ -238,13 +238,13 @@ def linerange(node):
 
     for key in strip.keys():
         if strip[key] is not None:
-            node.key = strip[key]
+            setattr(node, key, strip[key])
 
     if lines_max == -1:
         lines_min = 0
         lines_max = 1
 
-    setattr(node, '_bandit_linerange_stripped', (lines_min, lines_max))
+    node._bandit_linerange_stripped = (lines_min, lines_max)
 
     return list(range(lines_min, lines_max + 1))
 
