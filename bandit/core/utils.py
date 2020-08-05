@@ -219,6 +219,10 @@ def calc_linerange(node):
 
 def linerange(node):
     """Get line number range from a node."""
+    if hasattr(node, '_bandit_linerange_stripped'):
+        lines_minmax = getattr(node, '_bandit_linerange_stripped')
+        return list(range(lines_minmax[0], lines_minmax[1] + 1))
+
     strip = {"body": None, "orelse": None,
              "handlers": None, "finalbody": None}
     for key in strip.keys():
@@ -237,9 +241,13 @@ def linerange(node):
         if strip[key] is not None:
             node.key = strip[key]
 
-    if lines_max > -1:
-        return list(range(lines_min, lines_max + 1))
-    return [0, 1]
+    if lines_max == -1:
+        lines_min = 0
+        lines_max = 1
+
+    setattr(node, '_bandit_linerange_stripped', (lines_min, lines_max))
+
+    return list(range(lines_min, lines_max + 1))
 
 
 def linerange_fix(node):
