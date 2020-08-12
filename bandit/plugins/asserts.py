@@ -39,14 +39,25 @@ more info on ``assert``
 .. versionadded:: 0.11.0
 
 """
+import fnmatch
 
 import bandit
 from bandit.core import test_properties as test
 
 
+def gen_config(name):
+    if name == 'assert_used':
+        return {'skips': []}
+
+
+@test.takes_config
 @test.test_id('B101')
 @test.checks('Assert')
-def assert_used(context):
+def assert_used(context, config):
+    for skip in config.get('skips', []):
+        if fnmatch.fnmatch(context.filename, skip):
+            return None
+
     return bandit.Issue(
         severity=bandit.LOW,
         confidence=bandit.HIGH,
