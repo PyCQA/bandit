@@ -270,9 +270,9 @@ class BanditManager(object):
                 try:
                     tmp = list(lines)
                     if six.PY2:
-                        tokens = tokenize.generate_tokens(lambda: tmp.pop(0))
+                        tokens = tokenize.generate_tokens(lambda: tmp.pop(0) if tmp else b'')
                     else:
-                        tokens = tokenize.tokenize(lambda: tmp.pop(0))
+                        tokens = tokenize.tokenize(lambda: tmp.pop(0) if tmp else b'')
                     nosec_lines = set(
                         lineno for toktype, tokval, (lineno, _), _, _ in tokens
                         if toktype == tokenize.COMMENT and
