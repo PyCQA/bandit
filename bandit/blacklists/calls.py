@@ -580,29 +580,27 @@ def gen_blacklist():
 
     sets.append(utils.build_conf_dict(
         'response_splitting', 'B327',
-        ['urllib2.Request.add_header','urllib.URLopener.addheader','urllib.URLopener.addheaders'], 
+        ['urllib2.Request.add_header', 'urllib.URLopener.addheader', 'urllib.URLopener.addheaders'], 
         'Python Urllib and Urllib2 are vulnerable to CRLF injection.'
         'See https://bugs.python.org/issue36276'
         ))
     
     sets.append(utils.build_conf_dict(
         'Base64_encoding_used', 'B328',
-        ['base64.b64encode','base64.standard_b64encode','base64.urlsafe_b64encode','base64.b16encode','base64.b32encode','base64.encodestring','flask_scrypt.enbase64','base64.b64decode'],
-        'Weak encoding alogirthm. Encoding and storing sensitive information using this algorithm gives a false sense of security.','LOW'
+        ['base64.b64encode', 'base64.standard_b64encode', 'base64.urlsafe_b64encode', 'base64.b16encode', 'base64.b32encode', 'base64.encodestring', 'flask_scrypt.enbase64', 'base64.b64decode'],
+        'Weak encoding alogirthm. Encoding and storing sensitive information using this algorithm gives a false sense of security.'
         ))
     
     sets.append(utils.build_conf_dict(
         'Server_Side_Template_Injection', 'B329',
         ['render_template_string', 'render_template'],
-        'User controlled Values injected into the template can lead to arbitrary code executions in the server. Check if input values are properly sanitized. See https://blog.nvisium.com/p263',
-        'MEDIUM'
+        'User controlled Values injected into the template can lead to arbitrary code executions in the server. Check if input values are properly sanitized. See https://blog.nvisium.com/p263'
         ))
     
     sets.append(utils.build_conf_dict(
         'file_upload', 'B330',
         ['Flask.send_file'],
         'Presence of a file upload funtionality. Ensure that the application whitelists the allowed file extensions and validated the MIME type.',
-        'MEDIUM'
         ))
     
     return {'Call': sets}
