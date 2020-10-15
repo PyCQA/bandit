@@ -39,13 +39,13 @@ set world writable. Warnings are given with HIGH confidence.
 
 .. seealso::
 
- - https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html  # noqa
+ - https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html
  - https://en.wikipedia.org/wiki/File_system_permissions
  - https://security.openstack.org
 
 .. versionadded:: 0.9.0
 
-"""
+"""  # noqa: E501
 
 import stat
 
