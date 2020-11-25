@@ -19,6 +19,16 @@ Please see
 https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement for
 more info on ``assert``
 
+**Config Options:**
+
+You can configure files that skip this check. This is often useful when you
+use assert statements in test cases.
+
+.. code-block:: yaml
+
+    assert_used:
+      skips: ['*_test.py', 'test_*.py']
+
 :Example:
 
 .. code-block:: none
