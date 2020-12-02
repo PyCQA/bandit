@@ -19,9 +19,9 @@ def get_url(bid):
         return '%splugins/%s_%s.html' % (BASE_URL, bid.lower(),
                                          info.plugin.__name__)
 
-    info = extension_loader.MANAGER.blacklist_by_id.get(bid)
+    info = extension_loader.MANAGER.blocklist_by_id.get(bid)
     if info is not None:
-        template = 'blacklists/blacklist_{kind}.html#{id}-{name}'
+        template = 'blocklists/blocklist_{kind}.html#{id}-{name}'
         info['name'] = info['name'].replace('_', '-')
 
         if info['id'].startswith('B3'):  # B3XX

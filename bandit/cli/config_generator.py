@@ -148,7 +148,7 @@ def main():
                              for t in extension_loader.MANAGER.plugins]
 
                 others = [tpl.format(k, v['name']) for k, v in (
-                    extension_loader.MANAGER.blacklist_by_id.items())]
+                    extension_loader.MANAGER.blocklist_by_id.items())]
                 test_list.extend(others)
                 test_list.sort()
 

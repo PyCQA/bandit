@@ -15,7 +15,7 @@ This formatter outputs the issues as XML.
 
     <?xml version='1.0' encoding='utf-8'?>
     <testsuite name="bandit" tests="1"><testcase
-    classname="examples/yaml_load.py" name="blacklist_calls"><error
+    classname="examples/yaml_load.py" name="blocklist_calls"><error
     message="Use of unsafe yaml load. Allows instantiation of arbitrary
     objects. Consider yaml.safe_load().&#10;" type="MEDIUM"
     more_info="https://bandit.readthedocs.io/en/latest/">Test ID: B301

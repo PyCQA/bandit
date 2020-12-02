@@ -17,17 +17,17 @@ def report_issue(check, name):
         ident=name, test_id=check.get("id", 'LEGACY'))
 
 
-def blacklist(context, config):
-    """Generic blacklist test, B001.
+def blocklist(context, config):
+    """Generic blocklist test, B001.
 
-    This generic blacklist test will be called for any encountered node with
-    defined blacklist data available. This data is loaded via plugins using
-    the 'bandit.blacklists' entry point. Please see the documentation for more
-    details. Each blacklist datum has a unique bandit ID that may be used for
-    filtering purposes, or alternatively all blacklisting can be filtered using
+    This generic blocklist test will be called for any encountered node with
+    defined blocklist data available. This data is loaded via plugins using
+    the 'bandit.blocklists' entry point. Please see the documentation for more
+    details. Each blocklist datum has a unique bandit ID that may be used for
+    filtering purposes, or alternatively all blocklisting can be filtered using
     the id of this built in test, 'B001'.
     """
-    blacklists = config
+    blocklists = config
     node_type = context.node.__class__.__name__
 
     if node_type == 'Call':
@@ -48,7 +48,7 @@ def blacklist(context, config):
             # Will produce None if argument is not a literal or identifier
             if name in ["importlib.import_module", "importlib.__import__"]:
                 name = context.call_args[0]
-        for check in blacklists[node_type]:
+        for check in blocklists[node_type]:
             for qn in check['qualnames']:
                 if name is not None and fnmatch.fnmatch(name, qn):
                     return report_issue(check, name)
@@ -59,7 +59,7 @@ def blacklist(context, config):
             if context.node.module is not None:
                 prefix = context.node.module + "."
 
-        for check in blacklists[node_type]:
+        for check in blocklists[node_type]:
             for name in context.node.names:
                 for qn in check['qualnames']:
                     if (prefix + name.name).startswith(qn):

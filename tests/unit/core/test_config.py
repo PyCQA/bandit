@@ -122,11 +122,11 @@ class TestConfigCompat(testtools.TestCase):
 
             test_2:
                 include:
-                    - blacklist_calls
+                    - blocklist_calls
 
             test_3:
                 include:
-                    - blacklist_imports
+                    - blocklist_imports
 
             test_4:
                 exclude:
@@ -134,23 +134,23 @@ class TestConfigCompat(testtools.TestCase):
 
             test_5:
                 exclude:
-                    - blacklist_calls
-                    - blacklist_imports
+                    - blocklist_calls
+                    - blocklist_imports
 
             test_6:
                 include:
-                    - blacklist_calls
+                    - blocklist_calls
 
                 exclude:
-                    - blacklist_imports
+                    - blocklist_imports
 
-        blacklist_calls:
+        blocklist_calls:
             bad_name_sets:
                 - pickle:
                     qualnames: [pickle.loads]
                     message: "{func} library appears to be in use."
 
-        blacklist_imports:
+        blocklist_imports:
             bad_import_sets:
                 - telnet:
                     imports: [telnetlib]
@@ -166,7 +166,7 @@ class TestConfigCompat(testtools.TestCase):
     def test_converted_include(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_1']
-        data = {'blacklist': {},
+        data = {'blocklist': {},
                 'exclude': set(),
                 'include': set(['B101', 'B604'])}
 
@@ -178,7 +178,7 @@ class TestConfigCompat(testtools.TestCase):
 
         self.assertEqual(set(['B101']), test['exclude'])
 
-    def test_converted_blacklist_call_data(self):
+    def test_converted_blocklist_call_data(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_2']
         data = {'Call': [{'qualnames': ['telnetlib'],
@@ -186,32 +186,32 @@ class TestConfigCompat(testtools.TestCase):
                           'message': '{name} is considered insecure.',
                           'name': 'telnet'}]}
 
-        self.assertEqual(data, test['blacklist'])
+        self.assertEqual(data, test['blocklist'])
 
-    def test_converted_blacklist_import_data(self):
+    def test_converted_blocklist_import_data(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_3']
         data = [{'message': '{name} library appears to be in use.',
                  'name': 'pickle',
                  'qualnames': ['pickle.loads']}]
 
-        self.assertEqual(data, test['blacklist']['Call'])
-        self.assertEqual(data, test['blacklist']['Import'])
-        self.assertEqual(data, test['blacklist']['ImportFrom'])
+        self.assertEqual(data, test['blocklist']['Call'])
+        self.assertEqual(data, test['blocklist']['Import'])
+        self.assertEqual(data, test['blocklist']['ImportFrom'])
 
-    def test_converted_blacklist_call_test(self):
+    def test_converted_blocklist_call_test(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_2']
 
         self.assertEqual(set(['B001']), test['include'])
 
-    def test_converted_blacklist_import_test(self):
+    def test_converted_blocklist_import_test(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_3']
 
         self.assertEqual(set(['B001']), test['include'])
 
-    def test_converted_exclude_blacklist(self):
+    def test_converted_exclude_blocklist(self):
         profiles = self.config.get_option('profiles')
         test = profiles['test_5']
 
@@ -228,16 +228,16 @@ class TestConfigCompat(testtools.TestCase):
             self.config.validate('')
             self.assertEqual((msg, ''), m.call_args_list[0][0])
 
-    def test_blacklist_error(self):
+    def test_blocklist_error(self):
         msg = (" : Config file has an include or exclude reference to legacy "
                "test '%s' but no configuration data for it. Configuration "
                "data is required for this test. Please consider switching to "
                "the new config file format, the tool "
                "'bandit-config-generator' can help you with this.")
 
-        for name in ["blacklist_call",
-                     "blacklist_imports",
-                     "blacklist_imports_func"]:
+        for name in ["blocklist_call",
+                     "blocklist_imports",
+                     "blocklist_imports_func"]:
 
             self.config._config = (
                 {"profiles": {"test": {"include": [name]}}})

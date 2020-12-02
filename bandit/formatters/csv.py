@@ -15,7 +15,7 @@ This formatter outputs the issues in a comma separated values format.
 
     filename,test_name,test_id,issue_severity,issue_confidence,issue_text,
     line_number,line_range,more_info
-    examples/yaml_load.py,blacklist_calls,B301,MEDIUM,HIGH,"Use of unsafe yaml
+    examples/yaml_load.py,blocklist_calls,B301,MEDIUM,HIGH,"Use of unsafe yaml
     load. Allows instantiation of arbitrary objects. Consider yaml.safe_load().
     ",5,[5],https://bandit.readthedocs.io/en/latest/
 

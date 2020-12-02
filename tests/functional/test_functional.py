@@ -754,7 +754,7 @@ class FunctionalTests(testtools.TestCase):
         self.assertEqual(1, len(self.b_mgr.baseline))
         self.assertEqual({}, self.b_mgr.get_issue_list())
 
-    def test_blacklist_input(self):
+    def test_blocklist_input(self):
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
@@ -777,7 +777,7 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('hashlib_new_insecure_functions.py', expect)
 
-    def test_blacklist_pycrypto(self):
+    def test_blocklist_pycrypto(self):
         '''Test importing pycrypto module'''
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2},
@@ -785,10 +785,10 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example('pycrypto.py', expect)
 
-    def test_no_blacklist_pycryptodome(self):
+    def test_no_blocklist_pycryptodome(self):
         '''Test importing pycryptodome module
 
-        make sure it's no longer blacklisted
+        make sure it's no longer blocklisted
         '''
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},

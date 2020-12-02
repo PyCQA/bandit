@@ -16,7 +16,7 @@ Getting Started
 
    config
    plugins/index
-   blacklists/index
+   blocklists/index
    formatters/index
 
 Indices and tables

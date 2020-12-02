@@ -256,12 +256,12 @@ def main():
 
     plugin_info = ["%s\t%s" % (a[0], a[1].name) for a in
                    extension_mgr.plugins_by_id.items()]
-    blacklist_info = []
-    for a in extension_mgr.blacklist.items():
+    blocklist_info = []
+    for a in extension_mgr.blocklist.items():
         for b in a[1]:
-            blacklist_info.append('%s\t%s' % (b['id'], b['name']))
+            blocklist_info.append('%s\t%s' % (b['id'], b['name']))
 
-    plugin_list = '\n\t'.join(sorted(set(plugin_info + blacklist_info)))
+    plugin_list = '\n\t'.join(sorted(set(plugin_info + blocklist_info)))
     dedent_text = textwrap.dedent('''
     CUSTOM FORMATTING
     -----------------

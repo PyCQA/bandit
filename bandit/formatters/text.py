@@ -14,7 +14,7 @@ This formatter outputs the issues as plain text.
 
 .. code-block:: none
 
-    >> Issue: [B301:blacklist_calls] Use of unsafe yaml load. Allows
+    >> Issue: [B301:blocklist_calls] Use of unsafe yaml load. Allows
        instantiation of arbitrary objects. Consider yaml.safe_load().
 
        Severity: Medium   Confidence: High

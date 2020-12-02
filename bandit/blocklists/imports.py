@@ -9,8 +9,8 @@ r"""
 Blacklist various Python imports known to be dangerous
 ======================================================
 
-This blacklist data checks for a number of Python modules known to have
-possible security implications. The following blacklist tests are run against
+This blocklist data checks for a number of Python modules known to have
+possible security implications. The following blocklist tests are run against
 any import statements or calls encountered in the scanned code base.
 
 Note that the XML rules listed here are mostly based off of Christian Heimes'
@@ -193,7 +193,7 @@ library.
 
 B414: import_pycryptodome
 -------------------------
-This import blacklist has been removed. The information here has been
+This import blocklist has been removed. The information here has been
 left for historical purposes.
 
 pycryptodome is a direct fork of pycrypto that has not fully addressed
@@ -216,19 +216,19 @@ of pyca/cryptography which has more support among the Python community.
 
 """
 
-from bandit.blacklists import utils
+from bandit.blocklists import utils
 
 
-def gen_blacklist():
-    """Generate a list of items to blacklist.
+def gen_blocklist():
+    """Generate a list of items to blocklist.
 
-    Methods of this type, "bandit.blacklist" plugins, are used to build a list
-    of items that bandit's built in blacklisting tests will use to trigger
-    issues. They replace the older blacklist* test plugins and allow
-    blacklisted items to have a unique bandit ID for filtering and profile
+    Methods of this type, "bandit.blocklist" plugins, are used to build a list
+    of items that bandit's built in blocklisting tests will use to trigger
+    issues. They replace the older blocklist* test plugins and allow
+    blocklisted items to have a unique bandit ID for filtering and profile
     usage.
 
-    :return: a dictionary mapping node types to a list of blacklist data
+    :return: a dictionary mapping node types to a list of blocklist data
     """
 
     sets = []

@@ -13,7 +13,7 @@ the ability to construct a new hashing object using the named algorithm. This
 can be used to create insecure hash functions like MD4 and MD5 if they are
 passed as algorithm names to this function.
 
-This is similar to B303 blacklist check, except that this checks for insecure
+This is similar to B303 blocklist check, except that this checks for insecure
 hash functions created using ``hashlib.new`` function.
 
 :Example:

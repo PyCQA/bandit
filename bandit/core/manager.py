@@ -403,7 +403,7 @@ def _find_candidate_matches(unmatched_issues, results_list):
     be able to pick out the new one.
 
     :param unmatched_issues: List of issues that weren't present before
-    :param results_list: Master list of current Bandit findings
+    :param results_list: Complete list of current Bandit findings
     :return: A dictionary with a list of candidates for each issue
     """
 

@@ -56,7 +56,7 @@ This formatter outputs the issues in JSON.
             5
           ],
           "more_info": "https://bandit.readthedocs.io/en/latest/",
-          "test_name": "blacklist_calls",
+          "test_name": "blocklist_calls",
           "test_id": "B301"
         }
       ]

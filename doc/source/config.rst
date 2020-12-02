@@ -73,7 +73,7 @@ Generating a Config
 Bandit ships the tool `bandit-config-generator` designed to take the leg work
 out of configuration. This tool can generate a configuration file
 automatically. The generated configuration will include default config blocks
-for all detected test and blacklist plugins. This data can then be deleted or
+for all detected test and blocklist plugins. This data can then be deleted or
 edited as needed to produce a minimal config as desired. The config generator
 supports `-t` and `-s` command line options to specify a list of test IDs that
 should be included or excluded respectively. If no options are given then the
