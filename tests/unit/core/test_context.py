@@ -254,3 +254,12 @@ class ContextTests(testtools.TestCase):
 
         new_context = context.Context()
         self.assertFalse(new_context.is_module_imported_like('spam'))
+
+    def test_filename(self):
+        ref_context = dict(filename='spam.py')
+        new_context = context.Context(context_object=ref_context)
+
+        self.assertEqual(new_context.filename, 'spam.py')
+
+        new_context = context.Context()
+        self.assertIsNone(new_context.filename)
