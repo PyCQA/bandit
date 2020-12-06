@@ -16,7 +16,7 @@ jobs:
         python-version: 3.7
 
     - name: Install pypa/build
-      run: python -m pip install build pbr --user
+      run: python -m pip install build pbr
 
     - name: Build a binary wheel and a source tarball
       run: |
