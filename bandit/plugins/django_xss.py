@@ -52,7 +52,8 @@ class DeepAssignation(object):
                     assigned = self.is_assigned_in(node.body)
             else:
                 for withitem in node.items:
-                    if withitem.optional_vars.id == self.var_name.id:
+                    var_id = getattr(withitem.optional_vars, 'id', None)
+                    if var_id == self.var_name.id:
                         assigned = node
                     else:
                         assigned = self.is_assigned_in(node.body)
