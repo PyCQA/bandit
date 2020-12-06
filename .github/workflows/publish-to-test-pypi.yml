@@ -16,11 +16,10 @@ jobs:
     - name: Install pypa/build
       run: python -m pip install build --user
 
-    - name: Checkout to latest tag
-      run: git checkout `git describe --abbrev=0 --tags`
-
     - name: Build a binary wheel and a source tarball
-      run: python -m build --sdist --wheel --outdir dist/ .
+      run: |
+        git checkout `git describe --abbrev=0 --tags`
+        python -m build --sdist --wheel --outdir dist/ .
 
     - name: Publish distribution to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
