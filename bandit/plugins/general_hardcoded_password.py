@@ -75,7 +75,6 @@ def hardcoded_password_string(context):
 
     """
     node = context.node
-    print(node._bandit_parent)
     if isinstance(node._bandit_parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node._bandit_parent.targets:
