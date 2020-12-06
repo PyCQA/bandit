@@ -16,6 +16,9 @@ jobs:
     - name: Install pypa/build
       run: python -m pip install build --user
 
+    - name: Checkout to latest tag
+      run: git checkout `git describe --abbrev=0 --tags`
+
     - name: Build a binary wheel and a source tarball
       run: python -m build --sdist --wheel --outdir dist/ .
 
