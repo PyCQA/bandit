@@ -15,6 +15,9 @@ jobs:
       with:
         python-version: 3.7
 
+    - name: Install dependencies
+      run: pip install wheel
+
     - name: Build a binary wheel and a source tarball
       run: |
         git checkout `git describe --abbrev=0 --tags`
