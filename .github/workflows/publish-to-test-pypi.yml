@@ -1,0 +1,26 @@
+name: Publish to Test PyPI
+
+on: workflow_dispatch
+
+jobs:
+  build-n-publish:
+    name: Build and publish to Test PyPI
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+
+    - name: Install pypa/build
+      run: python -m pip install build --user
+
+    - name: Build a binary wheel and a source tarball
+      run: python -m build --sdist --wheel --outdir dist/ .
+
+    - name: Publish distribution to Test PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.test_pypi_password }}
+        repository_url: https://test.pypi.org/legacy/
