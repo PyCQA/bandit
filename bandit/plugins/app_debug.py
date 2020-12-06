@@ -33,11 +33,11 @@ of the Patreon breach in 2015 [3]_.
 
  .. [1] http://flask.pocoo.org/docs/1.0/quickstart/#debug-mode
  .. [2] http://werkzeug.palletsprojects.com/en/0.15.x/debug/
- .. [3] http://labs.detectify.com/post/130332638391/how-patreon-got-hacked-publicly-exposed-werkzeug  # noqa
+ .. [3] http://labs.detectify.com/post/130332638391/how-patreon-got-hacked-publicly-exposed-werkzeug
 
 .. versionadded:: 0.15.0
 
-"""
+"""  # noqa: E501
 
 import bandit
 from bandit.core import test_properties as test
