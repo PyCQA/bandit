@@ -34,6 +34,7 @@ A security linter from PyCQA
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
 * Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
+
 Overview
 --------
 Bandit is a tool designed to find common security issues in Python code. To do
