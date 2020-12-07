@@ -584,6 +584,24 @@ class FunctionalTests(testtools.TestCase):
 
     def test_asserts(self):
         '''Test catching the use of assert.'''
+        test = next((x for x in self.b_mgr.b_ts.tests['Assert']
+                     if x.__name__ == 'assert_used'))
+
+        test._config = {'skips': []}
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
+        }
+        self.check_example('assert.py', expect)
+
+        test._config = {'skips': ['*assert.py']}
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.check_example('assert.py', expect)
+
+        test._config = {}
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}

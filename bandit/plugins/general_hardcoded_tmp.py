@@ -44,11 +44,11 @@ issue.
 
 .. seealso::
 
- - https://security.openstack.org/guidelines/dg_using-temporary-files-securely.html  # noqa
+ - https://security.openstack.org/guidelines/dg_using-temporary-files-securely.html
 
 .. versionadded:: 0.9.0
 
-"""
+"""  # noqa: E501
 
 import bandit
 from bandit.core import test_properties as test

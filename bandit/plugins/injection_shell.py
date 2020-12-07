@@ -184,12 +184,12 @@ def subprocess_popen_with_shell_equals_true(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
 
     .. versionadded:: 0.9.0
-    """
+    """  # noqa: E501
     if config and context.call_function_name_qual in config['subprocess']:
         if has_shell(context):
             if len(context.call_args) > 0:
@@ -275,12 +275,12 @@ def subprocess_without_shell_equals_true(context, config):
     .. seealso::
 
      - https://security.openstack.org
-     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.9.0
-    """
+    """  # noqa: E501
     if config and context.call_function_name_qual in config['subprocess']:
         if not has_shell(context):
             return bandit.Issue(
@@ -355,10 +355,10 @@ def any_other_function_with_shell_equals_true(context, config):
     .. seealso::
 
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
-     - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html  # noqa
+     - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.9.0
-    """
+    """  # noqa: E501
     if config and context.call_function_name_qual not in config['subprocess']:
         if has_shell(context):
             return bandit.Issue(
@@ -438,11 +438,11 @@ def start_process_with_a_shell(context, config):
 
      - https://security.openstack.org
      - https://docs.python.org/3/library/os.html#os.system
-     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.10.0
-    """
+    """  # noqa: E501
     if config and context.call_function_name_qual in config['shell']:
         if len(context.call_args) > 0:
             sev = _evaluate_shell_call(context)
@@ -536,11 +536,11 @@ def start_process_with_no_shell(context, config):
 
      - https://security.openstack.org
      - https://docs.python.org/3/library/os.html#os.system
-     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments  # noqa
+     - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
 
     .. versionadded:: 0.10.0
-    """
+    """  # noqa: E501
 
     if config and context.call_function_name_qual in config['no_shell']:
         return bandit.Issue(
