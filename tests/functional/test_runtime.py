@@ -14,12 +14,12 @@ class RuntimeTests(testtools.TestCase):
     def _test_runtime(self, cmdlist, infile=None):
         process = subprocess.Popen(
             cmdlist,
-            stdin=infile if infile else subprocess.PIPE,
+            stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             close_fds=True
         )
-        stdout, stderr = process.communicate()
+        stdout, stderr = process.communicate(input=infile)
         retcode = process.poll()
         return (retcode, stdout.decode('utf-8'))
 
@@ -35,7 +35,7 @@ class RuntimeTests(testtools.TestCase):
 
     def test_piped_input(self):
         with open('examples/imports.py', 'r') as infile:
-            (retcode, output) = self._test_runtime(['bandit', '-'], infile)
+            (retcode, output) = self._test_runtime(['bandit', '-'], infile.read())
             self.assertEqual(1, retcode)
             self.assertIn("Total lines of code: 4", output)
             self.assertIn("Low: 2", output)

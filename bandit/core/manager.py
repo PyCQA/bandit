@@ -279,11 +279,11 @@ class BanditManager(object):
                 nosec_lines = set()
             else:
                 try:
-                    fdata.seek(0)
+                    tmp = list(lines)
                     if six.PY2:
-                        tokens = tokenize.generate_tokens(fdata.readline)
+                        tokens = tokenize.generate_tokens(lambda: tmp.pop(0) if tmp else b'')
                     else:
-                        tokens = tokenize.tokenize(fdata.readline)
+                        tokens = tokenize.tokenize(lambda: tmp.pop(0) if tmp else b'')
                     nosec_lines = set(
                         lineno for toktype, tokval, (lineno, _), _, _ in tokens
                         if toktype == tokenize.COMMENT and
@@ -298,7 +298,7 @@ class BanditManager(object):
         except SyntaxError:
             self.skipped.append((fname,
                                  "syntax error while parsing AST from file"))
-            new_files_list.remove(fname)
+            new_files_list.remove("<stdin>" if fname == '-' else fname)
         except Exception as e:
             LOG.error("Exception occurred when executing tests against "
                       "%s. Run \"bandit --debug %s\" to see the full "
