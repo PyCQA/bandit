@@ -6,6 +6,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: [3.5]
         tox-env: ["pylint", "pep8"]
@@ -27,6 +28,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.5", "3.6", "3.7", "3.8"]
     steps:
