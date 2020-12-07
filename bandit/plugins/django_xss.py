@@ -48,7 +48,7 @@ class DeepAssignation(object):
                 if var_id == self.var_name.id:
                     assigned = node
                 else:
-                    assigned = self.is_assigned_in(node.body)               
+                    assigned = self.is_assigned_in(node.body)
         elif isinstance(node, ast.Try):
             assigned = []
             assigned.extend(self.is_assigned_in(node.body))
