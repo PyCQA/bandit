@@ -9,7 +9,9 @@ from __future__ import unicode_literals
 
 import linecache
 
+from collections import Counter
 from six import moves
+
 
 from bandit.core import constants
 
@@ -127,3 +129,22 @@ def issue_from_dict(data):
     i = Issue(severity=data["issue_severity"])
     i.from_dict(data)
     return i
+
+
+class HashableIssue(object):
+    def __init__(self, issue):
+        '''A hashable issue class cseline mparisions between'''
+        self.issue = issue
+
+    def __hash__(self):
+        issue_hash = 0
+        for field in ['severity', 'confidence', 'fname', 'test', 'test_id']:
+            issue_hash ^= hash(getattr(self.issue, field))
+        return issue_hash
+
+    def __eq__(self, other):
+        return (self.issue.__eq__(other.issue))
+
+
+def convert_issues_hashable(issues):
+    return Counter([HashableIssue(issue) for issue in issues])
