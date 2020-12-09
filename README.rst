@@ -3,8 +3,8 @@
 
 ======
 
-.. image:: https://travis-ci.org/PyCQA/bandit.svg?branch=master
-    :target: https://travis-ci.org/PyCQA/bandit/
+.. image:: https://github.com/PyCQA/bandit/workflows/Build%20and%20Test%20Bandit/badge.svg
+    :target: https://github.com/PyCQA/bandit/actions?query=workflow%3A%22Build+and+Test+Bandit%22
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/bandit/badge/?version=latest
@@ -34,6 +34,7 @@ A security linter from PyCQA
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
 * Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
+
 Overview
 --------
 Bandit is a tool designed to find common security issues in Python code. To do
