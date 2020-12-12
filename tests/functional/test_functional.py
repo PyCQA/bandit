@@ -601,6 +601,24 @@ class FunctionalTests(testtools.TestCase):
 
     def test_asserts(self):
         '''Test catching the use of assert.'''
+        test = next((x for x in self.b_mgr.b_ts.tests['Assert']
+                     if x.__name__ == 'assert_used'))
+
+        test._config = {'skips': []}
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
+        }
+        self.check_example('assert.py', expect)
+
+        test._config = {'skips': ['*assert.py']}
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.check_example('assert.py', expect)
+
+        test._config = {}
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
@@ -753,13 +771,6 @@ class FunctionalTests(testtools.TestCase):
         self.run_example('flask_debug.py')
         self.assertEqual(1, len(self.b_mgr.baseline))
         self.assertEqual({}, self.b_mgr.get_issue_list())
-
-    def test_blacklist_input(self):
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
-        }
-        self.check_example('input.py', expect)
 
     def test_unverified_context(self):
         '''Test for `ssl._create_unverified_context`.'''

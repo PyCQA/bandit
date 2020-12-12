@@ -3,8 +3,8 @@
 
 ======
 
-.. image:: https://travis-ci.org/PyCQA/bandit.svg?branch=master
-    :target: https://travis-ci.org/PyCQA/bandit/
+.. image:: https://github.com/PyCQA/bandit/workflows/Build%20and%20Test%20Bandit/badge.svg
+    :target: https://github.com/PyCQA/bandit/actions?query=workflow%3A%22Build+and+Test+Bandit%22
     :alt: Build Status
 
 .. image:: https://readthedocs.org/projects/bandit/badge/?version=latest
@@ -33,6 +33,7 @@ A security linter from PyCQA
 * Documentation: https://bandit.readthedocs.io/en/latest/
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
+* Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
 
 Overview
 --------
@@ -52,6 +53,10 @@ Bandit is distributed on PyPI. The best way to install it is with pip:
 Create a virtual environment (optional)::
 
     virtualenv bandit-env
+    # Or if you're working with a Python 3 project
+    python3 -m venv bandit-env
+    # And activate it:
+    source bandit-env/bin/activate
 
 Install Bandit::
 
@@ -215,7 +220,6 @@ Usage::
       B319  xml_bad_pulldom
       B320  xml_bad_etree
       B321  ftplib
-      B322  input
       B323  unverified_context
       B324  hashlib_new_insecure_functions
       B325  tempnam
@@ -426,25 +430,8 @@ To register your plugin, you have two options:
 
 Contributing
 ------------
-Contributions to Bandit are always welcome!
-
-The best way to get started with Bandit is to grab the source::
-
-    git clone https://github.com/PyCQA/bandit.git
-
-You can test any changes with tox::
-
-    pip install tox
-    tox -e pep8
-    tox -e py27
-    tox -e py35
-    tox -e docs
-    tox -e cover
-
-Please make PR requests using your own branch, and not master::
-
-    git checkout -b mychange
-    git push origin mychange
+Follow our Contributing file:
+https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
 
 Reporting Bugs
 --------------

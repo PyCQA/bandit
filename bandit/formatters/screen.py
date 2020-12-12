@@ -38,16 +38,20 @@ from bandit.core import constants
 from bandit.core import docs_utils
 from bandit.core import test_properties
 
+IS_WIN_PLATFORM = sys.platform.startswith('win32')
+COLORAMA = False
+
 # This fixes terminal colors not displaying properly on Windows systems.
 # Colorama will intercept any ANSI escape codes and convert them to the
 # proper Windows console API calls to change text color.
-if sys.platform.startswith('win32'):
+if IS_WIN_PLATFORM:
     try:
         import colorama
     except ImportError:
         pass
     else:
-        colorama.init()
+        COLORAMA = True
+
 
 LOG = logging.getLogger(__name__)
 
@@ -106,7 +110,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         indent, docs_utils.get_url(issue.test_id), COLOR['DEFAULT']))
 
     if show_code:
-        bits.extend([indent + l for l in
+        bits.extend([indent + line for line in
                      issue.get_code(lines, True).split('\n')])
 
     return '\n'.join([bit for bit in bits])
@@ -161,6 +165,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     :param lines: Number of lines to report, -1 for all
     """
 
+    if IS_WIN_PLATFORM and COLORAMA:
+        colorama.init()
+
     bits = []
     if not manager.quiet or manager.results_count(sev_level, conf_level):
         bits.append(header("Run started:%s", datetime.datetime.utcnow()))
@@ -186,3 +193,6 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     if fileobj.name != sys.stdout.name:
         LOG.info("Screen formatter output was not written to file: %s, "
                  "consider '-f txt'", fileobj.name)
+
+    if IS_WIN_PLATFORM and COLORAMA:
+        colorama.deinit()
