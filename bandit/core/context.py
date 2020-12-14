@@ -314,3 +314,7 @@ class Context(object):
                 if module in imp:
                     return True
         return False
+
+    @property
+    def filename(self):
+        return self._context.get('filename')

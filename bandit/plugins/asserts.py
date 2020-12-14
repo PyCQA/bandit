@@ -12,12 +12,22 @@ B101: Test for use of assert
 This plugin test checks for the use of the Python ``assert`` keyword. It was
 discovered that some projects used assert to enforce interface constraints.
 However, assert is removed with compiling to optimised byte code (python -o
-producing \*.pyo files). This caused various protections to be removed. The use
-of assert is also considered as general bad practice in OpenStack codebases.
+producing \*.pyo files). This caused various protections to be removed.
+Consider raising a semantically meaningful error or ``AssertionError`` instead.
 
 Please see
 https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement for
-more info on ``assert``
+more info on ``assert``.
+
+**Config Options:**
+
+You can configure files that skip this check. This is often useful when you
+use assert statements in test cases.
+
+.. code-block:: yaml
+
+    assert_used:
+      skips: ['*_test.py', 'test_*.py']
 
 :Example:
 
@@ -39,14 +49,25 @@ more info on ``assert``
 .. versionadded:: 0.11.0
 
 """
+import fnmatch
 
 import bandit
 from bandit.core import test_properties as test
 
 
+def gen_config(name):
+    if name == 'assert_used':
+        return {'skips': []}
+
+
+@test.takes_config
 @test.test_id('B101')
 @test.checks('Assert')
-def assert_used(context):
+def assert_used(context, config):
+    for skip in config.get('skips', []):
+        if fnmatch.fnmatch(context.filename, skip):
+            return None
+
     return bandit.Issue(
         severity=bandit.LOW,
         confidence=bandit.HIGH,

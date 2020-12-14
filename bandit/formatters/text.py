@@ -83,7 +83,7 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
         indent, docs_utils.get_url(issue.test_id)))
 
     if show_code:
-        bits.extend([indent + l for l in
+        bits.extend([indent + line for line in
                      issue.get_code(lines, True).split('\n')])
 
     return '\n'.join([bit for bit in bits])

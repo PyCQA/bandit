@@ -45,11 +45,11 @@ If so, a MEDIUM issue is reported. For example:
 .. seealso::
 
  - https://www.owasp.org/index.php/SQL_Injection
- - https://security.openstack.org/guidelines/dg_parameterize-database-queries.html  # noqa
+ - https://security.openstack.org/guidelines/dg_parameterize-database-queries.html
 
 .. versionadded:: 0.9.0
 
-"""
+"""  # noqa: E501
 
 import ast
 import re
