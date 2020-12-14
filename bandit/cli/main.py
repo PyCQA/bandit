@@ -179,12 +179,12 @@ def main():
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
         default=None, help='report only issues of a given severity level or '
-                        'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
+                            'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
     )
     parser.add_argument(
         '-i', '--confidence', dest='confidence', action='count',
         default=None, help='report only issues of a given confidence level or '
-                        'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
+                           'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
     )
     output_format = 'screen' if sys.stdout.isatty() else 'txt'
     parser.add_argument(
