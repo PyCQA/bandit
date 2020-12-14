@@ -146,13 +146,13 @@ def main():
     )
     parser.add_argument(
         '-a', '--aggregate', dest='agg_type',
-        action='store', default='file', type=str,
+        action='store', default=None, type=str,
         choices=['file', 'vuln'],
         help='aggregate output by vulnerability (default) or by filename'
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
-        action='store', default=3, type=int,
+        action='store', default=None, type=int,
         help='maximum number of code lines to output for each issue'
     )
     parser.add_argument(
@@ -178,18 +178,18 @@ def main():
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
-        default=1, help='report only issues of a given severity level or '
+        default=None, help='report only issues of a given severity level or '
                         'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
     )
     parser.add_argument(
         '-i', '--confidence', dest='confidence', action='count',
-        default=1, help='report only issues of a given confidence level or '
+        default=None, help='report only issues of a given confidence level or '
                         'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
     )
     output_format = 'screen' if sys.stdout.isatty() else 'txt'
     parser.add_argument(
         '-f', '--format', dest='output_format', action='store',
-        default=output_format, help='specify output format',
+        default=None, help='specify output format',
         choices=sorted(extension_mgr.formatter_names)
     )
     parser.add_argument(
@@ -223,7 +223,7 @@ def main():
     )
     parser.add_argument(
         '-x', '--exclude', dest='excluded_paths', action='store',
-        default=','.join(constants.EXCLUDE),
+        default=None,
         help='comma-separated list of paths (glob patterns '
              'supported) to exclude from scan '
              '(note that these are in addition to the excluded '
@@ -403,6 +403,19 @@ def main():
             args.baseline,
             ini_options.get('baseline'),
             'path of a baseline report')
+
+    if args.agg_type is None:
+        args.agg_type = 'file'
+    if args.context_lines is None:
+        args.context_lines = 3
+    if args.confidence is None:
+        args.confidence = 1
+    if args.severity is None:
+        args.severity = 1
+    if args.output_format is None:
+        args.output_format = output_format
+    if args.excluded_paths is None:
+        args.excluded_paths = ','.join(constants.EXCLUDE)
 
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
