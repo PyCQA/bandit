@@ -5,9 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 r"""
-======================================================
-Blacklist various Python imports known to be dangerous
-======================================================
+Blacklist various Python imports known to be dangerous.
 
 This blacklist data checks for a number of Python modules known to have
 possible security implications. The following blacklist tests are run against
@@ -215,7 +213,6 @@ of pyca/cryptography which has more support among the Python community.
 +------+---------------------+------------------------------------+-----------+
 
 """
-
 from bandit.blacklists import utils
 
 
@@ -230,7 +227,6 @@ def gen_blacklist():
 
     :return: a dictionary mapping node types to a list of blacklist data
     """
-
     sets = []
     sets.append(utils.build_conf_dict(
         'import_telnetlib', 'B401', ['telnetlib'],

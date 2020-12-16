@@ -3,6 +3,9 @@
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
+"""Bandit is a tool designed to find common security issues in Python code."""
+
+
 import argparse
 import fnmatch
 import logging
@@ -21,11 +24,11 @@ LOG = logging.getLogger()
 
 
 def _init_logger(log_level=logging.INFO, log_format=None):
-    '''Initialize the logger
+    """Initialize the logger.
 
     :param debug: Whether to enable debug mode
     :return: An instantiated logging instance
-    '''
+    """
     LOG.handlers = []
 
     if not log_format:
@@ -120,6 +123,7 @@ def _log_info(args, profile):
 
 
 def main():
+    """Bandit CLI."""
     # bring our logging stuff up as early as possible
     debug = (logging.DEBUG if '-d' in sys.argv or '--debug' in sys.argv else
              logging.INFO)
