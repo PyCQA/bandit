@@ -757,6 +757,7 @@ class FunctionalTests(testtools.TestCase):
               "issue_severity": "HIGH",
               "issue_text": "%s",
               "line_number": 10,
+              "col_offset": 0,
               "line_range": [
                 10
               ],
