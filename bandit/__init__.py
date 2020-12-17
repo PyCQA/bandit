@@ -13,7 +13,7 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-"""Bandit is a tool designed to find common security issues in Python code."""
+
 import pbr.version
 
 from bandit.core import config  # noqa
