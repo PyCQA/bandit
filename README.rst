@@ -220,7 +220,6 @@ Usage::
       B319  xml_bad_pulldom
       B320  xml_bad_etree
       B321  ftplib
-      B322  input
       B323  unverified_context
       B324  hashlib_new_insecure_functions
       B325  tempnam
