@@ -201,7 +201,7 @@ def main():
     )
     parser.add_argument(
         '-o', '--output', dest='output_file', action='store', nargs='?',
-        type=argparse.FileType('w'), default=sys.stdout,
+        type=argparse.FileType('w', encoding='utf-8'), default=sys.stdout,
         help='write report to filename'
     )
     group = parser.add_mutually_exclusive_group(required=False)
@@ -268,7 +268,7 @@ def main():
 
     Available tags:
 
-        {abspath}, {relpath}, {line},  {test_id},
+        {abspath}, {relpath}, {line}, {col}, {test_id},
         {severity}, {msg}, {confidence}, {range}
 
     Example usage:

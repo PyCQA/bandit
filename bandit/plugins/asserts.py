@@ -12,12 +12,12 @@ B101: Test for use of assert
 This plugin test checks for the use of the Python ``assert`` keyword. It was
 discovered that some projects used assert to enforce interface constraints.
 However, assert is removed with compiling to optimised byte code (python -o
-producing \*.pyo files). This caused various protections to be removed. The use
-of assert is also considered as general bad practice in OpenStack codebases.
+producing \*.pyo files). This caused various protections to be removed.
+Consider raising a semantically meaningful error or ``AssertionError`` instead.
 
 Please see
 https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement for
-more info on ``assert``
+more info on ``assert``.
 
 **Config Options:**
 

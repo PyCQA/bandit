@@ -22,7 +22,7 @@ jobs:
         pip install tox
     - name: Run tox
       run: tox -e pylint
-      
+
   pep8:
     runs-on: ubuntu-latest
     strategy:
@@ -82,7 +82,7 @@ jobs:
         pip install tox
     - name: Run tox
       run: tox -e py36
-  
+
   py37:
     runs-on: ubuntu-latest
     strategy:
