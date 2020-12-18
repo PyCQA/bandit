@@ -7,7 +7,6 @@
 import os
 import sys
 
-import six
 import testtools
 
 from bandit.core import config as b_config
@@ -150,21 +149,12 @@ class FunctionalTests(testtools.TestCase):
 
     def test_exec(self):
         '''Test the `exec` example.'''
-        filename = 'exec-{}.py'
-        if six.PY2:
-            filename = filename.format('py2')
-            expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
-                               'HIGH': 2}
-            }
-        else:
-            filename = filename.format('py3')
-            expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
-                               'HIGH': 1}
-            }
+        filename = 'exec.py'
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
+                           'HIGH': 1}
+        }
         self.check_example(filename, expect)
 
     def test_hardcoded_passwords(self):
@@ -286,11 +276,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_os_chmod(self):
         '''Test setting file permissions.'''
-        filename = 'os-chmod-{}.py'
-        if six.PY2:
-            filename = filename.format('py2')
-        else:
-            filename = filename.format('py3')
+        filename = 'os-chmod.py'
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 8},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 9}

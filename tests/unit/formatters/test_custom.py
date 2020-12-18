@@ -3,7 +3,6 @@
 import csv
 import tempfile
 
-import six
 import testtools
 
 import bandit
@@ -46,10 +45,8 @@ class CustomFormatterTests(testtools.TestCase):
 
         with open(self.tmp_fname) as f:
             reader = csv.DictReader(f, ['line', 'col', 'severity', 'message'])
-            data = six.next(reader)
-            self.assertEqual(six.text_type(self.context['lineno']),
-                             data['line'])
-            self.assertEqual(six.text_type(self.context['col_offset']),
-                             data['col'])
+            data = next(reader)
+            self.assertEqual(str(self.context['lineno']), data['line'])
+            self.assertEqual(str(self.context['col_offset']), data['col'])
             self.assertEqual(self.issue.severity, data['severity'])
             self.assertEqual(self.issue.text, data['message'])
