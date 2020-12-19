@@ -156,7 +156,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 
         with fileobj:
             wrapped_file = utils.wrap_file_object(fileobj)
-            wrapped_file.write(utils.convert_file_contents(result))
+            wrapped_file.write(result)
 
     if fileobj.name != sys.stdout.name:
         LOG.info("Text output written to file: %s", fileobj.name)
