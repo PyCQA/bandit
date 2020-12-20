@@ -18,7 +18,7 @@ Python docs succinctly describe why the use of `exec` is risky.
 
     >> Issue: Use of exec detected.
        Severity: Medium   Confidence: High
-       Location: ./examples/exec-py2.py:2
+       Location: ./examples/exec.py:2
     1 exec("do evil")
     2 exec "do evil"
 

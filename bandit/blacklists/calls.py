@@ -265,6 +265,22 @@ SSH/SFTP/SCP or some other encrypted protocol.
 | B321 | ftplib              | - ftplib.\*                        | High      |
 +------+---------------------+------------------------------------+-----------+
 
+B322: input
+-----------
+
+The check for this call has been removed.
+
+The input method in Python 2 will read from standard input, evaluate and
+run the resulting string as python source code. This is similar, though in
+many ways worse, than using eval. On Python 2, use raw_input instead, input
+is safe in Python 3.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B322 | input               | - input                            | High      |
++------+---------------------+------------------------------------+-----------+
+
 B323: unverified_context
 ------------------------
 
@@ -528,6 +544,8 @@ def gen_blacklist():
         'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
         'HIGH'
         ))
+
+    # skipped B322 as the check for a call to input() has been removed
 
     sets.append(utils.build_conf_dict(
         'unverified_context', 'B323', ['ssl._create_unverified_context'],

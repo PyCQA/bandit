@@ -86,8 +86,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
     if isinstance(xss_var, ast.Name):
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.arg
-                if arg_name == xss_var.id:
+                if name.arg == xss_var.id:
                     return False  # Params are not secure
 
         analyser = DeepAssignation(xss_var, ignore_nodes)
@@ -133,7 +132,7 @@ def evaluate_call(call, parent, ignore_nodes=None):
     if isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute):
         if isinstance(call.func.value, ast.Str) and call.func.attr == 'format':
             evaluate = True
-            if call.keywords or call.kwargs:
+            if call.keywords:
                 evaluate = False  # TODO(??) get support for this
 
     if evaluate:
@@ -178,8 +177,6 @@ def transform2call(var):
             new_call.func.attr = 'format'
             if isinstance(var.right, ast.Tuple):
                 new_call.args = var.right.elts
-            elif isinstance(var.right, ast.Dict):
-                new_call.kwargs = var.right
             else:
                 new_call.args = [var.right]
             return new_call
@@ -200,8 +197,7 @@ def check_risk(node):
         is_param = False
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.arg
-                if arg_name == xss_var.id:
+                if name.arg == xss_var.id:
                     is_param = True
                     break
 

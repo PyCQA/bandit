@@ -740,6 +740,7 @@ class FunctionalTests(testtools.TestCase):
               "issue_severity": "HIGH",
               "issue_text": "%s",
               "line_number": 10,
+              "col_offset": 0,
               "line_range": [
                 10
               ],
@@ -754,13 +755,6 @@ class FunctionalTests(testtools.TestCase):
         self.run_example('flask_debug.py')
         self.assertEqual(1, len(self.b_mgr.baseline))
         self.assertEqual({}, self.b_mgr.get_issue_list())
-
-    def test_blacklist_input(self):
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
-        }
-        self.check_example('input.py', expect)
 
     def test_unverified_context(self):
         '''Test for `ssl._create_unverified_context`.'''

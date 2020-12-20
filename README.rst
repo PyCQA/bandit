@@ -166,7 +166,7 @@ Usage::
 
     Available tags:
 
-        {abspath}, {relpath}, {line},  {test_id},
+        {abspath}, {relpath}, {line}, {col}, {test_id},
         {severity}, {msg}, {confidence}, {range}
 
     Example usage:
@@ -220,7 +220,6 @@ Usage::
       B319  xml_bad_pulldom
       B320  xml_bad_etree
       B321  ftplib
-      B322  input
       B323  unverified_context
       B324  hashlib_new_insecure_functions
       B325  tempnam
@@ -458,9 +457,9 @@ using RST::
 Under Which Version of Python Should I Install Bandit?
 ------------------------------------------------------
 The answer to this question depends on the project(s) you will be running
-Bandit against. If your project is only compatible with Python 2.7, you
-should install Bandit to run under Python 2.7. If your project is only
-compatible with Python 3.5, then use 3.5 respectively. If your project supports
+Bandit against. If your project is only compatible with Python 3.5, you
+should install Bandit to run under Python 3.5. If your project is only
+compatible with Python 3.8, then use 3.8 respectively. If your project supports
 both, you *could* run Bandit with both versions but you don't have to.
 
 Bandit uses the `ast` module from Python's standard library in order to
