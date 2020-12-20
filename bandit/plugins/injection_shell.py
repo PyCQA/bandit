@@ -7,8 +7,6 @@
 import ast
 import re
 
-import six
-
 import bandit
 from bandit.core import test_properties as test
 
@@ -91,7 +89,7 @@ def has_shell(context):
                     result = bool(val.keys)
                 elif isinstance(val, ast.Name) and val.id in ['False', 'None']:
                     result = False
-                elif not six.PY2 and isinstance(val, ast.NameConstant):
+                elif isinstance(val, ast.NameConstant):
                     result = val.value
                 else:
                     result = True

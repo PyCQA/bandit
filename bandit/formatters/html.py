@@ -142,19 +142,14 @@ This formatter outputs the issues as HTML.
 """
 from __future__ import absolute_import
 
+from html import escape as html_escape
 import logging
 import sys
-
-import six
 
 from bandit.core import docs_utils
 from bandit.core import test_properties
 from bandit.formatters import utils
 
-if not six.PY2:
-    from html import escape as html_escape
-else:
-    from cgi import escape as html_escape
 
 LOG = logging.getLogger(__name__)
 
@@ -377,8 +372,8 @@ pre {
 
     with fileobj:
         wrapped_file = utils.wrap_file_object(fileobj)
-        wrapped_file.write(utils.convert_file_contents(header_block))
-        wrapped_file.write(utils.convert_file_contents(report_contents))
+        wrapped_file.write(header_block)
+        wrapped_file.write(report_contents)
 
     if fileobj.name != sys.stdout.name:
         LOG.info("HTML output written to file: %s", fileobj.name)

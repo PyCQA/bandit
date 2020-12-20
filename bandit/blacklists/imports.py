@@ -252,8 +252,8 @@ def gen_blacklist():
 
     sets.append(utils.build_conf_dict(
         'import_subprocess', 'B404', ['subprocess'],
-        'Consider possible security implications associated with '
-        '{name} module.', 'LOW'
+        'Consider possible security implications associated with the '
+        'subprocess module.', 'LOW'
         ))
 
     # Most of this is based off of Christian Heimes' work on defusedxml:
