@@ -5,7 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 r"""
-Blacklist various Python imports known to be dangerous.
+======================================================
+Blacklist various Python imports known to be dangerous
+======================================================
 
 This blacklist data checks for a number of Python modules known to have
 possible security implications. The following blacklist tests are run against

@@ -4,7 +4,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 r"""
-Blacklist various Python calls known to be dangerous.
+====================================================
+Blacklist various Python calls known to be dangerous
+====================================================
 
 This blacklist data checks for a number of Python calls known to have possible
 security implications. The following blacklist tests are run against any
