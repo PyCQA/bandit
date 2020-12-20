@@ -149,13 +149,11 @@ class FunctionalTests(testtools.TestCase):
 
     def test_exec(self):
         '''Test the `exec` example.'''
-        filename = 'exec.py'
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
-                           'HIGH': 1}
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
         }
-        self.check_example(filename, expect)
+        self.check_example('exec.py', expect)
 
     def test_hardcoded_passwords(self):
         '''Test for hard-coded passwords.'''
@@ -276,12 +274,11 @@ class FunctionalTests(testtools.TestCase):
 
     def test_os_chmod(self):
         '''Test setting file permissions.'''
-        filename = 'os-chmod.py'
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 8},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 9}
         }
-        self.check_example(filename, expect)
+        self.check_example('os-chmod.py', expect)
 
     def test_os_exec(self):
         '''Test for `os.exec*`.'''
