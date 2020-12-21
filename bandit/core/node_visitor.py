@@ -205,6 +205,8 @@ class BanditNodeVisitor(object):
                 LOG.debug("skipped, nosec")
                 self.metrics.note_nosec()
                 return False
+        if hasattr(node, 'col_offset'):
+            self.context['col_offset'] = node.col_offset
 
         self.context['node'] = node
         self.context['linerange'] = b_utils.linerange_fix(node)
