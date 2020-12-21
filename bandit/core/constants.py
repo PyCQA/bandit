@@ -43,3 +43,8 @@ EXCLUDE = (
     ".eggs",
     "*.egg",
 )
+
+AGG_TYPE = 'file'
+CONTEXT_LINES = 3
+CONFIDENCE = 1
+SEVERITY = 1

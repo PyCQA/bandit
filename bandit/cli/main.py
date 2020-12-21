@@ -146,14 +146,16 @@ def main():
     )
     parser.add_argument(
         '-a', '--aggregate', dest='agg_type',
-        action='store', default=None, type=str,
+        action='store', default=argparse.SUPPRESS, type=str,
         choices=['file', 'vuln'],
         help='aggregate output by vulnerability (default) or by filename'
+             '(default: {})'.format(constants.AGG_TYPE)
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
-        action='store', default=None, type=int,
+        action='store', default=argparse.SUPPRESS, type=int,
         help='maximum number of code lines to output for each issue'
+             '(default: {})'.format(constants.CONTEXT_LINES)
     )
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
@@ -178,18 +180,20 @@ def main():
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
-        default=None, help='report only issues of a given severity level or '
-                           'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
+        default=argparse.SUPPRESS, help='report only issues of a given severity level or '
+                                        'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
+                                        '(default: {})'.format(constants.SEVERITY)
     )
     parser.add_argument(
         '-i', '--confidence', dest='confidence', action='count',
-        default=None, help='report only issues of a given confidence level or '
-                           'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
+        default=argparse.SUPPRESS, help='report only issues of a given confidence level or '
+                                        'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH) '
+                                        '(default: {})'.format(constants.CONFIDENCE)
     )
     output_format = 'screen' if sys.stdout.isatty() else 'txt'
     parser.add_argument(
         '-f', '--format', dest='output_format', action='store',
-        default=None, help='specify output format',
+        default=argparse.SUPPRESS, help='specify output format',
         choices=sorted(extension_mgr.formatter_names)
     )
     parser.add_argument(
@@ -223,7 +227,7 @@ def main():
     )
     parser.add_argument(
         '-x', '--exclude', dest='excluded_paths', action='store',
-        default=None,
+        default=argparse.SUPPRESS,
         help='comma-separated list of paths (glob patterns '
              'supported) to exclude from scan '
              '(note that these are in addition to the excluded '
@@ -294,6 +298,21 @@ def main():
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
+
+    if not hasattr(args, 'agg_type'):
+        setattr(args, 'agg_type',  constants.AGG_TYPE)
+    if not hasattr(args, 'context_lines'):
+        setattr(args, 'context_lines', constants.CONTEXT_LINES)
+    if not hasattr(args, 'confidence'):
+        setattr(args, 'confidence', constants.CONFIDENCE)
+    if not hasattr(args, 'severity'):
+        setattr(args, 'severity', constants.SEVERITY)
+    if not hasattr(args, 'output_format'):
+        output_format = 'screen' if sys.stdout.isatty() else 'txt'
+        setattr(args, 'output_format', output_format)
+    if not hasattr(args, 'excluded_paths'):
+        setattr(args, 'excluded_paths', ','.join(constants.EXCLUDE))
+
     # Check if `--msg-template` is not present without custom formatter
     if args.output_format != 'custom' and args.msg_template is not None:
         parser.error("--msg-template can only be used with --format=custom")
@@ -403,19 +422,6 @@ def main():
             args.baseline,
             ini_options.get('baseline'),
             'path of a baseline report')
-
-    if args.agg_type is None:
-        args.agg_type = 'file'
-    if args.context_lines is None:
-        args.context_lines = 3
-    if args.confidence is None:
-        args.confidence = 1
-    if args.severity is None:
-        args.severity = 1
-    if args.output_format is None:
-        args.output_format = output_format
-    if args.excluded_paths is None:
-        args.excluded_paths = ','.join(constants.EXCLUDE)
 
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
