@@ -302,7 +302,7 @@ def main():
     args = parser.parse_args()
 
     # Check if `--msg-template` is not present without custom formatter
-    if args.output_format != 'custom' and args.msg_template is not None:
+    if getattr(args, 'output_format', '') != 'custom' and args.msg_template is not None:
         parser.error("--msg-template can only be used with --format=custom")
 
     try:
