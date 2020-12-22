@@ -116,10 +116,11 @@ Usage::
       -h, --help            show this help message and exit
       -r, --recursive       find and process files in subdirectories
       -a {file,vuln}, --aggregate {file,vuln}
-                            aggregate output by vulnerability (default) or by
-                            filename
+                            aggregate output by vulnerability or by filename
+                            (default: file)
       -n CONTEXT_LINES, --number CONTEXT_LINES
                             maximum number of code lines to output for each issue
+                            (default: 3)
       -c CONFIG_FILE, --configfile CONFIG_FILE
                             optional config file to use for selecting plugins and
                             overriding defaults
@@ -130,9 +131,9 @@ Usage::
       -s SKIPS, --skip SKIPS
                             comma-separated list of test IDs to skip
       -l, --level           report only issues of a given severity level or higher
-                            (-l for LOW, -ll for MEDIUM, -lll for HIGH)
-      -i, --confidence      report only issues of a given confidence level or
-                            higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
+                            (-l for LOW, -ll for MEDIUM, -lll for HIGH) (default: 1)
+      -i, --confidence      report only issues of a given confidence level or higher
+                            (-i for LOW, -ii for MEDIUM, -iii for HIGH) (default: 1)
       -f {csv,custom,html,json,screen,txt,xml,yaml}, --format {csv,custom,html,json,screen,txt,xml,yaml}
                             specify output format
       --msg-template MSG_TEMPLATE

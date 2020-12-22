@@ -148,13 +148,13 @@ def main():
         '-a', '--aggregate', dest='agg_type',
         action='store', default=argparse.SUPPRESS, type=str,
         choices=['file', 'vuln'],
-        help='aggregate output by vulnerability (default) or by filename'
+        help='aggregate output by vulnerability or by filename '
              '(default: {})'.format(constants.AGG_TYPE)
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
         action='store', default=argparse.SUPPRESS, type=int,
-        help='maximum number of code lines to output for each issue'
+        help='maximum number of code lines to output for each issue '
              '(default: {})'.format(constants.CONTEXT_LINES)
     )
     parser.add_argument(
@@ -180,15 +180,17 @@ def main():
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
-        default=argparse.SUPPRESS, help='report only issues of a given severity level or '
-                                        'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
-                                        '(default: {})'.format(constants.SEVERITY)
+        default=argparse.SUPPRESS,
+        help='report only issues of a given severity level or '
+             'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH) '
+             '(default: {})'.format(constants.SEVERITY)
     )
     parser.add_argument(
         '-i', '--confidence', dest='confidence', action='count',
-        default=argparse.SUPPRESS, help='report only issues of a given confidence level or '
-                                        'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH) '
-                                        '(default: {})'.format(constants.CONFIDENCE)
+        default=argparse.SUPPRESS,
+        help='report only issues of a given confidence level or '
+             'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH) '
+             '(default: {})'.format(constants.CONFIDENCE)
     )
     output_format = 'screen' if sys.stdout.isatty() else 'txt'
     parser.add_argument(
@@ -300,7 +302,7 @@ def main():
     args = parser.parse_args()
 
     if not hasattr(args, 'agg_type'):
-        setattr(args, 'agg_type',  constants.AGG_TYPE)
+        setattr(args, 'agg_type', constants.AGG_TYPE)
     if not hasattr(args, 'context_lines'):
         setattr(args, 'context_lines', constants.CONTEXT_LINES)
     if not hasattr(args, 'confidence'):
