@@ -29,6 +29,10 @@ shell_injection:
         - os.system
 """
 
+bandit_ini_config = """
+[bandit]
+"""
+
 bandit_baseline_content = """{
     "results": [
         {
@@ -123,6 +127,33 @@ class BanditCLIMainTests(testtools.TestCase):
             None,
             [target_directory],
         )
+
+    def test_get_options_from_ini_for_directory_target(self):
+        # Test that bandit reads configuration from a .bandit ini file
+        # when it is present in the target directory
+        target_directory = self.useFixture(fixtures.TempDir()).path
+        target_directory = os.path.join(target_directory, 'directory_target')
+        os.mkdir(target_directory)
+        bandit_config = os.path.join(target_directory, '.bandit')
+        with open(bandit_config, 'wt') as fd:
+            fd.write(bandit_ini_config)
+        self.assertIsNotNone(bandit._get_options_from_ini(None,
+                             [target_directory]))
+
+    def test_get_options_from_ini_for_file_target(self):
+        # Test that bandit reads configuration from a .bandit ini file
+        # when it is present alongside the target file
+        target_directory = self.useFixture(fixtures.TempDir()).path
+        target_directory = os.path.join(target_directory, 'file_target')
+        os.mkdir(target_directory)
+        bandit_config = os.path.join(target_directory, '.bandit')
+        with open(bandit_config, 'wt') as fd:
+            fd.write(bandit_ini_config)
+        target_file = os.path.join(target_directory, 'target.py')
+        with open(target_file, 'wt') as fd:
+            fd.write('# empty')
+        self.assertIsNotNone(bandit._get_options_from_ini(None,
+                             [target_file]))
 
     def test_init_extensions(self):
         # Test that an extension loader manager is returned
