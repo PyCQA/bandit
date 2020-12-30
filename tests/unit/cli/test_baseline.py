@@ -6,10 +6,10 @@
 
 import os
 import subprocess
+from unittest import mock
 
 import fixtures
 import git
-import mock
 import testtools
 
 import bandit.cli.baseline as baseline
