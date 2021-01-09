@@ -1,4 +1,5 @@
-log_set = {
+# This file contains a single long_set with 7276 'a' elements
+long_set = {
     'a',
     'a',
     'a',
