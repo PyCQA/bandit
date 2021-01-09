@@ -7,7 +7,6 @@
 import ast
 
 import mock
-import six
 import testtools
 
 from bandit.core import context
@@ -167,15 +166,9 @@ class ContextTests(testtools.TestCase):
         expected = value.id
         self.assertEqual(expected, new_context._get_literal_value(value))
 
-        if six.PY3:
-            value = ast.NameConstant(True)
-            expected = str(value.value)
-            self.assertEqual(expected, new_context._get_literal_value(value))
-
-        if six.PY3:
-            value = ast.Bytes(b'spam')
-            expected = value.s
-            self.assertEqual(expected, new_context._get_literal_value(value))
+        value = ast.Bytes(b'spam')
+        expected = value.s
+        self.assertEqual(expected, new_context._get_literal_value(value))
 
         self.assertIsNone(new_context._get_literal_value(None))
 
@@ -254,3 +247,12 @@ class ContextTests(testtools.TestCase):
 
         new_context = context.Context()
         self.assertFalse(new_context.is_module_imported_like('spam'))
+
+    def test_filename(self):
+        ref_context = dict(filename='spam.py')
+        new_context = context.Context(context_object=ref_context)
+
+        self.assertEqual(new_context.filename, 'spam.py')
+
+        new_context = context.Context()
+        self.assertIsNone(new_context.filename)

@@ -66,6 +66,7 @@ class BanditTester(object):
                     if result.lineno is None:
                         result.lineno = temp_context['lineno']
                     result.linerange = temp_context['linerange']
+                    result.col_offset = temp_context['col_offset']
                     result.test = name
                     if result.test_id == "":
                         result.test_id = test._test_id

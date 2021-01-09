@@ -142,19 +142,14 @@ This formatter outputs the issues as HTML.
 """
 from __future__ import absolute_import
 
+from html import escape as html_escape
 import logging
 import sys
-
-import six
 
 from bandit.core import docs_utils
 from bandit.core import test_properties
 from bandit.formatters import utils
 
-if not six.PY2:
-    from html import escape as html_escape
-else:
-    from cgi import escape as html_escape
 
 LOG = logging.getLogger(__name__)
 
@@ -268,6 +263,7 @@ pre {
     <b>Severity: </b>{severity}<br>
     <b>Confidence: </b>{confidence}<br>
     <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
+    <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
 {candidates}
@@ -363,7 +359,8 @@ pre {
                                           confidence=issue.confidence,
                                           path=issue.fname, code=code,
                                           candidates=candidates,
-                                          url=url)
+                                          url=url,
+                                          line_number=issue.lineno)
 
     # build the metrics string to insert in the report
     metrics_summary = metrics_block.format(
@@ -377,8 +374,8 @@ pre {
 
     with fileobj:
         wrapped_file = utils.wrap_file_object(fileobj)
-        wrapped_file.write(utils.convert_file_contents(header_block))
-        wrapped_file.write(utils.convert_file_contents(report_contents))
+        wrapped_file.write(header_block)
+        wrapped_file.write(report_contents)
 
     if fileobj.name != sys.stdout.name:
         LOG.info("HTML output written to file: %s", fileobj.name)
