@@ -215,7 +215,6 @@ of pyca/cryptography which has more support among the Python community.
 +------+---------------------+------------------------------------+-----------+
 
 """
-
 from bandit.blacklists import utils
 
 
@@ -230,7 +229,6 @@ def gen_blacklist():
 
     :return: a dictionary mapping node types to a list of blacklist data
     """
-
     sets = []
     sets.append(utils.build_conf_dict(
         'import_telnetlib', 'B401', ['telnetlib'],
@@ -254,8 +252,8 @@ def gen_blacklist():
 
     sets.append(utils.build_conf_dict(
         'import_subprocess', 'B404', ['subprocess'],
-        'Consider possible security implications associated with '
-        '{name} module.', 'LOW'
+        'Consider possible security implications associated with the '
+        'subprocess module.', 'LOW'
         ))
 
     # Most of this is based off of Christian Heimes' work on defusedxml:

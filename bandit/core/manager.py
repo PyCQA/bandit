@@ -13,8 +13,6 @@ import sys
 import tokenize
 import traceback
 
-import six
-
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
 from bandit.core import issue
@@ -280,10 +278,7 @@ class BanditManager(object):
             else:
                 try:
                     fdata.seek(0)
-                    if six.PY2:
-                        tokens = tokenize.generate_tokens(fdata.readline)
-                    else:
-                        tokens = tokenize.tokenize(fdata.readline)
+                    tokens = tokenize.tokenize(fdata.readline)
                     nosec_lines = set(
                         lineno for toktype, tokval, (lineno, _), _, _ in tokens
                         if toktype == tokenize.COMMENT and

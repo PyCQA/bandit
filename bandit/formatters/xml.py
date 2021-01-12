@@ -35,8 +35,6 @@ import logging
 import sys
 from xml.etree import cElementTree as ET
 
-import six
-
 from bandit.core import docs_utils
 
 LOG = logging.getLogger(__name__)
@@ -71,10 +69,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     tree = ET.ElementTree(root)
 
     if fileobj.name == sys.stdout.name:
-        if six.PY2:
-            fileobj = sys.stdout
-        else:
-            fileobj = sys.stdout.buffer
+        fileobj = sys.stdout.buffer
     elif fileobj.mode == 'w':
         fileobj.close()
         fileobj = open(fileobj.name, "wb")

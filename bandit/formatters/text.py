@@ -76,8 +76,9 @@ def _output_issue_str(issue, indent, show_lineno=True, show_code=True,
     bits.append("%s   Severity: %s   Confidence: %s" % (
         indent, issue.severity.capitalize(), issue.confidence.capitalize()))
 
-    bits.append("%s   Location: %s:%s" % (
-        indent, issue.fname, issue.lineno if show_lineno else ""))
+    bits.append("%s   Location: %s:%s:%s" % (
+        indent, issue.fname, issue.lineno if show_lineno else "",
+        issue.col_offset if show_lineno else ""))
 
     bits.append("%s   More Info: %s" % (
         indent, docs_utils.get_url(issue.test_id)))
@@ -155,7 +156,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 
         with fileobj:
             wrapped_file = utils.wrap_file_object(fileobj)
-            wrapped_file.write(utils.convert_file_contents(result))
+            wrapped_file.write(result)
 
     if fileobj.name != sys.stdout.name:
         LOG.info("Text output written to file: %s", fileobj.name)

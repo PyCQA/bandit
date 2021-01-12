@@ -5,8 +5,6 @@
 
 import io
 
-import six
-
 
 def wrap_file_object(fileobj):
     """Handle differences in Python 2 and 3 around writing bytes."""
@@ -24,10 +22,3 @@ def wrap_file_object(fileobj):
     # Finally, we've determined that the fileobj passed in cannot handle text,
     # so we use TextIOWrapper to handle the conversion for us.
     return io.TextIOWrapper(fileobj)
-
-
-def convert_file_contents(text):
-    """Convert text to built-in strings on Python 2."""
-    if not six.PY2:
-        return text
-    return str(text.encode('utf-8'))

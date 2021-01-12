@@ -90,7 +90,7 @@ methods are fully qualified and de-aliased prior to checking.
 
  - https://security.openstack.org
  - https://en.wikipedia.org/wiki/Wildcard_character
- - http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
+ - https://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
 
 .. versionadded:: 0.9.0
 

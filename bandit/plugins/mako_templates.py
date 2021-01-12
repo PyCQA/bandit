@@ -32,9 +32,8 @@ attacks.
 
 .. seealso::
 
- - http://www.makotemplates.org/
- - `OWASP XSS <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>`_
- - https://security.openstack.org
+ - https://www.makotemplates.org/
+ - `OWASP XSS <https://owasp.org/www-community/attacks/xss/>`_
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
 
 .. versionadded:: 0.10.0
