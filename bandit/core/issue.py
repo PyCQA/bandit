@@ -175,7 +175,6 @@ class Issue(object):
             'line_range': self.linerange,
             'col_offset': self.col_offset
             }
-        
         if with_code:
             out['code'] = self.get_code()
         return out
