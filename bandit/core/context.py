@@ -6,8 +6,6 @@
 
 import ast
 
-import six
-
 from bandit.core import utils
 
 
@@ -211,14 +209,10 @@ class Context(object):
         elif isinstance(literal, ast.Name):
             literal_value = literal.id
 
-        # NOTE(sigmavirus24): NameConstants are only part of the AST in Python
-        # 3. NameConstants tend to refer to things like True and False. This
-        # prevents them from being re-assigned in Python 3.
-        elif six.PY3 and isinstance(literal, ast.NameConstant):
+        elif isinstance(literal, ast.NameConstant):
             literal_value = str(literal.value)
 
-        # NOTE(sigmavirus24): Bytes are only part of the AST in Python 3
-        elif six.PY3 and isinstance(literal, ast.Bytes):
+        elif isinstance(literal, ast.Bytes):
             literal_value = literal.s
 
         else:
@@ -314,3 +308,7 @@ class Context(object):
                 if module in imp:
                     return True
         return False
+
+    @property
+    def filename(self):
+        return self._context.get('filename')

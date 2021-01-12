@@ -36,8 +36,9 @@ class ScreenFormatterTests(testtools.TestCase):
                           format(_indent_val, _issue.severity.capitalize(),
                                  _issue.cwe,
                                  _issue.confidence.capitalize()),
-                          "{}   Location: {}:{}".
-                          format(_indent_val, _issue.fname, _issue.lineno),
+                          "{}   Location: {}:{}:{}".
+                          format(_indent_val, _issue.fname, _issue.lineno,
+                                 _issue.col_offset),
                           "{}   More Info: {}{}".format(
                               _indent_val, docs_utils.get_url(_issue.test_id),
                               screen.COLOR['DEFAULT'])]
@@ -57,6 +58,7 @@ class ScreenFormatterTests(testtools.TestCase):
         self.assertEqual(expected_return, issue_text)
 
         issue.lineno = ''
+        issue.col_offset = ''
         issue_text = screen._output_issue_str(issue, indent_val,
                                               show_lineno=False)
         expected_return = _template(issue, indent_val, 'DDDDDDD',

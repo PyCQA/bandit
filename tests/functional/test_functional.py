@@ -7,7 +7,6 @@
 import os
 import sys
 
-import six
 import testtools
 
 from bandit.core import config as b_config
@@ -150,22 +149,11 @@ class FunctionalTests(testtools.TestCase):
 
     def test_exec(self):
         '''Test the `exec` example.'''
-        filename = 'exec-{}.py'
-        if six.PY2:
-            filename = filename.format('py2')
-            expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
-                               'HIGH': 2}
-            }
-        else:
-            filename = filename.format('py3')
-            expect = {
-                'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
-                'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0,
-                               'HIGH': 1}
-            }
-        self.check_example(filename, expect)
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
+        }
+        self.check_example('exec.py', expect)
 
     def test_hardcoded_passwords(self):
         '''Test for hard-coded passwords.'''
@@ -286,16 +274,11 @@ class FunctionalTests(testtools.TestCase):
 
     def test_os_chmod(self):
         '''Test setting file permissions.'''
-        filename = 'os-chmod-{}.py'
-        if six.PY2:
-            filename = filename.format('py2')
-        else:
-            filename = filename.format('py3')
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 2, 'HIGH': 8},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 9}
         }
-        self.check_example(filename, expect)
+        self.check_example('os-chmod.py', expect)
 
     def test_os_exec(self):
         '''Test for `os.exec*`.'''
@@ -601,6 +584,24 @@ class FunctionalTests(testtools.TestCase):
 
     def test_asserts(self):
         '''Test catching the use of assert.'''
+        test = next((x for x in self.b_mgr.b_ts.tests['Assert']
+                     if x.__name__ == 'assert_used'))
+
+        test._config = {'skips': []}
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
+        }
+        self.check_example('assert.py', expect)
+
+        test._config = {'skips': ['*assert.py']}
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
+        }
+        self.check_example('assert.py', expect)
+
+        test._config = {}
         expect = {
             'SEVERITY': {'UNDEFINED': 0, 'LOW': 1, 'MEDIUM': 0, 'HIGH': 0},
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
@@ -743,6 +744,7 @@ class FunctionalTests(testtools.TestCase):
               },
               "issue_text": "%s",
               "line_number": 10,
+              "col_offset": 0,
               "line_range": [
                 10
               ],
@@ -757,13 +759,6 @@ class FunctionalTests(testtools.TestCase):
         self.run_example('flask_debug.py')
         self.assertEqual(1, len(self.b_mgr.baseline))
         self.assertEqual({}, self.b_mgr.get_issue_list())
-
-    def test_blacklist_input(self):
-        expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 1}
-        }
-        self.check_example('input.py', expect)
 
     def test_unverified_context(self):
         '''Test for `ssl._create_unverified_context`.'''

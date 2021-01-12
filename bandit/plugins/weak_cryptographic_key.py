@@ -29,7 +29,7 @@ medium severity error for those lower than the higher threshold.
 
 .. seealso::
 
- - http://csrc.nist.gov/publications/nistpubs/800-131A/sp800-131A.pdf
+ - https://csrc.nist.gov/publications/detail/sp/800-131a/rev-2/final
  - https://security.openstack.org/guidelines/dg_strong-crypto.html
 
 .. versionadded:: 0.14.0

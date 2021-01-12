@@ -16,7 +16,7 @@ document from an untrusted source. The function yaml.safe_load limits this
 ability to simple Python objects like integers or lists.
 
 Please see
-http://pyyaml.org/wiki/PyYAMLDocumentation#LoadingYAML for more information
+https://pyyaml.org/wiki/PyYAMLDocumentation#LoadingYAML for more information
 on ``yaml.load`` and yaml.safe_load
 
 :Example:
@@ -32,7 +32,7 @@ on ``yaml.load`` and yaml.safe_load
 
 .. seealso::
 
- - http://pyyaml.org/wiki/PyYAMLDocumentation#LoadingYAML
+ - https://pyyaml.org/wiki/PyYAMLDocumentation#LoadingYAML
 
 .. versionadded:: 1.0.0
 

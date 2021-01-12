@@ -13,8 +13,6 @@ import sys
 import tokenize
 import traceback
 
-import six
-
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
 from bandit.core import issue
@@ -220,9 +218,7 @@ class BanditManager(object):
 
         :return: -
         '''
-        # display progress, if number of files warrants it
-        if len(self.files_list) > self.progress:
-            sys.stderr.write("%s [" % len(self.files_list))
+        self._show_progress("%s [" % len(self.files_list))
 
         # if we have problems with a file, we'll remove it from the files_list
         # and add it to the skipped list instead
@@ -234,8 +230,7 @@ class BanditManager(object):
             if len(self.files_list) > self.progress:
                 # is it time to update the progress indicator?
                 if count % self.progress == 0:
-                    sys.stderr.write("%s.. " % count)
-                    sys.stderr.flush()
+                    self._show_progress("%s.. " % count, flush=True)
             try:
                 if fname == '-':
                     sys.stdin = os.fdopen(sys.stdin.fileno(), 'rb', 0)
@@ -247,15 +242,29 @@ class BanditManager(object):
                 self.skipped.append((fname, e.strerror))
                 new_files_list.remove(fname)
 
-        if len(self.files_list) > self.progress:
-            sys.stderr.write("]\n")
-            sys.stderr.flush()
+        self._show_progress("]\n", flush=True)
 
         # reflect any files which may have been skipped
         self.files_list = new_files_list
 
         # do final aggregation of metrics
         self.metrics.aggregate()
+
+    def _show_progress(self, message, flush=False):
+        '''Show progress on stderr
+
+        Write progress message to stderr, if number of files warrants it and
+        log level is high enough.
+
+        :param message: The message to write to stderr
+        :param flush: Whether to flush stderr after writing the message
+        :return:
+        '''
+        if len(self.files_list) > self.progress and \
+                LOG.getEffectiveLevel() <= logging.INFO:
+            sys.stderr.write(message)
+            if flush:
+                sys.stderr.flush()
 
     def _parse_file(self, fname, fdata, new_files_list):
         try:
@@ -269,10 +278,7 @@ class BanditManager(object):
             else:
                 try:
                     fdata.seek(0)
-                    if six.PY2:
-                        tokens = tokenize.generate_tokens(fdata.readline)
-                    else:
-                        tokens = tokenize.tokenize(fdata.readline)
+                    tokens = tokenize.tokenize(fdata.readline)
                     nosec_lines = set(
                         lineno for toktype, tokval, (lineno, _), _, _ in tokens
                         if toktype == tokenize.COMMENT and

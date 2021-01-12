@@ -52,9 +52,8 @@ false. A HIGH severity warning is generated in either of these scenarios.
 .. seealso::
 
  - `OWASP XSS <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>`_
- - https://realpython.com/blog/python/primer-on-jinja-templating/
- - http://jinja.pocoo.org/docs/dev/api/#autoescaping
- - https://security.openstack.org
+ - https://realpython.com/primer-on-jinja-templating/
+ - https://jinja.palletsprojects.com/en/2.11.x/api/#autoescaping
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
 
 .. versionadded:: 0.10.0

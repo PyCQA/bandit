@@ -6,7 +6,6 @@
 
 import ast
 import re
-import sys
 
 import bandit
 from bandit.core.cwemap import CWEMAP
@@ -207,10 +206,6 @@ def hardcoded_password_default(context):
 
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
-        py3_is_arg = True
-        if sys.version_info.major > 2:
-            py3_is_arg = isinstance(key, ast.arg)
-        if isinstance(key, ast.Name) or py3_is_arg:
-            check = key.arg if sys.version_info.major > 2 else key.id  # Py3
-            if isinstance(val, ast.Str) and RE_CANDIDATES.search(check):
+        if isinstance(key, (ast.Name, ast.arg)):
+            if isinstance(val, ast.Str) and RE_CANDIDATES.search(key.arg):
                 return _report(val.s)
