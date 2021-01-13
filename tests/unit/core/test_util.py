@@ -12,7 +12,6 @@ import sys
 import tempfile
 
 import testtools
-
 from bandit.core import utils as b_utils
 
 
@@ -272,7 +271,7 @@ class UtilTests(testtools.TestCase):
                   'expected': {'exclude': '/abc,/def'}},
 
                  {'content': '[Blabla]\nsomething=something',
-                  'expected': None}]
+                  'expected': {}}]
 
         with tempfile.NamedTemporaryFile('r+') as t:
             for test in tests:
