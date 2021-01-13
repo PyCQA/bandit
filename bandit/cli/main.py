@@ -89,7 +89,7 @@ def _decide_option_source(arg_val, ini_val, default_val, option_name):
         LOG.info("Using ini file for %s", option_name)
         return ini_val
     elif default_val is not None:
-        print("Using default value for %s" % option_name)
+        LOG.info("Using default value for %s", option_name)
         return default_val
     else:
         return None
