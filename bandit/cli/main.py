@@ -80,8 +80,8 @@ def _init_extensions():
     return ext_loader.MANAGER
 
 
-def _log_option_source(arg_val, ini_val, option_name):
-    """It's useful to show the source of each option."""
+def _decide_option_source(arg_val, ini_val, option_name):
+    """Decide witch option source should be used. And log source to log."""
     if arg_val:
         LOG.info("Using command line arg for %s", option_name)
         return arg_val
@@ -312,17 +312,17 @@ def main():
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
         # prefer command line, then ini file
-        args.excluded_paths = _log_option_source(
+        args.excluded_paths = _decide_option_source(
             args.excluded_paths,
             ini_options.get('exclude'),
             'excluded paths')
 
-        args.skips = _log_option_source(
+        args.skips = _decide_option_source(
             args.skips,
             ini_options.get('skips'),
             'skipped tests')
 
-        args.tests = _log_option_source(
+        args.tests = _decide_option_source(
             args.tests,
             ini_options.get('tests'),
             'selected tests')
@@ -331,79 +331,79 @@ def main():
         if ini_targets:
             ini_targets = ini_targets.split(',')
 
-        args.targets = _log_option_source(
+        args.targets = _decide_option_source(
             args.targets,
             ini_targets,
             'selected targets')
 
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
-        args.recursive = _log_option_source(
+        args.recursive = _decide_option_source(
             args.recursive,
             ini_options.get('recursive'),
             'recursive scan')
 
-        args.agg_type = _log_option_source(
+        args.agg_type = _decide_option_source(
             args.agg_type,
             ini_options.get('aggregate'),
             'aggregate output type')
 
-        args.context_lines = _log_option_source(
+        args.context_lines = _decide_option_source(
             args.context_lines,
             ini_options.get('number'),
             'max code lines output for issue')
 
-        args.profile = _log_option_source(
+        args.profile = _decide_option_source(
             args.profile,
             ini_options.get('profile'),
             'profile')
 
-        args.severity = _log_option_source(
+        args.severity = _decide_option_source(
             args.severity,
             ini_options.get('level'),
             'severity level')
 
-        args.confidence = _log_option_source(
+        args.confidence = _decide_option_source(
             args.confidence,
             ini_options.get('confidence'),
             'confidence level')
 
-        args.output_format = _log_option_source(
+        args.output_format = _decide_option_source(
             args.output_format,
             ini_options.get('format'),
             'output format')
 
-        args.msg_template = _log_option_source(
+        args.msg_template = _decide_option_source(
             args.msg_template,
             ini_options.get('msg-template'),
             'output message template')
 
-        args.output_file = _log_option_source(
+        args.output_file = _decide_option_source(
             args.output_file,
             ini_options.get('output'),
             'output file')
 
-        args.verbose = _log_option_source(
+        args.verbose = _decide_option_source(
             args.verbose,
             ini_options.get('verbose'),
             'output extra information')
 
-        args.debug = _log_option_source(
+        args.debug = _decide_option_source(
             args.debug,
             ini_options.get('debug'),
             'debug mode')
 
-        args.quiet = _log_option_source(
+        args.quiet = _decide_option_source(
             args.quiet,
             ini_options.get('quiet'),
             'silent mode')
 
-        args.ignore_nosec = _log_option_source(
+        args.ignore_nosec = _decide_option_source(
             args.ignore_nosec,
             ini_options.get('ignore-nosec'),
             'do not skip lines with # nosec')
 
-        args.baseline = _log_option_source(
+        args.baseline = _decide_option_source(
             args.baseline,
             ini_options.get('baseline'),
             'path of a baseline report')
