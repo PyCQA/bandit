@@ -72,7 +72,7 @@ def _get_options_from_ini(ini_path, target):
     if ini_file:
         return utils.parse_ini_file(ini_file)
     else:
-        return None
+        return {}
 
 
 def _init_extensions():
@@ -80,7 +80,7 @@ def _init_extensions():
     return ext_loader.MANAGER
 
 
-def _decide_option_source(arg_val, ini_val, option_name):
+def _decide_option_source(arg_val, ini_val, default_val, option_name):
     """Decide witch option source should be used. And log source to log."""
     if arg_val:
         LOG.info("Using command line arg for %s", option_name)
@@ -88,6 +88,9 @@ def _decide_option_source(arg_val, ini_val, option_name):
     elif ini_val:
         LOG.info("Using ini file for %s", option_name)
         return ini_val
+    elif default_val is not None:
+        print("Using default value for %s" % option_name)
+        return default_val
     else:
         return None
 
@@ -136,6 +139,7 @@ def main():
                                                   extension_mgr.formatters)]
 
     # now do normal startup
+    # command line arguments (don't store defaults here)
     parser = argparse.ArgumentParser(
         description='Bandit - a Python source code security analyzer',
         formatter_class=argparse.RawDescriptionHelpFormatter
@@ -143,21 +147,25 @@ def main():
     parser.add_argument(
         'targets', metavar='targets', type=str, nargs='*',
         help='source file(s) or directory(s) to be tested'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-r', '--recursive', dest='recursive',
         action='store_true', help='find and process files in subdirectories'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-a', '--aggregate', dest='agg_type',
         action='store', default='file', type=str,
         choices=['file', 'vuln'],
         help='aggregate output by vulnerability (default) or by filename'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-n', '--number', dest='context_lines',
         action='store', default=3, type=int,
         help='maximum number of code lines to output for each issue'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-c', '--configfile', dest='config_file',
@@ -167,77 +175,89 @@ def main():
     )
     parser.add_argument(
         '-p', '--profile', dest='profile',
-        action='store', default=None, type=str,
+        action='store', type=str,
         help='profile to use (defaults to executing all tests)'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-t', '--tests', dest='tests',
-        action='store', default=None, type=str,
+        action='store', type=str,
         help='comma-separated list of test IDs to run'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-s', '--skip', dest='skips',
-        action='store', default=None, type=str,
+        action='store', type=str,
         help='comma-separated list of test IDs to skip'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-l', '--level', dest='severity', action='count',
-        default=1, help='report only issues of a given severity level or '
-                        'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
+        help='report only issues of a given severity level or '
+        'higher (-l for LOW, -ll for MEDIUM, -lll for HIGH)'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-i', '--confidence', dest='confidence', action='count',
-        default=1, help='report only issues of a given confidence level or '
-                        'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
+        help='report only issues of a given confidence level or '
+        'higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)'
+        # don't place default here, use _decide_option_source bellow
     )
-    output_format = 'screen' if sys.stdout.isatty() else 'txt'
     parser.add_argument(
         '-f', '--format', dest='output_format', action='store',
-        default=output_format, help='specify output format',
+        help='specify output format',
         choices=sorted(extension_mgr.formatter_names)
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '--msg-template', action='store',
-        default=None, help='specify output message template'
-                           ' (only usable with --format custom),'
-                           ' see CUSTOM FORMAT section'
-                           ' for list of available values',
+        help='specify output message template'
+        ' (only usable with --format custom),'
+        ' see CUSTOM FORMAT section'
+        ' for list of available values',
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-o', '--output', dest='output_file', action='store', nargs='?',
-        type=argparse.FileType('w', encoding='utf-8'), default=sys.stdout,
+        type=argparse.FileType('w', encoding='utf-8'),
         help='write report to filename'
+        # don't place default here, use _decide_option_source bellow
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
         '-v', '--verbose', dest='verbose', action='store_true',
         help='output extra information like excluded and included files'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-d', '--debug', dest='debug', action='store_true',
         help='turn on debug mode'
+        # don't place default here, use _decide_option_source bellow
     )
     group.add_argument(
         '-q', '--quiet', '--silent', dest='quiet', action='store_true',
         help='only show output in the case of an error'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '--ignore-nosec', dest='ignore_nosec', action='store_true',
         help='do not skip lines with # nosec comments'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-x', '--exclude', dest='excluded_paths', action='store',
-        default=','.join(constants.EXCLUDE),
         help='comma-separated list of paths (glob patterns '
              'supported) to exclude from scan '
              '(note that these are in addition to the excluded '
              'paths provided in the config file) (default: ' +
         ','.join(constants.EXCLUDE) + ')'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '-b', '--baseline', dest='baseline', action='store',
-        default=None, help='path of a baseline report to compare against '
-                           '(only JSON-formatted files are accepted)'
+        help='path of a baseline report to compare against '
+             '(only JSON-formatted files are accepted)'
+        # don't place default here, use _decide_option_source bellow
     )
     parser.add_argument(
         '--ini', dest='ini_path', action='store', default=None,
@@ -252,11 +272,6 @@ def main():
         version='%(prog)s {version}\n  python version = {python}'.format(
             version=bandit.__version__, python=python_ver)
     )
-
-    parser.set_defaults(debug=False)
-    parser.set_defaults(verbose=False)
-    parser.set_defaults(quiet=False)
-    parser.set_defaults(ignore_nosec=False)
 
     plugin_info = ["%s\t%s" % (a[0], a[1].name) for a in
                    extension_mgr.plugins_by_id.items()]
@@ -298,9 +313,6 @@ def main():
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
-    # Check if `--msg-template` is not present without custom formatter
-    if args.output_format != 'custom' and args.msg_template is not None:
-        parser.error("--msg-template can only be used with --format=custom")
 
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
@@ -310,103 +322,124 @@ def main():
 
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
-    if ini_options:
-        # prefer command line, then ini file
-        args.excluded_paths = _decide_option_source(
-            args.excluded_paths,
-            ini_options.get('exclude'),
-            'excluded paths')
+    # prefer command line, then ini file, than default
+    args.excluded_paths = _decide_option_source(
+        args.excluded_paths,
+        ini_options.get('exclude'),
+        ','.join(constants.EXCLUDE),
+        'excluded paths')
 
-        args.skips = _decide_option_source(
-            args.skips,
-            ini_options.get('skips'),
-            'skipped tests')
+    args.skips = _decide_option_source(
+        args.skips,
+        ini_options.get('skips'),
+        None,
+        'skipped tests')
 
-        args.tests = _decide_option_source(
-            args.tests,
-            ini_options.get('tests'),
-            'selected tests')
+    args.tests = _decide_option_source(
+        args.tests,
+        ini_options.get('tests'),
+        None,
+        'selected tests')
 
-        ini_targets = ini_options.get('targets')
-        if ini_targets:
-            ini_targets = ini_targets.split(',')
+    ini_targets = ini_options.get('targets')
+    if ini_targets:
+        ini_targets = ini_targets.split(',')
 
-        args.targets = _decide_option_source(
-            args.targets,
-            ini_targets,
-            'selected targets')
+    args.targets = _decide_option_source(
+        args.targets,
+        ini_targets,
+        None,
+        'selected targets')
 
-        # TODO(tmcpeak): any other useful options to pass from .bandit?
+    # TODO(tmcpeak): any other useful options to pass from .bandit?
 
-        args.recursive = _decide_option_source(
-            args.recursive,
-            ini_options.get('recursive'),
-            'recursive scan')
+    args.recursive = _decide_option_source(
+        args.recursive,
+        ini_options.get('recursive'),
+        None,
+        'recursive scan')
 
-        args.agg_type = _decide_option_source(
-            args.agg_type,
-            ini_options.get('aggregate'),
-            'aggregate output type')
+    args.agg_type = _decide_option_source(
+        args.agg_type,
+        ini_options.get('aggregate'),
+        None,
+        'aggregate output type')
 
-        args.context_lines = _decide_option_source(
-            args.context_lines,
-            ini_options.get('number'),
-            'max code lines output for issue')
+    args.context_lines = _decide_option_source(
+        args.context_lines,
+        ini_options.get('number'),
+        None,
+        'max code lines output for issue')
 
-        args.profile = _decide_option_source(
-            args.profile,
-            ini_options.get('profile'),
-            'profile')
+    args.profile = _decide_option_source(
+        args.profile,
+        ini_options.get('profile'),
+        None,
+        'profile')
 
-        args.severity = _decide_option_source(
-            args.severity,
-            ini_options.get('level'),
-            'severity level')
+    args.severity = _decide_option_source(
+        args.severity,
+        ini_options.get('level'),
+        1,
+        'severity level')
 
-        args.confidence = _decide_option_source(
-            args.confidence,
-            ini_options.get('confidence'),
-            'confidence level')
+    args.confidence = _decide_option_source(
+        args.confidence,
+        ini_options.get('confidence'),
+        1,
+        'confidence level')
 
-        args.output_format = _decide_option_source(
-            args.output_format,
-            ini_options.get('format'),
-            'output format')
+    args.output_format = _decide_option_source(
+        args.output_format,
+        ini_options.get('format'),
+        'screen' if sys.stdout.isatty() else 'txt',
+        'output format')
 
-        args.msg_template = _decide_option_source(
-            args.msg_template,
-            ini_options.get('msg-template'),
-            'output message template')
+    args.msg_template = _decide_option_source(
+        args.msg_template,
+        ini_options.get('msg-template'),
+        None,
+        'output message template')
 
-        args.output_file = _decide_option_source(
-            args.output_file,
-            ini_options.get('output'),
-            'output file')
+    args.output_file = _decide_option_source(
+        args.output_file,
+        ini_options.get('output'),
+        sys.stdout,
+        'output file')
 
-        args.verbose = _decide_option_source(
-            args.verbose,
-            ini_options.get('verbose'),
-            'output extra information')
+    args.verbose = _decide_option_source(
+        args.verbose,
+        ini_options.get('verbose'),
+        False,
+        'output extra information')
 
-        args.debug = _decide_option_source(
-            args.debug,
-            ini_options.get('debug'),
-            'debug mode')
+    args.debug = _decide_option_source(
+        args.debug,
+        ini_options.get('debug'),
+        False,
+        'debug mode')
 
-        args.quiet = _decide_option_source(
-            args.quiet,
-            ini_options.get('quiet'),
-            'silent mode')
+    args.quiet = _decide_option_source(
+        args.quiet,
+        ini_options.get('quiet'),
+        False,
+        'silent mode')
 
-        args.ignore_nosec = _decide_option_source(
-            args.ignore_nosec,
-            ini_options.get('ignore-nosec'),
-            'do not skip lines with # nosec')
+    args.ignore_nosec = _decide_option_source(
+        args.ignore_nosec,
+        ini_options.get('ignore-nosec'),
+        False,
+        'do not skip lines with # nosec')
 
-        args.baseline = _decide_option_source(
-            args.baseline,
-            ini_options.get('baseline'),
-            'path of a baseline report')
+    args.baseline = _decide_option_source(
+        args.baseline,
+        ini_options.get('baseline'),
+        None,
+        'path of a baseline report')
+
+    # Check if `--msg-template` is not present without custom formatter
+    if args.output_format != 'custom' and args.msg_template is not None:
+        parser.error("--msg-template can only be used with --format=custom")
 
     if not args.targets:
         LOG.error("No targets found in CLI or ini files, exiting.")
