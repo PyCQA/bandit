@@ -12,6 +12,7 @@ import sys
 import tempfile
 
 import testtools
+
 from bandit.core import utils as b_utils
 
 

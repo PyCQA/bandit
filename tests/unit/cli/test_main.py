@@ -8,6 +8,7 @@ import os
 import fixtures
 import mock
 import testtools
+
 from bandit.cli import main as bandit
 from bandit.core import extension_loader as ext_loader
 from bandit.core import utils
