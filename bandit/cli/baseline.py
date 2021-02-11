@@ -13,6 +13,9 @@
 # reports on any new findings.
 # #############################################################################
 
+"""Bandit is a tool designed to find common security issues in Python code."""
+
+
 import argparse
 import contextlib
 import logging
@@ -33,8 +36,11 @@ repo = None
 report_basename = 'bandit_baseline_result'
 valid_baseline_formats = ['txt', 'html', 'json']
 
+"""baseline.py"""
+
 
 def main():
+    """Execute Bandit."""
     # our cleanup function needs this and can't be passed arguments
     global current_commit
     global repo
@@ -120,6 +126,7 @@ def main():
 # #################### Clean up before exit ###################################
 @contextlib.contextmanager
 def baseline_setup():
+    """Baseline setup by creating temp folder and resetting repo."""
     d = tempfile.mkdtemp()
     yield d
     shutil.rmtree(d, True)
@@ -130,6 +137,7 @@ def baseline_setup():
 
 # #################### Setup logging ##########################################
 def init_logger():
+    """Init logger."""
     LOG.handlers = []
     log_level = logging.INFO
     log_format_string = "[%(levelname)7s ] %(message)s"
@@ -142,6 +150,7 @@ def init_logger():
 
 # #################### Perform initialization and validate assumptions ########
 def initialize():
+    """Initialize arguments and output formats."""
     valid = True
 
     # #################### Parse Args #########################################

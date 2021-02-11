@@ -59,6 +59,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
                       'issue_confidence',
                       'issue_text',
                       'line_number',
+                      'col_offset',
                       'line_range',
                       'more_info']
 

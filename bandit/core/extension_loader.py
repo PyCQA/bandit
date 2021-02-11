@@ -6,7 +6,6 @@ from __future__ import print_function
 
 import sys
 
-import six
 from stevedore import extension
 
 from bandit.core import utils
@@ -75,7 +74,7 @@ class Manager(object):
 
         self.blacklist_by_id = {}
         self.blacklist_by_name = {}
-        for val in six.itervalues(self.blacklist):
+        for val in self.blacklist.values():
             for b in val:
                 self.blacklist_by_id[b['id']] = b
                 self.blacklist_by_name[b['name']] = b

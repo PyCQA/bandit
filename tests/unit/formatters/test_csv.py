@@ -5,7 +5,6 @@
 import csv
 import tempfile
 
-import six
 import testtools
 
 import bandit
@@ -44,14 +43,13 @@ class CsvFormatterTests(testtools.TestCase):
 
         with open(self.tmp_fname) as f:
             reader = csv.DictReader(f)
-            data = six.next(reader)
+            data = next(reader)
             self.assertEqual(self.tmp_fname, data['filename'])
             self.assertEqual(self.issue.severity, data['issue_severity'])
             self.assertEqual(self.issue.confidence, data['issue_confidence'])
             self.assertEqual(self.issue.text, data['issue_text'])
-            self.assertEqual(six.text_type(self.context['lineno']),
-                             data['line_number'])
-            self.assertEqual(six.text_type(self.context['linerange']),
+            self.assertEqual(str(self.context['lineno']), data['line_number'])
+            self.assertEqual(str(self.context['linerange']),
                              data['line_range'])
             self.assertEqual(self.check_name, data['test_name'])
             self.assertIsNotNone(data['more_info'])

@@ -120,6 +120,7 @@ class HtmlFormatterTests(testtools.TestCase):
             self.assertIn('BBBBBBB', issue1.text)
             self.assertIn('CCCCCCC', issue1.text)
             self.assertIn('abc.py', issue1.text)
+            self.assertIn('Line number: 1', issue1.text)
 
     @mock.patch('bandit.core.issue.Issue.get_code')
     @mock.patch('bandit.core.manager.BanditManager.get_issue_list')

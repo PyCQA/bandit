@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import six
 import testtools
 
 from bandit.core import meta_ast
@@ -28,4 +27,4 @@ class BanditMetaAstTests(testtools.TestCase):
     def test_str(self):
         node = self.b_meta_ast.nodes[self.node_id]
         expected = 'Node: %s\n\t%s\nLength: 1\n' % (self.node_id, node)
-        self.assertEqual(expected, six.text_type(self.b_meta_ast))
+        self.assertEqual(expected, str(self.b_meta_ast))
