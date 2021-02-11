@@ -62,18 +62,6 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("optional arguments:", output)
         self.assertIn("tests were discovered and loaded:", output)
 
-    def test_help_in_readme(self):
-        replace_list = [' ', '\t', '\n']
-        (retcode, output) = self._test_runtime(['bandit', '-h'])
-        for i in replace_list:
-            output = output.replace(i, '')
-        output = output.replace("'", "\'")
-        with open('README.rst') as f:
-            readme = f.read()
-            for i in replace_list:
-                readme = readme.replace(i, '')
-            self.assertIn(output, readme)
-
     # test examples (use _test_example() to wrap in config location argument
     def test_example_nonexistent(self):
         (retcode, output) = self._test_example(
