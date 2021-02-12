@@ -89,20 +89,20 @@ class BanditCLIMainTests(testtools.TestCase):
     def test_get_options_from_ini_no_ini_path_no_target(self):
         # Test that no config options are loaded when no ini path or target
         # directory are provided
-        self.assertIsNone(bandit._get_options_from_ini(None, []))
+        self.assertEqual({}, bandit._get_options_from_ini(None, []))
 
     def test_get_options_from_ini_empty_directory_no_target(self):
         # Test that no config options are loaded when an empty directory is
         # provided as the ini path and no target directory is provided
         ini_directory = self.useFixture(fixtures.TempDir()).path
-        self.assertIsNone(bandit._get_options_from_ini(ini_directory, []))
+        self.assertEqual({}, bandit._get_options_from_ini(ini_directory, []))
 
     def test_get_options_from_ini_no_ini_path_no_bandit_files(self):
         # Test that no config options are loaded when no ini path is provided
         # and the target directory contains no bandit config files (.bandit)
         target_directory = self.useFixture(fixtures.TempDir()).path
-        self.assertIsNone(bandit._get_options_from_ini(None,
-                          [target_directory]))
+        self.assertEqual({}, bandit._get_options_from_ini(
+            None, [target_directory]))
 
     def test_get_options_from_ini_no_ini_path_multi_bandit_files(self):
         # Test that bandit exits when no ini path is provided and the target
@@ -124,27 +124,41 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that an extension loader manager is returned
         self.assertEqual(ext_loader.MANAGER, bandit._init_extensions())
 
-    def test_log_option_source_arg_val(self):
+    def test_decide_option_source_arg_val(self):
         # Test that the command argument value is returned when provided
         arg_val = 'file'
         ini_val = 'vuln'
         option_name = 'aggregate'
-        self.assertEqual(arg_val, bandit._log_option_source(arg_val, ini_val,
-                         option_name))
+        self.assertEqual(arg_val, bandit._decide_option_source(arg_val,
+                                                               ini_val,
+                                                               None,
+                                                               option_name))
 
-    def test_log_option_source_ini_value(self):
+    def test_decide_option_source_ini_value(self):
         # Test that the ini value is returned when no command argument is
         # provided
         ini_val = 'vuln'
         option_name = 'aggregate'
-        self.assertEqual(ini_val, bandit._log_option_source(None, ini_val,
-                         option_name))
+        self.assertEqual(ini_val, bandit._decide_option_source(None, ini_val,
+                                                               None,
+                                                               option_name))
 
-    def test_log_option_source_no_values(self):
+    def test_decide_option_source_default_value(self):
+        # Test that the ini value is returned when no command argument is
+        # provided
+        default_val = 'vuln'
+        option_name = 'aggregate'
+        self.assertEqual(default_val,
+                         bandit._decide_option_source(None, None,
+                                                      default_val,
+                                                      option_name))
+
+    def test_decide_option_source_no_values(self):
         # Test that None is returned when no command argument or ini value are
         # provided
         option_name = 'aggregate'
-        self.assertIsNone(bandit._log_option_source(None, None, option_name))
+        self.assertIsNone(bandit._decide_option_source(
+            None, None, None, option_name))
 
     @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
     def test_main_config_unopenable(self):

@@ -95,6 +95,7 @@ class InvalidModulePath(Exception):
 
 class ConfigError(Exception):
     """Raised when the config file fails validation."""
+
     def __init__(self, message, config_file):
         self.config_file = config_file
         self.message = "{0} : {1}".format(config_file, message)
@@ -103,6 +104,7 @@ class ConfigError(Exception):
 
 class ProfileNotFound(Exception):
     """Raised when chosen profile cannot be found."""
+
     def __init__(self, config_file, profile):
         self.config_file = config_file
         self.profile = profile
@@ -312,7 +314,7 @@ def parse_ini_file(f_loc):
         LOG.warning("Unable to parse config file %s or missing [bandit] "
                     "section", f_loc)
 
-    return None
+    return {}
 
 
 def check_ast_node(name):

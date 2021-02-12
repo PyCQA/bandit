@@ -272,7 +272,7 @@ class UtilTests(testtools.TestCase):
                   'expected': {'exclude': '/abc,/def'}},
 
                  {'content': '[Blabla]\nsomething=something',
-                  'expected': None}]
+                  'expected': {}}]
 
         with tempfile.NamedTemporaryFile('r+') as t:
             for test in tests:
