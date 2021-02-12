@@ -1,29 +1,58 @@
+# Possible hardcoded password: 'Admin'
+# Severity: Low   Confidence: Medium
 def someFunction(user, password="Admin"):
     print("Hi " + user)
 
 def someFunction2(password):
+    # Possible hardcoded password: 'root'
+    # Severity: Low   Confidence: Medium
     if password == "root":
         print("OK, logged in")
 
 def noMatch(password):
+    # Possible hardcoded password: ''
+    # Severity: Low   Confidence: Medium
     if password == '':
         print("No password!")
 
 def NoMatch2(password):
+    # Possible hardcoded password: 'ajklawejrkl42348swfgkg'
+    # Severity: Low   Confidence: Medium
     if password == "ajklawejrkl42348swfgkg":
         print("Nice password!")
 
+# Possible hardcoded password: 'blerg'
+# Severity: Low   Confidence: Medium
 def doLogin(password="blerg"):
     pass
 
 def NoMatch3(a, b):
     pass
 
+# Possible hardcoded password: 'blerg'
+# Severity: Low   Confidence: Medium
 doLogin(password="blerg")
+
+# Possible hardcoded password: 'blerg'
+# Severity: Low   Confidence: Medium
 password = "blerg"
+
+# Possible hardcoded password: 'blerg'
+# Severity: Low   Confidence: Medium
 d["password"] = "blerg"
 
+# Possible hardcoded password: 'secret'
+# Severity: Low   Confidence: Medium
 EMAIL_PASSWORD = "secret"
+
+# Possible hardcoded password: 'emails_secret'
+# Severity: Low   Confidence: Medium
 email_pwd = 'emails_secret'
+
+# Possible hardcoded password: 'd6s$f9g!j8mg7hw?n&2'
+# Severity: Low   Confidence: Medium
 my_secret_password_for_email = 'd6s$f9g!j8mg7hw?n&2'
+
+# Possible hardcoded password: '1234'
+# Severity: Low   Confidence: Medium
 passphrase='1234'
