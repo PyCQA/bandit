@@ -43,6 +43,7 @@ case you would explicitly specify the path to configuration via `-s` too.
 For example:
 
 .. code-block:: python
+
     [tool.bandit.profiles.test_1]
     include = [
       "any_other_function_with_shell_equals_true",
