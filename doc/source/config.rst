@@ -42,7 +42,7 @@ Also you can configure bandit via
 case you would explicitly specify the path to configuration via `-s` too.
 For example:
 
-.. code-block:: python
+.. code-block:: TOML
 
     [tool.bandit.profiles.test_1]
     include = [
