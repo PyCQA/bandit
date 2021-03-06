@@ -27,7 +27,7 @@ use assert statements in test cases.
 .. code-block:: yaml
 
     assert_used:
-      skips: ['*_test.py', 'test_*.py']
+      skips: ['*_test.py', '*test_*.py']
 
 :Example:
 
