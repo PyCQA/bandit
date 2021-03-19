@@ -129,7 +129,7 @@ def _get_int(value):
     try:
         value = int(value)
         return value
-    except ValueError:
+    except TypeError:
         return value
 
 
@@ -311,6 +311,8 @@ def main():
 
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
+    if not ini_options:
+        ini_options = {}
 
     # prefer command line, then ini file, then default value
     args.excluded_paths = _log_option_source(
