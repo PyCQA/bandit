@@ -790,3 +790,12 @@ class FunctionalTests(testtools.TestCase):
             'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 0}
         }
         self.check_example('pycryptodome.py', expect)
+
+    def test_blacklist_pandas_read_pickle(self):
+        '''
+        Test whether the pandas read pickle is appropriately blacklisted
+        '''
+        expect = {
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0}
+        }
+        self.check_example('pandas_read_pickle.py', expect)
