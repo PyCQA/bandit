@@ -47,7 +47,10 @@ def blacklist(context, config):
             # argument name as an actual import module name.
             # Will produce None if argument is not a literal or identifier
             if name in ["importlib.import_module", "importlib.__import__"]:
-                name = context.call_args[0]
+                if context.call_args_count > 0:
+                    name = context.call_args[0]
+                else:
+                    name = context.call_keywords['name']
         for check in blacklists[node_type]:
             for qn in check['qualnames']:
                 if name is not None and fnmatch.fnmatch(name, qn):
