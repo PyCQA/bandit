@@ -230,8 +230,8 @@ class FunctionalTests(testtools.TestCase):
     def test_imports_using_importlib(self):
         '''Test for dangerous imports using importlib.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 2, 'MEDIUM': 0, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 2}
+            'SEVERITY': {'UNDEFINED': 0, 'LOW': 4, 'MEDIUM': 0, 'HIGH': 0},
+            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 0, 'HIGH': 4}
         }
         self.check_example('imports-with-importlib.py', expect)
 

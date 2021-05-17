@@ -93,9 +93,8 @@ def ssl_with_bad_version(context, config):
 
      - :func:`ssl_with_bad_defaults`
      - :func:`ssl_with_no_version`
-     - http://heartbleed.com/
-     - https://poodlebleed.com/
-     - https://security.openstack.org/
+     - https://heartbleed.com/
+     - https://en.wikipedia.org/wiki/POODLE
      - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
@@ -172,9 +171,8 @@ def ssl_with_bad_defaults(context, config):
 
      - :func:`ssl_with_bad_version`
      - :func:`ssl_with_no_version`
-     - http://heartbleed.com/
-     - https://poodlebleed.com/
-     - https://security.openstack.org/
+     - https://heartbleed.com/
+     - https://en.wikipedia.org/wiki/POODLE
      - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
@@ -230,9 +228,8 @@ def ssl_with_no_version(context):
 
      - :func:`ssl_with_bad_version`
      - :func:`ssl_with_bad_defaults`
-     - http://heartbleed.com/
-     - https://poodlebleed.com/
-     - https://security.openstack.org/
+     - https://heartbleed.com/
+     - https://en.wikipedia.org/wiki/POODLE
      - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0

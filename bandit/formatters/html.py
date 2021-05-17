@@ -263,6 +263,7 @@ pre {
     <b>Severity: </b>{severity}<br>
     <b>Confidence: </b>{confidence}<br>
     <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
+    <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
 {candidates}
@@ -358,7 +359,8 @@ pre {
                                           confidence=issue.confidence,
                                           path=issue.fname, code=code,
                                           candidates=candidates,
-                                          url=url)
+                                          url=url,
+                                          line_number=issue.lineno)
 
     # build the metrics string to insert in the report
     metrics_summary = metrics_block.format(
