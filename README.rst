@@ -53,7 +53,6 @@ Bandit is distributed on PyPI. The best way to install it is with pip:
 Create a virtual environment (optional)::
 
     virtualenv bandit-env
-    # Or if you're working with a Python 3 project
     python3 -m venv bandit-env
     # And activate it:
     source bandit-env/bin/activate
@@ -61,7 +60,6 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    # Or if you're working with a Python 3 project
     pip3 install bandit
 
 Run Bandit::
