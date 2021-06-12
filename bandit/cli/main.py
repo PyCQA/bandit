@@ -264,6 +264,11 @@ def main():
     parser.add_argument('--exit-zero', action='store_true', dest='exit_zero',
                         default=False, help='exit with 0, '
                                             'even with results found')
+    parser.add_argument(
+        '--exit-zero-severity', dest='exit_zero_severity_string', action='store', default=None,
+        help='control which severity makes bandit to exit with zero status code. '
+             'Lower severities to the specified one are included implicitly'
+            )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
@@ -341,6 +346,17 @@ def main():
             args.confidence = 3
         elif args.confidence_string == "high":
             args.confidence = 4
+        # Other strings will be blocked by argparse
+
+    if args.exit_zero_severity_string is not None:
+        if args.exit_zero_severity_string == "all":
+            args.exit_zero_severity = 1
+        elif args.exit_zero_severity_string == "low":
+            args.exit_zero_severity = 2
+        elif args.exit_zero_severity_string == "medium":
+            args.exit_zero_severity = 3
+        elif args.exit_zero_severity_string == "high":
+            args.exit_zero_severity = 4
         # Other strings will be blocked by argparse
 
     try:
@@ -520,8 +536,13 @@ def main():
                          args.output_format,
                          args.msg_template)
 
-    if (b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
-            and not args.exit_zero):
+    if args.exit_zero:
+        sys.exit(0)
+
+    if "exit_zero_severity" in args and not b_mgr.above_threshold_results(args.exit_zero_severity):
+        sys.exit(0)
+
+    if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:
         sys.exit(1)
     else:
         sys.exit(0)

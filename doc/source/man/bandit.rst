@@ -70,6 +70,8 @@ OPTIONS
   --ini INI_PATH        path to a .bandit file that supplies command line
                         arguments
   --exit-zero           exit with 0, even with results found
+  --exit-zero-severity  control which severity makes bandit to exit with zero status code.
+                        Lower severities to the specified one are included implicitly
   --version             show program's version number and exit
 
 CUSTOM FORMATTING

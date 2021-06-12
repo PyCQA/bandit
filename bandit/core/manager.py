@@ -320,6 +320,24 @@ class BanditManager(object):
         self.results.extend(res.tester.results)
         return score
 
+    def above_threshold_results(self, exit_zero_severity):
+        """
+        this method takes args.exit_zero_severity and checkes the count of results of all severities above the defined exit zero severity.
+        if any of the above severities reports > 0 results this method returns True else it returns False
+        """
+        items_in_rankings = len(b_constants.RANKING)
+        # this is the minimal level we shouldn't exit with 0
+        non_exit_zero_severity = exit_zero_severity + 1
+
+        while non_exit_zero_severity <= items_in_rankings:
+            some_var = b_constants.RANKING[non_exit_zero_severity - 1]
+            results_count = self.results_count(sev_filter=some_var)
+            non_exit_zero_severity += 1
+
+            if results_count > 0:
+                return True
+
+        return False
 
 def _get_files_from_dir(files_dir, included_globs=None,
                         excluded_path_strings=None):
