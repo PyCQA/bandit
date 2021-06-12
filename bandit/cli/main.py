@@ -261,15 +261,20 @@ def main():
         '--ini', dest='ini_path', action='store', default=None,
         help='path to a .bandit file that supplies command line arguments'
     )
-    parser.add_argument('--exit-zero', action='store_true', dest='exit_zero',
-                        default=False, help='exit with 0, '
-                                            'even with results found')
-    parser.add_argument(
+    exit_zero_group = parser.add_mutually_exclusive_group(required=False)
+    exit_zero_group.add_argument(
+        '--exit-zero', action='store_true', dest='exit_zero', default=False,
+        help='exit with 0, even with results found'
+    )
+    exit_zero_group.add_argument(
         '--exit-zero-severity', dest='exit_zero_severity_string',
         action='store', default=None,
         help='control which severity makes bandit to exit with zero '
              'status code. Lower severities to the specified one are '
-             'included implicitly'
+             'included implicitly '
+             '(low for LOW,  '
+             'medium for MEDIUM, '
+             'high for HIGH).'
     )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
