@@ -270,7 +270,7 @@ def main():
         help='control which severity makes bandit to exit with zero '
              'status code. Lower severities to the specified one are '
              'included implicitly'
-            )
+    )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
         '--version', action='version',
