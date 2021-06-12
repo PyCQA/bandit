@@ -265,9 +265,11 @@ def main():
                         default=False, help='exit with 0, '
                                             'even with results found')
     parser.add_argument(
-        '--exit-zero-severity', dest='exit_zero_severity_string', action='store', default=None,
-        help='control which severity makes bandit to exit with zero status code. '
-             'Lower severities to the specified one are included implicitly'
+        '--exit-zero-severity', dest='exit_zero_severity_string',
+        action='store', default=None,
+        help='control which severity makes bandit to exit with zero '
+             'status code. Lower severities to the specified one are '
+             'included implicitly'
             )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
@@ -539,7 +541,8 @@ def main():
     if args.exit_zero:
         sys.exit(0)
 
-    if "exit_zero_severity" in args and not b_mgr.above_threshold_results(args.exit_zero_severity):
+    if ("exit_zero_severity" in args
+            and not b_mgr.above_threshold_results(args.exit_zero_severity)):
         sys.exit(0)
 
     if b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0:

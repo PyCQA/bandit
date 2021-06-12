@@ -294,7 +294,7 @@ class BanditCLIMainTests(testtools.TestCase):
 
     @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o',
                              'output', '--exit-zero-severity', 'low'])
-    def test_main_exit_with_results_and_with_exit_zero_severity_flag_set_to_some_value_returning_true(self):
+    def test_main_exit_with_results_and_with_ezs_flag_set_returning_true(self):
         # Test that bandit exits with 0 on results and zero flag
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
@@ -303,23 +303,24 @@ class BanditCLIMainTests(testtools.TestCase):
         with mock.patch('bandit.core.manager.BanditManager.results_count'
                         ) as mock_mgr_results_ct:
             mock_mgr_results_ct.return_value = 2
-            with mock.patch('bandit.core.manager.BanditManager.above_threshold_results'
-                            ) as mock_mgr_above_threshold_results_ct:
+            with mock.patch(
+                    'bandit.core.manager.BanditManager.above_threshold_results'
+                    ) as mock_mgr_above_threshold_results_ct:
                 mock_mgr_above_threshold_results_ct.return_value = True
-
 
                 self.assertRaisesRegex(SystemExit, '1', bandit.main)
 
     @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test', '-o',
                              'output', '--exit-zero-severity', 'medium'])
-    def test_main_exit_with_results_and_with_exit_zero_severity_flag_set_to_some_value_returning_false(self):
+    def test_main_exit_with_results_and_with_ezs_flag_returning_false(self):
         # Test that bandit exits with 0 on results and zero flag
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
         with open('bandit.yaml', 'wt') as fd:
             fd.write(bandit_config_content)
-        with mock.patch('bandit.core.manager.BanditManager.above_threshold_results'
-                        ) as mock_mgr_above_threshold_results_ct:
+        with mock.patch(
+                'bandit.core.manager.BanditManager.above_threshold_results'
+                ) as mock_mgr_above_threshold_results_ct:
             mock_mgr_above_threshold_results_ct.return_value = False
 
             self.assertRaisesRegex(SystemExit, '0', bandit.main)

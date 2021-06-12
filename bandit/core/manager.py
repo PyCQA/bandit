@@ -321,10 +321,18 @@ class BanditManager(object):
         return score
 
     def above_threshold_results(self, exit_zero_severity):
-        """
-        this method takes args.exit_zero_severity and checkes the count of results of all severities above the defined exit zero severity.
-        if any of the above severities reports > 0 results this method returns True else it returns False
-        """
+        '''Check the above threshold results
+
+        this method takes args.exit_zero_severity and checkes the count
+        of results of all severities above the defined exit zero severity.
+        if any of the above severities reports > 0 results this method
+        returns True else it returns False
+
+        :param exit_zero_severity: integer value converted from
+                                   exit_zero_severity_string
+        :return: bool value depending on the results
+        '''
+
         items_in_rankings = len(b_constants.RANKING)
         # this is the minimal level we shouldn't exit with 0
         non_exit_zero_severity = exit_zero_severity + 1
@@ -338,6 +346,7 @@ class BanditManager(object):
                 return True
 
         return False
+
 
 def _get_files_from_dir(files_dir, included_globs=None,
                         excluded_path_strings=None):
