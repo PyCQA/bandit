@@ -4,9 +4,9 @@
 
 import logging
 import os
+from unittest import mock
 
 import fixtures
-import mock
 import testtools
 
 from bandit.cli import main as bandit
