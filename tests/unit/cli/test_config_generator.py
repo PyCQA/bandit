@@ -6,8 +6,8 @@
 
 import importlib
 import logging
+from unittest import mock
 
-import mock
 import testtools
 import yaml
 
