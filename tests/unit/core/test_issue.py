@@ -4,7 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import mock
+from unittest import mock
+
 import testtools
 
 import bandit
