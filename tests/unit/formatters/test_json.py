@@ -5,8 +5,8 @@
 import collections
 import json
 import tempfile
+from unittest import mock
 
-import mock
 import testtools
 
 import bandit
