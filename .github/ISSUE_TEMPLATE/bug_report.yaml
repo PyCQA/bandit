@@ -24,11 +24,7 @@ body:
     attributes:
       label: To Reproduce
       description: Steps to reproduce the behavior
-      value: |
-      1. Go to ...
-      2. Click on ...
-      3. Scroll down to ...
-      4. See error"
+      value: ""
     validations:
       required: true
 
