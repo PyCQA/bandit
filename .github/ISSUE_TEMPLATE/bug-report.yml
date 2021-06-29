@@ -1,8 +1,6 @@
-name: "\U0001F41B Bug report"
-about: Create a report to help us improve
-title: ''
+name: 🐛 Bug report
+description: Create a report to help us improve
 labels: bug
-assignees: ''
 
 body:
   - type: markdown
@@ -15,16 +13,20 @@ body:
     attributes:
       label: Describe the bug
       description: A clear and concise description of what the bug is.
-      value: ""
     validations:
       required: true
 
   - type: textarea
-    id: what-happened
+    id: reproduction-steps
     attributes:
-      label: To Reproduce
+      label: Reproduction steps
       description: Steps to reproduce the behavior
-      value: ""
+      value: |
+        1.
+        2.
+        3.
+        ...
+      render: bash
     validations:
       required: true
 
@@ -33,7 +35,6 @@ body:
     attributes:
       label: Expected behavior
       description: A clear and concise description of what you expected to happen.
-      value: ""
     validations:
       required: true
 
@@ -75,6 +76,3 @@ body:
     attributes:
       label: Additional context
       description: Add any other context about the problem here.
-      value: ""
-    validations:
-      required: true
