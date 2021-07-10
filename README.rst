@@ -117,6 +117,8 @@ This is useful for ignoring known vulnerabilities that you believe are non-issue
 Version control integration
 ---------------------------
 
+- pre-commit
+
 Use `pre-commit <https://pre-commit.com/>`_. Once you `have it
 installed <https://pre-commit.com/#install>`_, add this to the
 `.pre-commit-config.yaml` in your repository
@@ -130,6 +132,14 @@ installed <https://pre-commit.com/#install>`_, add this to the
 
 
 Then run `pre-commit install` and you're ready to go.
+
+- Mega-Linter
+
+Bandit is natively embedded within `MegaLinter <https://nvuillam.github.io/mega-linter/descriptors/python_bandit/>`_
+
+You can define it as a CI job using this command::
+
+    npx mega-linter-runner --install
 
 Configuration
 -------------
