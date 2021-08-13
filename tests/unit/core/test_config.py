@@ -5,10 +5,10 @@
 import os
 import tempfile
 import textwrap
+from unittest import mock
 import uuid
 
 import fixtures
-import mock
 import testtools
 
 from bandit.core import config

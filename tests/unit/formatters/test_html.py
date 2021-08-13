@@ -5,9 +5,9 @@
 
 import collections
 import tempfile
+from unittest import mock
 
 import bs4
-import mock
 import testtools
 
 import bandit
