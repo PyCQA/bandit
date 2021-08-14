@@ -39,7 +39,7 @@ the specific tests that are to be run (and not their parameters) then using
 
 Also you can configure bandit via
 `pyproject.toml <https://www.python.org/dev/peps/pep-0518/>`_ file. In this
-case you would explicitly specify the path to configuration via `-s` too.
+case you would explicitly specify the path to configuration via `-c` too.
 For example:
 
 .. code-block:: TOML
