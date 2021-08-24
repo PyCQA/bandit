@@ -6,6 +6,7 @@ bad = random.random()
 bad = random.randrange()
 bad = random.randint()
 bad = random.choice()
+bad = random.choices()
 bad = random.uniform()
 bad = random.triangular()
 
