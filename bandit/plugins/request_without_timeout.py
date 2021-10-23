@@ -57,7 +57,7 @@ def request_without_timeout(context):
         if context.check_call_arg_value('timeout') is None:
             issue = bandit.Issue(
                 severity=bandit.MEDIUM,
-                confidence=bandit.HIGH,
+                confidence=bandit.LOW,
                 text="Requests call without timeout"
             )
             return issue
@@ -65,7 +65,7 @@ def request_without_timeout(context):
         if context.check_call_arg_value('timeout', 'None'):
             issue = bandit.Issue(
                 severity=bandit.MEDIUM,
-                confidence=bandit.HIGH,
+                confidence=bandit.LOW,
                 text="Requests call with timeout set to None"
             )
             return issue
