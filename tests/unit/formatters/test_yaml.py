@@ -70,7 +70,7 @@ class YamlFormatterTests(testtools.TestCase):
                           self.issue.confidence)
 
         with open(self.tmp_fname) as f:
-            data = yaml.load(f.read())
+            data = yaml.load(f.read(), Loader=yaml.SafeLoader)
             self.assertIsNotNone(data['generated_at'])
             self.assertEqual(self.tmp_fname, data['results'][0]['filename'])
             self.assertEqual(self.issue.severity,
