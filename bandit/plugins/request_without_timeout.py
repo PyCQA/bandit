@@ -5,7 +5,7 @@
 r"""
 =======================================
 B113: Test for missing requests timeout
-=============================================
+=======================================
 
 This plugin test checks for ``requests`` calls without a timeout specified.
 
