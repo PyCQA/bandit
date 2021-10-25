@@ -64,8 +64,7 @@ You can test any changes with tox:
 ```shell script
 pip install tox
 tox -e pep8
-tox -e py27
-tox -e py35
+tox -e py37
 tox -e docs
 tox -e cover
 ```
