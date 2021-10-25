@@ -40,6 +40,7 @@ Bandit will return a MEDIUM severity error.
 .. seealso::
 
  - https://2.python-requests.org/en/master/user/quickstart/#timeouts
+    .. versionadded:: 1.7.1
 
 """  # noqa: E501
 
