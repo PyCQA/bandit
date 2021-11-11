@@ -126,25 +126,55 @@ class BanditCLIMainTests(testtools.TestCase):
 
     def test_log_option_source_arg_val(self):
         # Test that the command argument value is returned when provided
+        # with None or a string default value
         arg_val = 'file'
         ini_val = 'vuln'
         option_name = 'aggregate'
-        self.assertEqual(arg_val, bandit._log_option_source(arg_val, ini_val,
-                         option_name))
+        for default_val in (None, 'default'):
+            self.assertEqual(arg_val, bandit._log_option_source(
+                                default_val,
+                                arg_val,
+                                ini_val,
+                                option_name
+                            ))
 
     def test_log_option_source_ini_value(self):
         # Test that the ini value is returned when no command argument is
         # provided
+        default_val = None
         ini_val = 'vuln'
         option_name = 'aggregate'
-        self.assertEqual(ini_val, bandit._log_option_source(None, ini_val,
-                         option_name))
+        self.assertEqual(ini_val, bandit._log_option_source(
+                            default_val,
+                            None,
+                            ini_val,
+                            option_name
+                        ))
+
+    def test_log_option_source_ini_val_with_str_default_and_no_arg_val(self):
+        # Test that the ini value is returned when no command argument is
+        # provided
+        default_val = "file"
+        arg_val = 'file'
+        ini_val = 'vuln'
+        option_name = 'aggregate'
+        self.assertEqual(ini_val, bandit._log_option_source(
+                            default_val,
+                            arg_val,
+                            ini_val,
+                            option_name
+                        ))
 
     def test_log_option_source_no_values(self):
         # Test that None is returned when no command argument or ini value are
         # provided
         option_name = 'aggregate'
-        self.assertIsNone(bandit._log_option_source(None, None, option_name))
+        self.assertIsNone(bandit._log_option_source(
+                            None,
+                            None,
+                            None,
+                            option_name
+                          ))
 
     @mock.patch('sys.argv', ['bandit', '-c', 'bandit.yaml', 'test'])
     def test_main_config_unopenable(self):
