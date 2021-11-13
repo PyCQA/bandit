@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import ast
 import re
 
@@ -12,7 +10,7 @@ from bandit.core import test_properties as test
 
 # yuck, regex: starts with a windows drive letter (eg C:)
 # or one of our path delimeter characters (/, \, .)
-full_path_match = re.compile(r'^(?:[A-Za-z](?=\:)|[\\\/\.])')
+full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")
 
 
 def _evaluate_shell_call(context):
@@ -25,61 +23,62 @@ def _evaluate_shell_call(context):
 
 
 def gen_config(name):
-    if name == 'shell_injection':
+    if name == "shell_injection":
         return {
             # Start a process using the subprocess module, or one of its
             # wrappers.
-            'subprocess':
-            ['subprocess.Popen',
-             'subprocess.call',
-             'subprocess.check_call',
-             'subprocess.check_output',
-             'subprocess.run'],
-
+            "subprocess": [
+                "subprocess.Popen",
+                "subprocess.call",
+                "subprocess.check_call",
+                "subprocess.check_output",
+                "subprocess.run",
+            ],
             # Start a process with a function vulnerable to shell injection.
-            'shell':
-            ['os.system',
-             'os.popen',
-             'os.popen2',
-             'os.popen3',
-             'os.popen4',
-             'popen2.popen2',
-             'popen2.popen3',
-             'popen2.popen4',
-             'popen2.Popen3',
-             'popen2.Popen4',
-             'commands.getoutput',
-             'commands.getstatusoutput'],
-
+            "shell": [
+                "os.system",
+                "os.popen",
+                "os.popen2",
+                "os.popen3",
+                "os.popen4",
+                "popen2.popen2",
+                "popen2.popen3",
+                "popen2.popen4",
+                "popen2.Popen3",
+                "popen2.Popen4",
+                "commands.getoutput",
+                "commands.getstatusoutput",
+            ],
             # Start a process with a function that is not vulnerable to shell
             # injection.
-            'no_shell':
-            ['os.execl',
-             'os.execle',
-             'os.execlp',
-             'os.execlpe',
-             'os.execv',
-             'os.execve',
-             'os.execvp',
-             'os.execvpe',
-             'os.spawnl',
-             'os.spawnle',
-             'os.spawnlp',
-             'os.spawnlpe',
-             'os.spawnv',
-             'os.spawnve',
-             'os.spawnvp',
-             'os.spawnvpe',
-             'os.startfile']
-            }
+            "no_shell": [
+                "os.execl",
+                "os.execle",
+                "os.execlp",
+                "os.execlpe",
+                "os.execv",
+                "os.execve",
+                "os.execvp",
+                "os.execvpe",
+                "os.spawnl",
+                "os.spawnle",
+                "os.spawnlp",
+                "os.spawnlpe",
+                "os.spawnv",
+                "os.spawnve",
+                "os.spawnvp",
+                "os.spawnvpe",
+                "os.startfile",
+            ],
+        }
 
 
 def has_shell(context):
     keywords = context.node.keywords
     result = False
-    if 'shell' in context.call_keywords:
+    if "shell" in context.call_keywords:
         for key in keywords:
-            if key.arg == 'shell':
+            if key.arg == "shell":
                 val = key.value
                 if isinstance(val, ast.Num):
                     result = bool(val.n)
@@ -87,7 +86,7 @@ def has_shell(context):
                     result = bool(val.elts)
                 elif isinstance(val, ast.Dict):
                     result = bool(val.keys)
-                elif isinstance(val, ast.Name) and val.id in ['False', 'None']:
+                elif isinstance(val, ast.Name) and val.id in ["False", "None"]:
                     result = False
                 elif isinstance(val, ast.NameConstant):
                     result = val.value
@@ -96,9 +95,9 @@ def has_shell(context):
     return result
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B602')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B602")
 def subprocess_popen_with_shell_equals_true(context, config):
     """**B602: Test for use of popen with shell equals true**
 
@@ -190,7 +189,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
 
     .. versionadded:: 0.9.0
     """  # noqa: E501
-    if config and context.call_function_name_qual in config['subprocess']:
+    if config and context.call_function_name_qual in config["subprocess"]:
         if has_shell(context):
             if len(context.call_args) > 0:
                 sev = _evaluate_shell_call(context)
@@ -198,24 +197,24 @@ def subprocess_popen_with_shell_equals_true(context, config):
                     return bandit.Issue(
                         severity=bandit.LOW,
                         confidence=bandit.HIGH,
-                        text='subprocess call with shell=True seems safe, but '
-                             'may be changed in the future, consider '
-                             'rewriting without shell',
-                        lineno=context.get_lineno_for_call_arg('shell'),
+                        text="subprocess call with shell=True seems safe, but "
+                        "may be changed in the future, consider "
+                        "rewriting without shell",
+                        lineno=context.get_lineno_for_call_arg("shell"),
                     )
                 else:
                     return bandit.Issue(
                         severity=bandit.HIGH,
                         confidence=bandit.HIGH,
-                        text='subprocess call with shell=True identified, '
-                             'security issue.',
-                        lineno=context.get_lineno_for_call_arg('shell'),
+                        text="subprocess call with shell=True identified, "
+                        "security issue.",
+                        lineno=context.get_lineno_for_call_arg("shell"),
                     )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B603')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B603")
 def subprocess_without_shell_equals_true(context, config):
     """**B603: Test for use of subprocess without shell equals true**
 
@@ -281,20 +280,20 @@ def subprocess_without_shell_equals_true(context, config):
 
     .. versionadded:: 0.9.0
     """  # noqa: E501
-    if config and context.call_function_name_qual in config['subprocess']:
+    if config and context.call_function_name_qual in config["subprocess"]:
         if not has_shell(context):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
-                text='subprocess call - check for execution of untrusted '
-                     'input.',
-                lineno=context.get_lineno_for_call_arg('shell'),
+                text="subprocess call - check for execution of untrusted "
+                "input.",
+                lineno=context.get_lineno_for_call_arg("shell"),
             )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B604')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B604")
 def any_other_function_with_shell_equals_true(context, config):
     """**B604: Test for any function with shell equals true**
 
@@ -359,20 +358,20 @@ def any_other_function_with_shell_equals_true(context, config):
 
     .. versionadded:: 0.9.0
     """  # noqa: E501
-    if config and context.call_function_name_qual not in config['subprocess']:
+    if config and context.call_function_name_qual not in config["subprocess"]:
         if has_shell(context):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
-                text='Function call with shell=True parameter identified, '
-                     'possible security issue.',
-                lineno=context.get_lineno_for_call_arg('shell'),
-                )
+                text="Function call with shell=True parameter identified, "
+                "possible security issue.",
+                lineno=context.get_lineno_for_call_arg("shell"),
+            )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B605')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B605")
 def start_process_with_a_shell(context, config):
     """**B605: Test for starting a process with a shell**
 
@@ -443,29 +442,29 @@ def start_process_with_a_shell(context, config):
 
     .. versionadded:: 0.10.0
     """  # noqa: E501
-    if config and context.call_function_name_qual in config['shell']:
+    if config and context.call_function_name_qual in config["shell"]:
         if len(context.call_args) > 0:
             sev = _evaluate_shell_call(context)
             if sev == bandit.LOW:
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text='Starting a process with a shell: '
-                         'Seems safe, but may be changed in the future, '
-                         'consider rewriting without shell'
+                    text="Starting a process with a shell: "
+                    "Seems safe, but may be changed in the future, "
+                    "consider rewriting without shell",
                 )
             else:
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.HIGH,
-                    text='Starting a process with a shell, possible injection'
-                         ' detected, security issue.'
+                    text="Starting a process with a shell, possible injection"
+                    " detected, security issue.",
                 )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B606')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B606")
 def start_process_with_no_shell(context, config):
     """**B606: Test for starting a process with no shell**
 
@@ -542,17 +541,17 @@ def start_process_with_no_shell(context, config):
     .. versionadded:: 0.10.0
     """  # noqa: E501
 
-    if config and context.call_function_name_qual in config['no_shell']:
+    if config and context.call_function_name_qual in config["no_shell"]:
         return bandit.Issue(
             severity=bandit.LOW,
             confidence=bandit.MEDIUM,
-            text='Starting a process without a shell.'
+            text="Starting a process without a shell.",
         )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B607')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B607")
 def start_process_with_partial_path(context, config):
     """**B607: Test for starting a process with a partial path**
 
@@ -627,9 +626,11 @@ def start_process_with_partial_path(context, config):
     """
 
     if config and len(context.call_args):
-        if(context.call_function_name_qual in config['subprocess'] or
-           context.call_function_name_qual in config['shell'] or
-           context.call_function_name_qual in config['no_shell']):
+        if (
+            context.call_function_name_qual in config["subprocess"]
+            or context.call_function_name_qual in config["shell"]
+            or context.call_function_name_qual in config["no_shell"]
+        ):
 
             node = context.node.args[0]
             # some calls take an arg list, check the first part
@@ -641,5 +642,5 @@ def start_process_with_partial_path(context, config):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text='Starting a process with a partial executable path'
+                    text="Starting a process with a partial executable path",
                 )

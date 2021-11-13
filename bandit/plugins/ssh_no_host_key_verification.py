@@ -1,7 +1,6 @@
 # Copyright (c) 2018 VMware, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==========================================
 B507: Test for missing host key validation
@@ -32,24 +31,28 @@ verification is disabled, Bandit will return a HIGH severity error.
 .. versionadded:: 1.5.1
 
 """
-
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B507')
+@test.checks("Call")
+@test.test_id("B507")
 def ssh_no_host_key_verification(context):
-    if (context.is_module_imported_like('paramiko') and
-            context.call_function_name == 'set_missing_host_key_policy'):
-        if (context.call_args and
-                context.call_args[0] in ['AutoAddPolicy', 'WarningPolicy']):
+    if (
+        context.is_module_imported_like("paramiko")
+        and context.call_function_name == "set_missing_host_key_policy"
+    ):
+        if context.call_args and context.call_args[0] in [
+            "AutoAddPolicy",
+            "WarningPolicy",
+        ]:
             issue = bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.MEDIUM,
-                text='Paramiko call with policy set to automatically trust '
-                     'the unknown host key.',
+                text="Paramiko call with policy set to automatically trust "
+                "the unknown host key.",
                 lineno=context.get_lineno_for_call_arg(
-                    'set_missing_host_key_policy'),
+                    "set_missing_host_key_policy"
+                ),
             )
             return issue

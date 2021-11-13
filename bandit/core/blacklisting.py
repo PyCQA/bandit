@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2016 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import ast
 import fnmatch
 
@@ -12,9 +10,12 @@ from bandit.core import issue
 
 def report_issue(check, name):
     return issue.Issue(
-        severity=check.get('level', 'MEDIUM'), confidence='HIGH',
-        text=check['message'].replace('{name}', name),
-        ident=name, test_id=check.get("id", 'LEGACY'))
+        severity=check.get("level", "MEDIUM"),
+        confidence="HIGH",
+        text=check["message"].replace("{name}", name),
+        ident=name,
+        test_id=check.get("id", "LEGACY"),
+    )
 
 
 def blacklist(context, config):
@@ -30,9 +31,9 @@ def blacklist(context, config):
     blacklists = config
     node_type = context.node.__class__.__name__
 
-    if node_type == 'Call':
+    if node_type == "Call":
         func = context.node.func
-        if isinstance(func, ast.Name) and func.id == '__import__':
+        if isinstance(func, ast.Name) and func.id == "__import__":
             if len(context.node.args):
                 if isinstance(context.node.args[0], ast.Str):
                     name = context.node.args[0].s
@@ -50,13 +51,13 @@ def blacklist(context, config):
                 if context.call_args_count > 0:
                     name = context.call_args[0]
                 else:
-                    name = context.call_keywords['name']
+                    name = context.call_keywords["name"]
         for check in blacklists[node_type]:
-            for qn in check['qualnames']:
+            for qn in check["qualnames"]:
                 if name is not None and fnmatch.fnmatch(name, qn):
                     return report_issue(check, name)
 
-    if node_type.startswith('Import'):
+    if node_type.startswith("Import"):
         prefix = ""
         if node_type == "ImportFrom":
             if context.node.module is not None:
@@ -64,6 +65,6 @@ def blacklist(context, config):
 
         for check in blacklists[node_type]:
             for name in context.node.names:
-                for qn in check['qualnames']:
+                for qn in check["qualnames"]:
                     if (prefix + name.name).startswith(qn):
                         return report_issue(check, name.name)
