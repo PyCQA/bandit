@@ -71,14 +71,33 @@ def _check_string(data):
     return SIMPLE_SQL_RE.search(data) is not None
 
 
+def _bin_op_string(node):
+    def _gather_nodes(node, leaves):
+        if isinstance(node.left, ast.BinOp):
+            _gather_nodes(node.left, leaves)
+        else:
+            leaves.append(node.left)
+
+        if isinstance(node.right, ast.BinOp):
+            _gather_nodes(node.right, leaves)
+        else:
+            leaves.append(node.right)
+
+    leaves = []
+    if isinstance(node, ast.BinOp):
+        _gather_nodes(node, leaves)
+    return " ".join([x.s for x in leaves if isinstance(x, ast.Str)])
+
+
 def _evaluate_ast(node):
     wrapper = None
     statement = ''
 
-    if isinstance(node._bandit_parent, ast.BinOp):
-        out = utils.concat_string(node, node._bandit_parent)
-        wrapper = out[0]._bandit_parent
-        statement = out[1]
+    if isinstance(node, ast.BinOp):
+        # Add, Mod, etc.
+        statement = _bin_op_string(node)
+        wrapper = node._bandit_parent
+
     elif (isinstance(node._bandit_parent, ast.Attribute)
           and node._bandit_parent.attr == 'format'):
         statement = node.s
@@ -97,10 +116,15 @@ def _evaluate_ast(node):
         return (False, statement)
 
 
-@test.checks('Str')
+@test.checks('Str', 'BinOp')
 @test.test_id('B608')
 def hardcoded_sql_expressions(context):
-    val = _evaluate_ast(context.node)
+    node = context.node
+    parent = node._bandit_parent
+    if isinstance(parent, ast.BinOp):
+        return
+
+    val = _evaluate_ast(node)
     if _check_string(val[1]):
         return bandit.Issue(
             severity=bandit.MEDIUM,

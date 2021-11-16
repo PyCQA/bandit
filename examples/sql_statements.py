@@ -7,6 +7,7 @@ query = "DELETE FROM foo WHERE id = '%s'" % identifier
 query = "UPDATE foo SET value = 'b' WHERE id = '%s'" % identifier
 query = """WITH cte AS (SELECT x FROM foo)
 SELECT x FROM cte WHERE x = '%s'""" % identifier
+"SELECT a " + "FROM " + vuln
 # bad alternate forms
 query = "SELECT * FROM foo WHERE id = '" + identifier + "'"
 query = "SELECT * FROM foo WHERE id = '{}'".format(identifier)
