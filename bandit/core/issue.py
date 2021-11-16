@@ -83,7 +83,7 @@ class Issue:
         ident=None,
         lineno=None,
         test_id="",
-        col_offset=0,
+        col_offset=-1,
     ):
         self.severity = severity
         self.cwe = Cwe(cwe)
