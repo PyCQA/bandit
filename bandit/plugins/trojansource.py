@@ -14,7 +14,7 @@ to reorder source code characters in a way that changes its logic.
 
 .. code-block:: none
 
-    >> Issue: [B113:trojansource] A Python source file seems to contain bidirectional control characters ('\u202e').
+    >> Issue: [B113:trojansource] A Python source file contains bidirectional control characters ('\u202e').
        Severity: High   Confidence: Medium
        Location: examples/trojansource.py:0:0
 
@@ -23,9 +23,11 @@ to reorder source code characters in a way that changes its logic.
  .. [1] https://trojansource.codes/
  .. [2] https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-42574
 
-.. versionadded:: 1.7.1
+.. versionadded:: 1.7.2
 
 """  # noqa: E501
+
+from tokenize import detect_encoding
 
 import bandit
 from bandit.core import test_properties as test
@@ -37,7 +39,9 @@ BIDI_CHARACTERS = ('\u202A', '\u202B', '\u202C', '\u202D', '\u202E', '\u2066', '
 @test.test_id('B113')
 @test.checks('File')
 def trojansource(context):
-    with open(context.filename, encoding='utf8') as src_file:
+    with open(context.filename, 'rb') as src_file:
+        encoding, _ = detect_encoding(src_file.readline)
+    with open(context.filename, encoding=encoding) as src_file:
         for lineno, line in enumerate(src_file.readlines(), start=1):
             for char in BIDI_CHARACTERS:
                 try:
@@ -47,7 +51,7 @@ def trojansource(context):
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.MEDIUM,
-                    text="A Python source file seems to contain bidirectional control characters (%r)." % char,
+                    text="A Python source file contains bidirectional control characters (%r)." % char,
                     lineno=lineno,
                     col_offset=col_offset,
                 )
