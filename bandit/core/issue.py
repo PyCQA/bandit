@@ -35,10 +35,9 @@ class Issue(object):
                                   self.confidence, self.fname, self.lineno)
 
     def __eq__(self, other):
-        # if the issue text, severity, confidence, and filename match, it's
+        # if the issue severity, confidence, and filename match, it's
         # the same issue from our perspective
-        match_types = ['text', 'severity', 'confidence', 'fname', 'test',
-                       'test_id']
+        match_types = ['severity', 'confidence', 'fname', 'test', 'test_id']
         return all(getattr(self, field) == getattr(other, field)
                    for field in match_types)
 

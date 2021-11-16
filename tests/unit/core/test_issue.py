@@ -94,9 +94,6 @@ class IssueTests(testtools.TestCase):
         # confidence doesn't match
         self.assertNotEqual(issue_a, issue_c)
 
-        # text doesn't match
-        self.assertNotEqual(issue_a, issue_d)
-
         # filename doesn't match
         self.assertNotEqual(issue_a, issue_e)
 
