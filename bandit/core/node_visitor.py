@@ -296,7 +296,8 @@ class BanditNodeVisitor:
         """
         f_ast = ast.parse(data)
         self.generic_visit(f_ast)
-        # Run tests that do not require access to the AST but only to the whole file source:
+        # Run tests that do not require access to the AST,
+        # but only to the whole file source:
         self.context = {
             'filename': self.fname,
             'lineno': 0,

@@ -33,7 +33,8 @@ import bandit
 from bandit.core import test_properties as test
 
 
-BIDI_CHARACTERS = ('\u202A', '\u202B', '\u202C', '\u202D', '\u202E', '\u2066', '\u2067', '\u2068', '\u2069')
+BIDI_CHARACTERS = ('\u202A', '\u202B', '\u202C', '\u202D', '\u202E',
+                   '\u2066', '\u2067', '\u2068', '\u2069')
 
 
 @test.test_id('B113')
@@ -48,10 +49,12 @@ def trojansource(context):
                     col_offset = line.index(char) + 1
                 except ValueError:
                     continue
+                text = ("A Python source file contains bidirectional"
+                        " control characters (%r)." % char)
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.MEDIUM,
-                    text="A Python source file contains bidirectional control characters (%r)." % char,
+                    text=text,
                     lineno=lineno,
                     col_offset=col_offset,
                 )
