@@ -59,7 +59,6 @@ class RuntimeTests(testtools.TestCase):
         )
         self.assertIn("usage: bandit [-h]", output)
         self.assertIn("positional arguments:", output)
-        self.assertIn("optional arguments:", output)
         self.assertIn("tests were discovered and loaded:", output)
 
     # test examples (use _test_example() to wrap in config location argument

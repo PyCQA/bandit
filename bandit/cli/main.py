@@ -80,16 +80,24 @@ def _init_extensions():
     return ext_loader.MANAGER
 
 
-def _log_option_source(arg_val, ini_val, option_name):
+def _log_option_source(default_val, arg_val, ini_val, option_name):
     """It's useful to show the source of each option."""
-    if arg_val:
-        LOG.info("Using command line arg for %s", option_name)
-        return arg_val
-    elif ini_val:
-        LOG.info("Using ini file for %s", option_name)
-        return ini_val
+    # When default value is not defined, arg_val and ini_val is deterministic
+    if default_val is None:
+        if arg_val:
+            LOG.info("Using command line arg for %s", option_name)
+            return arg_val
+        elif ini_val:
+            LOG.info("Using ini file for %s", option_name)
+            return ini_val
+        else:
+            return None
+    # No value passed to commad line and default value is used
+    elif default_val == arg_val:
+        return ini_val if ini_val else arg_val
+    # Certainly a value is passed to commad line
     else:
-        return None
+        return arg_val
 
 
 def _running_under_virtualenv():
@@ -354,16 +362,19 @@ def main():
     if ini_options:
         # prefer command line, then ini file
         args.excluded_paths = _log_option_source(
+            parser.get_default('excluded_paths'),
             args.excluded_paths,
             ini_options.get('exclude'),
             'excluded paths')
 
         args.skips = _log_option_source(
+            parser.get_default('skips'),
             args.skips,
             ini_options.get('skips'),
             'skipped tests')
 
         args.tests = _log_option_source(
+            parser.get_default('tests'),
             args.tests,
             ini_options.get('tests'),
             'selected tests')
@@ -373,6 +384,7 @@ def main():
             ini_targets = ini_targets.split(',')
 
         args.targets = _log_option_source(
+            parser.get_default('targets'),
             args.targets,
             ini_targets,
             'selected targets')
@@ -380,71 +392,85 @@ def main():
         # TODO(tmcpeak): any other useful options to pass from .bandit?
 
         args.recursive = _log_option_source(
+            parser.get_default('recursive'),
             args.recursive,
             ini_options.get('recursive'),
             'recursive scan')
 
         args.agg_type = _log_option_source(
+            parser.get_default('agg_type'),
             args.agg_type,
             ini_options.get('aggregate'),
             'aggregate output type')
 
         args.context_lines = _log_option_source(
+            parser.get_default('context_lines'),
             args.context_lines,
             ini_options.get('number'),
             'max code lines output for issue')
 
         args.profile = _log_option_source(
+            parser.get_default('profile'),
             args.profile,
             ini_options.get('profile'),
             'profile')
 
         args.severity = _log_option_source(
+            parser.get_default('severity'),
             args.severity,
             ini_options.get('level'),
             'severity level')
 
         args.confidence = _log_option_source(
+            parser.get_default('confidence'),
             args.confidence,
             ini_options.get('confidence'),
             'confidence level')
 
         args.output_format = _log_option_source(
+            parser.get_default('output_format'),
             args.output_format,
             ini_options.get('format'),
             'output format')
 
         args.msg_template = _log_option_source(
+            parser.get_default('msg_template'),
             args.msg_template,
             ini_options.get('msg-template'),
             'output message template')
 
         args.output_file = _log_option_source(
+            parser.get_default('output_file'),
             args.output_file,
             ini_options.get('output'),
             'output file')
 
         args.verbose = _log_option_source(
+            parser.get_default('verbose'),
             args.verbose,
             ini_options.get('verbose'),
             'output extra information')
 
         args.debug = _log_option_source(
+            parser.get_default('debug'),
             args.debug,
             ini_options.get('debug'),
             'debug mode')
 
         args.quiet = _log_option_source(
+            parser.get_default('quiet'),
             args.quiet,
             ini_options.get('quiet'),
             'silent mode')
 
         args.ignore_nosec = _log_option_source(
+            parser.get_default('ignore_nosec'),
             args.ignore_nosec,
             ini_options.get('ignore-nosec'),
             'do not skip lines with # nosec')
 
         args.baseline = _log_option_source(
+            parser.get_default('baseline'),
             args.baseline,
             ini_options.get('baseline'),
             'path of a baseline report')
