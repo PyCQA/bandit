@@ -540,10 +540,8 @@ def main():
                          args.output_format,
                          args.msg_template)
 
-    if args.exit_zero:
-        sys.exit(0)
-
-    if ("exit_zero_severity" in args
+    if (args.exit_zero
+            or "exit_zero_severity" in args
             and not b_mgr.above_threshold_results(args.exit_zero_severity)):
         sys.exit(0)
 
