@@ -191,6 +191,7 @@ purposes.
 |      |                     | - random.randrange                 |           |
 |      |                     | - random.randint                   |           |
 |      |                     | - random.choice                    |           |
+|      |                     | - random.choices                   |           |
 |      |                     | - random.uniform                   |           |
 |      |                     | - random.triangular                |           |
 +------+---------------------+------------------------------------+-----------+
@@ -447,6 +448,7 @@ def gen_blacklist():
          'random.randrange',
          'random.randint',
          'random.choice',
+         'random.choices',
          'random.uniform',
          'random.triangular'],
         'Standard pseudo-random generators are not suitable for '
