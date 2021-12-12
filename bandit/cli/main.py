@@ -268,13 +268,10 @@ def main():
     )
     exit_zero_group.add_argument(
         '--exit-zero-severity', dest='exit_zero_severity_string',
-        action='store', default=None,
+        action='store', default=None, choices=["all", "low", "medium", "high"],
         help='control which severity makes bandit to exit with zero '
              'status code. Lower severities to the specified one are '
-             'included implicitly '
-             '(low for LOW,  '
-             'medium for MEDIUM, '
-             'high for HIGH).'
+             'included implicitly. '
     )
     python_ver = sys.version.replace('\n', '')
     parser.add_argument(
