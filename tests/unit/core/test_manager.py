@@ -333,3 +333,38 @@ class ManagerTests(testtools.TestCase):
             {issue_a: [issue_a, issue_b], issue_b: [issue_a, issue_b]},
             manager._find_candidate_matches([issue_a, issue_b],
                                             [issue_a, issue_b, issue_c]))
+
+    def test_above_threshold_medium_severity_results_true(self):
+        levels = [constants.LOW, constants.MEDIUM]
+        self.manager.results = (
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
+        self.assertTrue(self.manager.above_threshold_results(2))
+
+    def test_above_threshold_high_severity_results_true(self):
+        levels = [constants.LOW, constants.HIGH]
+        self.manager.results = (
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
+        self.assertTrue(self.manager.above_threshold_results(2))
+
+    def test_above_threshold_low_severity_results_false(self):
+        levels = [constants.LOW]
+        self.manager.results = (
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
+        self.assertFalse(self.manager.above_threshold_results(2))
+
+    def test_above_threshold_medium_severity_results_false(self):
+        levels = [constants.MEDIUM]
+        self.manager.results = (
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
+        self.assertFalse(self.manager.above_threshold_results(3))
+
+    def test_above_threshold_high_severity_results_false(self):
+        levels = [constants.HIGH]
+        self.manager.results = (
+            [issue.Issue(severity=level, confidence=level)
+             for level in levels])
+        self.assertFalse(self.manager.above_threshold_results(4))
