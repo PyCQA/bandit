@@ -36,6 +36,7 @@ def hardcoded_password_string(context):
 
     - assigned to a variable that looks like a password
     - assigned to a dict key that looks like a password
+    - assigned to a class attribute that looks like a password
     - used in a comparison with a variable that looks like a password
 
     Variables are considered to look like a password if they have match any one
@@ -79,6 +80,9 @@ def hardcoded_password_string(context):
         for targ in node._bandit_parent.targets:
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
+            elif isinstance(targ, ast.Attribute) \
+                    and RE_CANDIDATES.search(targ.attr):
+                return _report(node.s)
 
     elif (isinstance(node._bandit_parent, ast.Subscript)
           and RE_CANDIDATES.search(node.s)):
@@ -103,6 +107,10 @@ def hardcoded_password_string(context):
         comp = node._bandit_parent
         if isinstance(comp.left, ast.Name):
             if RE_CANDIDATES.search(comp.left.id):
+                if isinstance(comp.comparators[0], ast.Str):
+                    return _report(comp.comparators[0].s)
+        elif isinstance(comp.left, ast.Attribute):
+            if RE_CANDIDATES.search(comp.left.attr):
                 if isinstance(comp.comparators[0], ast.Str):
                     return _report(comp.comparators[0].s)
 
