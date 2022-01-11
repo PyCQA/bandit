@@ -19,8 +19,12 @@ class Metrics:
 
     def __init__(self):
         self.data = dict()
-        self.data["_totals"] = {"loc": 0, "nosec": 0, "nosec_by_test": 0,
-                                "failed_nosec_by_test": 0}
+        self.data["_totals"] = {
+            "loc": 0,
+            "nosec": 0,
+            "nosec_by_test": 0,
+            "failed_nosec_by_test": 0,
+        }
 
         # initialize 0 totals for criteria and rank; this will be reset later
         for rank in constants.RANKING:
@@ -33,8 +37,12 @@ class Metrics:
         This starts a new metric collection name "fname" and makes is active.
         :param fname: the metrics unique name, normally the file name.
         """
-        self.data[fname] = {"loc": 0, "nosec": 0, "nosec_by_test": 0,
-                            "failed_nosec_by_test": 0}
+        self.data[fname] = {
+            "loc": 0,
+            "nosec": 0,
+            "nosec_by_test": 0,
+            "failed_nosec_by_test": 0,
+        }
         self.current = self.data[fname]
 
     def note_nosec(self, num=1):
@@ -54,8 +62,9 @@ class Metrics:
         self.current["nosec_by_test"] += num
 
     def note_failed_nosec_by_test(self, num=1):
-        """Note a test failed not caught when specific tests in comment used
+        """Note a test failed when using a nosec comment with specific tests.
 
+        e.g. # nosec B102, B607, but B602 failed.
         Increment the currently active metrics failed_nosec_by_test count.
         :param num: number of failed nosecs seen, defaults to 1
         """

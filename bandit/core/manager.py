@@ -22,8 +22,8 @@ from bandit.core import test_set as b_test_set
 
 
 LOG = logging.getLogger(__name__)
-NOSEC_SPECIFIC_IDS_IGNORE = re.compile(r"([bB][\d]+),?[ ]?")
-NOSEC_SPECIFIC_NAMES_IGNORE = re.compile(r"([a-z_]+),?[ ]?")
+NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
+NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z_]+),?)+", re.IGNORECASE)
 
 
 class BanditManager:
@@ -464,61 +464,39 @@ def _find_candidate_matches(unmatched_issues, results_list):
     return issue_candidates
 
 
-def _get_tests_from_nosec_comment(comment):
-    nosec_no_space = '#nosec'
-    nosec_space = '# nosec'
-    nospace = comment.find(nosec_no_space)
-    space = comment.find(nosec_space)
-    if nospace > -1:
-        start_comment = nospace
-        nosec_length = len(nosec_no_space)
-    elif space > -1:
-        start_comment = space
-        nosec_length = len(nosec_space)
-    else:
-        # None is explicitly different to empty set, None indicates no
-        # nosec comment on a line
-        return None
-
-    # find the next # separator
-    end = comment.find('#', start_comment + 1)
-    # if we don't find one, set end index to the length
-    if end == -1:
-        end = len(comment)
-
-    # extract text after #[ ]?nosec and the end index, this is just the
-    # list of potential test ids or names
-    return comment[start_comment + nosec_length:end]
+def _find_test_id_from_nosec_string(extman, match):
+    plugin_id = extman.check_id(match)
+    if plugin_id:
+        return match
+    # Finding by short_id didn't work, let's check the plugin name
+    plugin_id = extman.get_plugin_id(match)
+    if not plugin_id:
+        # Name and short id didn't work:
+        LOG.warning(
+            "Test in comment: %s is not a test name or id, ignoring", match
+        )
+    return plugin_id  # We want to return None or the string here regardless
 
 
 def _parse_nosec_comment(comment):
-    nosec_tests = _get_tests_from_nosec_comment(comment)
-    if nosec_tests is None:
+    found_no_sec_comment = NOSEC_COMMENT.search(comment)
+    if not found_no_sec_comment:
+        # there was no nosec comment
         return None
+
+    matches = found_no_sec_comment.groupdict()
+    nosec_tests = matches.get("tests", set())
+
     # empty set indicates that there was a nosec comment without specific
     # test ids or names
     test_ids = set()
     if nosec_tests:
         extman = extension_loader.MANAGER
-        # check for IDS to ignore (e.g. B602)
-        for test in re.finditer(NOSEC_SPECIFIC_IDS_IGNORE,
-                                nosec_tests):
-            test_id_match = test.group(1)
-            plugin_id = extman.check_id(test_id_match)
-            if plugin_id:
-                test_ids.add(test_id_match)
-            else:
-                LOG.warning("Test in comment: %s is not a test id",
-                            test_id_match)
-        # check for NAMES to ignore (e.g. assert_used)
-        for test in re.finditer(NOSEC_SPECIFIC_NAMES_IGNORE,
-                                nosec_tests):
-            plugin_id = extman.get_plugin_id(test.group(1))
-            if plugin_id:
-                test_ids.add(plugin_id)
-            else:
-                LOG.warning(
-                    "Test in comment: %s is not a test name, ignoring",
-                    test.group(1))
+        # lookup tests by short code or name
+        for test in re.finditer(NOSEC_COMMENT_TESTS, nosec_tests):
+            test_match = test.group(1)
+            test_id = _find_test_id_from_nosec_string(extman, test_match)
+            if test_id:
+                test_ids.add(test_id)
 
     return test_ids

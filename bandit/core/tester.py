@@ -38,7 +38,7 @@ class BanditTester:
             "SEVERITY": [0] * len(constants.RANKING),
             "CONFIDENCE": [0] * len(constants.RANKING),
             "nosecs_by_tests": 0,
-            "failed_nosecs_by_test": 0
+            "failed_nosecs_by_test": 0,
         }
 
         tests = self.testset.get_tests(checktype)
@@ -57,7 +57,8 @@ class BanditTester:
                     nosec_tests_to_skip = set()
                     base_tests = self.nosec_lines.get(result.lineno, None)
                     context_tests = self.nosec_lines.get(
-                        temp_context["lineno"], None)
+                        temp_context["lineno"], None
+                    )
 
                     # if both are non there are were no comments
                     # this is explicitly different than being empty
@@ -90,19 +91,23 @@ class BanditTester:
                         # if the set is empty or the test id is in the set of
                         # tests to skip, log and increment the skip by test
                         # count
-                        if not nosec_tests_to_skip or \
-                                (result.test_id in nosec_tests_to_skip):
-                            LOG.debug("skipped, nosec for test %s"
-                                      % result.test_id)
-                            scores['nosecs_by_tests'] += 1
+                        if not nosec_tests_to_skip or (
+                            result.test_id in nosec_tests_to_skip
+                        ):
+                            LOG.debug(
+                                "skipped, nosec for test %s" % result.test_id
+                            )
+                            scores["nosecs_by_tests"] += 1
                             continue
                         # otherwise this test was not called out explicitly by
                         # a nosec BXX type comment and should fail. Log and
                         # increment the failed test count
                         else:
-                            LOG.debug("uncaught test %s in nosec comment"
-                                      % result.test_id)
-                            scores['failed_nosecs_by_test'] += 1
+                            LOG.debug(
+                                "uncaught test %s in nosec comment"
+                                % result.test_id
+                            )
+                            scores["failed_nosecs_by_test"] += 1
 
                     self.results.append(result)
 
