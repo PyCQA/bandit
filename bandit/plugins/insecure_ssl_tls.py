@@ -1,32 +1,33 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import bandit
 from bandit.core import test_properties as test
 
 
 def get_bad_proto_versions(config):
-    return config['bad_protocol_versions']
+    return config["bad_protocol_versions"]
 
 
 def gen_config(name):
-    if name == 'ssl_with_bad_version':
-        return {'bad_protocol_versions':
-                ['PROTOCOL_SSLv2',
-                 'SSLv2_METHOD',
-                 'SSLv23_METHOD',
-                 'PROTOCOL_SSLv3',  # strict option
-                 'PROTOCOL_TLSv1',  # strict option
-                 'SSLv3_METHOD',    # strict option
-                 'TLSv1_METHOD']}   # strict option
+    if name == "ssl_with_bad_version":
+        return {
+            "bad_protocol_versions": [
+                "PROTOCOL_SSLv2",
+                "SSLv2_METHOD",
+                "SSLv23_METHOD",
+                "PROTOCOL_SSLv3",  # strict option
+                "PROTOCOL_TLSv1",  # strict option
+                "SSLv3_METHOD",  # strict option
+                "TLSv1_METHOD",
+            ]
+        }  # strict option
 
 
 @test.takes_config
-@test.checks('Call')
-@test.test_id('B502')
+@test.checks("Call")
+@test.test_id("B502")
 def ssl_with_bad_version(context, config):
     """**B502: Test for SSL use with bad version used**
 
@@ -100,43 +101,47 @@ def ssl_with_bad_version(context, config):
     .. versionadded:: 0.9.0
     """
     bad_ssl_versions = get_bad_proto_versions(config)
-    if context.call_function_name_qual == 'ssl.wrap_socket':
-        if context.check_call_arg_value('ssl_version', bad_ssl_versions):
+    if context.call_function_name_qual == "ssl.wrap_socket":
+        if context.check_call_arg_value("ssl_version", bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="ssl.wrap_socket call with insecure SSL/TLS protocol "
-                     "version identified, security issue.",
-                lineno=context.get_lineno_for_call_arg('ssl_version'),
+                "version identified, security issue.",
+                lineno=context.get_lineno_for_call_arg("ssl_version"),
             )
-    elif context.call_function_name_qual == 'pyOpenSSL.SSL.Context':
-        if context.check_call_arg_value('method', bad_ssl_versions):
+    elif context.call_function_name_qual == "pyOpenSSL.SSL.Context":
+        if context.check_call_arg_value("method", bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="SSL.Context call with insecure SSL/TLS protocol "
-                     "version identified, security issue.",
-                lineno=context.get_lineno_for_call_arg('method'),
+                "version identified, security issue.",
+                lineno=context.get_lineno_for_call_arg("method"),
             )
 
-    elif (context.call_function_name_qual != 'ssl.wrap_socket' and
-          context.call_function_name_qual != 'pyOpenSSL.SSL.Context'):
-        if (context.check_call_arg_value('method', bad_ssl_versions) or
-                context.check_call_arg_value('ssl_version', bad_ssl_versions)):
-            lineno = (context.get_lineno_for_call_arg('method') or
-                      context.get_lineno_for_call_arg('ssl_version'))
+    elif (
+        context.call_function_name_qual != "ssl.wrap_socket"
+        and context.call_function_name_qual != "pyOpenSSL.SSL.Context"
+    ):
+        if context.check_call_arg_value(
+            "method", bad_ssl_versions
+        ) or context.check_call_arg_value("ssl_version", bad_ssl_versions):
+            lineno = context.get_lineno_for_call_arg(
+                "method"
+            ) or context.get_lineno_for_call_arg("ssl_version")
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
                 text="Function call with insecure SSL/TLS protocol "
-                     "identified, possible security issue.",
+                "identified, possible security issue.",
                 lineno=lineno,
             )
 
 
 @test.takes_config("ssl_with_bad_version")
-@test.checks('FunctionDef')
-@test.test_id('B503')
+@test.checks("FunctionDef")
+@test.test_id("B503")
 def ssl_with_bad_defaults(context, config):
     """**B503: Test for SSL use with bad defaults specified**
 
@@ -186,13 +191,13 @@ def ssl_with_bad_defaults(context, config):
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
                 text="Function definition identified with insecure SSL/TLS "
-                     "protocol version by default, possible security "
-                     "issue."
+                "protocol version by default, possible security "
+                "issue.",
             )
 
 
-@test.checks('Call')
-@test.test_id('B504')
+@test.checks("Call")
+@test.test_id("B504")
 def ssl_with_no_version(context):
     """**B504: Test for SSL use with no version specified**
 
@@ -234,8 +239,8 @@ def ssl_with_no_version(context):
 
     .. versionadded:: 0.9.0
     """
-    if context.call_function_name_qual == 'ssl.wrap_socket':
-        if context.check_call_arg_value('ssl_version') is None:
+    if context.call_function_name_qual == "ssl.wrap_socket":
+        if context.check_call_arg_value("ssl_version") is None:
             # check_call_arg_value() returns False if the argument is found
             # but does not match the supplied value (or the default None).
             # It returns None if the arg_name passed doesn't exist. This
@@ -244,7 +249,7 @@ def ssl_with_no_version(context):
                 severity=bandit.LOW,
                 confidence=bandit.MEDIUM,
                 text="ssl.wrap_socket call with no SSL/TLS protocol version "
-                     "specified, the default SSLv23 could be insecure, "
-                     "possible security issue.",
-                lineno=context.get_lineno_for_call_arg('ssl_version'),
+                "specified, the default SSLv23 could be insecure, "
+                "possible security issue.",
+                lineno=context.get_lineno_for_call_arg("ssl_version"),
             )

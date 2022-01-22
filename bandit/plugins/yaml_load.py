@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright (c) 2016 Rackspace, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ===============================
 B506: Test for use of yaml load
@@ -37,31 +35,32 @@ on ``yaml.load`` and yaml.safe_load
 .. versionadded:: 1.0.0
 
 """
-
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.test_id('B506')
-@test.checks('Call')
+@test.test_id("B506")
+@test.checks("Call")
 def yaml_load(context):
-    imported = context.is_module_imported_exact('yaml')
+    imported = context.is_module_imported_exact("yaml")
     qualname = context.call_function_name_qual
     if not imported and isinstance(qualname, str):
         return
 
-    qualname_list = qualname.split('.')
+    qualname_list = qualname.split(".")
     func = qualname_list[-1]
-    if all([
-            'yaml' in qualname_list,
-            func == 'load',
-            not context.check_call_arg_value('Loader', 'SafeLoader'),
-            not context.check_call_arg_value('Loader', 'CSafeLoader'),
-    ]):
+    if all(
+        [
+            "yaml" in qualname_list,
+            func == "load",
+            not context.check_call_arg_value("Loader", "SafeLoader"),
+            not context.check_call_arg_value("Loader", "CSafeLoader"),
+        ]
+    ):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
             text="Use of unsafe yaml load. Allows instantiation of"
-                 " arbitrary objects. Consider yaml.safe_load().",
+            " arbitrary objects. Consider yaml.safe_load().",
             lineno=context.node.lineno,
         )

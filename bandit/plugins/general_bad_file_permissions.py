@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==================================================
 B103: Test for setting permissive file permissions
@@ -46,22 +44,24 @@ set world writable. Warnings are given with HIGH confidence.
 .. versionadded:: 0.9.0
 
 """  # noqa: E501
-
 import stat
 
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B103')
+@test.checks("Call")
+@test.test_id("B103")
 def set_bad_file_permissions(context):
-    if 'chmod' in context.call_function_name:
+    if "chmod" in context.call_function_name:
         if context.call_args_count == 2:
             mode = context.get_call_arg_at_position(1)
 
-            if (mode is not None and isinstance(mode, int) and
-                    (mode & stat.S_IWOTH or mode & stat.S_IXGRP)):
+            if (
+                mode is not None
+                and isinstance(mode, int)
+                and (mode & stat.S_IWOTH or mode & stat.S_IXGRP)
+            ):
                 # world writable is an HIGH, group executable is a MEDIUM
                 if mode & stat.S_IWOTH:
                     sev_level = bandit.HIGH
@@ -70,10 +70,10 @@ def set_bad_file_permissions(context):
 
                 filename = context.get_call_arg_at_position(0)
                 if filename is None:
-                    filename = 'NOT PARSED'
+                    filename = "NOT PARSED"
                 return bandit.Issue(
                     severity=sev_level,
                     confidence=bandit.HIGH,
-                    text="Chmod setting a permissive mask %s on file (%s)." %
-                    (oct(mode), filename)
+                    text="Chmod setting a permissive mask %s on file (%s)."
+                    % (oct(mode), filename),
                 )
