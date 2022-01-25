@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import ast
 import logging
 import os.path
@@ -21,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 
 def _get_attr_qual_name(node, aliases):
-    '''Get a the full name for the attribute node.
+    """Get a the full name for the attribute node.
 
     This will resolve a pseudo-qualified name for the attribute
     rooted at node as long as all the deeper nodes are Names or
@@ -34,13 +32,13 @@ def _get_attr_qual_name(node, aliases):
     :param node: AST Name or Attribute node
     :param aliases: Import aliases dictionary
     :returns: Qualified name referred to by the attribute or name.
-    '''
+    """
     if isinstance(node, ast.Name):
         if node.id in aliases:
             return aliases[node.id]
         return node.id
     elif isinstance(node, ast.Attribute):
-        name = '%s.%s' % (_get_attr_qual_name(node.value, aliases), node.attr)
+        name = f"{_get_attr_qual_name(node.value, aliases)}.{node.attr}"
         if name in aliases:
             return aliases[name]
         return name
@@ -50,9 +48,9 @@ def _get_attr_qual_name(node, aliases):
 
 def get_call_name(node, aliases):
     if isinstance(node.func, ast.Name):
-        if deepgetattr(node, 'func.id') in aliases:
-            return aliases[deepgetattr(node, 'func.id')]
-        return deepgetattr(node, 'func.id')
+        if deepgetattr(node, "func.id") in aliases:
+            return aliases[deepgetattr(node, "func.id")]
+        return deepgetattr(node, "func.id")
     elif isinstance(node.func, ast.Attribute):
         return _get_attr_qual_name(node.func, aliases)
     else:
@@ -67,24 +65,24 @@ def get_qual_attr(node, aliases):
     prefix = ""
     if isinstance(node, ast.Attribute):
         try:
-            val = deepgetattr(node, 'value.id')
+            val = deepgetattr(node, "value.id")
             if val in aliases:
                 prefix = aliases[val]
             else:
-                prefix = deepgetattr(node, 'value.id')
+                prefix = deepgetattr(node, "value.id")
         except Exception:
             # NOTE(tkelsey): degrade gracefully when we can't get the fully
             # qualified name for an attr, just return its base name.
             pass
 
-        return "%s.%s" % (prefix, node.attr)
+        return f"{prefix}.{node.attr}"
     else:
         return ""  # TODO(tkelsey): process other node types
 
 
 def deepgetattr(obj, attr):
     """Recurses through an attribute chain to get the ultimate value."""
-    for key in attr.split('.'):
+    for key in attr.split("."):
         obj = getattr(obj, key)
     return obj
 
@@ -95,30 +93,35 @@ class InvalidModulePath(Exception):
 
 class ConfigError(Exception):
     """Raised when the config file fails validation."""
+
     def __init__(self, message, config_file):
         self.config_file = config_file
-        self.message = "{0} : {1}".format(config_file, message)
-        super(ConfigError, self).__init__(self.message)
+        self.message = f"{config_file} : {message}"
+        super().__init__(self.message)
 
 
 class ProfileNotFound(Exception):
     """Raised when chosen profile cannot be found."""
+
     def __init__(self, config_file, profile):
         self.config_file = config_file
         self.profile = profile
-        message = 'Unable to find profile (%s) in config file: %s' % (
-            self.profile, self.config_file)
-        super(ProfileNotFound, self).__init__(message)
+        message = "Unable to find profile ({}) in config file: {}".format(
+            self.profile,
+            self.config_file,
+        )
+        super().__init__(message)
 
 
-def warnings_formatter(message, category=UserWarning, filename='', lineno=-1,
-                       line=''):
-    '''Monkey patch for warnings.warn to suppress cruft output.'''
-    return "{0}\n".format(message)
+def warnings_formatter(
+    message, category=UserWarning, filename="", lineno=-1, line=""
+):
+    """Monkey patch for warnings.warn to suppress cruft output."""
+    return f"{message}\n"
 
 
 def get_module_qualname_from_path(path):
-    '''Get the module's qualified name by analysis of the path.
+    """Get the module's qualified name by analysis of the path.
 
     Resolve the absolute pathname and eliminate symlinks. This could result in
     an incorrect name if symlinks are used to restructure the python lib
@@ -132,27 +135,29 @@ def get_module_qualname_from_path(path):
     :param: Path to module file. Relative paths will be resolved relative to
             current working directory.
     :return: fully qualified module name
-    '''
+    """
 
     (head, tail) = os.path.split(path)
-    if head == '' or tail == '':
-        raise InvalidModulePath('Invalid python file path: "%s"'
-                                ' Missing path or file name' % (path))
+    if head == "" or tail == "":
+        raise InvalidModulePath(
+            'Invalid python file path: "%s"'
+            " Missing path or file name" % (path)
+        )
 
     qname = [os.path.splitext(tail)[0]]
-    while head not in ['/', '.', '']:
-        if os.path.isfile(os.path.join(head, '__init__.py')):
+    while head not in ["/", ".", ""]:
+        if os.path.isfile(os.path.join(head, "__init__.py")):
             (head, tail) = os.path.split(head)
             qname.insert(0, tail)
         else:
             break
 
-    qualname = '.'.join(qname)
+    qualname = ".".join(qname)
     return qualname
 
 
 def namespace_path_join(base, name):
-    '''Extend the current namespace path with an additional name
+    """Extend the current namespace path with an additional name
 
     Take a namespace path (i.e., package.module.class) and extends it
     with an additional name (i.e., package.module.class.subclass).
@@ -162,12 +167,12 @@ def namespace_path_join(base, name):
     :param name: (String) The new name to append to the base path.
     :returns: (String) A new namespace path resulting from combination of
               base and name.
-    '''
-    return '%s.%s' % (base, name)
+    """
+    return f"{base}.{name}"
 
 
 def namespace_path_split(path):
-    '''Split the namespace path into a pair (head, tail).
+    """Split the namespace path into a pair (head, tail).
 
     Tail will be the last namespace path component and head will
     be everything leading up to that in the path. This is similar to
@@ -176,12 +181,12 @@ def namespace_path_split(path):
     :param path: (String) A namespace path.
     :returns: (String, String) A tuple where the first component is the base
               path and the second is the last path component.
-    '''
-    return tuple(path.rsplit('.', 1))
+    """
+    return tuple(path.rsplit(".", 1))
 
 
 def escaped_bytes_representation(b):
-    '''PY3 bytes need escaping for comparison with other strings.
+    """PY3 bytes need escaping for comparison with other strings.
 
     In practice it turns control characters into acceptable codepoints then
     encodes them into bytes again to turn unprintable bytes into printable
@@ -189,14 +194,13 @@ def escaped_bytes_representation(b):
 
     This is safe to do for the whole range 0..255 and result matches
     unicode_escape on a unicode string.
-    '''
-    return b.decode('unicode_escape').encode('unicode_escape')
+    """
+    return b.decode("unicode_escape").encode("unicode_escape")
 
 
 def linerange(node):
     """Get line number range from a node."""
-    strip = {"body": None, "orelse": None,
-             "handlers": None, "finalbody": None}
+    strip = {"body": None, "orelse": None, "handlers": None, "finalbody": None}
     for key in strip.keys():
         if hasattr(node, key):
             strip[key] = getattr(node, key)
@@ -205,7 +209,7 @@ def linerange(node):
     lines_min = 9999999999
     lines_max = -1
     for n in ast.walk(node):
-        if hasattr(n, 'lineno'):
+        if hasattr(n, "lineno"):
             lines_min = min(lines_min, n.lineno)
             lines_max = max(lines_max, n.lineno)
 
@@ -222,8 +226,8 @@ def linerange_fix(node):
     """Try and work around a known Python bug with multi-line strings."""
     # deal with multiline strings lineno behavior (Python issue #16806)
     lines = linerange(node)
-    if hasattr(node, '_bandit_sibling') and hasattr(
-            node._bandit_sibling, 'lineno'
+    if hasattr(node, "_bandit_sibling") and hasattr(
+        node._bandit_sibling, "lineno"
     ):
         start = min(lines)
         delta = node._bandit_sibling.lineno - start
@@ -233,7 +237,7 @@ def linerange_fix(node):
 
 
 def concat_string(node, stop=None):
-    '''Builds a string from a ast.BinOp chain.
+    """Builds a string from a ast.BinOp chain.
 
     This will build a string from a series of ast.Str nodes wrapped in
     ast.BinOp nodes. Something like "a" + "b" + "c" or "a %s" % val etc.
@@ -242,17 +246,20 @@ def concat_string(node, stop=None):
     :param node: (ast.Str or ast.BinOp) The node to process
     :param stop: (ast.Str or ast.BinOp) Optional base node to stop at
     :returns: (Tuple) the root node of the expression, the string value
-    '''
+    """
+
     def _get(node, bits, stop=None):
         if node != stop:
             bits.append(
                 _get(node.left, bits, stop)
                 if isinstance(node.left, ast.BinOp)
-                else node.left)
+                else node.left
+            )
             bits.append(
                 _get(node.right, bits, stop)
                 if isinstance(node.right, ast.BinOp)
-                else node.right)
+                else node.right
+            )
 
     bits = [node]
     while isinstance(node._bandit_parent, ast.BinOp):
@@ -263,7 +270,7 @@ def concat_string(node, stop=None):
 
 
 def get_called_name(node):
-    '''Get a function name from an ast.Call node.
+    """Get a function name from an ast.Call node.
 
     An ast.Call node representing a method call with present differently to one
     wrapping a function call: thing.call() vs call(). This helper will grab the
@@ -271,7 +278,7 @@ def get_called_name(node):
 
     :param node: (ast.Call) the call node
     :returns: (String) the function name
-    '''
+    """
     func = node.func
     try:
         return func.attr if isinstance(func, ast.Attribute) else func.id
@@ -280,11 +287,11 @@ def get_called_name(node):
 
 
 def get_path_for_function(f):
-    '''Get the path of the file where the function is defined.
+    """Get the path of the file where the function is defined.
 
     :returns: the path, or None if one could not be found or f is not a real
         function
-    '''
+    """
 
     if hasattr(f, "__module__"):
         module_name = f.__module__
@@ -306,17 +313,19 @@ def parse_ini_file(f_loc):
     config = configparser.ConfigParser()
     try:
         config.read(f_loc)
-        return {k: v for k, v in config.items('bandit')}
+        return {k: v for k, v in config.items("bandit")}
 
     except (configparser.Error, KeyError, TypeError):
-        LOG.warning("Unable to parse config file %s or missing [bandit] "
-                    "section", f_loc)
+        LOG.warning(
+            "Unable to parse config file %s or missing [bandit] " "section",
+            f_loc,
+        )
 
     return None
 
 
 def check_ast_node(name):
-    'Check if the given name is that of a valid AST node.'
+    "Check if the given name is that of a valid AST node."
     try:
         node = getattr(ast, name)
         if issubclass(node, ast.AST):

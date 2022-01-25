@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import pbr.version
 
 from bandit.core import config  # noqa
@@ -18,4 +16,4 @@ from bandit.core.constants import *  # noqa
 from bandit.core.issue import *  # noqa
 from bandit.core.test_properties import *  # noqa
 
-__version__ = pbr.version.VersionInfo('bandit').version_string()
+__version__ = pbr.version.VersionInfo("bandit").version_string()

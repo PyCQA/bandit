@@ -142,26 +142,28 @@ An optional config file may be supplied and may include:
 
 Per Project Command Line Args
 -----------------------------
-Projects may include a `.bandit` file that specifies command line arguments
-that should be supplied for that project. The currently supported arguments
-are:
+Projects may include a YAML file named `.bandit` that specifies command line
+arguments that should be supplied for that project. The currently supported
+arguments are:
 
  - targets: comma separated list of target dirs/files to run bandit on
  - exclude: comma separated list of excluded paths
  - skips: comma separated list of tests to skip
  - tests: comma separated list of tests to run
 
-To use this, put a .bandit file in your project's directory. For example:
+To use this, put a YAML file named `.bandit` in your project's directory.
+For example:
 
 ::
 
-   [bandit]
    exclude: /test
 
 ::
 
-   [bandit]
-   tests: B101,B102,B301
+   tests:
+     - B101
+     - B102
+     - B301
 
 
 Exclusions
@@ -298,9 +300,9 @@ using RST::
 Under Which Version of Python Should I Install Bandit?
 ------------------------------------------------------
 The answer to this question depends on the project(s) you will be running
-Bandit against. If your project is only compatible with Python 3.5, you
-should install Bandit to run under Python 3.5. If your project is only
-compatible with Python 3.8, then use 3.8 respectively. If your project supports
+Bandit against. If your project is only compatible with Python 3.8, you
+should install Bandit to run under Python 3.8. If your project is only
+compatible with Python 3.9, then use 3.9 respectively. If your project supports
 both, you *could* run Bandit with both versions but you don't have to.
 
 Bandit uses the `ast` module from Python's standard library in order to
