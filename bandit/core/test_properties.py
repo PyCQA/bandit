@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import logging
 
 from bandit.core import utils
@@ -12,25 +10,27 @@ LOG = logging.getLogger(__name__)
 
 
 def checks(*args):
-    '''Decorator function to set checks to be run.'''
+    """Decorator function to set checks to be run."""
+
     def wrapper(func):
         if not hasattr(func, "_checks"):
             func._checks = []
         func._checks.extend(utils.check_ast_node(a) for a in args)
 
-        LOG.debug('checks() decorator executed')
-        LOG.debug('  func._checks: %s', func._checks)
+        LOG.debug("checks() decorator executed")
+        LOG.debug("  func._checks: %s", func._checks)
         return func
+
     return wrapper
 
 
 def takes_config(*args):
-    '''Test function takes config
+    """Test function takes config
 
     Use of this delegate before a test function indicates that it should be
     passed data from the config file. Passing a name parameter allows
     aliasing tests and thus sharing config options.
-    '''
+    """
     name = ""
 
     def _takes_config(func):
@@ -47,14 +47,16 @@ def takes_config(*args):
 
 
 def test_id(id_val):
-    '''Test function identifier
+    """Test function identifier
 
     Use this decorator before a test function indicates its simple ID
-    '''
+    """
+
     def _has_id(func):
         if not hasattr(func, "_test_id"):
             func._test_id = id_val
         return func
+
     return _has_id
 
 
@@ -65,11 +67,13 @@ def accepts_baseline(*args):
     with baseline results.  Specifically this means it has a way to display
     candidate results and know when it should do so.
     """
+
     def wrapper(func):
-        if not hasattr(func, '_accepts_baseline'):
+        if not hasattr(func, "_accepts_baseline"):
             func._accepts_baseline = True
 
-        LOG.debug('accepts_baseline() decorator executed on %s', func.__name__)
+        LOG.debug("accepts_baseline() decorator executed on %s", func.__name__)
 
         return func
+
     return wrapper(args[0])

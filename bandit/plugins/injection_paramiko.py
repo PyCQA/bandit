@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==============================================
 B601: Test for shell injection within Paramiko
@@ -37,19 +35,22 @@ method advising the user to check inputs are correctly sanitized.
 .. versionadded:: 0.12.0
 
 """
-
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B601')
+@test.checks("Call")
+@test.test_id("B601")
 def paramiko_calls(context):
-    issue_text = ('Possible shell injection via Paramiko call, check inputs '
-                  'are properly sanitized.')
-    for module in ['paramiko']:
+    issue_text = (
+        "Possible shell injection via Paramiko call, check inputs "
+        "are properly sanitized."
+    )
+    for module in ["paramiko"]:
         if context.is_module_imported_like(module):
-            if context.call_function_name in ['exec_command']:
-                return bandit.Issue(severity=bandit.MEDIUM,
-                                    confidence=bandit.MEDIUM,
-                                    text=issue_text)
+            if context.call_function_name in ["exec_command"]:
+                return bandit.Issue(
+                    severity=bandit.MEDIUM,
+                    confidence=bandit.MEDIUM,
+                    text=issue_text,
+                )
