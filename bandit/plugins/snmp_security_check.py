@@ -24,9 +24,9 @@ def snmp_insecure_version_check(context):
 
     if context.call_function_name_qual == "CommunityData":
         # We called community data. Lets check our args
-        if (context.check_call_arg_value(
+        if context.check_call_arg_value(
             "mpModel", 0
-        ) or context.check_call_arg_value("mpModel", 1)):
+        ) or context.check_call_arg_value("mpModel", 1):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
