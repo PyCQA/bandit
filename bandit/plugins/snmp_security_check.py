@@ -38,7 +38,6 @@ def snmp_insecure_version_check(context):
 @test.checks("Call")
 @test.test_id('B509')
 def snmp_crypto_check(context):
-
     """**B509: Checking for weak cryptography**
 
     This test is for checking for the usage of insecure SNMP cryptography:
