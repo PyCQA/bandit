@@ -1,7 +1,5 @@
-# -*- coding:utf-8 -*-
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 =============
 CSV Formatter
@@ -27,8 +25,6 @@ This formatter outputs the issues in a comma separated values format.
 """
 # Necessary for this formatter to work when imported on Python 2. Importing
 # the standard library's csv module conflicts with the name of this module.
-from __future__ import absolute_import
-
 import csv
 import logging
 import sys
@@ -39,36 +35,40 @@ LOG = logging.getLogger(__name__)
 
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
-    '''Prints issues in CSV format
+    """Prints issues in CSV format
 
     :param manager: the bandit manager object
     :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
-    '''
+    """
 
-    results = manager.get_issue_list(sev_level=sev_level,
-                                     conf_level=conf_level)
+    results = manager.get_issue_list(
+        sev_level=sev_level, conf_level=conf_level
+    )
 
     with fileobj:
-        fieldnames = ['filename',
-                      'test_name',
-                      'test_id',
-                      'issue_severity',
-                      'issue_confidence',
-                      'issue_text',
-                      'line_number',
-                      'col_offset',
-                      'line_range',
-                      'more_info']
+        fieldnames = [
+            "filename",
+            "test_name",
+            "test_id",
+            "issue_severity",
+            "issue_confidence",
+            "issue_text",
+            "line_number",
+            "col_offset",
+            "line_range",
+            "more_info",
+        ]
 
-        writer = csv.DictWriter(fileobj, fieldnames=fieldnames,
-                                extrasaction='ignore')
+        writer = csv.DictWriter(
+            fileobj, fieldnames=fieldnames, extrasaction="ignore"
+        )
         writer.writeheader()
         for result in results:
             r = result.as_dict(with_code=False)
-            r['more_info'] = docs_utils.get_url(r['test_id'])
+            r["more_info"] = docs_utils.get_url(r["test_id"])
             writer.writerow(r)
 
     if fileobj.name != sys.stdout.name:

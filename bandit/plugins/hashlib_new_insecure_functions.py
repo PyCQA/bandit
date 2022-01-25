@@ -1,7 +1,5 @@
-# -*- coding:utf-8 -*-
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ============================================================================
 B324: Test use of insecure md4, md5, or sha1 hash functions in hashlib.new()
@@ -29,23 +27,26 @@ hash functions created using ``hashlib.new`` function.
 .. versionadded:: 1.5.0
 
 """
-
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.test_id('B324')
-@test.checks('Call')
+@test.test_id("B324")
+@test.checks("Call")
 def hashlib_new(context):
     if isinstance(context.call_function_name_qual, str):
-        qualname_list = context.call_function_name_qual.split('.')
+        qualname_list = context.call_function_name_qual.split(".")
         func = qualname_list[-1]
-        if 'hashlib' in qualname_list and func == 'new':
+        if "hashlib" in qualname_list and func == "new":
             args = context.call_args
             keywords = context.call_keywords
-            name = args[0] if args else keywords['name']
-            if (isinstance(name, str) and
-                    name.lower() in ('md4', 'md5', 'sha', 'sha1')):
+            name = args[0] if args else keywords["name"]
+            if isinstance(name, str) and name.lower() in (
+                "md4",
+                "md5",
+                "sha",
+                "sha1",
+            ):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,

@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2015 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ======================================================
 B201: Test for use of flask app with debug set to true
@@ -38,22 +36,21 @@ of the Patreon breach in 2015 [3]_.
 .. versionadded:: 0.15.0
 
 """  # noqa: E501
-
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.test_id('B201')
-@test.checks('Call')
+@test.test_id("B201")
+@test.checks("Call")
 def flask_debug_true(context):
-    if context.is_module_imported_like('flask'):
-        if context.call_function_name_qual.endswith('.run'):
-            if context.check_call_arg_value('debug', 'True'):
+    if context.is_module_imported_like("flask"):
+        if context.call_function_name_qual.endswith(".run"):
+            if context.check_call_arg_value("debug", "True"):
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.MEDIUM,
                     text="A Flask app appears to be run with debug=True, "
-                         "which exposes the Werkzeug debugger and allows "
-                         "the execution of arbitrary code.",
-                    lineno=context.get_lineno_for_call_arg('debug'),
+                    "which exposes the Werkzeug debugger and allows "
+                    "the execution of arbitrary code.",
+                    lineno=context.get_lineno_for_call_arg("debug"),
                 )

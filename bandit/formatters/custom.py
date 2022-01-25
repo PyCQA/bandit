@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright (c) 2017 Hewlett Packard Enterprise
 #
 # SPDX-License-Identifier: Apache-2.0
-
 """
 ================
 Custom Formatter
@@ -24,7 +22,6 @@ Allowing use of file:/ or custom schemes is often unexpected.
 .. versionadded:: 1.5.0
 
 """
-
 import logging
 import os
 import re
@@ -39,6 +36,7 @@ LOG = logging.getLogger(__name__)
 
 class SafeMapper(dict):
     """Safe mapper to handle format key errors"""
+
     @classmethod  # To prevent PEP8 warnings in the test suite
     def __missing__(cls, key):
         return "{%s}" % key
@@ -57,13 +55,13 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
                     {test_id}[bandit]: {severity}: {msg}')
     """
 
-    machine_output = {'results': [], 'errors': []}
+    machine_output = {"results": [], "errors": []}
     for (fname, reason) in manager.get_skipped():
-        machine_output['errors'].append({'filename': fname,
-                                         'reason': reason})
+        machine_output["errors"].append({"filename": fname, "reason": reason})
 
-    results = manager.get_issue_list(sev_level=sev_level,
-                                     conf_level=conf_level)
+    results = manager.get_issue_list(
+        sev_level=sev_level, conf_level=conf_level
+    )
 
     msg_template = template
     if template is None:
@@ -71,21 +69,19 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
 
     # Dictionary of non-terminal tags that will be expanded
     tag_mapper = {
-        'abspath': lambda issue: os.path.abspath(issue.fname),
-        'relpath': lambda issue: os.path.relpath(issue.fname),
-        'line': lambda issue: issue.lineno,
-        'col': lambda issue: issue.col_offset,
-        'test_id': lambda issue: issue.test_id,
-        'severity': lambda issue: issue.severity,
-        'msg': lambda issue: issue.text,
-        'confidence': lambda issue: issue.confidence,
-        'range': lambda issue: issue.linerange
+        "abspath": lambda issue: os.path.abspath(issue.fname),
+        "relpath": lambda issue: os.path.relpath(issue.fname),
+        "line": lambda issue: issue.lineno,
+        "col": lambda issue: issue.col_offset,
+        "test_id": lambda issue: issue.test_id,
+        "severity": lambda issue: issue.severity,
+        "msg": lambda issue: issue.text,
+        "confidence": lambda issue: issue.confidence,
+        "range": lambda issue: issue.linerange,
     }
 
     # Create dictionary with tag sets to speed up search for similar tags
-    tag_sim_dict = dict(
-        [(tag, set(tag)) for tag, _ in tag_mapper.items()]
-    )
+    tag_sim_dict = {tag: set(tag) for tag, _ in tag_mapper.items()}
 
     # Parse the format_string template and check the validity of tags
     try:
@@ -104,8 +100,9 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
         sys.exit(2)
 
     def get_similar_tag(tag):
-        similarity_list = [(len(set(tag) & t_set), t)
-                           for t, t_set in tag_sim_dict.items()]
+        similarity_list = [
+            (len(set(tag) & t_set), t) for t, t_set in tag_sim_dict.items()
+        ]
         return sorted(similarity_list)[-1][1]
 
     tag_blacklist = []
@@ -115,7 +112,9 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
             similar_tag = get_similar_tag(tag)
             LOG.warning(
                 "Tag '%s' was not recognized and will be skipped, "
-                "did you mean to use '%s'?", tag, similar_tag
+                "did you mean to use '%s'?",
+                tag,
+                similar_tag,
             )
             tag_blacklist += [tag]
 
@@ -124,8 +123,8 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
     for literal_text, field_name, fmt_spec, conversion in parsed_template_orig:
         if literal_text:
             # if there is '{' or '}', double it to prevent expansion
-            literal_text = re.sub('{', '{{', literal_text)
-            literal_text = re.sub('}', '}}', literal_text)
+            literal_text = re.sub("{", "{{", literal_text)
+            literal_text = re.sub("}", "}}", literal_text)
             msg_parsed_template_list.append(literal_text)
 
         if field_name is not None:
@@ -134,16 +133,20 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
                 continue
             # Append the fmt_spec part
             params = [field_name, fmt_spec, conversion]
-            markers = ['', ':', '!']
+            markers = ["", ":", "!"]
             msg_parsed_template_list.append(
-                ['{'] +
-                ["%s" % (m + p) if p else ''
-                 for m, p in zip(markers, params)] +
-                ['}']
+                ["{"]
+                + [
+                    "%s" % (m + p) if p else ""
+                    for m, p in zip(markers, params)
+                ]
+                + ["}"]
             )
 
-    msg_parsed_template = "".join([item for lst in msg_parsed_template_list
-                                   for item in lst]) + "\n"
+    msg_parsed_template = (
+        "".join([item for lst in msg_parsed_template_list for item in lst])
+        + "\n"
+    )
     with fileobj:
         for defect in results:
             evaluated_tags = SafeMapper(

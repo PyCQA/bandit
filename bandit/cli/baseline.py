@@ -1,21 +1,15 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2015 Hewlett-Packard Enterprise
 #
 # SPDX-License-Identifier: Apache-2.0
-
 # #############################################################################
 # Bandit Baseline is a tool that runs Bandit against a Git commit, and compares
 # the current commit findings to the parent commit findings.
-
 # To do this it checks out the parent commit, runs Bandit (with any provided
 # filters or profiles), checks out the current commit, runs Bandit, and then
 # reports on any new findings.
 # #############################################################################
-
 """Bandit is a tool designed to find common security issues in Python code."""
-
-
 import argparse
 import contextlib
 import logging
@@ -28,13 +22,13 @@ import tempfile
 import git
 
 bandit_args = sys.argv[1:]
-baseline_tmp_file = '_bandit_baseline_run.json_'
+baseline_tmp_file = "_bandit_baseline_run.json_"
 current_commit = None
-default_output_format = 'terminal'
+default_output_format = "terminal"
 LOG = logging.getLogger(__name__)
 repo = None
-report_basename = 'bandit_baseline_result'
-valid_baseline_formats = ['txt', 'html', 'json']
+report_basename = "bandit_baseline_result"
+valid_baseline_formats = ["txt", "html", "json"]
 
 """baseline.py"""
 
@@ -61,11 +55,11 @@ def main():
     try:
         commit = repo.commit()
         current_commit = commit.hexsha
-        LOG.info('Got current commit: [%s]', commit.name_rev)
+        LOG.info("Got current commit: [%s]", commit.name_rev)
 
         commit = commit.parents[0]
         parent_commit = commit.hexsha
-        LOG.info('Got parent commit: [%s]', commit.name_rev)
+        LOG.info("Got parent commit: [%s]", commit.name_rev)
 
     except git.GitCommandError:
         LOG.error("Unable to get current or parent commit")
@@ -75,29 +69,37 @@ def main():
         sys.exit(2)
 
     # #################### Run Bandit against both commits ####################
-    output_type = (['-f', 'txt'] if output_format == default_output_format
-                   else ['-o', report_fname])
+    output_type = (
+        ["-f", "txt"]
+        if output_format == default_output_format
+        else ["-o", report_fname]
+    )
 
     with baseline_setup() as t:
 
-        bandit_tmpfile = "{}/{}".format(t, baseline_tmp_file)
+        bandit_tmpfile = f"{t}/{baseline_tmp_file}"
 
-        steps = [{'message': 'Getting Bandit baseline results',
-                  'commit': parent_commit,
-                  'args': bandit_args + ['-f', 'json', '-o', bandit_tmpfile]},
-
-                 {'message': 'Comparing Bandit results to baseline',
-                  'commit': current_commit,
-                  'args': bandit_args + ['-b', bandit_tmpfile] + output_type}]
+        steps = [
+            {
+                "message": "Getting Bandit baseline results",
+                "commit": parent_commit,
+                "args": bandit_args + ["-f", "json", "-o", bandit_tmpfile],
+            },
+            {
+                "message": "Comparing Bandit results to baseline",
+                "commit": current_commit,
+                "args": bandit_args + ["-b", bandit_tmpfile] + output_type,
+            },
+        ]
 
         return_code = None
 
         for step in steps:
-            repo.head.reset(commit=step['commit'], working_tree=True)
+            repo.head.reset(commit=step["commit"], working_tree=True)
 
-            LOG.info(step['message'])
+            LOG.info(step["message"])
 
-            bandit_command = ['bandit'] + step['args']
+            bandit_command = ["bandit"] + step["args"]
 
             try:
                 output = subprocess.check_output(bandit_command)
@@ -106,11 +108,14 @@ def main():
                 return_code = e.returncode
             else:
                 return_code = 0
-                output = output.decode('utf-8')  # subprocess returns bytes
+                output = output.decode("utf-8")  # subprocess returns bytes
 
             if return_code not in [0, 1]:
-                LOG.error("Error running command: %s\nOutput: %s\n",
-                          bandit_args, output)
+                LOG.error(
+                    "Error running command: %s\nOutput: %s\n",
+                    bandit_args,
+                    output,
+                )
 
     # #################### Output and exit ####################################
     # print output or display message about written report
@@ -155,32 +160,43 @@ def initialize():
 
     # #################### Parse Args #########################################
     parser = argparse.ArgumentParser(
-        description='Bandit Baseline - Generates Bandit results compared to "'
-                    'a baseline',
+        description="Bandit Baseline - Generates Bandit results compared to "
+        "a baseline",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='Additional Bandit arguments such as severity filtering (-ll) '
-               'can be added and will be passed to Bandit.'
+        epilog="Additional Bandit arguments such as severity filtering (-ll) "
+        "can be added and will be passed to Bandit.",
     )
 
-    parser.add_argument('targets', metavar='targets', type=str, nargs='+',
-                        help='source file(s) or directory(s) to be tested')
+    parser.add_argument(
+        "targets",
+        metavar="targets",
+        type=str,
+        nargs="+",
+        help="source file(s) or directory(s) to be tested",
+    )
 
-    parser.add_argument('-f', dest='output_format', action='store',
-                        default='terminal', help='specify output format',
-                        choices=valid_baseline_formats)
+    parser.add_argument(
+        "-f",
+        dest="output_format",
+        action="store",
+        default="terminal",
+        help="specify output format",
+        choices=valid_baseline_formats,
+    )
 
     args, _ = parser.parse_known_args()
 
     # #################### Setup Output #######################################
     # set the output format, or use a default if not provided
-    output_format = (args.output_format if args.output_format
-                     else default_output_format)
+    output_format = (
+        args.output_format if args.output_format else default_output_format
+    )
 
     if output_format == default_output_format:
         LOG.info("No output format specified, using %s", default_output_format)
 
     # set the report name based on the output format
-    report_fname = "{}.{}".format(report_basename, output_format)
+    report_fname = f"{report_basename}.{output_format}"
 
     # #################### Check Requirements #################################
     try:
@@ -196,8 +212,9 @@ def initialize():
 
     else:
         if repo.is_dirty():
-            LOG.error("Current working directory is dirty and must be "
-                      "resolved")
+            LOG.error(
+                "Current working directory is dirty and must be " "resolved"
+            )
             valid = False
 
     # if output format is specified, we need to be able to write the report
@@ -207,17 +224,19 @@ def initialize():
 
     # Bandit needs to be able to create this temp file
     if os.path.exists(baseline_tmp_file):
-        LOG.error("Temporary file %s needs to be removed prior to running",
-                  baseline_tmp_file)
+        LOG.error(
+            "Temporary file %s needs to be removed prior to running",
+            baseline_tmp_file,
+        )
         valid = False
 
     # we must validate -o is not provided, as it will mess up Bandit baseline
-    if '-o' in bandit_args:
+    if "-o" in bandit_args:
         LOG.error("Bandit baseline must not be called with the -o option")
         valid = False
 
     return (output_format, repo, report_fname) if valid else (None, None, None)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

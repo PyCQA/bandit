@@ -1,9 +1,5 @@
-# -*- coding:utf-8 -*-
 #
 # SPDX-License-Identifier: Apache-2.0
-
-from __future__ import print_function
-
 import sys
 
 from stevedore import extension
@@ -11,15 +7,16 @@ from stevedore import extension
 from bandit.core import utils
 
 
-class Manager(object):
+class Manager:
     # These IDs are for bandit built in tests
-    builtin = [
-        'B001'  # Built in blacklist test
-        ]
+    builtin = ["B001"]  # Built in blacklist test
 
-    def __init__(self, formatters_namespace='bandit.formatters',
-                 plugins_namespace='bandit.plugins',
-                 blacklists_namespace='bandit.blacklists'):
+    def __init__(
+        self,
+        formatters_namespace="bandit.formatters",
+        plugins_namespace="bandit.plugins",
+        blacklists_namespace="bandit.blacklists",
+    ):
         # Cache the extension managers, loaded extensions, and extension names
         self.load_formatters(formatters_namespace)
         self.load_plugins(plugins_namespace)
@@ -30,7 +27,7 @@ class Manager(object):
             namespace=formatters_namespace,
             invoke_on_load=False,
             verify_requirements=False,
-            )
+        )
         self.formatters = list(self.formatters_mgr)
         self.formatter_names = self.formatters_mgr.names()
 
@@ -39,13 +36,15 @@ class Manager(object):
             namespace=plugins_namespace,
             invoke_on_load=False,
             verify_requirements=False,
-            )
+        )
 
         def test_has_id(plugin):
             if not hasattr(plugin.plugin, "_test_id"):
                 # logger not setup yet, so using print
-                print("WARNING: Test '%s' has no ID, skipping." % plugin.name,
-                      file=sys.stderr)
+                print(
+                    "WARNING: Test '%s' has no ID, skipping." % plugin.name,
+                    file=sys.stderr,
+                )
                 return False
             return True
 
@@ -64,7 +63,7 @@ class Manager(object):
             namespace=blacklist_namespace,
             invoke_on_load=False,
             verify_requirements=False,
-            )
+        )
         self.blacklist = {}
         blacklist = list(self.blacklists_mgr)
         for item in blacklist:
@@ -76,29 +75,31 @@ class Manager(object):
         self.blacklist_by_name = {}
         for val in self.blacklist.values():
             for b in val:
-                self.blacklist_by_id[b['id']] = b
-                self.blacklist_by_name[b['name']] = b
+                self.blacklist_by_id[b["id"]] = b
+                self.blacklist_by_name[b["name"]] = b
 
     def validate_profile(self, profile):
-        '''Validate that everything in the configured profiles looks good.'''
-        for inc in profile['include']:
+        """Validate that everything in the configured profiles looks good."""
+        for inc in profile["include"]:
             if not self.check_id(inc):
-                raise ValueError('Unknown test found in profile: %s' % inc)
+                raise ValueError("Unknown test found in profile: %s" % inc)
 
-        for exc in profile['exclude']:
+        for exc in profile["exclude"]:
             if not self.check_id(exc):
-                raise ValueError('Unknown test found in profile: %s' % exc)
+                raise ValueError("Unknown test found in profile: %s" % exc)
 
-        union = set(profile['include']) & set(profile['exclude'])
+        union = set(profile["include"]) & set(profile["exclude"])
         if len(union) > 0:
-            raise ValueError('Non-exclusive include/exclude test sets: %s' %
-                             union)
+            raise ValueError(
+                "Non-exclusive include/exclude test sets: %s" % union
+            )
 
     def check_id(self, test):
         return (
-            test in self.plugins_by_id or
-            test in self.blacklist_by_id or
-            test in self.builtin)
+            test in self.plugins_by_id
+            or test in self.blacklist_by_id
+            or test in self.builtin
+        )
 
 
 # Using entry-points and pkg_resources *can* be expensive. So let's load these
