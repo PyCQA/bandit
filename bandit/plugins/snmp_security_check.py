@@ -55,7 +55,7 @@ def snmp_crypto_check(context):
     Use (Defaults to usmHMACMD5AuthProtocol and usmDESPrivProtocol
       `UsmUserData("securityName", "authName", "privName")`
 
-    .. versionadded:: 1.5.2
+    .. versionadded:: 1.7.2
     """
 
     if context.call_function_name_qual == 'UsmUserData':
