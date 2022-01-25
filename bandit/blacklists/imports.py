@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2016 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ======================================================
 Blacklist various Python imports known to be dangerous
@@ -230,89 +228,154 @@ def gen_blacklist():
     :return: a dictionary mapping node types to a list of blacklist data
     """
     sets = []
-    sets.append(utils.build_conf_dict(
-        'import_telnetlib', 'B401', ['telnetlib'],
-        'A telnet-related module is being imported.  Telnet is '
-        'considered insecure. Use SSH or some other encrypted protocol.',
-        'HIGH'
-        ))
+    sets.append(
+        utils.build_conf_dict(
+            "import_telnetlib",
+            "B401",
+            ["telnetlib"],
+            "A telnet-related module is being imported.  Telnet is "
+            "considered insecure. Use SSH or some other encrypted protocol.",
+            "HIGH",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_ftplib', 'B402', ['ftplib'],
-        'A FTP-related module is being imported.  FTP is considered '
-        'insecure. Use SSH/SFTP/SCP or some other encrypted protocol.',
-        'HIGH'
-        ))
+    sets.append(
+        utils.build_conf_dict(
+            "import_ftplib",
+            "B402",
+            ["ftplib"],
+            "A FTP-related module is being imported.  FTP is considered "
+            "insecure. Use SSH/SFTP/SCP or some other encrypted protocol.",
+            "HIGH",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_pickle', 'B403', ['pickle', 'cPickle', 'dill', 'shelve'],
-        'Consider possible security implications associated with '
-        '{name} module.', 'LOW'
-        ))
+    sets.append(
+        utils.build_conf_dict(
+            "import_pickle",
+            "B403",
+            ["pickle", "cPickle", "dill", "shelve"],
+            "Consider possible security implications associated with "
+            "{name} module.",
+            "LOW",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_subprocess', 'B404', ['subprocess'],
-        'Consider possible security implications associated with the '
-        'subprocess module.', 'LOW'
-        ))
+    sets.append(
+        utils.build_conf_dict(
+            "import_subprocess",
+            "B404",
+            ["subprocess"],
+            "Consider possible security implications associated with the "
+            "subprocess module.",
+            "LOW",
+        )
+    )
 
     # Most of this is based off of Christian Heimes' work on defusedxml:
     #   https://pypi.org/project/defusedxml/#defusedxml-sax
 
-    xml_msg = ('Using {name} to parse untrusted XML data is known to be '
-               'vulnerable to XML attacks. Replace {name} with the equivalent '
-               'defusedxml package, or make sure defusedxml.defuse_stdlib() '
-               'is called.')
-    lxml_msg = ('Using {name} to parse untrusted XML data is known to be '
-                'vulnerable to XML attacks. Replace {name} with the '
-                'equivalent defusedxml package.')
+    xml_msg = (
+        "Using {name} to parse untrusted XML data is known to be "
+        "vulnerable to XML attacks. Replace {name} with the equivalent "
+        "defusedxml package, or make sure defusedxml.defuse_stdlib() "
+        "is called."
+    )
+    lxml_msg = (
+        "Using {name} to parse untrusted XML data is known to be "
+        "vulnerable to XML attacks. Replace {name} with the "
+        "equivalent defusedxml package."
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_xml_etree', 'B405',
-        ['xml.etree.cElementTree', 'xml.etree.ElementTree'], xml_msg, 'LOW'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_xml_etree",
+            "B405",
+            ["xml.etree.cElementTree", "xml.etree.ElementTree"],
+            xml_msg,
+            "LOW",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_xml_sax', 'B406', ['xml.sax'], xml_msg, 'LOW'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_xml_sax", "B406", ["xml.sax"], xml_msg, "LOW"
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_xml_expat', 'B407', ['xml.dom.expatbuilder'], xml_msg, 'LOW'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_xml_expat",
+            "B407",
+            ["xml.dom.expatbuilder"],
+            xml_msg,
+            "LOW",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_xml_minidom', 'B408', ['xml.dom.minidom'], xml_msg, 'LOW'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_xml_minidom", "B408", ["xml.dom.minidom"], xml_msg, "LOW"
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_xml_pulldom', 'B409', ['xml.dom.pulldom'], xml_msg, 'LOW'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_xml_pulldom", "B409", ["xml.dom.pulldom"], xml_msg, "LOW"
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_lxml', 'B410', ['lxml'], lxml_msg, 'LOW'))
+    sets.append(
+        utils.build_conf_dict("import_lxml", "B410", ["lxml"], lxml_msg, "LOW")
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_xmlrpclib', 'B411', ['xmlrpclib'],
-        'Using {name} to parse untrusted XML data is known to be '
-        'vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() '
-        'function to monkey-patch xmlrpclib and mitigate XML '
-        'vulnerabilities.', 'HIGH'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_xmlrpclib",
+            "B411",
+            ["xmlrpclib"],
+            "Using {name} to parse untrusted XML data is known to be "
+            "vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() "
+            "function to monkey-patch xmlrpclib and mitigate XML "
+            "vulnerabilities.",
+            "HIGH",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_httpoxy', 'B412',
-        ['wsgiref.handlers.CGIHandler', 'twisted.web.twcgi.CGIScript',
-         'twisted.web.twcgi.CGIDirectory'],
-        'Consider possible security implications associated with '
-        '{name} module.', 'HIGH'
-        ))
+    sets.append(
+        utils.build_conf_dict(
+            "import_httpoxy",
+            "B412",
+            [
+                "wsgiref.handlers.CGIHandler",
+                "twisted.web.twcgi.CGIScript",
+                "twisted.web.twcgi.CGIDirectory",
+            ],
+            "Consider possible security implications associated with "
+            "{name} module.",
+            "HIGH",
+        )
+    )
 
-    sets.append(utils.build_conf_dict(
-        'import_pycrypto', 'B413',
-        ['Crypto.Cipher',
-         'Crypto.Hash',
-         'Crypto.IO',
-         'Crypto.Protocol',
-         'Crypto.PublicKey',
-         'Crypto.Random',
-         'Crypto.Signature',
-         'Crypto.Util'],
-        'The pyCrypto library and its module {name} are no longer actively '
-        'maintained and have been deprecated. '
-        'Consider using pyca/cryptography library.', 'HIGH'))
+    sets.append(
+        utils.build_conf_dict(
+            "import_pycrypto",
+            "B413",
+            [
+                "Crypto.Cipher",
+                "Crypto.Hash",
+                "Crypto.IO",
+                "Crypto.Protocol",
+                "Crypto.PublicKey",
+                "Crypto.Random",
+                "Crypto.Signature",
+                "Crypto.Util",
+            ],
+            "The pyCrypto library and its module {name} are no longer actively"
+            " maintained and have been deprecated. "
+            "Consider using pyca/cryptography library.",
+            "HIGH",
+        )
+    )
 
-    return {'Import': sets, 'ImportFrom': sets, 'Call': sets}
+    return {"Import": sets, "ImportFrom": sets, "Call": sets}

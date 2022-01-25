@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 =============================================
 B501: Test for missing certificate validation
@@ -40,23 +38,24 @@ Bandit will return a HIGH severity error.
 .. versionadded:: 0.9.0
 
 """
-
 import bandit
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B501')
+@test.checks("Call")
+@test.test_id("B501")
 def request_with_no_cert_validation(context):
-    http_verbs = ('get', 'options', 'head', 'post', 'put', 'patch', 'delete')
-    if ('requests' in context.call_function_name_qual and
-            context.call_function_name in http_verbs):
-        if context.check_call_arg_value('verify', 'False'):
+    http_verbs = ("get", "options", "head", "post", "put", "patch", "delete")
+    if (
+        "requests" in context.call_function_name_qual
+        and context.call_function_name in http_verbs
+    ):
+        if context.check_call_arg_value("verify", "False"):
             issue = bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
                 text="Requests call with verify=False disabling SSL "
-                     "certificate checks, security issue.",
-                lineno=context.get_lineno_for_call_arg('verify'),
+                "certificate checks, security issue.",
+                lineno=context.get_lineno_for_call_arg("verify"),
             )
             return issue

@@ -1,24 +1,22 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 # default plugin name pattern
-plugin_name_pattern = '*.py'
+plugin_name_pattern = "*.py"
 
 # default progress increment
 progress_increment = 50
 
-RANKING = ['UNDEFINED', 'LOW', 'MEDIUM', 'HIGH']
-RANKING_VALUES = {'UNDEFINED': 1, 'LOW': 3, 'MEDIUM': 5, 'HIGH': 10}
-CRITERIA = [('SEVERITY', 'UNDEFINED'), ('CONFIDENCE', 'UNDEFINED')]
+RANKING = ["UNDEFINED", "LOW", "MEDIUM", "HIGH"]
+RANKING_VALUES = {"UNDEFINED": 1, "LOW": 3, "MEDIUM": 5, "HIGH": 10}
+CRITERIA = [("SEVERITY", "UNDEFINED"), ("CONFIDENCE", "UNDEFINED")]
 
 # add each ranking to globals, to allow direct access in module name space
 for rank in RANKING:
     globals()[rank] = rank
 
-CONFIDENCE_DEFAULT = 'UNDEFINED'
+CONFIDENCE_DEFAULT = "UNDEFINED"
 
 # A list of values Python considers to be False.
 # These can be useful in tests to check if a value is True or False.
@@ -26,10 +24,10 @@ CONFIDENCE_DEFAULT = 'UNDEFINED'
 # These are only useful when we have a constant in code. If we
 # have a variable we cannot determine if False.
 # See https://docs.python.org/3/library/stdtypes.html#truth-value-testing
-FALSE_VALUES = [None, False, 'False', 0, 0.0, 0j, '', (), [], {}]
+FALSE_VALUES = [None, False, "False", 0, 0.0, 0j, "", (), [], {}]
 
 # override with "log_format" option in config file
-log_format_string = '[%(module)s]\t%(levelname)s\t%(message)s'
+log_format_string = "[%(module)s]\t%(levelname)s\t%(message)s"
 
 # Directories to exclude by default
 EXCLUDE = (

@@ -35,7 +35,7 @@ PATH_JENKINS = "jenkins/jobs/projects.yaml"
 PATH_PROJECT_LIST = "openstack/governance/plain/reference/projects.yaml"
 PATH_ZUUL = "zuul/layout.yaml"
 
-TITLE = "OpenStack Bandit Coverage Report -- {0} UTC".format(
+TITLE = "OpenStack Bandit Coverage Report -- {} UTC".format(
     datetime.datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
 )
 
@@ -48,13 +48,13 @@ def get_yaml(url):
         data = yaml.load(r.content)
         return(data)
     raise SystemError(
-        "Could not obtain valid YAML from specified source ({0})"
+        "Could not obtain valid YAML from specified source ({})"
         .format(url)
     )
 
 
 def list_projects(conf_jenkins):
-    data = get_yaml("{0}{1}{2}".format(BASE_URL, PATH_INFRA, conf_jenkins))
+    data = get_yaml("{}{}{}".format(BASE_URL, PATH_INFRA, conf_jenkins))
     # parse data
     bandit_projects = []
     for project in data:
@@ -68,15 +68,15 @@ def list_projects(conf_jenkins):
     # output results
     print("Bandit jobs have been defined in the following OpenStack projects:")
     for project in sorted(bandit_projects):
-        print(" - {0}".format(project))
-    print("\n(Configuration from {0}{1}{2})\n".format(
+        print(" - {}".format(project))
+    print("\n(Configuration from {}{}{})\n".format(
         BASE_URL, PATH_INFRA, conf_jenkins
     ))
     return bandit_projects
 
 
 def coverage_zuul(conf_zuul):
-    data = get_yaml("{0}{1}{2}".format(BASE_URL, PATH_INFRA, conf_zuul))
+    data = get_yaml("{}{}{}".format(BASE_URL, PATH_INFRA, conf_zuul))
     # parse data
     bandit_jobs = {}
     bandit_tests = {key: set() for key in TEST_TYPES}
@@ -96,15 +96,15 @@ def coverage_zuul(conf_zuul):
     # output results
     for test_type in bandit_tests:
         print(
-            "\n{0} tests exist for the following OpenStack projects:"
+            "\n{} tests exist for the following OpenStack projects:"
             .format(test_type.capitalize())
         )
         for project in sorted(bandit_tests[test_type]):
             if project[1] is False:
-                print(" - {0}".format(project[0]))
+                print(" - {}".format(project[0]))
             else:
-                print(" - {0} (VOTING)".format(project[0]))
-    print("\n(Configuration from {0}{1}{2})\n".format(
+                print(" - {} (VOTING)".format(project[0]))
+    print("\n(Configuration from {}{}{})\n".format(
         BASE_URL, PATH_INFRA, conf_zuul
     ))
 
@@ -137,7 +137,7 @@ def _get_repo_names(project_list):
     # as the key and the repo as the value.
     project_repos = {key: None for key in project_list}
 
-    yaml_data = get_yaml("{0}{1}".format(BASE_URL, PATH_PROJECT_LIST))
+    yaml_data = get_yaml("{}{}".format(BASE_URL, PATH_PROJECT_LIST))
 
     for project in yaml_data:
 

@@ -2,10 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 """Bandit is a tool designed to find common security issues in Python code."""
-
-
-from __future__ import print_function
-
 import argparse
 import importlib
 import logging
@@ -16,7 +12,7 @@ import yaml
 
 from bandit.core import extension_loader
 
-PROG_NAME = 'bandit_conf_generator'
+PROG_NAME = "bandit_conf_generator"
 LOG = logging.getLogger(__name__)
 
 
@@ -78,23 +74,41 @@ def parse_args():
 
     parser = argparse.ArgumentParser(
         description=help_description,
-        formatter_class=argparse.RawTextHelpFormatter)
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
 
-    parser.add_argument('--show-defaults', dest='show_defaults',
-                        action='store_true',
-                        help='show the default settings values for each '
-                             'plugin but do not output a profile')
-    parser.add_argument('-o', '--out', dest='output_file',
-                        action='store',
-                        help='output file to save profile')
     parser.add_argument(
-        '-t', '--tests', dest='tests',
-        action='store', default=None, type=str,
-        help='list of test names to run')
+        "--show-defaults",
+        dest="show_defaults",
+        action="store_true",
+        help="show the default settings values for each "
+        "plugin but do not output a profile",
+    )
     parser.add_argument(
-        '-s', '--skip', dest='skips',
-        action='store', default=None, type=str,
-        help='list of test names to skip')
+        "-o",
+        "--out",
+        dest="output_file",
+        action="store",
+        help="output file to save profile",
+    )
+    parser.add_argument(
+        "-t",
+        "--tests",
+        dest="tests",
+        action="store",
+        default=None,
+        type=str,
+        help="list of test names to run",
+    )
+    parser.add_argument(
+        "-s",
+        "--skip",
+        dest="skips",
+        action="store",
+        default=None,
+        type=str,
+        help="list of test names to skip",
+    )
     args = parser.parse_args()
 
     if not args.output_file and not args.show_defaults:
@@ -112,11 +126,11 @@ def get_config_settings():
         function = plugin.plugin
 
         # if a function takes config...
-        if hasattr(function, '_takes_config'):
+        if hasattr(function, "_takes_config"):
             fn_module = importlib.import_module(function.__module__)
 
             # call the config generator if it exists
-            if hasattr(fn_module, 'gen_config'):
+            if hasattr(fn_module, "gen_config"):
                 config[fn_name] = fn_module.gen_config(function._takes_config)
 
     return yaml.safe_dump(config, default_flow_style=False)
@@ -138,24 +152,30 @@ def main():
             sys.exit(2)
 
         try:
-            with open(args.output_file, 'w') as f:
-                skips = args.skips.split(',') if args.skips else []
-                tests = args.tests.split(',') if args.tests else []
+            with open(args.output_file, "w") as f:
+                skips = args.skips.split(",") if args.skips else []
+                tests = args.tests.split(",") if args.tests else []
 
                 for skip in skips:
                     if not extension_loader.MANAGER.check_id(skip):
-                        raise RuntimeError('unknown ID in skips: %s' % skip)
+                        raise RuntimeError("unknown ID in skips: %s" % skip)
 
                 for test in tests:
                     if not extension_loader.MANAGER.check_id(test):
-                        raise RuntimeError('unknown ID in tests: %s' % test)
+                        raise RuntimeError("unknown ID in tests: %s" % test)
 
                 tpl = "# {0} : {1}"
-                test_list = [tpl.format(t.plugin._test_id, t.name)
-                             for t in extension_loader.MANAGER.plugins]
+                test_list = [
+                    tpl.format(t.plugin._test_id, t.name)
+                    for t in extension_loader.MANAGER.plugins
+                ]
 
-                others = [tpl.format(k, v['name']) for k, v in (
-                    extension_loader.MANAGER.blacklist_by_id.items())]
+                others = [
+                    tpl.format(k, v["name"])
+                    for k, v in (
+                        extension_loader.MANAGER.blacklist_by_id.items()
+                    )
+                ]
                 test_list.extend(others)
                 test_list.sort()
 
@@ -163,11 +183,12 @@ def main():
                     cli=" ".join(sys.argv),
                     settings=yaml_settings,
                     test_list="\n".join(test_list),
-                    skip='skips: ' + str(skips) if skips else 'skips:',
-                    test='tests: ' + str(tests) if tests else 'tests:')
+                    skip="skips: " + str(skips) if skips else "skips:",
+                    test="tests: " + str(tests) if tests else "tests:",
+                )
                 f.write(contents)
 
-        except IOError:
+        except OSError:
             LOG.error("Unable to open %s for writing", args.output_file)
 
         except Exception as e:
@@ -179,5 +200,5 @@ def main():
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
