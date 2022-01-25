@@ -8,10 +8,10 @@ SYNOPSIS
 bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
             [-p PROFILE] [-t TESTS] [-s SKIPS] [-l] [-i]
             [-f {csv,custom,html,json,screen,txt,xml,yaml}]
-            [--msg-template MSG_TEMPLATE] [-o OUTPUT_FILE] [-v] [-d] [-q]
+            [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d] [-q]
             [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
             [--ini INI_PATH] [--exit-zero] [--version]
-            targets [targets ...]
+            [targets [targets ...]]
 
 DESCRIPTION
 ===========
@@ -59,9 +59,11 @@ OPTIONS
                         only show output in the case of an error
   --ignore-nosec        do not skip lines with # nosec comments
   -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
-                        comma-separated list of paths (glob patterns supported)
-                        to exclude from scan (note that these are in addition
-                        to the excluded paths provided in the config file)
+                        comma-separated list of paths (glob patterns
+                        supported) to exclude from scan (note that these are
+                        in addition to the excluded paths provided in the
+                        config file) (default:
+                        .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
   -b BASELINE, --baseline BASELINE
                         path of a baseline report to compare against (only
                         JSON-formatted files are accepted)
