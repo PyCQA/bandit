@@ -1,7 +1,6 @@
 # Copyright (c) 2017 VMware, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==============
 YAML Formatter
@@ -59,8 +58,6 @@ This formatter outputs the issues in a yaml format.
 """
 # Necessary for this formatter to work when imported on Python 2. Importing
 # the standard library's yaml module conflicts with the name of this module.
-from __future__ import absolute_import
-
 import datetime
 import logging
 import operator
@@ -74,46 +71,49 @@ LOG = logging.getLogger(__name__)
 
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
-    '''Prints issues in YAML format
+    """Prints issues in YAML format
 
     :param manager: the bandit manager object
     :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
-    '''
+    """
 
-    machine_output = {'results': [], 'errors': []}
+    machine_output = {"results": [], "errors": []}
     for (fname, reason) in manager.get_skipped():
-        machine_output['errors'].append({'filename': fname, 'reason': reason})
+        machine_output["errors"].append({"filename": fname, "reason": reason})
 
-    results = manager.get_issue_list(sev_level=sev_level,
-                                     conf_level=conf_level)
+    results = manager.get_issue_list(
+        sev_level=sev_level, conf_level=conf_level
+    )
 
     collector = [r.as_dict() for r in results]
     for elem in collector:
-        elem['more_info'] = docs_utils.get_url(elem['test_id'])
+        elem["more_info"] = docs_utils.get_url(elem["test_id"])
 
     itemgetter = operator.itemgetter
-    if manager.agg_type == 'vuln':
-        machine_output['results'] = sorted(collector,
-                                           key=itemgetter('test_name'))
+    if manager.agg_type == "vuln":
+        machine_output["results"] = sorted(
+            collector, key=itemgetter("test_name")
+        )
     else:
-        machine_output['results'] = sorted(collector,
-                                           key=itemgetter('filename'))
+        machine_output["results"] = sorted(
+            collector, key=itemgetter("filename")
+        )
 
-    machine_output['metrics'] = manager.metrics.data
+    machine_output["metrics"] = manager.metrics.data
 
-    for result in machine_output['results']:
-        if 'code' in result:
-            code = result['code'].replace('\n', '\\n')
-            result['code'] = code
+    for result in machine_output["results"]:
+        if "code" in result:
+            code = result["code"].replace("\n", "\\n")
+            result["code"] = code
 
     # timezone agnostic format
     TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
     time_string = datetime.datetime.utcnow().strftime(TS_FORMAT)
-    machine_output['generated_at'] = time_string
+    machine_output["generated_at"] = time_string
 
     yaml.safe_dump(machine_output, fileobj, default_flow_style=False)
 

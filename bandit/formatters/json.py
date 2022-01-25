@@ -1,7 +1,5 @@
-# -*- coding:utf-8 -*-
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==============
 JSON formatter
@@ -67,8 +65,6 @@ This formatter outputs the issues in JSON.
 """
 # Necessary so we can import the standard library json module while continuing
 # to name this file json.py. (Python 2 only)
-from __future__ import absolute_import
-
 import datetime
 import json
 import logging
@@ -83,22 +79,22 @@ LOG = logging.getLogger(__name__)
 
 @test_properties.accepts_baseline
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
-    '''''Prints issues in JSON format
+    """''Prints issues in JSON format
 
     :param manager: the bandit manager object
     :param fileobj: The output file object, which may be sys.stdout
     :param sev_level: Filtering severity level
     :param conf_level: Filtering confidence level
     :param lines: Number of lines to report, -1 for all
-    '''
+    """
 
-    machine_output = {'results': [], 'errors': []}
+    machine_output = {"results": [], "errors": []}
     for (fname, reason) in manager.get_skipped():
-        machine_output['errors'].append({'filename': fname,
-                                         'reason': reason})
+        machine_output["errors"].append({"filename": fname, "reason": reason})
 
-    results = manager.get_issue_list(sev_level=sev_level,
-                                     conf_level=conf_level)
+    results = manager.get_issue_list(
+        sev_level=sev_level, conf_level=conf_level
+    )
 
     baseline = not isinstance(results, list)
 
@@ -106,34 +102,37 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         collector = []
         for r in results:
             d = r.as_dict()
-            d['more_info'] = docs_utils.get_url(d['test_id'])
+            d["more_info"] = docs_utils.get_url(d["test_id"])
             if len(results[r]) > 1:
-                d['candidates'] = [c.as_dict() for c in results[r]]
+                d["candidates"] = [c.as_dict() for c in results[r]]
             collector.append(d)
 
     else:
         collector = [r.as_dict() for r in results]
         for elem in collector:
-            elem['more_info'] = docs_utils.get_url(elem['test_id'])
+            elem["more_info"] = docs_utils.get_url(elem["test_id"])
 
     itemgetter = operator.itemgetter
-    if manager.agg_type == 'vuln':
-        machine_output['results'] = sorted(collector,
-                                           key=itemgetter('test_name'))
+    if manager.agg_type == "vuln":
+        machine_output["results"] = sorted(
+            collector, key=itemgetter("test_name")
+        )
     else:
-        machine_output['results'] = sorted(collector,
-                                           key=itemgetter('filename'))
+        machine_output["results"] = sorted(
+            collector, key=itemgetter("filename")
+        )
 
-    machine_output['metrics'] = manager.metrics.data
+    machine_output["metrics"] = manager.metrics.data
 
     # timezone agnostic format
     TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
     time_string = datetime.datetime.utcnow().strftime(TS_FORMAT)
-    machine_output['generated_at'] = time_string
+    machine_output["generated_at"] = time_string
 
-    result = json.dumps(machine_output, sort_keys=True,
-                        indent=2, separators=(',', ': '))
+    result = json.dumps(
+        machine_output, sort_keys=True, indent=2, separators=(",", ": ")
+    )
 
     with fileobj:
         fileobj.write(result)

@@ -1,5 +1,5 @@
 # Contributing to Bandit
-Thanks for considering to take part in the improvement of the Bandit project. Contributions are always welcome!  
+Thanks for considering to take part in the improvement of the Bandit project. Contributions are always welcome!
 Here are guidelines and rules that can be helpful if you plan to want to get involved in the project.
 
 #### Table Of Contents
@@ -27,7 +27,7 @@ If you encounter a bug, please let us know about it. See the guide here [GitHub 
 to add a comment to the existing issue instead of creating a new one.
 
 ### Submitting your first issue
-We encourage using the issue template to improve quality of reported issues. 
+We encourage using the issue template to improve quality of reported issues.
 Navigate to the issues tab and select `New issue`, then select the **Bug report** template and fill out the form.
 To submit a good bug report keep in mind to:
 * Use a descriptive title so other people can understand what the issue is about.
@@ -64,8 +64,7 @@ You can test any changes with tox:
 ```shell script
 pip install tox
 tox -e pep8
-tox -e py27
-tox -e py35
+tox -e py37
 tox -e docs
 tox -e cover
 ```

@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ============================
 B608: Test for SQL injection
@@ -50,7 +48,6 @@ If so, a MEDIUM issue is reported. For example:
 .. versionadded:: 0.9.0
 
 """  # noqa: E501
-
 import ast
 import re
 
@@ -59,10 +56,10 @@ from bandit.core import test_properties as test
 from bandit.core import utils
 
 SIMPLE_SQL_RE = re.compile(
-    r'(select\s.*from\s|'
-    r'delete\s+from\s|'
-    r'insert\s+into\s.*values\s|'
-    r'update\s.*set\s)',
+    r"(select\s.*from\s|"
+    r"delete\s+from\s|"
+    r"insert\s+into\s.*values\s|"
+    r"update\s.*set\s)",
     re.IGNORECASE | re.DOTALL,
 )
 
@@ -73,32 +70,35 @@ def _check_string(data):
 
 def _evaluate_ast(node):
     wrapper = None
-    statement = ''
+    statement = ""
 
     if isinstance(node._bandit_parent, ast.BinOp):
         out = utils.concat_string(node, node._bandit_parent)
         wrapper = out[0]._bandit_parent
         statement = out[1]
-    elif (isinstance(node._bandit_parent, ast.Attribute)
-          and node._bandit_parent.attr == 'format'):
+    elif (
+        isinstance(node._bandit_parent, ast.Attribute)
+        and node._bandit_parent.attr == "format"
+    ):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node._bandit_parent._bandit_parent._bandit_parent
-    elif (hasattr(ast, 'JoinedStr')
-          and isinstance(node._bandit_parent, ast.JoinedStr)):
+    elif hasattr(ast, "JoinedStr") and isinstance(
+        node._bandit_parent, ast.JoinedStr
+    ):
         statement = node.s
         wrapper = node._bandit_parent._bandit_parent
 
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
-        names = ['execute', 'executemany']
+        names = ["execute", "executemany"]
         name = utils.get_called_name(wrapper)
         return (name in names, statement)
     else:
         return (False, statement)
 
 
-@test.checks('Str')
-@test.test_id('B608')
+@test.checks("Str")
+@test.test_id("B608")
 def hardcoded_sql_expressions(context):
     val = _evaluate_ast(context.node)
     if _check_string(val[1]):
@@ -106,5 +106,5 @@ def hardcoded_sql_expressions(context):
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM if val[0] else bandit.LOW,
             text="Possible SQL injection vector through string-based "
-                 "query construction."
+            "query construction.",
         )

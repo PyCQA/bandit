@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 from bandit.core import config  # noqa
 from bandit.core import context  # noqa
 from bandit.core import manager  # noqa

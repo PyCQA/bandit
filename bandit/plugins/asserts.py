@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ============================
 B101: Test for use of assert
@@ -56,21 +54,23 @@ from bandit.core import test_properties as test
 
 
 def gen_config(name):
-    if name == 'assert_used':
-        return {'skips': []}
+    if name == "assert_used":
+        return {"skips": []}
 
 
 @test.takes_config
-@test.test_id('B101')
-@test.checks('Assert')
+@test.test_id("B101")
+@test.checks("Assert")
 def assert_used(context, config):
-    for skip in config.get('skips', []):
+    for skip in config.get("skips", []):
         if fnmatch.fnmatch(context.filename, skip):
             return None
 
     return bandit.Issue(
         severity=bandit.LOW,
         confidence=bandit.HIGH,
-        text=("Use of assert detected. The enclosed code "
-              "will be removed when compiling to optimised byte code.")
+        text=(
+            "Use of assert detected. The enclosed code "
+            "will be removed when compiling to optimised byte code."
+        ),
     )

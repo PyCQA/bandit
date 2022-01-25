@@ -2,7 +2,6 @@
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 =============================================
 B112: Test for a continue in the except block
@@ -70,7 +69,6 @@ following would not generate a warning if the configuration option
 .. versionadded:: 1.0.0
 
 """
-
 import ast
 
 import bandit
@@ -78,23 +76,26 @@ from bandit.core import test_properties as test
 
 
 def gen_config(name):
-    if name == 'try_except_continue':
-        return {'check_typed_exception': False}
+    if name == "try_except_continue":
+        return {"check_typed_exception": False}
 
 
 @test.takes_config
-@test.checks('ExceptHandler')
-@test.test_id('B112')
+@test.checks("ExceptHandler")
+@test.test_id("B112")
 def try_except_continue(context, config):
     node = context.node
     if len(node.body) == 1:
-        if (not config['check_typed_exception'] and
-                node.type is not None and
-                getattr(node.type, 'id', None) != 'Exception'):
+        if (
+            not config["check_typed_exception"]
+            and node.type is not None
+            and getattr(node.type, "id", None) != "Exception"
+        ):
             return
 
         if isinstance(node.body[0], ast.Continue):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
-                text=("Try, Except, Continue detected."))
+                text=("Try, Except, Continue detected."),
+            )

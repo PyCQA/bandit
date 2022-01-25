@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==============================
 B102: Test for the use of exec
@@ -31,7 +29,6 @@ Python docs succinctly describe why the use of `exec` is risky.
 
 .. versionadded:: 0.9.0
 """
-
 import bandit
 from bandit.core import test_properties as test
 
@@ -40,12 +37,12 @@ def exec_issue():
     return bandit.Issue(
         severity=bandit.MEDIUM,
         confidence=bandit.HIGH,
-        text="Use of exec detected."
+        text="Use of exec detected.",
     )
 
 
-@test.checks('Call')
-@test.test_id('B102')
+@test.checks("Call")
+@test.test_id("B102")
 def exec_used(context):
-    if context.call_function_name_qual == 'exec':
+    if context.call_function_name_qual == "exec":
         return exec_issue()
