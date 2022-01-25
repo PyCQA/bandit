@@ -19,7 +19,7 @@ def snmp_insecure_version_check(context):
 
     Please update your code to use more secure versions of SNMP.
 
-    .. versionadded:: 1.5.2
+    .. versionadded:: 1.7.2
     """
 
     if context.call_function_name_qual == 'CommunityData':
