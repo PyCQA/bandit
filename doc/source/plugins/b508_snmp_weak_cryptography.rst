@@ -1,5 +1,5 @@
 ---------------------------
-B508: snmp_insecure_version
+B509: snmp_weak_cryptography
 ---------------------------
 
 .. currentmodule:: bandit.plugins.snmp_security_check
