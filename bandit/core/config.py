@@ -6,6 +6,11 @@ import logging
 
 import yaml
 
+try:
+    import toml
+except ImportError:
+    toml = None
+
 from bandit.core import constants
 from bandit.core import extension_loader
 from bandit.core import utils
@@ -36,7 +41,10 @@ class BanditConfig:
                 )
 
             if config_file.endswith(".toml"):
-                import toml
+                if toml is None:
+                    raise utils.ConfigError(
+                        "toml parser not available, reinstall with toml extra"
+                    )
 
                 try:
                     with f:
