@@ -19,7 +19,7 @@ Bandit will return a MEDIUM severity error.
 .. code-block:: none
 
     >> Issue: [B113:request_without_timeout] Requests call without timeout
-       Severity: Medium   Confidence: High
+       Severity: Medium   Confidence: Low
        Location: examples/requests-missing-timeout.py:3:0
        More Info: https://bandit.readthedocs.io/en/latest/plugins/b113_request_without_timeout.html
     2
@@ -28,7 +28,7 @@ Bandit will return a MEDIUM severity error.
 
     --------------------------------------------------
     >> Issue: [B113:request_without_timeout] Requests call with timeout set to None
-       Severity: Medium   Confidence: High
+       Severity: Medium   Confidence: Low
        Location: examples/requests-missing-timeout.py:4:0
        More Info: https://bandit.readthedocs.io/en/latest/plugins/b113_request_without_timeout.html
     3	requests.get('https://gmail.com')
