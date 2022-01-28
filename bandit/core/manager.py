@@ -493,7 +493,7 @@ def _parse_nosec_comment(comment):
     if nosec_tests:
         extman = extension_loader.MANAGER
         # lookup tests by short code or name
-        for test in re.finditer(NOSEC_COMMENT_TESTS, nosec_tests):
+        for test in NOSEC_COMMENT_TESTS.finditer(nosec_tests):
             test_match = test.group(1)
             test_id = _find_test_id_from_nosec_string(extman, test_match)
             if test_id:

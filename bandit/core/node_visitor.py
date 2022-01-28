@@ -30,7 +30,7 @@ class BanditNodeVisitor:
         self.imports = set()
         self.import_aliases = {}
         self.tester = b_tester.BanditTester(
-            self.testset, self.debug, nosec_lines
+            self.testset, self.debug, nosec_lines, metrics
         )
 
         # in some cases we can't determine a qualified name
@@ -207,6 +207,7 @@ class BanditNodeVisitor:
                 LOG.debug("skipped, nosec without test number")
                 self.metrics.note_nosec()
                 return False
+
         if hasattr(node, "col_offset"):
             self.context["col_offset"] = node.col_offset
 
@@ -275,12 +276,6 @@ class BanditNodeVisitor:
         severity, this is needed to update the stored list.
         :param score: The score list to update our scores with
         """
-        # scores has extra nosec information about nosecs with specific tests
-        # so pop those out first and track the metrics for them
-        self.metrics.note_nosec_by_test(scores.pop("nosecs_by_tests"))
-        self.metrics.note_failed_nosec_by_test(
-            scores.pop("failed_nosecs_by_test")
-        )
         # we'll end up with something like:
         # SEVERITY: {0, 0, 0, 10}  where 10 is weighted by finding and level
         for score_type in self.scores:
