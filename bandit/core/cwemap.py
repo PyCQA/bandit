@@ -5,8 +5,8 @@
 from bandit.core import issue
 
 CWEMAP = {
-    "B000": Cwe.NOTSET,
-    "LEGACY": Cwe.NOTSET,
+    "B000": issue.Cwe.NOTSET,
+    "LEGACY": issue.Cwe.NOTSET,
 
     # Plugins
     "B101": issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
