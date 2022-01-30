@@ -29,7 +29,7 @@ class CsvFormatterTests(testtools.TestCase):
             bandit.MEDIUM,
             123,
             bandit.MEDIUM,
-            "Possible binding to all interfaces."
+            "Possible binding to all interfaces.",
         )
         self.manager.out_file = self.tmp_fname
 

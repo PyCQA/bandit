@@ -222,7 +222,8 @@ def check_risk(node):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             cwe=cwemap.CWEMAP["B703"],
-            confidence=bandit.HIGH, text=description
+            confidence=bandit.HIGH,
+            text=description
         )
 
 

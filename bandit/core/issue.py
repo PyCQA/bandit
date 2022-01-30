@@ -7,7 +7,7 @@ import linecache
 from bandit.core import constants
 
 
-class Cwe(object):
+class Cwe():
     NOTSET = 0
     IMPROPER_INPUT_VALIDATION = 20
     PATH_TRAVERSAL = 22
@@ -48,17 +48,18 @@ class Cwe(object):
         return "CWE-%i (%s)" % (self.id, self.link())
 
     def as_dict(self):
-        return {
-            "id": self.id,
-            "link": self.link()
-        } if self.id != Cwe.NOTSET else {}
+        return (
+            {"id": self.id, "link": self.link()}
+            if self.id != Cwe.NOTSET
+            else {}
+        )
 
     def as_jsons(self):
         return str(self.as_dict())
 
     def from_dict(self, data):
-        if 'id' in data:
-            self.id = int(data['id'])
+        if "id" in data:
+            self.id = int(data["id"])
         else:
             self.id = Cwe.NOTSET
 

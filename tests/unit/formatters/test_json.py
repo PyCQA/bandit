@@ -33,7 +33,7 @@ class JsonFormatterTests(testtools.TestCase):
             bandit.MEDIUM,
             issue.Cwe.MULTIPLE_BINDS,
             bandit.MEDIUM,
-            "Possible binding to all interfaces."
+            "Possible binding to all interfaces.",
         )
 
         self.candidates = [
@@ -42,14 +42,14 @@ class JsonFormatterTests(testtools.TestCase):
                 bandit.LOW,
                 bandit.LOW,
                 "Candidate A",
-                lineno=1
+                lineno=1,
             ),
             issue.Issue(
                 bandit.HIGH,
                 issue.Cwe.MULTIPLE_BINDS,
                 bandit.HIGH,
                 "Candiate B",
-                lineno=2
+                lineno=2,
             ),
         ]
 

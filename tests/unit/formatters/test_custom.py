@@ -27,7 +27,7 @@ class CustomFormatterTests(testtools.TestCase):
         self.issue = issue.Issue(
             bandit.MEDIUM,
             bandit.MEDIUM,
-            text="Possible binding to all interfaces."
+            text="Possible binding to all interfaces.",
         )
         self.manager.out_file = self.tmp_fname
 

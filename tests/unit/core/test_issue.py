@@ -18,14 +18,15 @@ class IssueTests(testtools.TestCase):
 
     def test_issue_str(self):
         test_issue = _get_issue_instance()
-        expect = ("Issue: 'Test issue' from B999:bandit_plugin:"
-                  ' CWE: %s,'
-                  " Severity: MEDIUM "
-                  "Confidence: MEDIUM at code.py:1")
+        expect = (
+            "Issue: 'Test issue' from B999:bandit_plugin:"
+            " CWE: %s,"
+            " Severity: MEDIUM "
+            "Confidence: MEDIUM at code.py:1"
+        )
 
         self.assertEqual(
-            expect % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)),
-            str(test_issue)
+            expect % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)), str(test_issue)
         )
 
     def test_issue_as_dict(self):
@@ -111,9 +112,7 @@ class IssueTests(testtools.TestCase):
     def test_get_code(self, getline):
         getline.return_value = b"\x08\x30"
         new_issue = issue.Issue(
-            bandit.MEDIUM,
-            cwe=issue.Cwe.MULTIPLE_BINDS,
-            lineno=1
+            bandit.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS, lineno=1
         )
 
         try:
@@ -123,9 +122,10 @@ class IssueTests(testtools.TestCase):
 
 
 def _get_issue_instance(
-        severity=bandit.MEDIUM,
-        cwe=issue.Cwe.MULTIPLE_BINDS,
-        confidence=bandit.MEDIUM):
+    severity=bandit.MEDIUM,
+    cwe=issue.Cwe.MULTIPLE_BINDS,
+    confidence=bandit.MEDIUM
+):
     new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"
     new_issue.test = "bandit_plugin"

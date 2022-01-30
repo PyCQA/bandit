@@ -33,7 +33,7 @@ class YamlFormatterTests(testtools.TestCase):
             bandit.MEDIUM,
             123,
             bandit.MEDIUM,
-            "Possible binding to all interfaces."
+            "Possible binding to all interfaces.",
         )
 
         self.candidates = [

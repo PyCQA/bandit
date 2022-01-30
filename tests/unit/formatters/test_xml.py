@@ -30,7 +30,7 @@ class XmlFormatterTests(testtools.TestCase):
             bandit.MEDIUM,
             issue.Cwe.MULTIPLE_BINDS,
             bandit.MEDIUM,
-            "Possible binding to all interfaces."
+            "Possible binding to all interfaces.",
         )
         self.manager.out_file = self.tmp_fname
 

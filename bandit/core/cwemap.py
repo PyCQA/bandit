@@ -1,13 +1,10 @@
-# -*- coding:utf-8 -*-
 #
 # SPDX-License-Identifier: Apache-2.0
-
 from bandit.core import issue
 
 CWEMAP = {
     "B000": issue.Cwe.NOTSET,
     "LEGACY": issue.Cwe.NOTSET,
-
     # Plugins
     "B101": issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
     "B102": issue.Cwe.OS_COMMAND_INJECTION,
@@ -17,11 +14,8 @@ CWEMAP = {
     "B108": issue.Cwe.INSECURE_TEMP_FILE,
     "B110": issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
     "B112": issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
-
     "B201": issue.Cwe.CODE_INJECTION,
-
     "B324": issue.Cwe.BROKEN_CRYPTO,
-
     "B501": issue.Cwe.IMPROPER_CERT_VALIDATION,
     "B502": issue.Cwe.BROKEN_CRYPTO,
     "B503": issue.Cwe.BROKEN_CRYPTO,
@@ -29,7 +23,6 @@ CWEMAP = {
     "B505": issue.Cwe.INADEQUATE_ENCRYPTION_STRENGTH,
     "B506": issue.Cwe.IMPROPER_INPUT_VALIDATION,
     "B507": issue.Cwe.IMPROPER_CERT_VALIDATION,
-
     "B601": issue.Cwe.OS_COMMAND_INJECTION,
     "B602": issue.Cwe.OS_COMMAND_INJECTION,
     "B603": issue.Cwe.OS_COMMAND_INJECTION,
@@ -40,7 +33,6 @@ CWEMAP = {
     "B608": issue.Cwe.SQL_INJECTION,
     "B609": issue.Cwe.IMPROPER_WILDCARD_NEUTRALIZATION,
     "B611": issue.Cwe.SQL_INJECTION,
-
     "B701": issue.Cwe.CODE_INJECTION,
     "B702": issue.Cwe.BASIC_XSS,
     "B703": issue.Cwe.BASIC_XSS,
