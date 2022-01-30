@@ -12,7 +12,6 @@ import bandit
 from bandit.core import config
 from bandit.core import constants
 from bandit.core import issue
-from bandit.core.issue import Cwe as Cwe
 from bandit.core import manager
 from bandit.core import metrics
 from bandit.formatters import json as b_json
@@ -31,12 +30,12 @@ class JsonFormatterTests(testtools.TestCase):
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
-            bandit.MEDIUM, Cwe.MULTIPLE_BINDS, bandit.MEDIUM, "Possible binding to all interfaces."
+            bandit.MEDIUM, issue.Cwe.MULTIPLE_BINDS, bandit.MEDIUM, "Possible binding to all interfaces."
         )
 
         self.candidates = [
-            issue.Issue(Cwe.MULTIPLE_BINDS, bandit.LOW, bandit.LOW, "Candidate A", lineno=1),
-            issue.Issue(bandit.HIGH, Cwe.MULTIPLE_BINDS, bandit.HIGH, "Candiate B", lineno=2),
+            issue.Issue(issue.Cwe.MULTIPLE_BINDS, bandit.LOW, bandit.LOW, "Candidate A", lineno=1),
+            issue.Issue(bandit.HIGH, issue.Cwe.MULTIPLE_BINDS, bandit.HIGH, "Candiate B", lineno=2),
         ]
 
         self.manager.out_file = self.tmp_fname

@@ -118,7 +118,7 @@ class IssueTests(testtools.TestCase):
             self.fail("Bytes not properly decoded in issue.get_code()")
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, cwe=Cwe.MULTIPLE_BINDS, confidence=bandit.MEDIUM):
+def _get_issue_instance(severity=bandit.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS, confidence=bandit.MEDIUM):
     new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"
     new_issue.test = "bandit_plugin"

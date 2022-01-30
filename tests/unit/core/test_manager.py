@@ -172,7 +172,7 @@ class ManagerTests(testtools.TestCase):
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = [
-            issue.Issue(severity=level, cwe=Cwe.MULTIPLE_BINDS, confidence=level) for level in levels
+            issue.Issue(severity=level, cwe=issue.Cwe.MULTIPLE_BINDS, confidence=level) for level in levels
         ]
 
         r = [
