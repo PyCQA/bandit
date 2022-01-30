@@ -1,5 +1,50 @@
 Configuration
 =============
+
+---------------
+Bandit Settings
+---------------
+
+Projects may include a YAML file named `.bandit` that specifies command line
+arguments that should be supplied for that project. The currently supported
+arguments are:
+
+ - targets: comma separated list of target dirs/files to run bandit on
+ - exclude: comma separated list of excluded paths
+ - skips: comma separated list of tests to skip
+ - tests: comma separated list of tests to run
+
+To use this, put a YAML file named `.bandit` in your project's directory.
+For example:
+
+::
+
+   exclude: /test
+
+::
+
+   tests:
+     - B101
+     - B102
+     - B301
+
+
+Exclusions
+----------
+In the event that a line of code triggers a Bandit issue, but that the line
+has been reviewed and the issue is a false positive or acceptable for some
+other reason, the line can be marked with a ``# nosec`` and any results
+associated with it will not be reported.
+
+For example, although this line may cause Bandit to report a potential
+security issue, it will not be reported::
+
+    self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
+
+-----------------
+Scanning Behavior
+-----------------
+
 Bandit is designed to be configurable and cover a wide range of needs, it may
 be used as either a local developer utility or as part of a full CI/CD
 pipeline. To provide for these various usage scenarios bandit can be configured
