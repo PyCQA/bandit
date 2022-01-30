@@ -112,7 +112,8 @@ def _output_issue_str(
 
     bits.append(
         "%s   Severity: %s CWE: %s Confidence: %s"
-        % (indent, issue.severity.capitalize(), str(issue.cwe), issue.confidence.capitalize())
+        % (indent, issue.severity.capitalize(), str(issue.cwe),
+            issue.confidence.capitalize())
     )
 
     bits.append(

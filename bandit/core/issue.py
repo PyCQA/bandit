@@ -100,7 +100,8 @@ class Issue:
 
     def __str__(self):
         return (
-            "Issue: '%s' from %s:%s: CWE: %s, Severity: %s Confidence: " "%s at %s:%i"
+            "Issue: '%s' from %s:%s: CWE: %s, Severity: %s Confidence: "
+            "%s at %s:%i"
         ) % (
             self.text,
             self.test_id,

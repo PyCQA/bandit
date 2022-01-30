@@ -15,7 +15,11 @@ from bandit.core import manager
 
 
 class ManagerTests(testtools.TestCase):
-    def _get_issue_instance(self, sev=constants.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS, conf=constants.MEDIUM):
+    def _get_issue_instance(
+            self,
+            sev=constants.MEDIUM,
+            cwe=issue.Cwe.MULTIPLE_BINDS,
+            conf=constants.MEDIUM):
         new_issue = issue.Issue(sev, cwe, conf, "Test issue")
         new_issue.fname = "code.py"
         new_issue.test = "bandit_plugin"
@@ -172,7 +176,10 @@ class ManagerTests(testtools.TestCase):
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = [
-            issue.Issue(severity=level, cwe=issue.Cwe.MULTIPLE_BINDS, confidence=level) for level in levels
+            issue.Issue(
+                severity=level,
+                cwe=issue.Cwe.MULTIPLE_BINDS,
+                confidence=level) for level in levels
         ]
 
         r = [

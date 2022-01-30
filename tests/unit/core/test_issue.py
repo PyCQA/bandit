@@ -110,7 +110,11 @@ class IssueTests(testtools.TestCase):
     @mock.patch("linecache.getline")
     def test_get_code(self, getline):
         getline.return_value = b"\x08\x30"
-        new_issue = issue.Issue(bandit.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS, lineno=1)
+        new_issue = issue.Issue(
+            bandit.MEDIUM,
+            cwe=issue.Cwe.MULTIPLE_BINDS,
+            lineno=1
+        )
 
         try:
             new_issue.get_code()
@@ -118,7 +122,10 @@ class IssueTests(testtools.TestCase):
             self.fail("Bytes not properly decoded in issue.get_code()")
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS, confidence=bandit.MEDIUM):
+def _get_issue_instance(
+        severity=bandit.MEDIUM,
+        cwe=issue.Cwe.MULTIPLE_BINDS,
+        confidence=bandit.MEDIUM):
     new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"
     new_issue.test = "bandit_plugin"

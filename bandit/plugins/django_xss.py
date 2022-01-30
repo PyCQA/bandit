@@ -220,7 +220,9 @@ def check_risk(node):
 
     if not secure:
         return bandit.Issue(
-            severity=bandit.MEDIUM, cwe=cwemap.CWEMAP["B703"], confidence=bandit.HIGH, text=description
+            severity=bandit.MEDIUM,
+            cwe=cwemap.CWEMAP["B703"],
+            confidence=bandit.HIGH, text=description
         )
 
 

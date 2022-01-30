@@ -27,7 +27,10 @@ class XmlFormatterTests(testtools.TestCase):
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
-            bandit.MEDIUM, issue.Cwe.MULTIPLE_BINDS, bandit.MEDIUM, "Possible binding to all interfaces."
+            bandit.MEDIUM,
+            issue.Cwe.MULTIPLE_BINDS,
+            bandit.MEDIUM,
+            "Possible binding to all interfaces."
         )
         self.manager.out_file = self.tmp_fname
 

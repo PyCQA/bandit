@@ -55,7 +55,10 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
             root, "testcase", classname=issue.fname, name=test
         )
 
-        text = "Test ID: %s Severity: %s CWE: %s Confidence: %s\n%s\nLocation %s:%s"
+        text = (
+            "Test ID: %s Severity: %s CWE: %s Confidence: %s\n%s\n"
+            "Location %s:%s"
+        )
         text = text % (
             issue.test_id,
             issue.severity,
