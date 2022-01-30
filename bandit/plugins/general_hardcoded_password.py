@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import ast
 import re
 
@@ -14,8 +12,7 @@ from bandit.core import test_properties as test
 
 RE_WORDS = "(pas+wo?r?d|pass(phrase)?|pwd|token|secrete?)"
 RE_CANDIDATES = re.compile(
-    '(^{0}$|_{0}_|^{0}_|_{0}$)'.format(RE_WORDS),
-    re.IGNORECASE
+    "(^{0}$|_{0}_|^{0}_|_{0}$)".format(RE_WORDS), re.IGNORECASE
 )
 
 
@@ -24,11 +21,12 @@ def _report(value):
         severity=bandit.LOW,
         cwe=cwemap.CWEMAP["B105"],
         confidence=bandit.MEDIUM,
-        text=("Possible hardcoded password: '%s'" % value))
+        text=("Possible hardcoded password: '%s'" % value),
+    )
 
 
-@test.checks('Str')
-@test.test_id('B105')
+@test.checks("Str")
+@test.test_id("B105")
 def hardcoded_password_string(context):
     """**B105: Test for use of hard-coded password strings**
 
@@ -82,13 +80,26 @@ def hardcoded_password_string(context):
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
 
-    elif (isinstance(node._bandit_parent, ast.Index)
-          and RE_CANDIDATES.search(node.s)):
+    elif isinstance(
+        node._bandit_parent, ast.Subscript
+    ) and RE_CANDIDATES.search(node.s):
+        # Py39+: looks for "dict[candidate]='some_string'"
+        # subscript -> index -> string
+        assign = node._bandit_parent._bandit_parent
+        if isinstance(assign, ast.Assign) and isinstance(
+            assign.value, ast.Str
+        ):
+            return _report(assign.value.s)
+
+    elif isinstance(node._bandit_parent, ast.Index) and RE_CANDIDATES.search(
+        node.s
+    ):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node._bandit_parent._bandit_parent._bandit_parent
-        if isinstance(assign, ast.Assign) and isinstance(assign.value,
-                                                         ast.Str):
+        if isinstance(assign, ast.Assign) and isinstance(
+            assign.value, ast.Str
+        ):
             return _report(assign.value.s)
 
     elif isinstance(node._bandit_parent, ast.Compare):
@@ -100,8 +111,8 @@ def hardcoded_password_string(context):
                     return _report(comp.comparators[0].s)
 
 
-@test.checks('Call')
-@test.test_id('B106')
+@test.checks("Call")
+@test.test_id("B106")
 def hardcoded_password_funcarg(context):
     """**B106: Test for use of hard-coded password function arguments**
 
@@ -151,8 +162,8 @@ def hardcoded_password_funcarg(context):
             return _report(kw.value.s)
 
 
-@test.checks('FunctionDef')
-@test.test_id('B107')
+@test.checks("FunctionDef")
+@test.test_id("B107")
 def hardcoded_password_default(context):
     """**B107: Test for use of hard-coded password argument defaults**
 
@@ -200,8 +211,9 @@ def hardcoded_password_default(context):
     # looks for "def function(candidate='some_string')"
 
     # this pads the list of default values with "None" if nothing is given
-    defs = [None] * (len(context.node.args.args) -
-                     len(context.node.args.defaults))
+    defs = [None] * (
+        len(context.node.args.args) - len(context.node.args.defaults)
+    )
     defs.extend(context.node.args.defaults)
 
     # go through all (param, value)s and look for candidates

@@ -53,7 +53,6 @@ Bandit is distributed on PyPI. The best way to install it is with pip:
 Create a virtual environment (optional)::
 
     virtualenv bandit-env
-    # Or if you're working with a Python 3 project
     python3 -m venv bandit-env
     # And activate it:
     source bandit-env/bin/activate
@@ -61,7 +60,6 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    # Or if you're working with a Python 3 project
     pip3 install bandit
 
 Run Bandit::
@@ -96,167 +94,10 @@ run Bandit with standard input::
 
     cat examples/imports.py | bandit -
 
-Usage::
+For more usage information::
 
-    $ bandit -h
-    usage: bandit [-h] [-r] [-a {file,vuln}] [-n CONTEXT_LINES] [-c CONFIG_FILE]
-                  [-p PROFILE] [-t TESTS] [-s SKIPS] [-l] [-i]
-                  [-f {csv,custom,html,json,screen,txt,xml,yaml}]
-                  [--msg-template MSG_TEMPLATE] [-o [OUTPUT_FILE]] [-v] [-d] [-q]
-                  [--ignore-nosec] [-x EXCLUDED_PATHS] [-b BASELINE]
-                  [--ini INI_PATH] [--exit-zero] [--version]
-                  [targets [targets ...]]
+    bandit -h
 
-    Bandit - a Python source code security analyzer
-
-    positional arguments:
-      targets               source file(s) or directory(s) to be tested
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      -r, --recursive       find and process files in subdirectories
-      -a {file,vuln}, --aggregate {file,vuln}
-                            aggregate output by vulnerability (default) or by
-                            filename
-      -n CONTEXT_LINES, --number CONTEXT_LINES
-                            maximum number of code lines to output for each issue
-      -c CONFIG_FILE, --configfile CONFIG_FILE
-                            optional config file to use for selecting plugins and
-                            overriding defaults
-      -p PROFILE, --profile PROFILE
-                            profile to use (defaults to executing all tests)
-      -t TESTS, --tests TESTS
-                            comma-separated list of test IDs to run
-      -s SKIPS, --skip SKIPS
-                            comma-separated list of test IDs to skip
-      -l, --level           report only issues of a given severity level or higher
-                            (-l for LOW, -ll for MEDIUM, -lll for HIGH)
-      -i, --confidence      report only issues of a given confidence level or
-                            higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
-      -f {csv,custom,html,json,screen,txt,xml,yaml}, --format {csv,custom,html,json,screen,txt,xml,yaml}
-                            specify output format
-      --msg-template MSG_TEMPLATE
-                            specify output message template (only usable with
-                            --format custom), see CUSTOM FORMAT section for list
-                            of available values
-      -o [OUTPUT_FILE], --output [OUTPUT_FILE]
-                            write report to filename
-      -v, --verbose         output extra information like excluded and included
-                            files
-      -d, --debug           turn on debug mode
-      -q, --quiet, --silent
-                            only show output in the case of an error
-      --ignore-nosec        do not skip lines with # nosec comments
-      -x EXCLUDED_PATHS, --exclude EXCLUDED_PATHS
-                            comma-separated list of paths (glob patterns
-                            supported) to exclude from scan (note that these are
-                            in addition to the excluded paths provided in the
-                            config file) (default:
-                            .svn,CVS,.bzr,.hg,.git,__pycache__,.tox,.eggs,*.egg)
-      -b BASELINE, --baseline BASELINE
-                            path of a baseline report to compare against (only
-                            JSON-formatted files are accepted)
-      --ini INI_PATH        path to a .bandit file that supplies command line
-                            arguments
-      --exit-zero           exit with 0, even with results found
-      --version             show program's version number and exit
-
-    CUSTOM FORMATTING
-    -----------------
-
-    Available tags:
-
-        {abspath}, {relpath}, {line}, {col}, {test_id},
-        {severity}, {msg}, {confidence}, {range}
-
-    Example usage:
-
-        Default template:
-        bandit -r examples/ --format custom --msg-template \
-        "{abspath}:{line}: {test_id}[bandit]: {severity}: {msg}"
-
-        Provides same output as:
-        bandit -r examples/ --format custom
-
-        Tags can also be formatted in python string.format() style:
-        bandit -r examples/ --format custom --msg-template \
-        "{relpath:20.20s}: {line:03}: {test_id:^8}: DEFECT: {msg:>20}"
-
-        See python documentation for more information about formatting style:
-        https://docs.python.org/3/library/string.html
-
-    The following tests were discovered and loaded:
-    -----------------------------------------------
-
-      B101  assert_used
-      B102  exec_used
-      B103  set_bad_file_permissions
-      B104  hardcoded_bind_all_interfaces
-      B105  hardcoded_password_string
-      B106  hardcoded_password_funcarg
-      B107  hardcoded_password_default
-      B108  hardcoded_tmp_directory
-      B110  try_except_pass
-      B112  try_except_continue
-      B201  flask_debug_true
-      B301  pickle
-      B302  marshal
-      B303  md5
-      B304  ciphers
-      B305  cipher_modes
-      B306  mktemp_q
-      B307  eval
-      B308  mark_safe
-      B309  httpsconnection
-      B310  urllib_urlopen
-      B311  random
-      B312  telnetlib
-      B313  xml_bad_cElementTree
-      B314  xml_bad_ElementTree
-      B315  xml_bad_expatreader
-      B316  xml_bad_expatbuilder
-      B317  xml_bad_sax
-      B318  xml_bad_minidom
-      B319  xml_bad_pulldom
-      B320  xml_bad_etree
-      B321  ftplib
-      B323  unverified_context
-      B324  hashlib_new_insecure_functions
-      B325  tempnam
-      B401  import_telnetlib
-      B402  import_ftplib
-      B403  import_pickle
-      B404  import_subprocess
-      B405  import_xml_etree
-      B406  import_xml_sax
-      B407  import_xml_expat
-      B408  import_xml_minidom
-      B409  import_xml_pulldom
-      B410  import_lxml
-      B411  import_xmlrpclib
-      B412  import_httpoxy
-      B413  import_pycrypto
-      B501  request_with_no_cert_validation
-      B502  ssl_with_bad_version
-      B503  ssl_with_bad_defaults
-      B504  ssl_with_no_version
-      B505  weak_cryptographic_key
-      B506  yaml_load
-      B507  ssh_no_host_key_verification
-      B601  paramiko_calls
-      B602  subprocess_popen_with_shell_equals_true
-      B603  subprocess_without_shell_equals_true
-      B604  any_other_function_with_shell_equals_true
-      B605  start_process_with_a_shell
-      B606  start_process_with_no_shell
-      B607  start_process_with_partial_path
-      B608  hardcoded_sql_expressions
-      B609  linux_commands_wildcard_injection
-      B610  django_extra_used
-      B611  django_rawsql_used
-      B701  jinja2_autoescape_false
-      B702  use_of_mako_templates
-      B703  django_mark_safe
 
 Baseline
 --------
@@ -301,26 +142,28 @@ An optional config file may be supplied and may include:
 
 Per Project Command Line Args
 -----------------------------
-Projects may include a `.bandit` file that specifies command line arguments
-that should be supplied for that project. The currently supported arguments
-are:
+Projects may include a YAML file named `.bandit` that specifies command line
+arguments that should be supplied for that project. The currently supported
+arguments are:
 
  - targets: comma separated list of target dirs/files to run bandit on
  - exclude: comma separated list of excluded paths
  - skips: comma separated list of tests to skip
  - tests: comma separated list of tests to run
 
-To use this, put a .bandit file in your project's directory. For example:
+To use this, put a YAML file named `.bandit` in your project's directory.
+For example:
 
 ::
 
-   [bandit]
    exclude: /test
 
 ::
 
-   [bandit]
-   tests: B101,B102,B301
+   tests:
+     - B101
+     - B102
+     - B301
 
 
 Exclusions
@@ -457,9 +300,9 @@ using RST::
 Under Which Version of Python Should I Install Bandit?
 ------------------------------------------------------
 The answer to this question depends on the project(s) you will be running
-Bandit against. If your project is only compatible with Python 3.5, you
-should install Bandit to run under Python 3.5. If your project is only
-compatible with Python 3.8, then use 3.8 respectively. If your project supports
+Bandit against. If your project is only compatible with Python 3.8, you
+should install Bandit to run under Python 3.8. If your project is only
+compatible with Python 3.9, then use 3.9 respectively. If your project supports
 both, you *could* run Bandit with both versions but you don't have to.
 
 Bandit uses the `ast` module from Python's standard library in order to
