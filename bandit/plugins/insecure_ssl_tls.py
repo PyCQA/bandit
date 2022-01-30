@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -105,6 +106,7 @@ def ssl_with_bad_version(context, config):
         if context.check_call_arg_value("ssl_version", bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=cwemap.CWEMAP["B502"],
                 confidence=bandit.HIGH,
                 text="ssl.wrap_socket call with insecure SSL/TLS protocol "
                 "version identified, security issue.",
@@ -114,6 +116,7 @@ def ssl_with_bad_version(context, config):
         if context.check_call_arg_value("method", bad_ssl_versions):
             return bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=cwemap.CWEMAP["B502"],
                 confidence=bandit.HIGH,
                 text="SSL.Context call with insecure SSL/TLS protocol "
                 "version identified, security issue.",
@@ -132,6 +135,7 @@ def ssl_with_bad_version(context, config):
             ) or context.get_lineno_for_call_arg("ssl_version")
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=cwemap.CWEMAP["B502"],
                 confidence=bandit.MEDIUM,
                 text="Function call with insecure SSL/TLS protocol "
                 "identified, possible security issue.",
@@ -189,6 +193,7 @@ def ssl_with_bad_defaults(context, config):
         if val in bad_ssl_versions:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=cwemap.CWEMAP["B503"],
                 confidence=bandit.MEDIUM,
                 text="Function definition identified with insecure SSL/TLS "
                 "protocol version by default, possible security "
@@ -247,6 +252,7 @@ def ssl_with_no_version(context):
             # tests for that (ssl_version is not specified).
             return bandit.Issue(
                 severity=bandit.LOW,
+                cwe=cwemap.CWEMAP["B504"],
                 confidence=bandit.MEDIUM,
                 text="ssl.wrap_socket call with no SSL/TLS protocol version "
                 "specified, the default SSLv23 could be insecure, "

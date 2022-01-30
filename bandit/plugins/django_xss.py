@@ -5,6 +5,7 @@
 import ast
 
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -219,7 +220,10 @@ def check_risk(node):
 
     if not secure:
         return bandit.Issue(
-            severity=bandit.MEDIUM, confidence=bandit.HIGH, text=description
+            severity=bandit.MEDIUM,
+            cwe=cwemap.CWEMAP["B703"],
+            confidence=bandit.HIGH,
+            text=description,
         )
 
 

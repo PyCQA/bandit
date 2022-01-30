@@ -50,6 +50,7 @@ use assert statements in test cases.
 import fnmatch
 
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -68,6 +69,7 @@ def assert_used(context, config):
 
     return bandit.Issue(
         severity=bandit.LOW,
+        cwe=cwemap.CWEMAP["B101"],
         confidence=bandit.HIGH,
         text=(
             "Use of assert detected. The enclosed code "

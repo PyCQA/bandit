@@ -32,6 +32,7 @@ verification is disabled, Bandit will return a HIGH severity error.
 
 """
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -48,6 +49,7 @@ def ssh_no_host_key_verification(context):
         ]:
             issue = bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=cwemap.CWEMAP["B507"],
                 confidence=bandit.MEDIUM,
                 text="Paramiko call with policy set to automatically trust "
                 "the unknown host key.",

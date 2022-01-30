@@ -35,9 +35,10 @@ class ScreenFormatterTests(testtools.TestCase):
                     _issue.test,
                     _issue.text,
                 ),
-                "{}   Severity: {}   Confidence: {}".format(
+                "{}   Severity: {} CWE: {} Confidence: {}".format(
                     _indent_val,
                     _issue.severity.capitalize(),
+                    _issue.cwe,
                     _issue.confidence.capitalize(),
                 ),
                 "{}   Location: {}:{}:{}".format(
@@ -232,8 +233,10 @@ class ScreenFormatterTests(testtools.TestCase):
             output_str.assert_has_calls(calls, any_order=True)
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
-    new_issue = issue.Issue(severity, confidence, "Test issue")
+def _get_issue_instance(
+    severity=bandit.MEDIUM, cwe=123, confidence=bandit.MEDIUM
+):
+    new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"
     new_issue.test = "bandit_plugin"
     new_issue.lineno = 1

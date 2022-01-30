@@ -28,6 +28,7 @@ hash functions created using ``hashlib.new`` function.
 
 """
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -49,6 +50,7 @@ def hashlib_new(context):
             ):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
+                    cwe=cwemap.CWEMAP["B324"],
                     confidence=bandit.HIGH,
                     text="Use of insecure MD4 or MD5 hash function.",
                     lineno=context.node.lineno,

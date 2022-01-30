@@ -52,6 +52,7 @@ import ast
 import re
 
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 from bandit.core import utils
 
@@ -104,6 +105,7 @@ def hardcoded_sql_expressions(context):
     if _check_string(val[1]):
         return bandit.Issue(
             severity=bandit.MEDIUM,
+            cwe=cwemap.CWEMAP["B608"],
             confidence=bandit.MEDIUM if val[0] else bandit.LOW,
             text="Possible SQL injection vector through string-based "
             "query construction.",

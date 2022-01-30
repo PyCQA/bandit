@@ -38,6 +38,7 @@ attacks.
 
 """
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -53,6 +54,7 @@ def use_of_mako_templates(context):
             # feature and thus each variable must be carefully sanitized.
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=cwemap.CWEMAP["B702"],
                 confidence=bandit.HIGH,
                 text="Mako templates allow HTML/JS rendering by default and "
                 "are inherently open to XSS attacks. Ensure variables "

@@ -5,6 +5,7 @@
 import ast
 import fnmatch
 
+from bandit.core import cwemap
 from bandit.core import issue
 
 
@@ -13,6 +14,7 @@ def report_issue(check, name):
         severity=check.get("level", "MEDIUM"),
         confidence="HIGH",
         text=check["message"].replace("{name}", name),
+        cwe=cwemap.CWEMAP[check.get("id", "LEGACY")],
         ident=name,
         test_id=check.get("id", "LEGACY"),
     )

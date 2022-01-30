@@ -15,8 +15,13 @@ from bandit.core import manager
 
 
 class ManagerTests(testtools.TestCase):
-    def _get_issue_instance(self, sev=constants.MEDIUM, conf=constants.MEDIUM):
-        new_issue = issue.Issue(sev, conf, "Test issue")
+    def _get_issue_instance(
+        self,
+        sev=constants.MEDIUM,
+        cwe=issue.Cwe.MULTIPLE_BINDS,
+        conf=constants.MEDIUM,
+    ):
+        new_issue = issue.Issue(sev, cwe, conf, "Test issue")
         new_issue.fname = "code.py"
         new_issue.test = "bandit_plugin"
         new_issue.lineno = 1
@@ -130,6 +135,10 @@ class ManagerTests(testtools.TestCase):
                     "code": "test code",
                     "filename": "example_file.py",
                     "issue_severity": "low",
+                    "issue_cwe": {
+                        "id": 605,
+                        "link": "%s"
+                    },
                     "issue_confidence": "low",
                     "issue_text": "test issue",
                     "test_name": "some_test",
@@ -139,11 +148,14 @@ class ManagerTests(testtools.TestCase):
                 }
             ]
         }
-        """
+        """ % (
+            "https://cwe.mitre.org/data/definitions/605.html"
+        )
         issue_dictionary = {
             "code": "test code",
             "filename": "example_file.py",
             "issue_severity": "low",
+            "issue_cwe": issue.Cwe(issue.Cwe.MULTIPLE_BINDS).as_dict(),
             "issue_confidence": "low",
             "issue_text": "test issue",
             "test_name": "some_test",
@@ -167,7 +179,10 @@ class ManagerTests(testtools.TestCase):
     def test_results_count(self):
         levels = [constants.LOW, constants.MEDIUM, constants.HIGH]
         self.manager.results = [
-            issue.Issue(severity=level, confidence=level) for level in levels
+            issue.Issue(
+                severity=level, cwe=issue.Cwe.MULTIPLE_BINDS, confidence=level
+            )
+            for level in levels
         ]
 
         r = [

@@ -70,6 +70,7 @@ would not generate a warning if the configuration option
 import ast
 
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -94,6 +95,7 @@ def try_except_pass(context, config):
         if isinstance(node.body[0], ast.Pass):
             return bandit.Issue(
                 severity=bandit.LOW,
+                cwe=cwemap.CWEMAP["B110"],
                 confidence=bandit.HIGH,
                 text=("Try, Except, Pass detected."),
             )

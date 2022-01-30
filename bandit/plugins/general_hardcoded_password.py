@@ -6,6 +6,7 @@ import ast
 import re
 
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -18,6 +19,7 @@ RE_CANDIDATES = re.compile(
 def _report(value):
     return bandit.Issue(
         severity=bandit.LOW,
+        cwe=cwemap.CWEMAP["B105"],
         confidence=bandit.MEDIUM,
         text=("Possible hardcoded password: '%s'" % value),
     )

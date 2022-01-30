@@ -31,9 +31,10 @@ class TextFormatterTests(testtools.TestCase):
                 "{}>> Issue: [{}:{}] {}".format(
                     _indent_val, _issue.test_id, _issue.test, _issue.text
                 ),
-                "{}   Severity: {}   Confidence: {}".format(
+                "{}   Severity: {} CWE: {} Confidence: {}".format(
                     _indent_val,
                     _issue.severity.capitalize(),
+                    _issue.cwe,
                     _issue.confidence.capitalize(),
                 ),
                 "{}   Location: {}:{}:{}".format(
@@ -143,6 +144,7 @@ class TextFormatterTests(testtools.TestCase):
                 "binding.py (score: ",
                 "CONFIDENCE: 1",
                 "SEVERITY: 1",
+                "CWE: %s" % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)),
                 "Files excluded (1):",
                 "def.py",
                 "Undefined: 1",
@@ -202,8 +204,12 @@ class TextFormatterTests(testtools.TestCase):
             output_str.assert_has_calls(calls, any_order=True)
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
-    new_issue = issue.Issue(severity, confidence, "Test issue")
+def _get_issue_instance(
+    severity=bandit.MEDIUM,
+    cwe=issue.Cwe.MULTIPLE_BINDS,
+    confidence=bandit.MEDIUM,
+):
+    new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"
     new_issue.test = "bandit_plugin"
     new_issue.lineno = 1
