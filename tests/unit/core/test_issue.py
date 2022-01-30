@@ -124,7 +124,7 @@ class IssueTests(testtools.TestCase):
 def _get_issue_instance(
     severity=bandit.MEDIUM,
     cwe=issue.Cwe.MULTIPLE_BINDS,
-    confidence=bandit.MEDIUM
+    confidence=bandit.MEDIUM,
 ):
     new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"

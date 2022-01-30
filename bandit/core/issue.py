@@ -7,7 +7,7 @@ import linecache
 from bandit.core import constants
 
 
-class Cwe():
+class Cwe:
     NOTSET = 0
     IMPROPER_INPUT_VALIDATION = 20
     PATH_TRAVERSAL = 22

@@ -19,7 +19,7 @@ class ManagerTests(testtools.TestCase):
         self,
         sev=constants.MEDIUM,
         cwe=issue.Cwe.MULTIPLE_BINDS,
-        conf=constants.MEDIUM
+        conf=constants.MEDIUM,
     ):
         new_issue = issue.Issue(sev, cwe, conf, "Test issue")
         new_issue.fname = "code.py"

@@ -36,7 +36,6 @@ CWEMAP = {
     "B701": issue.Cwe.CODE_INJECTION,
     "B702": issue.Cwe.BASIC_XSS,
     "B703": issue.Cwe.BASIC_XSS,
-
     # Calls
     "B301": issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
     "B302": issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
@@ -62,7 +61,6 @@ CWEMAP = {
     "B322": issue.Cwe.OS_COMMAND_INJECTION,
     "B323": issue.Cwe.IMPROPER_CERT_VALIDATION,
     "B325": issue.Cwe.INSECURE_TEMP_FILE,
-
     # Imports
     "B401": issue.Cwe.CLEARTEXT_TRANSMISSION,
     "B402": issue.Cwe.CLEARTEXT_TRANSMISSION,
