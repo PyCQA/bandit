@@ -40,7 +40,7 @@ of the Patreon breach in 2015 [3]_.
 """  # noqa: E501
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 

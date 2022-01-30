@@ -34,7 +34,7 @@ binding to all network interfaces.
 """
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -44,7 +44,7 @@ def hardcoded_bind_all_interfaces(context):
     if context.string_val == '0.0.0.0':
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=CWEMAP["B104"],
+            cwe=cwemap.CWEMAP["B104"],
             confidence=bandit.MEDIUM,
             text="Possible binding to all interfaces."
         )

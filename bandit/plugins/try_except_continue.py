@@ -74,7 +74,7 @@ following would not generate a warning if the configuration option
 import ast
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -97,6 +97,6 @@ def try_except_continue(context, config):
         if isinstance(node.body[0], ast.Continue):
             return bandit.Issue(
                 severity=bandit.LOW,
-                cwe=CWEMAP["B112"],
+                cwe=cwemap.CWEMAP["B112"],
                 confidence=bandit.HIGH,
                 text=("Try, Except, Continue detected."))

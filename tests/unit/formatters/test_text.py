@@ -13,7 +13,6 @@ import bandit
 from bandit.core import config
 from bandit.core import docs_utils
 from bandit.core import issue
-from bandit.core.issue import Cwe as Cwe
 from bandit.core import manager
 from bandit.formatters import text as b_text
 
@@ -134,7 +133,7 @@ class TextFormatterTests(testtools.TestCase):
                               'binding.py (score: ',
                               "CONFIDENCE: 1",
                               "SEVERITY: 1",
-                              "CWE: %s" % str(Cwe(Cwe.MULTIPLE_BINDS)),
+                              "CWE: %s" % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)),
                               'Files excluded (1):',
                               'def.py',
                               'Undefined: 1',
@@ -191,7 +190,7 @@ class TextFormatterTests(testtools.TestCase):
             output_str.assert_has_calls(calls, any_order=True)
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, cwe=Cwe.MULTIPLE_BINDS,
+def _get_issue_instance(severity=bandit.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS,
                         confidence=bandit.MEDIUM):
     new_issue = issue.Issue(severity, cwe, confidence, 'Test issue')
     new_issue.fname = 'code.py'

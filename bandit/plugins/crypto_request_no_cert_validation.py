@@ -42,7 +42,7 @@ Bandit will return a HIGH severity error.
 """
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -55,7 +55,7 @@ def request_with_no_cert_validation(context):
         if context.check_call_arg_value('verify', 'False'):
             issue = bandit.Issue(
                 severity=bandit.HIGH,
-                cwe=CWEMAP["B501"],
+                cwe=cwemap.CWEMAP["B501"],
                 confidence=bandit.HIGH,
                 text="Requests call with verify=False disabling SSL "
                      "certificate checks, security issue.",

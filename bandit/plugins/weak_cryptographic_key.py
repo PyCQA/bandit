@@ -37,7 +37,7 @@ medium severity error for those lower than the higher threshold.
 """
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -71,7 +71,7 @@ def _classify_key_size(config, key_type, key_size):
         if key_size < size:
             return bandit.Issue(
                 severity=level,
-                cwe=CWEMAP["B505"],
+                cwe=cwemap.CWEMAP["B505"],
                 confidence=bandit.HIGH,
                 text='%s key sizes below %d bits are considered breakable. ' %
                 (key_type, size))

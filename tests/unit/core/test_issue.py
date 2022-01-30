@@ -10,7 +10,6 @@ import testtools
 import bandit
 from bandit.core import constants
 from bandit.core import issue
-from bandit.core.issue import Cwe as Cwe
 
 
 class IssueTests(testtools.TestCase):
@@ -27,7 +26,7 @@ class IssueTests(testtools.TestCase):
                   "Confidence: MEDIUM at code.py:1")
 
         self.assertEqual(
-            expect % str(Cwe(Cwe.MULTIPLE_BINDS)),
+            expect % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)),
             str(test_issue)
         )
 
@@ -114,7 +113,7 @@ class IssueTests(testtools.TestCase):
     def test_get_code(self, getline):
         getline.return_value = b'\x08\x30'
         new_issue = issue.Issue(bandit.MEDIUM,
-                                cwe=Cwe.MULTIPLE_BINDS,
+                                cwe=issue.Cwe.MULTIPLE_BINDS,
                                 lineno=1)
 
         try:

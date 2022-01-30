@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from bandit.core.issue import Cwe as Cwe
+from bandit.core import issue
 
 CWEMAP = {
     "B000": Cwe.NOTSET,

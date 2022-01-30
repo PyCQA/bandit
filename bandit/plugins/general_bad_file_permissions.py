@@ -50,7 +50,7 @@ set world writable. Warnings are given with HIGH confidence.
 import stat
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -74,7 +74,7 @@ def set_bad_file_permissions(context):
                     filename = 'NOT PARSED'
                 return bandit.Issue(
                     severity=sev_level,
-                    cwe=CWEMAP["B103"],
+                    cwe=cwemap.CWEMAP["B103"],
                     confidence=bandit.HIGH,
                     text="Chmod setting a permissive mask %s on file (%s)." %
                     (oct(mode), filename)

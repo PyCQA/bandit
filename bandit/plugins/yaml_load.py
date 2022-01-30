@@ -39,7 +39,7 @@ on ``yaml.load`` and yaml.safe_load
 """
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -61,7 +61,7 @@ def yaml_load(context):
     ]):
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=CWEMAP["B506"],
+            cwe=cwemap.CWEMAP["B506"],
             confidence=bandit.HIGH,
             text="Use of unsafe yaml load. Allows instantiation of"
                  " arbitrary objects. Consider yaml.safe_load().",

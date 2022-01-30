@@ -13,13 +13,12 @@ import testtools
 from bandit.core import config
 from bandit.core import constants
 from bandit.core import issue
-from bandit.core.issue import Cwe as Cwe
 from bandit.core import manager
 
 
 class ManagerTests(testtools.TestCase):
 
-    def _get_issue_instance(self, sev=constants.MEDIUM, cwe=Cwe.MULTIPLE_BINDS,
+    def _get_issue_instance(self, sev=constants.MEDIUM, cwe=issue.Cwe.MULTIPLE_BINDS,
                             conf=constants.MEDIUM):
         new_issue = issue.Issue(sev, cwe, conf, 'Test issue')
         new_issue.fname = 'code.py'

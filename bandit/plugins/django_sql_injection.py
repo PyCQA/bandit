@@ -8,7 +8,7 @@
 import ast
 
 import bandit
-from bandit.core.cwemap import CWEMAP
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -78,7 +78,7 @@ def django_extra_used(context):
         if insecure:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
-                cwe=CWEMAP["B611"],
+                cwe=cwemap.CWEMAP["B611"],
                 confidence=bandit.MEDIUM,
                 text=description
             )
@@ -104,7 +104,7 @@ def django_rawsql_used(context):
             if not isinstance(sql, ast.Str):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
-                    cwe=CWEMAP["B611"],
+                    cwe=cwemap.CWEMAP["B611"],
                     confidence=bandit.MEDIUM,
                     text=description
                 )
