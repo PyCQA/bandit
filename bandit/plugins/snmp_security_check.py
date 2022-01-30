@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -29,6 +30,7 @@ def snmp_insecure_version_check(context):
         ) or context.check_call_arg_value("mpModel", 1):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=cwemap.CWEMAP["B508"],
                 confidence=bandit.HIGH,
                 text="The use of SNMPv1 and SNMPv2 is insecure. "
                 "You should use SNMPv3 if able.",
@@ -62,6 +64,7 @@ def snmp_crypto_check(context):
         if context.call_args_count < 3:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
+                cwe=cwemap.CWEMAP["B509"],
                 confidence=bandit.HIGH,
                 text="You should not use SNMPv3 without encryption. "
                 "noAuthNoPriv & authNoPriv is insecure",
