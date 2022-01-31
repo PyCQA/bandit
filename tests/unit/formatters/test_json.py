@@ -30,12 +30,27 @@ class JsonFormatterTests(testtools.TestCase):
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
-            bandit.MEDIUM, bandit.MEDIUM, "Possible binding to all interfaces."
+            bandit.MEDIUM,
+            issue.Cwe.MULTIPLE_BINDS,
+            bandit.MEDIUM,
+            "Possible binding to all interfaces.",
         )
 
         self.candidates = [
-            issue.Issue(bandit.LOW, bandit.LOW, "Candidate A", lineno=1),
-            issue.Issue(bandit.HIGH, bandit.HIGH, "Candiate B", lineno=2),
+            issue.Issue(
+                issue.Cwe.MULTIPLE_BINDS,
+                bandit.LOW,
+                bandit.LOW,
+                "Candidate A",
+                lineno=1,
+            ),
+            issue.Issue(
+                bandit.HIGH,
+                issue.Cwe.MULTIPLE_BINDS,
+                bandit.HIGH,
+                "Candiate B",
+                lineno=2,
+            ),
         ]
 
         self.manager.out_file = self.tmp_fname

@@ -60,6 +60,7 @@ false. A HIGH severity warning is generated in either of these scenarios.
 import ast
 
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -80,6 +81,7 @@ def jinja2_autoescape_false(context):
                     ):
                         return bandit.Issue(
                             severity=bandit.HIGH,
+                            cwe=cwemap.CWEMAP["B701"],
                             confidence=bandit.HIGH,
                             text="Using jinja2 templates with autoescape="
                             "False is dangerous and can lead to XSS. "
@@ -105,6 +107,7 @@ def jinja2_autoescape_false(context):
                         else:
                             return bandit.Issue(
                                 severity=bandit.HIGH,
+                                cwe=cwemap.CWEMAP["B701"],
                                 confidence=bandit.MEDIUM,
                                 text="Using jinja2 templates with autoescape="
                                 "False is dangerous and can lead to XSS. "
@@ -116,6 +119,7 @@ def jinja2_autoescape_false(context):
             # behavior
             return bandit.Issue(
                 severity=bandit.HIGH,
+                cwe=cwemap.CWEMAP["B701"],
                 confidence=bandit.HIGH,
                 text="By default, jinja2 sets autoescape to False. Consider "
                 "using autoescape=True or use the select_autoescape "

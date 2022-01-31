@@ -773,6 +773,10 @@ class FunctionalTests(testtools.TestCase):
               "filename": "{}/examples/flask_debug.py",
               "issue_confidence": "MEDIUM",
               "issue_severity": "HIGH",
+              "issue_cwe": {{
+                "id": 94,
+                "link": "https://cwe.mitre.org/data/definitions/94.html"
+              }},
               "issue_text": "{}",
               "line_number": 10,
               "col_offset": 0,

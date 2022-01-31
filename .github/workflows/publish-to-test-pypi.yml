@@ -23,7 +23,7 @@ jobs:
         python setup.py sdist bdist_wheel
 
     - name: Publish distribution to Test PyPI
-      uses: pypa/gh-action-pypi-publish@master
+      uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.test_pypi_password }}
+        password: ${{ secrets.TEST_PYPI_PASSWORD }}
         repository_url: https://test.pypi.org/legacy/

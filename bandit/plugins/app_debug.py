@@ -37,6 +37,7 @@ of the Patreon breach in 2015 [3]_.
 
 """  # noqa: E501
 import bandit
+from bandit.core import cwemap
 from bandit.core import test_properties as test
 
 
@@ -48,6 +49,7 @@ def flask_debug_true(context):
             if context.check_call_arg_value("debug", "True"):
                 return bandit.Issue(
                     severity=bandit.HIGH,
+                    cwe=cwemap.CWEMAP["B201"],
                     confidence=bandit.MEDIUM,
                     text="A Flask app appears to be run with debug=True, "
                     "which exposes the Werkzeug debugger and allows "

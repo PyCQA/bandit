@@ -30,12 +30,15 @@ class YamlFormatterTests(testtools.TestCase):
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
-            bandit.MEDIUM, bandit.MEDIUM, "Possible binding to all interfaces."
+            bandit.MEDIUM,
+            123,
+            bandit.MEDIUM,
+            "Possible binding to all interfaces.",
         )
 
         self.candidates = [
-            issue.Issue(bandit.LOW, bandit.LOW, "Candidate A", lineno=1),
-            issue.Issue(bandit.HIGH, bandit.HIGH, "Candiate B", lineno=2),
+            issue.Issue(bandit.LOW, 123, bandit.LOW, "Candidate A", lineno=1),
+            issue.Issue(bandit.HIGH, 123, bandit.HIGH, "Candiate B", lineno=2),
         ]
 
         self.manager.out_file = self.tmp_fname
