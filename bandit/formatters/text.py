@@ -24,6 +24,12 @@ This formatter outputs the issues as plain text.
 
 .. versionadded:: 0.9.0
 
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
+
 """
 import datetime
 import logging
@@ -79,14 +85,15 @@ def _output_issue_str(
     )
 
     bits.append(
-        "%s   Severity: %s CWE: %s Confidence: %s"
+        "%s   Severity: %s   Confidence: %s"
         % (
             indent,
             issue.severity.capitalize(),
-            str(issue.cwe),
             issue.confidence.capitalize(),
         )
     )
+
+    bits.append(f"{indent}   CWE: {str(issue.cwe)}")
 
     bits.append(
         "%s   Location: %s:%s:%s"

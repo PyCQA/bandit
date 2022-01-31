@@ -47,6 +47,10 @@ This formatter outputs the issues in JSON.
           "filename": "examples/yaml_load.py",
           "issue_confidence": "HIGH",
           "issue_severity": "MEDIUM",
+          "issue_cwe": {
+            "id": 20,
+            "link": "https://cwe.mitre.org/data/definitions/20.html"
+          },
           "issue_text": "Use of unsafe yaml load. Allows instantiation of
                          arbitrary objects. Consider yaml.safe_load().\n",
           "line_number": 5,
@@ -61,6 +65,12 @@ This formatter outputs the issues in JSON.
     }
 
 .. versionadded:: 0.10.0
+
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
 
 """
 # Necessary so we can import the standard library json module while continuing

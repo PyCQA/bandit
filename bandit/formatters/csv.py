@@ -11,9 +11,10 @@ This formatter outputs the issues in a comma separated values format.
 
 .. code-block:: none
 
-    filename,test_name,test_id,issue_severity,issue_confidence,issue_text,
-    line_number,line_range,more_info
-    examples/yaml_load.py,blacklist_calls,B301,MEDIUM,HIGH,"Use of unsafe yaml
+    filename,test_name,test_id,issue_severity,issue_confidence,issue_cwe,
+    issue_text,line_number,line_range,more_info
+    examples/yaml_load.py,blacklist_calls,B301,MEDIUM,HIGH,
+    https://cwe.mitre.org/data/definitions/20.html,"Use of unsafe yaml
     load. Allows instantiation of arbitrary objects. Consider yaml.safe_load().
     ",5,[5],https://bandit.readthedocs.io/en/latest/
 
@@ -21,6 +22,9 @@ This formatter outputs the issues in a comma separated values format.
 
 .. versionchanged:: 1.5.0
     New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
 
 """
 # Necessary for this formatter to work when imported on Python 2. Importing
@@ -54,8 +58,8 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
             "test_name",
             "test_id",
             "issue_severity",
-            "issue_cwe",
             "issue_confidence",
+            "issue_cwe",
             "issue_text",
             "line_number",
             "col_offset",
