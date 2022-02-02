@@ -57,6 +57,7 @@ following would not generate a warning if the configuration option
 
     >> Issue: Try, Except, Continue detected.
        Severity: Low   Confidence: High
+       CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
        Location: ./examples/try_except_continue.py:5
     4            a = i
     5        except:
@@ -65,14 +66,18 @@ following would not generate a warning if the configuration option
 .. seealso::
 
  - https://security.openstack.org
+ - https://cwe.mitre.org/data/definitions/703.html
 
 .. versionadded:: 1.0.0
+
+.. versionchanged:: 1.7.3
+    CWE information added
 
 """
 import ast
 
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -97,7 +102,7 @@ def try_except_continue(context, config):
         if isinstance(node.body[0], ast.Continue):
             return bandit.Issue(
                 severity=bandit.LOW,
-                cwe=cwemap.CWEMAP["B112"],
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
                 text=("Try, Except, Continue detected."),
             )

@@ -6,7 +6,7 @@ import ast
 import re
 
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -19,8 +19,8 @@ RE_CANDIDATES = re.compile(
 def _report(value):
     return bandit.Issue(
         severity=bandit.LOW,
-        cwe=cwemap.CWEMAP["B105"],
         confidence=bandit.MEDIUM,
+        cwe=issue.Cwe.HARD_CODED_PASSWORD,
         text=("Possible hardcoded password: '%s'" % value),
     )
 
@@ -61,6 +61,7 @@ def hardcoded_password_string(context):
 
         >> Issue: Possible hardcoded password '(root)'
            Severity: Low   Confidence: Low
+           CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
            Location: ./examples/hardcoded-passwords.py:5
         4 def someFunction2(password):
         5     if password == "root":
@@ -69,8 +70,12 @@ def hardcoded_password_string(context):
     .. seealso::
 
         - https://www.owasp.org/index.php/Use_of_hard-coded_password
+        - https://cwe.mitre.org/data/definitions/259.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
 
     """
     node = context.node
@@ -145,6 +150,7 @@ def hardcoded_password_funcarg(context):
         >> Issue: [B106:hardcoded_password_funcarg] Possible hardcoded
         password: 'blerg'
            Severity: Low   Confidence: Medium
+           CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
            Location: ./examples/hardcoded-passwords.py:16
         15
         16    doLogin(password="blerg")
@@ -152,8 +158,12 @@ def hardcoded_password_funcarg(context):
     .. seealso::
 
         - https://www.owasp.org/index.php/Use_of_hard-coded_password
+        - https://cwe.mitre.org/data/definitions/259.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
 
     """
     # looks for "function(candidate='some_string')"
@@ -196,6 +206,7 @@ def hardcoded_password_default(context):
         >> Issue: [B107:hardcoded_password_default] Possible hardcoded
         password: 'Admin'
            Severity: Low   Confidence: Medium
+           CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
            Location: ./examples/hardcoded-passwords.py:1
 
         1    def someFunction(user, password="Admin"):
@@ -204,8 +215,12 @@ def hardcoded_password_default(context):
     .. seealso::
 
         - https://www.owasp.org/index.php/Use_of_hard-coded_password
+        - https://cwe.mitre.org/data/definitions/259.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
 
     """
     # looks for "def function(candidate='some_string')"

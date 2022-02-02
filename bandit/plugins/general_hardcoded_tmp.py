@@ -36,6 +36,7 @@ issue.
 
     >> Issue: Probable insecure usage of temp file/directory.
        Severity: Medium   Confidence: Medium
+       CWE: CWE-377 (https://cwe.mitre.org/data/definitions/377.html)
        Location: ./examples/hardcoded-tmp.py:1
     1 f = open('/tmp/abc', 'w')
     2 f.write('def')
@@ -43,12 +44,16 @@ issue.
 .. seealso::
 
  - https://security.openstack.org/guidelines/dg_using-temporary-files-securely.html
+ - https://cwe.mitre.org/data/definitions/377.html
 
 .. versionadded:: 0.9.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """  # noqa: E501
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -69,7 +74,7 @@ def hardcoded_tmp_directory(context, config):
     if any(context.string_val.startswith(s) for s in tmp_dirs):
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=cwemap.CWEMAP["B108"],
             confidence=bandit.MEDIUM,
+            cwe=issue.Cwe.INSECURE_TEMP_FILE,
             text="Probable insecure usage of temp file/directory.",
         )
