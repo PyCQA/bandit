@@ -21,6 +21,7 @@ method advising the user to check inputs are correctly sanitized.
     >> Issue: Possible shell injection via Paramiko call, check inputs are
        properly sanitized.
        Severity: Medium   Confidence: Medium
+       CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
        Location: ./examples/paramiko_injection.py:4
     3    # this is not safe
     4    paramiko.exec_command('something; really; unsafe')
@@ -31,12 +32,16 @@ method advising the user to check inputs are correctly sanitized.
  - https://security.openstack.org
  - https://github.com/paramiko/paramiko
  - https://www.owasp.org/index.php/Command_Injection
+ - https://cwe.mitre.org/data/definitions/78.html
 
 .. versionadded:: 0.12.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -52,7 +57,7 @@ def paramiko_calls(context):
             if context.call_function_name in ["exec_command"]:
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
-                    cwe=cwemap.CWEMAP["B601"],
                     confidence=bandit.MEDIUM,
+                    cwe=issue.Cwe.OS_COMMAND_INJECTION,
                     text=issue_text,
                 )

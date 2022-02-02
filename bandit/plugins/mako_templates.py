@@ -22,6 +22,7 @@ attacks.
     properly sanitized via the 'n', 'h' or 'x' flags (depending on context).
     For example, to HTML escape the variable 'data' do ${ data |h }.
        Severity: Medium   Confidence: High
+       CWE: CWE-80 (https://cwe.mitre.org/data/definitions/80.html)
        Location: ./examples/mako_templating.py:10
     9
     10  mako.template.Template("hern")
@@ -33,12 +34,16 @@ attacks.
  - https://www.makotemplates.org/
  - `OWASP XSS <https://owasp.org/www-community/attacks/xss/>`_
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
+ - https://cwe.mitre.org/data/definitions/80.html
 
 .. versionadded:: 0.10.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -54,8 +59,8 @@ def use_of_mako_templates(context):
             # feature and thus each variable must be carefully sanitized.
             return bandit.Issue(
                 severity=bandit.MEDIUM,
-                cwe=cwemap.CWEMAP["B702"],
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.BASIC_XSS,
                 text="Mako templates allow HTML/JS rendering by default and "
                 "are inherently open to XSS attacks. Ensure variables "
                 "in all templates are properly sanitized via the 'n', "
