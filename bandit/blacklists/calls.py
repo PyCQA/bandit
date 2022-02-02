@@ -314,6 +314,7 @@ For further information:
 
 """
 from bandit.blacklists import utils
+from bandit.core import issue
 
 
 def gen_blacklist():
@@ -332,6 +333,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "pickle",
             "B301",
+            issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
             [
                 "pickle.loads",
                 "pickle.load",
@@ -354,6 +356,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "marshal",
             "B302",
+            issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
             ["marshal.load", "marshal.loads"],
             "Deserialization with the marshal module is possibly dangerous.",
         )
@@ -363,6 +366,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "md5",
             "B303",
+            issue.Cwe.BROKEN_CRYPTO,
             [
                 "hashlib.md5",
                 "hashlib.sha1",
@@ -385,6 +389,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "ciphers",
             "B304",
+            issue.Cwe.BROKEN_CRYPTO,
             [
                 "Crypto.Cipher.ARC2.new",
                 "Crypto.Cipher.ARC4.new",
@@ -410,6 +415,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "cipher_modes",
             "B305",
+            issue.Cwe.BROKEN_CRYPTO,
             ["cryptography.hazmat.primitives.ciphers.modes.ECB"],
             "Use of insecure cipher mode {name}.",
         )
@@ -419,6 +425,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "mktemp_q",
             "B306",
+            issue.Cwe.INSECURE_TEMP_FILE,
             ["tempfile.mktemp"],
             "Use of insecure and deprecated function (mktemp).",
         )
@@ -428,6 +435,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "eval",
             "B307",
+            issue.Cwe.OS_COMMAND_INJECTION,
             ["eval"],
             "Use of possibly insecure function - consider using safer "
             "ast.literal_eval.",
@@ -438,6 +446,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "mark_safe",
             "B308",
+            issue.Cwe.XSS,
             ["django.utils.safestring.mark_safe"],
             "Use of mark_safe() may expose cross-site scripting "
             "vulnerabilities and should be reviewed.",
@@ -448,6 +457,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "httpsconnection",
             "B309",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
             [
                 "httplib.HTTPSConnection",
                 "http.client.HTTPSConnection",
@@ -463,6 +473,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "urllib_urlopen",
             "B310",
+            issue.Cwe.PATH_TRAVERSAL,
             [
                 "urllib.urlopen",
                 "urllib.request.urlopen",
@@ -488,6 +499,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "random",
             "B311",
+            issue.Cwe.INSUFFICIENT_RANDOM_VALUES,
             [
                 "random.random",
                 "random.randrange",
@@ -507,6 +519,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "telnetlib",
             "B312",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
             ["telnetlib.*"],
             "Telnet-related functions are being called. Telnet is considered "
             "insecure. Use SSH or some other encrypted protocol.",
@@ -528,6 +541,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_cElementTree",
             "B313",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             [
                 "xml.etree.cElementTree.parse",
                 "xml.etree.cElementTree.iterparse",
@@ -542,6 +556,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_ElementTree",
             "B314",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             [
                 "xml.etree.ElementTree.parse",
                 "xml.etree.ElementTree.iterparse",
@@ -556,6 +571,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_expatreader",
             "B315",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.sax.expatreader.create_parser"],
             xml_msg,
         )
@@ -565,6 +581,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_expatbuilder",
             "B316",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.dom.expatbuilder.parse", "xml.dom.expatbuilder.parseString"],
             xml_msg,
         )
@@ -574,6 +591,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_sax",
             "B317",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.sax.parse", "xml.sax.parseString", "xml.sax.make_parser"],
             xml_msg,
         )
@@ -583,6 +601,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_minidom",
             "B318",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.dom.minidom.parse", "xml.dom.minidom.parseString"],
             xml_msg,
         )
@@ -592,6 +611,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_pulldom",
             "B319",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.dom.pulldom.parse", "xml.dom.pulldom.parseString"],
             xml_msg,
         )
@@ -601,6 +621,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "xml_bad_etree",
             "B320",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             [
                 "lxml.etree.parse",
                 "lxml.etree.fromstring",
@@ -623,6 +644,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "ftplib",
             "B321",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
             ["ftplib.*"],
             "FTP-related functions are being called. FTP is considered "
             "insecure. Use SSH/SFTP/SCP or some other encrypted protocol.",
@@ -636,6 +658,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "unverified_context",
             "B323",
+            issue.Cwe.IMPROPER_CERT_VALIDATION,
             ["ssl._create_unverified_context"],
             "By default, Python will create a secure, verified ssl context for"
             " use in such classes as HTTPSConnection. However, it still allows"
@@ -651,6 +674,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "tempnam",
             "B325",
+            issue.Cwe.INSECURE_TEMP_FILE,
             ["os.tempnam", "os.tmpnam"],
             "Use of os.tempnam() and os.tmpnam() is vulnerable to symlink "
             "attacks. Consider using tmpfile() instead.",

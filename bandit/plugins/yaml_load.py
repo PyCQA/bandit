@@ -22,6 +22,7 @@ on ``yaml.load`` and yaml.safe_load
     >> Issue: [yaml_load] Use of unsafe yaml load. Allows instantiation of
        arbitrary objects. Consider yaml.safe_load().
        Severity: Medium   Confidence: High
+       CWE: CWE-20 (https://cwe.mitre.org/data/definitions/20.html)
        Location: examples/yaml_load.py:5
     4 ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
     5 y = yaml.load(ystr)
@@ -31,12 +32,16 @@ on ``yaml.load`` and yaml.safe_load
 .. seealso::
 
  - https://pyyaml.org/wiki/PyYAMLDocumentation#LoadingYAML
+ - https://cwe.mitre.org/data/definitions/20.html
 
 .. versionadded:: 1.0.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -60,8 +65,8 @@ def yaml_load(context):
     ):
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=cwemap.CWEMAP["B506"],
             confidence=bandit.HIGH,
+            cwe=issue.Cwe.IMPROPER_INPUT_VALIDATION,
             text="Use of unsafe yaml load. Allows instantiation of"
             " arbitrary objects. Consider yaml.safe_load().",
             lineno=context.node.lineno,

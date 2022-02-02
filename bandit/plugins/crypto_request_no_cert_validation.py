@@ -25,6 +25,7 @@ Bandit will return a HIGH severity error.
     >> Issue: [request_with_no_cert_validation] Requests call with verify=False
     disabling SSL certificate checks, security issue.
        Severity: High   Confidence: High
+       CWE: CWE-295 (https://cwe.mitre.org/data/definitions/295.html)
        Location: examples/requests-ssl-verify-disabled.py:4
     3   requests.get('https://gmail.com', verify=True)
     4   requests.get('https://gmail.com', verify=False)
@@ -34,12 +35,16 @@ Bandit will return a HIGH severity error.
 
  - https://security.openstack.org/guidelines/dg_move-data-securely.html
  - https://security.openstack.org/guidelines/dg_validate-certificates.html
+ - https://cwe.mitre.org/data/definitions/295.html
 
 .. versionadded:: 0.9.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -52,12 +57,11 @@ def request_with_no_cert_validation(context):
         and context.call_function_name in http_verbs
     ):
         if context.check_call_arg_value("verify", "False"):
-            issue = bandit.Issue(
+            return bandit.Issue(
                 severity=bandit.HIGH,
-                cwe=cwemap.CWEMAP["B501"],
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
                 text="Requests call with verify=False disabling SSL "
                 "certificate checks, security issue.",
                 lineno=context.get_lineno_for_call_arg("verify"),
             )
-            return issue
