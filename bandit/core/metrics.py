@@ -19,7 +19,11 @@ class Metrics:
 
     def __init__(self):
         self.data = dict()
-        self.data["_totals"] = {"loc": 0, "nosec": 0}
+        self.data["_totals"] = {
+            "loc": 0,
+            "nosec": 0,
+            "skipped_tests": 0,
+        }
 
         # initialize 0 totals for criteria and rank; this will be reset later
         for rank in constants.RANKING:
@@ -30,20 +34,30 @@ class Metrics:
         """Begin a new metric block.
 
         This starts a new metric collection name "fname" and makes is active.
-
         :param fname: the metrics unique name, normally the file name.
         """
-        self.data[fname] = {"loc": 0, "nosec": 0}
+        self.data[fname] = {
+            "loc": 0,
+            "nosec": 0,
+            "skipped_tests": 0,
+        }
         self.current = self.data[fname]
 
     def note_nosec(self, num=1):
-        """Note a "nosec" commnet.
+        """Note a "nosec" comment.
 
         Increment the currently active metrics nosec count.
-
         :param num: number of nosecs seen, defaults to 1
         """
         self.current["nosec"] += num
+
+    def note_skipped_test(self, num=1):
+        """Note a "nosec BXXX, BYYY, ..." comment.
+
+        Increment the currently active metrics skipped_tests count.
+        :param num: number of skipped_tests seen, defaults to 1
+        """
+        self.current["skipped_tests"] += num
 
     def count_locs(self, lines):
         """Count lines of code.

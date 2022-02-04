@@ -7,6 +7,7 @@ import fnmatch
 import json
 import logging
 import os
+import re
 import sys
 import tokenize
 import traceback
@@ -21,6 +22,8 @@ from bandit.core import test_set as b_test_set
 
 
 LOG = logging.getLogger(__name__)
+NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
+NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z_]+),?)+", re.IGNORECASE)
 
 
 class BanditManager:
@@ -308,21 +311,20 @@ class BanditManager:
             lines = data.splitlines()
             self.metrics.begin(fname)
             self.metrics.count_locs(lines)
-            if self.ignore_nosec:
-                nosec_lines = set()
-            else:
-                try:
-                    fdata.seek(0)
-                    tokens = tokenize.tokenize(fdata.readline)
-                    nosec_lines = {
-                        lineno
-                        for toktype, tokval, (lineno, _), _, _ in tokens
-                        if toktype == tokenize.COMMENT
-                        and "#nosec" in tokval
-                        or "# nosec" in tokval
-                    }
-                except tokenize.TokenError:
-                    nosec_lines = set()
+            # nosec_lines is a dict of line number -> set of tests to ignore
+            #                                         for the line
+            nosec_lines = dict()
+            try:
+                fdata.seek(0)
+                tokens = tokenize.tokenize(fdata.readline)
+
+                if not self.ignore_nosec:
+                    for toktype, tokval, (lineno, _), _, _ in tokens:
+                        if toktype == tokenize.COMMENT:
+                            nosec_lines[lineno] = _parse_nosec_comment(tokval)
+
+            except tokenize.TokenError:
+                pass
             score = self._execute_ast_visitor(fname, data, nosec_lines)
             self.scores.append(score)
             self.metrics.count_issues(
@@ -460,3 +462,41 @@ def _find_candidate_matches(unmatched_issues, results_list):
         ]
 
     return issue_candidates
+
+
+def _find_test_id_from_nosec_string(extman, match):
+    plugin_id = extman.check_id(match)
+    if plugin_id:
+        return match
+    # Finding by short_id didn't work, let's check the plugin name
+    plugin_id = extman.get_plugin_id(match)
+    if not plugin_id:
+        # Name and short id didn't work:
+        LOG.warning(
+            "Test in comment: %s is not a test name or id, ignoring", match
+        )
+    return plugin_id  # We want to return None or the string here regardless
+
+
+def _parse_nosec_comment(comment):
+    found_no_sec_comment = NOSEC_COMMENT.search(comment)
+    if not found_no_sec_comment:
+        # there was no nosec comment
+        return None
+
+    matches = found_no_sec_comment.groupdict()
+    nosec_tests = matches.get("tests", set())
+
+    # empty set indicates that there was a nosec comment without specific
+    # test ids or names
+    test_ids = set()
+    if nosec_tests:
+        extman = extension_loader.MANAGER
+        # lookup tests by short code or name
+        for test in NOSEC_COMMENT_TESTS.finditer(nosec_tests):
+            test_match = test.group(1)
+            test_id = _find_test_id_from_nosec_string(extman, test_match)
+            if test_id:
+                test_ids.add(test_id)
+
+    return test_ids
