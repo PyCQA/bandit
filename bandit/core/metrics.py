@@ -85,7 +85,8 @@ class Metrics:
                     if label not in issue_counts:
                         issue_counts[label] = 0
                         count = (
-                            score[criteria][i] / constants.RANKING_VALUES[rank]
+                            score[criteria][i]
+                            // constants.RANKING_VALUES[rank]
                         )
                         issue_counts[label] += count
         return issue_counts
