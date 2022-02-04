@@ -31,12 +31,12 @@ class TextFormatterTests(testtools.TestCase):
                 "{}>> Issue: [{}:{}] {}".format(
                     _indent_val, _issue.test_id, _issue.test, _issue.text
                 ),
-                "{}   Severity: {} CWE: {} Confidence: {}".format(
+                "{}   Severity: {}   Confidence: {}".format(
                     _indent_val,
                     _issue.severity.capitalize(),
-                    _issue.cwe,
                     _issue.confidence.capitalize(),
                 ),
+                f"{_indent_val}   CWE: {_issue.cwe}",
                 "{}   Location: {}:{}:{}".format(
                     _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
                 ),

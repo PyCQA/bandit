@@ -16,6 +16,7 @@ This formatter outputs the issues as color coded text to screen.
        instantiation of arbitrary objects. Consider yaml.safe_load().
 
        Severity: Medium   Confidence: High
+       CWE: CWE-20 (https://cwe.mitre.org/data/definitions/20.html)
        Location: examples/yaml_load.py:5
        More Info: https://bandit.readthedocs.io/en/latest/
     4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
@@ -23,6 +24,12 @@ This formatter outputs the issues as color coded text to screen.
     6       yaml.dump(y)
 
 .. versionadded:: 0.9.0
+
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
 
 """
 import datetime
@@ -111,14 +118,15 @@ def _output_issue_str(
     )
 
     bits.append(
-        "%s   Severity: %s CWE: %s Confidence: %s"
+        "%s   Severity: %s   Confidence: %s"
         % (
             indent,
             issue.severity.capitalize(),
-            str(issue.cwe),
             issue.confidence.capitalize(),
         )
     )
+
+    bits.append(f"{indent}   CWE: {str(issue.cwe)}")
 
     bits.append(
         "%s   Location: %s:%s:%s"
