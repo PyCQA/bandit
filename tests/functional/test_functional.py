@@ -831,6 +831,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("pycryptodome.py", expect)
 
+    def test_blacklist_pyghmi(self):
+        """Test calling pyghmi methods"""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 1},
+        }
+        self.check_example("pyghmi.py", expect)
+
     def test_snmp_security_check(self):
         """Test insecure and weak crypto usage of SNMP."""
         expect = {
