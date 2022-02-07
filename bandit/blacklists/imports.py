@@ -212,6 +212,17 @@ of pyca/cryptography which has more support among the Python community.
 |      |                     | - Cryptodome.Util                  |           |
 +------+---------------------+------------------------------------+-----------+
 
+B415: import_pyghmi
+-------------------
+An IPMI-related module is being imported. IPMI is considered insecure. Use
+an encrypted protocol.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B415 | import_pyghmi       | - pyghmi                           | high      |
++------+---------------------+------------------------------------+-----------+
+
 """
 from bandit.blacklists import utils
 from bandit.core import issue
@@ -406,6 +417,18 @@ def gen_blacklist():
             "The pyCrypto library and its module {name} are no longer actively"
             " maintained and have been deprecated. "
             "Consider using pyca/cryptography library.",
+            "HIGH",
+        )
+    )
+
+    sets.append(
+        utils.build_conf_dict(
+            "import_pyghmi",
+            "B415",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
+            ["pyghmi"],
+            "An IPMI-related module is being imported. IPMI is considered "
+            "insecure. Use an encrypted protocol.",
             "HIGH",
         )
     )
