@@ -34,6 +34,8 @@ hash functions created using ``hashlib.new`` function.
     CWE information added
 
 """
+import sys
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
@@ -55,10 +57,29 @@ def hashlib_new(context):
                 "sha",
                 "sha1",
             ):
-                return bandit.Issue(
-                    severity=bandit.MEDIUM,
-                    confidence=bandit.HIGH,
-                    cwe=issue.Cwe.BROKEN_CRYPTO,
-                    text="Use of insecure MD4 or MD5 hash function.",
-                    lineno=context.node.lineno,
-                )
+                if sys.version_info >= (3, 9):
+                    # Python 3.9 includes a usedforsecurity argument
+                    usedforsecurity = (
+                        args[2]
+                        if len(args) > 2
+                        else keywords.get("usedforsecurity", "True")
+                    )
+
+                    if usedforsecurity == "True":
+                        return bandit.Issue(
+                            severity=bandit.HIGH,
+                            confidence=bandit.HIGH,
+                            cwe=issue.Cwe.BROKEN_CRYPTO,
+                            text="Use of insecure MD2, MD4, MD5, or SHA1 hash "
+                            "function.",
+                            lineno=context.node.lineno,
+                        )
+                else:
+                    return bandit.Issue(
+                        severity=bandit.MEDIUM,
+                        confidence=bandit.HIGH,
+                        cwe=issue.Cwe.BROKEN_CRYPTO,
+                        text="Use of insecure MD2, MD4, MD5, or SHA1 hash "
+                        "function.",
+                        lineno=context.node.lineno,
+                    )
