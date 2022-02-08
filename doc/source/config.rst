@@ -1,5 +1,67 @@
 Configuration
 =============
+
+---------------
+Bandit Settings
+---------------
+
+Projects may include a YAML file named `.bandit` that specifies command line
+arguments that should be supplied for that project. The currently supported
+arguments are:
+
+ - targets: comma separated list of target dirs/files to run bandit on
+ - exclude: comma separated list of excluded paths
+ - skips: comma separated list of tests to skip
+ - tests: comma separated list of tests to run
+
+To use this, put a YAML file named `.bandit` in your project's directory.
+For example:
+
+::
+
+   exclude: /test
+
+::
+
+   tests:
+     - B101
+     - B102
+     - B301
+
+
+Exclusions
+----------
+In the event that a line of code triggers a Bandit issue, but that the line
+has been reviewed and the issue is a false positive or acceptable for some
+other reason, the line can be marked with a ``# nosec`` and any results
+associated with it will not be reported.
+
+For example, although this line may cause Bandit to report a potential
+security issue, it will not be reported::
+
+    self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
+
+Because multiple issues can be reported for the same line, specific tests may
+be provided to suppress those reports. This will cause other issues not
+included to be reported. This can be useful in preventing situations where a
+nosec comment is used, but a separate vulnerability may be added to the line
+later causing the new vulnerability to be ignored.
+
+For example, this will suppress the report of B602 and B607::
+
+    self.process = subprocess.Popen('/bin/ls *', shell=True)  #nosec B602, B607
+
+Full test names rather than the test ID may also be used.
+
+For example, this will suppress the report of B101 and continue to report B506
+as an issue.::
+
+    assert yaml.load("{}") == []  # nosec assert_used
+
+-----------------
+Scanning Behavior
+-----------------
+
 Bandit is designed to be configurable and cover a wide range of needs, it may
 be used as either a local developer utility or as part of a full CI/CD
 pipeline. To provide for these various usage scenarios bandit can be configured

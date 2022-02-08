@@ -13,4 +13,5 @@ later rehomed to PyCQA.
 https://bandit.readthedocs.io/
 """
 from bandit.cli import main
+
 main.main()

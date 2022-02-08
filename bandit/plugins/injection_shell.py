@@ -1,18 +1,18 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import ast
 import re
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
+
 
 # yuck, regex: starts with a windows drive letter (eg C:)
 # or one of our path delimeter characters (/, \, .)
-full_path_match = re.compile(r'^(?:[A-Za-z](?=\:)|[\\\/\.])')
+full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")
 
 
 def _evaluate_shell_call(context):
@@ -25,61 +25,62 @@ def _evaluate_shell_call(context):
 
 
 def gen_config(name):
-    if name == 'shell_injection':
+    if name == "shell_injection":
         return {
             # Start a process using the subprocess module, or one of its
             # wrappers.
-            'subprocess':
-            ['subprocess.Popen',
-             'subprocess.call',
-             'subprocess.check_call',
-             'subprocess.check_output',
-             'subprocess.run'],
-
+            "subprocess": [
+                "subprocess.Popen",
+                "subprocess.call",
+                "subprocess.check_call",
+                "subprocess.check_output",
+                "subprocess.run",
+            ],
             # Start a process with a function vulnerable to shell injection.
-            'shell':
-            ['os.system',
-             'os.popen',
-             'os.popen2',
-             'os.popen3',
-             'os.popen4',
-             'popen2.popen2',
-             'popen2.popen3',
-             'popen2.popen4',
-             'popen2.Popen3',
-             'popen2.Popen4',
-             'commands.getoutput',
-             'commands.getstatusoutput'],
-
+            "shell": [
+                "os.system",
+                "os.popen",
+                "os.popen2",
+                "os.popen3",
+                "os.popen4",
+                "popen2.popen2",
+                "popen2.popen3",
+                "popen2.popen4",
+                "popen2.Popen3",
+                "popen2.Popen4",
+                "commands.getoutput",
+                "commands.getstatusoutput",
+            ],
             # Start a process with a function that is not vulnerable to shell
             # injection.
-            'no_shell':
-            ['os.execl',
-             'os.execle',
-             'os.execlp',
-             'os.execlpe',
-             'os.execv',
-             'os.execve',
-             'os.execvp',
-             'os.execvpe',
-             'os.spawnl',
-             'os.spawnle',
-             'os.spawnlp',
-             'os.spawnlpe',
-             'os.spawnv',
-             'os.spawnve',
-             'os.spawnvp',
-             'os.spawnvpe',
-             'os.startfile']
-            }
+            "no_shell": [
+                "os.execl",
+                "os.execle",
+                "os.execlp",
+                "os.execlpe",
+                "os.execv",
+                "os.execve",
+                "os.execvp",
+                "os.execvpe",
+                "os.spawnl",
+                "os.spawnle",
+                "os.spawnlp",
+                "os.spawnlpe",
+                "os.spawnv",
+                "os.spawnve",
+                "os.spawnvp",
+                "os.spawnvpe",
+                "os.startfile",
+            ],
+        }
 
 
 def has_shell(context):
     keywords = context.node.keywords
     result = False
-    if 'shell' in context.call_keywords:
+    if "shell" in context.call_keywords:
         for key in keywords:
-            if key.arg == 'shell':
+            if key.arg == "shell":
                 val = key.value
                 if isinstance(val, ast.Num):
                     result = bool(val.n)
@@ -87,7 +88,7 @@ def has_shell(context):
                     result = bool(val.elts)
                 elif isinstance(val, ast.Dict):
                     result = bool(val.keys)
-                elif isinstance(val, ast.Name) and val.id in ['False', 'None']:
+                elif isinstance(val, ast.Name) and val.id in ["False", "None"]:
                     result = False
                 elif isinstance(val, ast.NameConstant):
                     result = val.value
@@ -96,9 +97,9 @@ def has_shell(context):
     return result
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B602')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B602")
 def subprocess_popen_with_shell_equals_true(context, config):
     """**B602: Test for use of popen with shell equals true**
 
@@ -161,6 +162,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
         >> Issue: subprocess call with shell=True seems safe, but may be
         changed in the future, consider rewriting without shell
            Severity: Low   Confidence: High
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: ./examples/subprocess_shell.py:21
         20  subprocess.check_call(['/bin/ls', '-l'], shell=False)
         21  subprocess.check_call('/bin/ls -l', shell=True)
@@ -169,6 +171,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
         >> Issue: call with shell=True contains special shell characters,
         consider moving extra logic into Python code
            Severity: Medium   Confidence: High
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: ./examples/subprocess_shell.py:26
         25
         26  subprocess.Popen('/bin/ls *', shell=True)
@@ -176,6 +179,7 @@ def subprocess_popen_with_shell_equals_true(context, config):
 
         >> Issue: subprocess call with shell=True identified, security issue.
            Severity: High   Confidence: High
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: ./examples/subprocess_shell.py:27
         26  subprocess.Popen('/bin/ls *', shell=True)
         27  subprocess.Popen('/bin/ls %s' % ('something',), shell=True)
@@ -187,10 +191,15 @@ def subprocess_popen_with_shell_equals_true(context, config):
      - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
+     - https://cwe.mitre.org/data/definitions/78.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """  # noqa: E501
-    if config and context.call_function_name_qual in config['subprocess']:
+    if config and context.call_function_name_qual in config["subprocess"]:
         if has_shell(context):
             if len(context.call_args) > 0:
                 sev = _evaluate_shell_call(context)
@@ -198,24 +207,26 @@ def subprocess_popen_with_shell_equals_true(context, config):
                     return bandit.Issue(
                         severity=bandit.LOW,
                         confidence=bandit.HIGH,
-                        text='subprocess call with shell=True seems safe, but '
-                             'may be changed in the future, consider '
-                             'rewriting without shell',
-                        lineno=context.get_lineno_for_call_arg('shell'),
+                        cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                        text="subprocess call with shell=True seems safe, but "
+                        "may be changed in the future, consider "
+                        "rewriting without shell",
+                        lineno=context.get_lineno_for_call_arg("shell"),
                     )
                 else:
                     return bandit.Issue(
                         severity=bandit.HIGH,
                         confidence=bandit.HIGH,
-                        text='subprocess call with shell=True identified, '
-                             'security issue.',
-                        lineno=context.get_lineno_for_call_arg('shell'),
+                        cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                        text="subprocess call with shell=True identified, "
+                        "security issue.",
+                        lineno=context.get_lineno_for_call_arg("shell"),
                     )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B603')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B603")
 def subprocess_without_shell_equals_true(context, config):
     """**B603: Test for use of subprocess without shell equals true**
 
@@ -267,6 +278,7 @@ def subprocess_without_shell_equals_true(context, config):
 
         >> Issue: subprocess call - check for execution of untrusted input.
            Severity: Low   Confidence: High
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: ./examples/subprocess_shell.py:23
         22
         23    subprocess.check_output(['/bin/ls', '-l'])
@@ -278,23 +290,29 @@ def subprocess_without_shell_equals_true(context, config):
      - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://cwe.mitre.org/data/definitions/78.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """  # noqa: E501
-    if config and context.call_function_name_qual in config['subprocess']:
+    if config and context.call_function_name_qual in config["subprocess"]:
         if not has_shell(context):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
-                text='subprocess call - check for execution of untrusted '
-                     'input.',
-                lineno=context.get_lineno_for_call_arg('shell'),
+                cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                text="subprocess call - check for execution of untrusted "
+                "input.",
+                lineno=context.get_lineno_for_call_arg("shell"),
             )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B604')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B604")
 def any_other_function_with_shell_equals_true(context, config):
     """**B604: Test for any function with shell equals true**
 
@@ -347,6 +365,7 @@ def any_other_function_with_shell_equals_true(context, config):
         >> Issue: Function call with shell=True parameter identified, possible
         security issue.
            Severity: Medium   Confidence: High
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: ./examples/subprocess_shell.py:9
         8 pop('/bin/gcc --version', shell=True)
         9 Popen('/bin/gcc --version', shell=True)
@@ -356,23 +375,29 @@ def any_other_function_with_shell_equals_true(context, config):
 
      - https://security.openstack.org/guidelines/dg_avoid-shell-true.html
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://cwe.mitre.org/data/definitions/78.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """  # noqa: E501
-    if config and context.call_function_name_qual not in config['subprocess']:
+    if config and context.call_function_name_qual not in config["subprocess"]:
         if has_shell(context):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
-                text='Function call with shell=True parameter identified, '
-                     'possible security issue.',
-                lineno=context.get_lineno_for_call_arg('shell'),
-                )
+                cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                text="Function call with shell=True parameter identified, "
+                "possible security issue.",
+                lineno=context.get_lineno_for_call_arg("shell"),
+            )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B605')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B605")
 def start_process_with_a_shell(context, config):
     """**B605: Test for starting a process with a shell**
 
@@ -430,6 +455,7 @@ def start_process_with_a_shell(context, config):
 
         >> Issue: Starting a process with a shell: check for injection.
            Severity: Low   Confidence: Medium
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: examples/os_system.py:3
         2
         3   os.system('/bin/echo hi')
@@ -440,32 +466,39 @@ def start_process_with_a_shell(context, config):
      - https://docs.python.org/3/library/os.html#os.system
      - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://cwe.mitre.org/data/definitions/78.html
 
     .. versionadded:: 0.10.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """  # noqa: E501
-    if config and context.call_function_name_qual in config['shell']:
+    if config and context.call_function_name_qual in config["shell"]:
         if len(context.call_args) > 0:
             sev = _evaluate_shell_call(context)
             if sev == bandit.LOW:
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text='Starting a process with a shell: '
-                         'Seems safe, but may be changed in the future, '
-                         'consider rewriting without shell'
+                    cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                    text="Starting a process with a shell: "
+                    "Seems safe, but may be changed in the future, "
+                    "consider rewriting without shell",
                 )
             else:
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.HIGH,
-                    text='Starting a process with a shell, possible injection'
-                         ' detected, security issue.'
+                    cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                    text="Starting a process with a shell, possible injection"
+                    " detected, security issue.",
                 )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B606')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B606")
 def start_process_with_no_shell(context, config):
     """**B606: Test for starting a process with no shell**
 
@@ -527,6 +560,7 @@ def start_process_with_no_shell(context, config):
         >> Issue: [start_process_with_no_shell] Starting a process without a
            shell.
            Severity: Low   Confidence: Medium
+           CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
            Location: examples/os-spawn.py:8
         7   os.spawnv(mode, path, args)
         8   os.spawnve(mode, path, args, env)
@@ -538,21 +572,27 @@ def start_process_with_no_shell(context, config):
      - https://docs.python.org/3/library/os.html#os.system
      - https://docs.python.org/3/library/subprocess.html#frequently-used-arguments
      - https://security.openstack.org/guidelines/dg_use-subprocess-securely.html
+     - https://cwe.mitre.org/data/definitions/78.html
 
     .. versionadded:: 0.10.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """  # noqa: E501
 
-    if config and context.call_function_name_qual in config['no_shell']:
+    if config and context.call_function_name_qual in config["no_shell"]:
         return bandit.Issue(
             severity=bandit.LOW,
             confidence=bandit.MEDIUM,
-            text='Starting a process without a shell.'
+            cwe=issue.Cwe.OS_COMMAND_INJECTION,
+            text="Starting a process without a shell.",
         )
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B607')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B607")
 def start_process_with_partial_path(context, config):
     """**B607: Test for starting a process with a partial path**
 
@@ -614,6 +654,7 @@ def start_process_with_partial_path(context, config):
 
         >> Issue: Starting a process with a partial executable path
         Severity: Low   Confidence: High
+        CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
         Location: ./examples/partial_path_process.py:3
         2    from subprocess import Popen as pop
         3    pop('gcc --version', shell=False)
@@ -622,14 +663,21 @@ def start_process_with_partial_path(context, config):
 
      - https://security.openstack.org
      - https://docs.python.org/3/library/os.html#process-management
+     - https://cwe.mitre.org/data/definitions/78.html
 
     .. versionadded:: 0.13.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """
 
     if config and len(context.call_args):
-        if(context.call_function_name_qual in config['subprocess'] or
-           context.call_function_name_qual in config['shell'] or
-           context.call_function_name_qual in config['no_shell']):
+        if (
+            context.call_function_name_qual in config["subprocess"]
+            or context.call_function_name_qual in config["shell"]
+            or context.call_function_name_qual in config["no_shell"]
+        ):
 
             node = context.node.args[0]
             # some calls take an arg list, check the first part
@@ -641,5 +689,6 @@ def start_process_with_partial_path(context, config):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,
-                    text='Starting a process with a partial executable path'
+                    cwe=issue.Cwe.OS_COMMAND_INJECTION,
+                    text="Starting a process with a partial executable path",
                 )

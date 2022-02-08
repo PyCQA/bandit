@@ -2,7 +2,6 @@
 # Copyright (c) 2015 Hewlett Packard Enterprise
 #
 # SPDX-License-Identifier: Apache-2.0
-
 import collections
 import tempfile
 from unittest import mock
@@ -18,152 +17,186 @@ from bandit.formatters import screen
 
 
 class ScreenFormatterTests(testtools.TestCase):
-
     def setUp(self):
-        super(ScreenFormatterTests, self).setUp()
+        super().setUp()
 
-    @mock.patch('bandit.core.issue.Issue.get_code')
+    @mock.patch("bandit.core.issue.Issue.get_code")
     def test_output_issue(self, get_code):
         issue = _get_issue_instance()
-        get_code.return_value = 'DDDDDDD'
-        indent_val = 'CCCCCCC'
+        get_code.return_value = "DDDDDDD"
+        indent_val = "CCCCCCC"
 
         def _template(_issue, _indent_val, _code, _color):
-            return_val = ["{}{}>> Issue: [{}:{}] {}".
-                          format(_indent_val, _color, _issue.test_id,
-                                 _issue.test, _issue.text),
-                          "{}   Severity: {}   Confidence: {}".
-                          format(_indent_val, _issue.severity.capitalize(),
-                                 _issue.confidence.capitalize()),
-                          "{}   Location: {}:{}:{}".
-                          format(_indent_val, _issue.fname, _issue.lineno,
-                                 _issue.col_offset),
-                          "{}   More Info: {}{}".format(
-                              _indent_val, docs_utils.get_url(_issue.test_id),
-                              screen.COLOR['DEFAULT'])]
+            return_val = [
+                "{}{}>> Issue: [{}:{}] {}".format(
+                    _indent_val,
+                    _color,
+                    _issue.test_id,
+                    _issue.test,
+                    _issue.text,
+                ),
+                "{}   Severity: {}   Confidence: {}".format(
+                    _indent_val,
+                    _issue.severity.capitalize(),
+                    _issue.confidence.capitalize(),
+                ),
+                "{}   CWE: {}".format(
+                    _indent_val,
+                    _issue.cwe,
+                ),
+                "{}   Location: {}:{}:{}".format(
+                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
+                ),
+                "{}   More Info: {}{}".format(
+                    _indent_val,
+                    docs_utils.get_url(_issue.test_id),
+                    screen.COLOR["DEFAULT"],
+                ),
+            ]
             if _code:
-                return_val.append("{}{}".format(_indent_val, _code))
-            return '\n'.join(return_val)
+                return_val.append(f"{_indent_val}{_code}")
+            return "\n".join(return_val)
 
         issue_text = screen._output_issue_str(issue, indent_val)
-        expected_return = _template(issue, indent_val, 'DDDDDDD',
-                                    screen.COLOR['MEDIUM'])
+        expected_return = _template(
+            issue, indent_val, "DDDDDDD", screen.COLOR["MEDIUM"]
+        )
         self.assertEqual(expected_return, issue_text)
 
-        issue_text = screen._output_issue_str(issue, indent_val,
-                                              show_code=False)
-        expected_return = _template(issue, indent_val, '',
-                                    screen.COLOR['MEDIUM'])
+        issue_text = screen._output_issue_str(
+            issue, indent_val, show_code=False
+        )
+        expected_return = _template(
+            issue, indent_val, "", screen.COLOR["MEDIUM"]
+        )
         self.assertEqual(expected_return, issue_text)
 
-        issue.lineno = ''
-        issue.col_offset = ''
-        issue_text = screen._output_issue_str(issue, indent_val,
-                                              show_lineno=False)
-        expected_return = _template(issue, indent_val, 'DDDDDDD',
-                                    screen.COLOR['MEDIUM'])
+        issue.lineno = ""
+        issue.col_offset = ""
+        issue_text = screen._output_issue_str(
+            issue, indent_val, show_lineno=False
+        )
+        expected_return = _template(
+            issue, indent_val, "DDDDDDD", screen.COLOR["MEDIUM"]
+        )
         self.assertEqual(expected_return, issue_text)
 
-    @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
+    @mock.patch("bandit.core.manager.BanditManager.get_issue_list")
     def test_no_issues(self, get_issue_list):
         conf = config.BanditConfig()
-        self.manager = manager.BanditManager(conf, 'file')
+        self.manager = manager.BanditManager(conf, "file")
 
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
 
         get_issue_list.return_value = collections.OrderedDict()
-        with mock.patch('bandit.formatters.screen.do_print') as m:
-            with open(self.tmp_fname, 'w') as tmp_file:
-                screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                              lines=5)
-            self.assertIn('No issues identified.',
-                          '\n'.join([str(a) for a in m.call_args]))
+        with mock.patch("bandit.formatters.screen.do_print") as m:
+            with open(self.tmp_fname, "w") as tmp_file:
+                screen.report(
+                    self.manager, tmp_file, bandit.LOW, bandit.LOW, lines=5
+                )
+            self.assertIn(
+                "No issues identified.",
+                "\n".join([str(a) for a in m.call_args]),
+            )
 
-    @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
+    @mock.patch("bandit.core.manager.BanditManager.get_issue_list")
     def test_report_nobaseline(self, get_issue_list):
         conf = config.BanditConfig()
-        self.manager = manager.BanditManager(conf, 'file')
+        self.manager = manager.BanditManager(conf, "file")
 
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
 
         self.manager.verbose = True
-        self.manager.files_list = ['binding.py']
+        self.manager.files_list = ["binding.py"]
 
-        self.manager.scores = [{'SEVERITY': [0, 0, 0, 1],
-                                'CONFIDENCE': [0, 0, 0, 1]}]
+        self.manager.scores = [
+            {"SEVERITY": [0, 0, 0, 1], "CONFIDENCE": [0, 0, 0, 1]}
+        ]
 
-        self.manager.skipped = [('abc.py', 'File is bad')]
-        self.manager.excluded_files = ['def.py']
+        self.manager.skipped = [("abc.py", "File is bad")]
+        self.manager.excluded_files = ["def.py"]
 
         issue_a = _get_issue_instance()
         issue_b = _get_issue_instance()
 
         get_issue_list.return_value = [issue_a, issue_b]
 
-        self.manager.metrics.data['_totals'] = {'loc': 1000, 'nosec': 50}
-        for category in ['SEVERITY', 'CONFIDENCE']:
-            for level in ['UNDEFINED', 'LOW', 'MEDIUM', 'HIGH']:
-                self.manager.metrics.data['_totals']['%s.%s' %
-                                                     (category, level)] = 1
+        self.manager.metrics.data["_totals"] = {"loc": 1000, "nosec": 50}
+        for category in ["SEVERITY", "CONFIDENCE"]:
+            for level in ["UNDEFINED", "LOW", "MEDIUM", "HIGH"]:
+                self.manager.metrics.data["_totals"][f"{category}.{level}"] = 1
 
         # Validate that we're outputting the correct issues
-        output_str_fn = 'bandit.formatters.screen._output_issue_str'
+        output_str_fn = "bandit.formatters.screen._output_issue_str"
         with mock.patch(output_str_fn) as output_str:
-            output_str.return_value = 'ISSUE_OUTPUT_TEXT'
+            output_str.return_value = "ISSUE_OUTPUT_TEXT"
 
-            with open(self.tmp_fname, 'w') as tmp_file:
-                screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                              lines=5)
+            with open(self.tmp_fname, "w") as tmp_file:
+                screen.report(
+                    self.manager, tmp_file, bandit.LOW, bandit.LOW, lines=5
+                )
 
-            calls = [mock.call(issue_a, '', lines=5),
-                     mock.call(issue_b, '', lines=5)]
+            calls = [
+                mock.call(issue_a, "", lines=5),
+                mock.call(issue_b, "", lines=5),
+            ]
 
             output_str.assert_has_calls(calls, any_order=True)
 
         # Validate that we're outputting all of the expected fields and the
         # correct values
-        with mock.patch('bandit.formatters.screen.do_print') as m:
-            with open(self.tmp_fname, 'w') as tmp_file:
-                screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                              lines=5)
+        with mock.patch("bandit.formatters.screen.do_print") as m:
+            with open(self.tmp_fname, "w") as tmp_file:
+                screen.report(
+                    self.manager, tmp_file, bandit.LOW, bandit.LOW, lines=5
+                )
 
-            data = '\n'.join([str(a) for a in m.call_args[0][0]])
+            data = "\n".join([str(a) for a in m.call_args[0][0]])
 
-            expected = 'Run started'
+            expected = "Run started"
             self.assertIn(expected, data)
 
             expected_items = [
-                screen.header('Files in scope (1):'),
-                '\n\tbinding.py (score: {SEVERITY: 1, CONFIDENCE: 1})']
+                screen.header("Files in scope (1):"),
+                "\n\tbinding.py (score: {SEVERITY: 1, CONFIDENCE: 1})",
+            ]
 
             for item in expected_items:
                 self.assertIn(item, data)
 
-            expected = screen.header('Files excluded (1):') + '\n\tdef.py'
+            expected = screen.header("Files excluded (1):") + "\n\tdef.py"
             self.assertIn(expected, data)
 
-            expected = ('Total lines of code: 1000\n\tTotal lines skipped '
-                        '(#nosec): 50')
+            expected = (
+                "Total lines of code: 1000\n\tTotal lines skipped "
+                "(#nosec): 50"
+            )
             self.assertIn(expected, data)
 
-            expected = ('Total issues (by severity):\n\t\tUndefined: 1\n\t\t'
-                        'Low: 1\n\t\tMedium: 1\n\t\tHigh: 1')
+            expected = (
+                "Total issues (by severity):\n\t\tUndefined: 1\n\t\t"
+                "Low: 1\n\t\tMedium: 1\n\t\tHigh: 1"
+            )
             self.assertIn(expected, data)
 
-            expected = ('Total issues (by confidence):\n\t\tUndefined: 1\n\t\t'
-                        'Low: 1\n\t\tMedium: 1\n\t\tHigh: 1')
+            expected = (
+                "Total issues (by confidence):\n\t\tUndefined: 1\n\t\t"
+                "Low: 1\n\t\tMedium: 1\n\t\tHigh: 1"
+            )
             self.assertIn(expected, data)
 
-            expected = (screen.header('Files skipped (1):') +
-                        '\n\tabc.py (File is bad)')
+            expected = (
+                screen.header("Files skipped (1):")
+                + "\n\tabc.py (File is bad)"
+            )
             self.assertIn(expected, data)
 
-    @mock.patch('bandit.core.manager.BanditManager.get_issue_list')
+    @mock.patch("bandit.core.manager.BanditManager.get_issue_list")
     def test_report_baseline(self, get_issue_list):
         conf = config.BanditConfig()
-        self.manager = manager.BanditManager(conf, 'file')
+        self.manager = manager.BanditManager(conf, "file")
 
         (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
@@ -172,37 +205,42 @@ class ScreenFormatterTests(testtools.TestCase):
         issue_b = _get_issue_instance()
 
         issue_x = _get_issue_instance()
-        issue_x.fname = 'x'
+        issue_x.fname = "x"
         issue_y = _get_issue_instance()
-        issue_y.fname = 'y'
+        issue_y.fname = "y"
         issue_z = _get_issue_instance()
-        issue_z.fname = 'z'
+        issue_z.fname = "z"
 
         get_issue_list.return_value = collections.OrderedDict(
-            [(issue_a, [issue_x]), (issue_b, [issue_y, issue_z])])
+            [(issue_a, [issue_x]), (issue_b, [issue_y, issue_z])]
+        )
 
         # Validate that we're outputting the correct issues
-        indent_val = ' ' * 10
-        output_str_fn = 'bandit.formatters.screen._output_issue_str'
+        indent_val = " " * 10
+        output_str_fn = "bandit.formatters.screen._output_issue_str"
         with mock.patch(output_str_fn) as output_str:
-            output_str.return_value = 'ISSUE_OUTPUT_TEXT'
+            output_str.return_value = "ISSUE_OUTPUT_TEXT"
 
-            with open(self.tmp_fname, 'w') as tmp_file:
-                screen.report(self.manager, tmp_file, bandit.LOW, bandit.LOW,
-                              lines=5)
+            with open(self.tmp_fname, "w") as tmp_file:
+                screen.report(
+                    self.manager, tmp_file, bandit.LOW, bandit.LOW, lines=5
+                )
 
-            calls = [mock.call(issue_a, '', lines=5),
-                     mock.call(issue_b, '', show_code=False,
-                               show_lineno=False),
-                     mock.call(issue_y, indent_val, lines=5),
-                     mock.call(issue_z, indent_val, lines=5)]
+            calls = [
+                mock.call(issue_a, "", lines=5),
+                mock.call(issue_b, "", show_code=False, show_lineno=False),
+                mock.call(issue_y, indent_val, lines=5),
+                mock.call(issue_z, indent_val, lines=5),
+            ]
 
             output_str.assert_has_calls(calls, any_order=True)
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
-    new_issue = issue.Issue(severity, confidence, 'Test issue')
-    new_issue.fname = 'code.py'
-    new_issue.test = 'bandit_plugin'
+def _get_issue_instance(
+    severity=bandit.MEDIUM, cwe=123, confidence=bandit.MEDIUM
+):
+    new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
+    new_issue.fname = "code.py"
+    new_issue.test = "bandit_plugin"
     new_issue.lineno = 1
     return new_issue
