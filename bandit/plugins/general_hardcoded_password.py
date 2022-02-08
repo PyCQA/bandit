@@ -85,8 +85,9 @@ def hardcoded_password_string(context):
         for targ in node._bandit_parent.targets:
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 return _report(node.s)
-            elif isinstance(targ, ast.Attribute) \
-                    and RE_CANDIDATES.search(targ.attr):
+            elif isinstance(targ, ast.Attribute) and RE_CANDIDATES.search(
+                targ.attr
+            ):
                 return _report(node.s)
 
     elif isinstance(
