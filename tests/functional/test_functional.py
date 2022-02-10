@@ -108,10 +108,36 @@ class FunctionalTests(testtools.TestCase):
 
     def test_crypto_md5(self):
         """Test the `hashlib.md5` example."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 15, "HIGH": 4},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 19},
-        }
+        if sys.version_info >= (3, 9):
+            expect = {
+                "SEVERITY": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 10,
+                    "HIGH": 9,
+                },
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 19,
+                },
+            }
+        else:
+            expect = {
+                "SEVERITY": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 16,
+                    "HIGH": 4,
+                },
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 20,
+                },
+            }
         self.check_example("crypto-md5.py", expect)
 
     def test_ciphers(self):
@@ -180,10 +206,26 @@ class FunctionalTests(testtools.TestCase):
 
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 5, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
-        }
+        if sys.version_info >= (3, 9):
+            expect = {
+                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 1, "HIGH": 4},
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 9,
+                },
+            }
+        else:
+            expect = {
+                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 5, "HIGH": 0},
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 9,
+                },
+            }
         self.check_example("imports-aliases.py", expect)
 
     def test_imports_from(self):
@@ -786,13 +828,13 @@ class FunctionalTests(testtools.TestCase):
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 11,
+                    "HIGH": 10,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 11,
+                    "HIGH": 10,
                 },
             }
         else:
@@ -800,14 +842,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 13,
+                    "MEDIUM": 11,
                     "HIGH": 0,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 13,
+                    "HIGH": 11,
                 },
             }
         self.check_example("hashlib_new_insecure_functions.py", expect)
