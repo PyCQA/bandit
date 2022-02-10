@@ -10,9 +10,6 @@ hashlib.new('MD4', string='test')
 
 hashlib.new(string='test', name='MD5')
 
-# 3rd arg only availabe in Python 3.9+
-hashlib.new('md5', b'test', True)
-
 hashlib.new('sha1')
 
 hashlib.new(string='test', name='SHA1')
@@ -28,9 +25,6 @@ hashlib.new('sha1', usedforsecurity=True)
 hashlib.new('sha256')
 
 hashlib.new('SHA512')
-
-# 3rd arg only availabe in Python 3.9+
-hashlib.new('md5', b'test', False)
 
 # usedforsecurity arg only availabe in Python 3.9+
 hashlib.new(name='sha1', usedforsecurity=False)
