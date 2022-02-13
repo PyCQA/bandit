@@ -46,32 +46,6 @@ it generates a report.
 Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
 
-References
-----------
-
-Bandit docs: https://bandit.readthedocs.io/en/latest/
-
-Python AST module documentation: https://docs.python.org/3/library/ast.html
-
-Green Tree Snakes - the missing Python AST docs:
-https://greentreesnakes.readthedocs.org/en/latest/
-
-Documentation of the various types of AST nodes that Bandit currently covers
-or could be extended to cover:
-https://greentreesnakes.readthedocs.org/en/latest/nodes.html
-
-Contributing
-------------
-
-Follow our Contributing file:
-https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
-
-Reporting Bugs
---------------
-
-Bugs should be reported on github. To file a bug against Bandit, visit:
-https://github.com/PyCQA/bandit/issues
-
 Show Your Style
 ---------------
 
@@ -90,3 +64,15 @@ using RST::
     .. image:: https://img.shields.io/badge/security-bandit-yellow.svg
         :target: https://github.com/PyCQA/bandit
         :alt: Security Status
+        
+References
+----------
+
+Python AST module documentation: https://docs.python.org/3/library/ast.html
+
+Green Tree Snakes - the missing Python AST docs:
+https://greentreesnakes.readthedocs.org/en/latest/
+
+Documentation of the various types of AST nodes that Bandit currently covers
+or could be extended to cover:
+https://greentreesnakes.readthedocs.org/en/latest/nodes.html
