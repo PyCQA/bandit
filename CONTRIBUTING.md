@@ -1,5 +1,5 @@
 # Contributing to Bandit
-Thanks for considering to take part in the improvement of the Bandit project, contributions are always welcome!  
+Thanks for considering to take part in the improvement of the Bandit project. Contributions are always welcome!
 Here are guidelines and rules that can be helpful if you plan to want to get involved in the project.
 
 #### Table Of Contents
@@ -18,31 +18,29 @@ Here are guidelines and rules that can be helpful if you plan to want to get inv
     * [Extending Bandit](#extending-bandit)
 
 ## Code of Conduct
-Everyone who participates in this project is governed by [Bandit Code of Conduct](https://github.com/Glyphack/bandit/blob/master/CODE_OF_CONDUCT.md#contributor-covenant-code-of-conduct).
+Everyone who participates in this project is governed by the PyCQA [Code of Conduct](https://github.com/PyCQA/bandit/blob/main/CODE_OF_CONDUCT.md#contributor-covenant-code-of-conduct).
 
 ## Reporting Bugs
-If you encountered a bug and want to let us know use [GitHub issues](https://guides.github.com/features/issues/).
+If you encounter a bug, please let us know about it. See the guide here [GitHub issues](https://guides.github.com/features/issues/).
 
-**Before submitting a new issue** you might want to check [existing issue](https://github.com/PyCQA/bandit/issues) to know if there is already a reported issue and the issue is still open, 
-in that case you can add a comment to the existing issue instead of creating a new one.
+**Before submitting a new issue** you might want to check for an [existing issue](https://github.com/PyCQA/bandit/issues) to know if there is already a reported issue. If an issue is already open please feel free
+to add a comment to the existing issue instead of creating a new one.
 
 ### Submitting your first issue
-We encourage using a issue template to improve quality of reported issues, however if you feel limited by the template please format the issue in a manner that best allows you to describe the problem.
-Navigate to the issues tab and select `new issue`, then select the **bug report** template and fill out the form,
-to submit a good bug report keep in mind that:
+We encourage using the issue template to improve quality of reported issues.
+Navigate to the issues tab and select `New issue`, then select the **Bug report** template and fill out the form.
+To submit a good bug report keep in mind to:
 * Use a descriptive title so other people can understand what the issue is about.
-* Be specific about the details, for e.g. what command did you use, what version of Bandit did you use or in what
-environment you observed the bug(CI or development) and other things that may be useful.
+* Be specific about the details, for example, what command did you use, what version of Bandit did you use, and in what environment you observed the bug (CI or development).
 
 ## Suggesting Enhancements
-If you want to suggest and enhancement open a new issue and use the **feature request** template.
+If you want to suggest an enhancement, open a new issue and use the **Feature request** template.
 
-**Before submitting an enhancement** please check for existing [feature requests](https://github.com/PyCQA/bandit/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement)
-and make sure the feature does not exist or requested already.
+**Before submitting an enhancement** please check for existing [feature requests](https://github.com/PyCQA/bandit/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement).
 
 Useful things to point out in your feature request:
-* Explain your feature request in a way that everyone can understand maybe with an example from another project or pictures
-* Please try to explain how this feature can help Bandit project
+* Explain your feature request in a way that everyone can understand
+* Please try to explain how this feature will improve the Bandit project
 
 ## Your First Code Contribution
 You can start contributing to Bandit project by picking [bug issues](https://github.com/PyCQA/bandit/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
@@ -51,7 +49,10 @@ These issues can be easier to resolve rather than a feature request and can get 
 ## Pull Requests
 The best way to get started with Bandit is to grab the source:
 
-`git clone https://github.com/PyCQA/bandit.git`
+Fork the repository into one with your username
+```shell script
+git clone https://github.com/<your username>/bandit.git
+```
 
 Create you own branch to start writing code:
 ```shell script
@@ -60,11 +61,10 @@ git push origin mybranch
 ```
 You can test any changes with tox:
 
-```
+```shell script
 pip install tox
 tox -e pep8
-tox -e py27
-tox -e py35
+tox -e py37
 tox -e docs
 tox -e cover
 ```
