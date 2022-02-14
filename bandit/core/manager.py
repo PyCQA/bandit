@@ -271,8 +271,9 @@ class BanditManager:
             try:
                 if fname == "-":
                     sys.stdin = _Seeker(os.fdopen(sys.stdin.fileno(), "rb", 0))
-                    new_files_list = ["<stdin>" if x == "-" else
-                                      x for x in new_files_list]
+                    new_files_list = [
+                        "<stdin>" if x == "-" else x for x in new_files_list
+                    ]
                     self._parse_file("<stdin>", sys.stdin, new_files_list)
                 else:
                     with open(fname, "rb") as fdata:
@@ -399,7 +400,7 @@ class _Seeker(object):
 
     def readline(self):
         line = self.buf.readline()
-        if not line.endswith("\n".encode()):
+        if not line.endswith(b"\n"):
             line += self.fileobj.readline()
         return line
 
