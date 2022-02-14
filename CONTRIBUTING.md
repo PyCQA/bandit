@@ -18,7 +18,7 @@ Here are guidelines and rules that can be helpful if you plan to want to get inv
     * [Extending Bandit](#extending-bandit)
 
 ## Code of Conduct
-Everyone who participates in this project is governed by the PyCQA [Code of Conduct](https://github.com/PyCQA/bandit/blob/master/CODE_OF_CONDUCT.md#contributor-covenant-code-of-conduct).
+Everyone who participates in this project is governed by the PyCQA [Code of Conduct](https://github.com/PyCQA/bandit/blob/main/CODE_OF_CONDUCT.md#contributor-covenant-code-of-conduct).
 
 ## Reporting Bugs
 If you encounter a bug, please let us know about it. See the guide here [GitHub issues](https://guides.github.com/features/issues/).

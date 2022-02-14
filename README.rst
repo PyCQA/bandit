@@ -1,4 +1,4 @@
-.. image:: https://github.com/PyCQA/bandit/blob/master/logo/logotype-sm.png
+.. image:: https://github.com/PyCQA/bandit/blob/main/logo/logotype-sm.png
     :alt: Bandit
 
 ======
@@ -24,7 +24,7 @@
     :alt: Format
 
 .. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
-    :target: https://github.com/PyCQA/bandit/blob/master/LICENSE
+    :target: https://github.com/PyCQA/bandit/blob/main/LICENSE
     :alt: License
 
 A security linter from PyCQA
@@ -33,7 +33,7 @@ A security linter from PyCQA
 * Documentation: https://bandit.readthedocs.io/en/latest/
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
-* Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
+* Contributing: https://github.com/PyCQA/bandit/blob/main/CONTRIBUTING.md
 
 Overview
 --------

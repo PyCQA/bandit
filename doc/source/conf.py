@@ -21,8 +21,8 @@ extensions = [
 # The suffix of source filenames.
 source_suffix = ".rst"
 
-# The master toctree document.
-master_doc = "index"
+# The root toctree document.
+root_doc = "index"
 
 # General information about the project.
 project = "Bandit"
