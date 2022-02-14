@@ -374,7 +374,7 @@ class BanditManager:
         return score
 
 
-class _Seeker(object):
+class _Seeker:
     def __init__(self, fileobj):
         self.fileobj = fileobj
         self.buf = io.BytesIO()
