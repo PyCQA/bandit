@@ -586,8 +586,9 @@ def main():
         )
 
     if not args.targets:
-        LOG.error("No targets found in CLI or ini files, exiting.")
+        parser.print_usage()
         sys.exit(2)
+
     # if the log format string was set in the options, reinitialize
     if b_conf.get_option("log_format"):
         log_format = b_conf.get_option("log_format")
