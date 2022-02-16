@@ -37,7 +37,7 @@ class BanditNodeVisitor:
         try:
             self.namespace = b_utils.get_module_qualname_from_path(fname)
         except b_utils.InvalidModulePath:
-            LOG.info(
+            LOG.warning(
                 "Unable to find qualified name for module: %s", self.fname
             )
             self.namespace = ""
