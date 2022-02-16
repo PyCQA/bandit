@@ -176,7 +176,7 @@ class Issue:
             sys.stdin.seek(0)
             for line_num in range(1, lmin):
                 sys.stdin.readline()
-        
+
         tmplt = "%i\t%s" if tabbed else "%i %s"
         for line in range(lmin, lmax):
             if self.fname == "<stdin>":
