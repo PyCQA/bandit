@@ -270,7 +270,8 @@ class BanditManager:
                     self._show_progress("%s.. " % count, flush=True)
             try:
                 if fname == "-":
-                    sys.stdin = _Seeker(os.fdopen(sys.stdin.fileno(), "rb", 0))
+                    open_fd = os.fdopen(sys.stdin.fileno(), "rb", 0)
+                    sys.stdin = io.BytesIO(open_fd.read())
                     new_files_list = [
                         "<stdin>" if x == "-" else x for x in new_files_list
                     ]
@@ -318,10 +319,10 @@ class BanditManager:
             # nosec_lines is a dict of line number -> set of tests to ignore
             #                                         for the line
             nosec_lines = dict()
-            try:
-                fdata.seek(0)
-                tokens = tokenize.tokenize(fdata.readline)
-
+            try:                
+                buf_data = io.BytesIO(data)
+                tokens = tokenize.tokenize(buf_data.readline)
+                
                 if not self.ignore_nosec:
                     for toktype, tokval, (lineno, _), _, _ in tokens:
                         if toktype == tokenize.COMMENT:
@@ -372,37 +373,6 @@ class BanditManager:
         score = res.process(data)
         self.results.extend(res.tester.results)
         return score
-
-
-class _Seeker:
-    def __init__(self, fileobj):
-        self.fileobj = fileobj
-        self.buf = io.BytesIO()
-
-    def _append_to_buf(self, contents):
-        oldpos = self.buf.tell()
-        self.buf.seek(0, os.SEEK_END)
-        self.buf.write(contents)
-        self.buf.seek(oldpos)
-
-    def seek(self, size):
-        contents = self.fileobj.read(size)
-        self._append_to_buf(contents)
-        return contents
-
-    def read(self, size=None):
-        if size is None:
-            return self.buf.read() + self.fileobj.read()
-        contents = self.buf.read(size)
-        if len(contents) < size:
-            contents += self.fileobj.read(size - len(contents))
-        return contents
-
-    def readline(self):
-        line = self.buf.readline()
-        if not line.endswith(b"\n"):
-            line += self.fileobj.readline()
-        return line
 
 
 def _get_files_from_dir(
