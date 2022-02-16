@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import linecache
+import sys
 
 from bandit.core import constants
 
@@ -171,9 +172,17 @@ class Issue:
         lmin = max(1, self.lineno - max_lines // 2)
         lmax = lmin + len(self.linerange) + max_lines - 1
 
+        if self.fname == "<stdin>":
+            sys.stdin.seek(0)
+            for line_num in range(1, lmin):
+                sys.stdin.readline()
+        
         tmplt = "%i\t%s" if tabbed else "%i %s"
         for line in range(lmin, lmax):
-            text = linecache.getline(self.fname, line)
+            if self.fname == "<stdin>":
+                text = sys.stdin.readline()
+            else:
+                text = linecache.getline(self.fname, line)
 
             if isinstance(text, bytes):
                 text = text.decode("utf-8")
