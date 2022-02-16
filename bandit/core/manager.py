@@ -319,10 +319,10 @@ class BanditManager:
             # nosec_lines is a dict of line number -> set of tests to ignore
             #                                         for the line
             nosec_lines = dict()
-            try:                
+            try:
                 buf_data = io.BytesIO(data)
                 tokens = tokenize.tokenize(buf_data.readline)
-                
+
                 if not self.ignore_nosec:
                     for toktype, tokval, (lineno, _), _, _ in tokens:
                         if toktype == tokenize.COMMENT:
