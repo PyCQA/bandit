@@ -271,11 +271,11 @@ class BanditManager:
             try:
                 if fname == "-":
                     open_fd = os.fdopen(sys.stdin.fileno(), "rb", 0)
-                    sys.stdin = io.BytesIO(open_fd.read())
+                    fdata = io.BytesIO(open_fd.read())
                     new_files_list = [
                         "<stdin>" if x == "-" else x for x in new_files_list
                     ]
-                    self._parse_file("<stdin>", sys.stdin, new_files_list)
+                    self._parse_file("<stdin>", fdata, new_files_list)
                 else:
                     with open(fname, "rb") as fdata:
                         self._parse_file(fname, fdata, new_files_list)
@@ -320,7 +320,7 @@ class BanditManager:
             #                                         for the line
             nosec_lines = dict()
             try:
-                buf_data = io.BytesIO(data)
+                fdata.seek(0)
                 tokens = tokenize.tokenize(buf_data.readline)
 
                 if not self.ignore_nosec:
@@ -330,7 +330,7 @@ class BanditManager:
 
             except tokenize.TokenError:
                 pass
-            score = self._execute_ast_visitor(fname, data, nosec_lines)
+            score = self._execute_ast_visitor(fname, fdata, data, nosec_lines)
             self.scores.append(score)
             self.metrics.count_issues(
                 [
@@ -357,7 +357,7 @@ class BanditManager:
             LOG.debug("  Exception string: %s", e)
             LOG.debug("  Exception traceback: %s", traceback.format_exc())
 
-    def _execute_ast_visitor(self, fname, data, nosec_lines):
+    def _execute_ast_visitor(self, fname, fdata, data, nosec_lines):
         """Execute AST parse on each file
 
         :param fname: The name of the file being parsed
@@ -367,7 +367,13 @@ class BanditManager:
         """
         score = []
         res = b_node_visitor.BanditNodeVisitor(
-            fname, self.b_ma, self.b_ts, self.debug, nosec_lines, self.metrics
+            fname,
+            fdata,
+            self.b_ma,
+            self.b_ts,
+            self.debug,
+            nosec_lines,
+            self.metrics
         )
 
         score = res.process(data)
