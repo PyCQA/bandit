@@ -3,7 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import linecache
-import sys
 
 from bandit.core import constants
 
@@ -174,7 +173,7 @@ class Issue:
         lmax = lmin + len(self.linerange) + max_lines - 1
 
         if self.fname == "<stdin>":
-            sys.fdata.seek(0)
+            self.fdata.seek(0)
             for line_num in range(1, lmin):
                 self.fdata.readline()
 
