@@ -321,7 +321,7 @@ class BanditManager:
             nosec_lines = dict()
             try:
                 fdata.seek(0)
-                tokens = tokenize.tokenize(buf_data.readline)
+                tokens = tokenize.tokenize(fdata.readline)
 
                 if not self.ignore_nosec:
                     for toktype, tokval, (lineno, _), _, _ in tokens:
