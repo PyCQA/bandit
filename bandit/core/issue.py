@@ -94,6 +94,7 @@ class Issue:
         self.text = text
         self.ident = ident
         self.fname = ""
+        self.fdata = None
         self.test = ""
         self.test_id = test_id
         self.lineno = lineno
@@ -173,14 +174,14 @@ class Issue:
         lmax = lmin + len(self.linerange) + max_lines - 1
 
         if self.fname == "<stdin>":
-            sys.stdin.seek(0)
+            sys.fdata.seek(0)
             for line_num in range(1, lmin):
-                sys.stdin.readline()
+                self.fdata.readline()
 
         tmplt = "%i\t%s" if tabbed else "%i %s"
         for line in range(lmin, lmax):
             if self.fname == "<stdin>":
-                text = sys.stdin.readline()
+                text = self.fdata.readline()
             else:
                 text = linecache.getline(self.fname, line)
 
