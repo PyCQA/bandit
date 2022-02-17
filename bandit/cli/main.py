@@ -265,7 +265,15 @@ def main():
         ' not be listed in "low".',
         choices=["all", "low", "medium", "high"],
     )
-    output_format = "screen" if sys.stdout.isatty() else "txt"
+    output_format = (
+        "screen"
+        if (
+            sys.stdout.isatty()
+            and os.getenv("NO_COLOR") is None
+            and os.getenv("TERM") != "dumb"
+        )
+        else "txt"
+    )
     parser.add_argument(
         "-f",
         "--format",
