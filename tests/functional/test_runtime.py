@@ -32,7 +32,7 @@ class RuntimeTests(testtools.TestCase):
             ]
         )
         self.assertEqual(2, retcode)
-        self.assertIn("No targets found in CLI or ini files", output)
+        self.assertIn("usage: bandit [-h]", output)
 
     def test_piped_input(self):
         with open("examples/imports.py") as infile:

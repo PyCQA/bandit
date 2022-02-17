@@ -164,7 +164,15 @@ class BanditManager:
         try:
             formatters_mgr = extension_loader.MANAGER.formatters_mgr
             if output_format not in formatters_mgr:
-                output_format = "screen" if sys.stdout.isatty() else "txt"
+                output_format = (
+                    "screen"
+                    if (
+                        sys.stdout.isatty()
+                        and os.getenv("NO_COLOR") is None
+                        and os.getenv("TERM") != "dumb"
+                    )
+                    else "txt"
+                )
 
             formatter = formatters_mgr[output_format]
             report_func = formatter.plugin
