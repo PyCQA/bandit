@@ -15,7 +15,7 @@ LOG = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor:
-    def __init__(self, fname, metaast, testset, debug, nosec_lines, metrics):
+    def __init__(self, fname, fdata, metaast, testset, debug, nosec_lines, metrics):
         self.debug = debug
         self.nosec_lines = nosec_lines
         self.seen = 0
@@ -25,6 +25,7 @@ class BanditNodeVisitor:
         }
         self.depth = 0
         self.fname = fname
+        self.fdata = fdata
         self.metaast = metaast
         self.testset = testset
         self.imports = set()
@@ -214,6 +215,7 @@ class BanditNodeVisitor:
         self.context["node"] = node
         self.context["linerange"] = b_utils.linerange_fix(node)
         self.context["filename"] = self.fname
+        self.context["file_data"] = self.fdata
 
         self.seen += 1
         LOG.debug(
