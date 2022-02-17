@@ -316,7 +316,6 @@ class Context:
     def filename(self):
         return self._context.get("filename")
 
-
     @property
     def file_data(self):
         return self._context.get("file_data")
