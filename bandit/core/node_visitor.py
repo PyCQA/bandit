@@ -15,7 +15,9 @@ LOG = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor:
-    def __init__(self, fname, fdata, metaast, testset, debug, nosec_lines, metrics):
+    def __init__(
+        self, fname, fdata, metaast, testset, debug, nosec_lines, metrics
+    ):
         self.debug = debug
         self.nosec_lines = nosec_lines
         self.seen = 0
