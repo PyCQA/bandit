@@ -61,6 +61,7 @@ class BanditTester:
                         result.fname = temp_context["filename"].decode("utf-8")
                     else:
                         result.fname = temp_context["filename"]
+                    result.fdata = temp_context["file_data"]
 
                     if result.lineno is None:
                         result.lineno = temp_context["lineno"]

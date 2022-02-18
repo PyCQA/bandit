@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import collections
 import fnmatch
+import io
 import json
 import logging
 import os
@@ -163,7 +164,15 @@ class BanditManager:
         try:
             formatters_mgr = extension_loader.MANAGER.formatters_mgr
             if output_format not in formatters_mgr:
-                output_format = "screen" if sys.stdout.isatty() else "txt"
+                output_format = (
+                    "screen"
+                    if (
+                        sys.stdout.isatty()
+                        and os.getenv("NO_COLOR") is None
+                        and os.getenv("TERM") != "dumb"
+                    )
+                    else "txt"
+                )
 
             formatter = formatters_mgr[output_format]
             report_func = formatter.plugin
@@ -269,8 +278,12 @@ class BanditManager:
                     self._show_progress("%s.. " % count, flush=True)
             try:
                 if fname == "-":
-                    sys.stdin = os.fdopen(sys.stdin.fileno(), "rb", 0)
-                    self._parse_file("<stdin>", sys.stdin, new_files_list)
+                    open_fd = os.fdopen(sys.stdin.fileno(), "rb", 0)
+                    fdata = io.BytesIO(open_fd.read())
+                    new_files_list = [
+                        "<stdin>" if x == "-" else x for x in new_files_list
+                    ]
+                    self._parse_file("<stdin>", fdata, new_files_list)
                 else:
                     with open(fname, "rb") as fdata:
                         self._parse_file(fname, fdata, new_files_list)
@@ -325,7 +338,7 @@ class BanditManager:
 
             except tokenize.TokenError:
                 pass
-            score = self._execute_ast_visitor(fname, data, nosec_lines)
+            score = self._execute_ast_visitor(fname, fdata, data, nosec_lines)
             self.scores.append(score)
             self.metrics.count_issues(
                 [
@@ -352,7 +365,7 @@ class BanditManager:
             LOG.debug("  Exception string: %s", e)
             LOG.debug("  Exception traceback: %s", traceback.format_exc())
 
-    def _execute_ast_visitor(self, fname, data, nosec_lines):
+    def _execute_ast_visitor(self, fname, fdata, data, nosec_lines):
         """Execute AST parse on each file
 
         :param fname: The name of the file being parsed
@@ -362,7 +375,13 @@ class BanditManager:
         """
         score = []
         res = b_node_visitor.BanditNodeVisitor(
-            fname, self.b_ma, self.b_ts, self.debug, nosec_lines, self.metrics
+            fname,
+            fdata,
+            self.b_ma,
+            self.b_ts,
+            self.debug,
+            nosec_lines,
+            self.metrics,
         )
 
         score = res.process(data)
