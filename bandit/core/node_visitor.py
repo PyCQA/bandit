@@ -15,7 +15,9 @@ LOG = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor:
-    def __init__(self, fname, metaast, testset, debug, nosec_lines, metrics):
+    def __init__(
+        self, fname, fdata, metaast, testset, debug, nosec_lines, metrics
+    ):
         self.debug = debug
         self.nosec_lines = nosec_lines
         self.seen = 0
@@ -25,6 +27,7 @@ class BanditNodeVisitor:
         }
         self.depth = 0
         self.fname = fname
+        self.fdata = fdata
         self.metaast = metaast
         self.testset = testset
         self.imports = set()
@@ -37,7 +40,7 @@ class BanditNodeVisitor:
         try:
             self.namespace = b_utils.get_module_qualname_from_path(fname)
         except b_utils.InvalidModulePath:
-            LOG.info(
+            LOG.warning(
                 "Unable to find qualified name for module: %s", self.fname
             )
             self.namespace = ""
@@ -214,6 +217,7 @@ class BanditNodeVisitor:
         self.context["node"] = node
         self.context["linerange"] = b_utils.linerange_fix(node)
         self.context["filename"] = self.fname
+        self.context["file_data"] = self.fdata
 
         self.seen += 1
         LOG.debug(
