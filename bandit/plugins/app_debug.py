@@ -33,7 +33,7 @@ of the Patreon breach in 2015 [3]_.
  .. [1] https://flask.palletsprojects.com/en/1.1.x/quickstart/#debug-mode
  .. [2] https://werkzeug.palletsprojects.com/en/1.0.x/debug/
  .. [3] https://labs.detectify.com/2015/10/02/how-patreon-got-hacked-publicly-exposed-werkzeug-debugger/
- .. [4] https://cwe.mitre.org/data/definitions/94.html
+ .. https://cwe.mitre.org/data/definitions/94.html
 
 .. versionadded:: 0.15.0
 

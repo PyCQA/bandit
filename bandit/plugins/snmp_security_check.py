@@ -20,6 +20,7 @@ def snmp_insecure_version_check(context):
     :Example:
 
     .. code-block:: none
+
         >> Issue: [B508:snmp_insecure_version_check] The use of SNMPv1 and
            SNMPv2 is insecure. You should use SNMPv3 if able.
            Severity: Medium Confidence: High
