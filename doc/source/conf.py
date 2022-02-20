@@ -22,7 +22,7 @@ extensions = [
 source_suffix = ".rst"
 
 # The root toctree document.
-root_doc = "index"
+master_doc = "index"
 
 # General information about the project.
 project = "Bandit"
