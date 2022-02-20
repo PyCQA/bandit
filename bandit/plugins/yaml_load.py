@@ -19,6 +19,8 @@ on ``yaml.load`` and yaml.safe_load
 
 :Example:
 
+.. code-block:: none
+
     >> Issue: [yaml_load] Use of unsafe yaml load. Allows instantiation of
        arbitrary objects. Consider yaml.safe_load().
        Severity: Medium   Confidence: High
@@ -27,7 +29,6 @@ on ``yaml.load`` and yaml.safe_load
     4 ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
     5 y = yaml.load(ystr)
     6 yaml.dump(y)
-
 
 .. seealso::
 
