@@ -1,5 +1,8 @@
-.. image:: https://github.com/PyCQA/bandit/blob/main/logo/logotype-sm.png
-    :alt: Bandit
+.. raw:: html
+
+    <p align="center">
+        <img src="https://raw.githubusercontent.com/pycqa/bandit/main/logo/logotype-sm.png" alt="Bandit">
+    </p>
 
 ======
 
