@@ -44,12 +44,15 @@ class ScreenFormatterTests(testtools.TestCase):
                     _indent_val,
                     _issue.cwe,
                 ),
-                "{}   Location: {}:{}:{}".format(
-                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
-                ),
-                "{}   More Info: {}{}".format(
+                "{}   More Info: {}".format(
                     _indent_val,
                     docs_utils.get_url(_issue.test_id),
+                ),
+                "{}   Location: {}:{}:{}{}".format(
+                    _indent_val,
+                    _issue.fname,
+                    _issue.lineno,
+                    _issue.col_offset,
                     screen.COLOR["DEFAULT"],
                 ),
             ]
