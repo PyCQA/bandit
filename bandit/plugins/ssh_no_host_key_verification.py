@@ -51,6 +51,8 @@ def ssh_no_host_key_verification(context):
             "AutoAddPolicy",
             "WarningPolicy",
         ]:
+            context.node.args[0].attr = "RejectPolicy"
+
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.MEDIUM,
@@ -60,4 +62,5 @@ def ssh_no_host_key_verification(context):
                 lineno=context.get_lineno_for_call_arg(
                     "set_missing_host_key_policy"
                 ),
+                fix=context.unparse(context.node),
             )

@@ -14,7 +14,7 @@ from bandit.core import utils as b_utils
 LOG = logging.getLogger(__name__)
 
 
-class BanditNodeVisitor:
+class BanditNodeVisitor(ast.NodeTransformer):
     def __init__(
         self, fname, fdata, metaast, testset, debug, nosec_lines, metrics
     ):
@@ -66,7 +66,6 @@ class BanditNodeVisitor:
         :param node: The node that is being inspected
         :return: -
         """
-
         self.context["function"] = node
         qualname = self.namespace + "." + b_utils.get_func_name(node)
         name = qualname.split(".")[-1]
@@ -87,7 +86,6 @@ class BanditNodeVisitor:
         :param node: The node that is being inspected
         :return: -
         """
-
         self.context["call"] = node
         qualname = b_utils.get_call_name(node, self.import_aliases)
         name = qualname.split(".")[-1]
@@ -209,6 +207,8 @@ class BanditNodeVisitor:
 
         if hasattr(node, "col_offset"):
             self.context["col_offset"] = node.col_offset
+        if hasattr(node, "end_col_offset"):
+            self.context["end_col_offset"] = node.end_col_offset
 
         self.context["node"] = node
         self.context["linerange"] = b_utils.linerange(node)

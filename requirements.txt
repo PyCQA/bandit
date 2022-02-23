@@ -6,3 +6,4 @@ PyYAML>=5.3.1 # MIT
 stevedore>=1.20.0 # Apache-2.0
 colorama>=0.3.9;platform_system=="Windows" # BSD License (3 clause)
 rich # MIT
+astunparse;python_version<"3.9" # Python-2.0

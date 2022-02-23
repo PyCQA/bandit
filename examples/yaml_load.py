@@ -16,3 +16,5 @@ def test_yaml_load():
 def test_json_load():
     # no issue should be found
     j = json.load("{}")
+
+yaml.load("{}", Loader=yaml.Loader)

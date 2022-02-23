@@ -39,6 +39,7 @@ function variations of hashlib.
     CWE information added
 
 """  # noqa: E501
+import ast
 import sys
 
 import bandit
@@ -47,6 +48,18 @@ from bandit.core import test_properties as test
 
 
 WEAK_HASHES = ("md4", "md5", "sha", "sha1")
+
+
+def transform(node):
+    found = False
+    for keyword in node.keywords:
+        if keyword.arg == "usedforsecurity":
+            keyword.value.value = False
+            found = True
+    if not found:
+        keyword = ast.keyword("usedforsecurity", ast.Constant(False))
+        node.keywords.append(keyword)
+    return node
 
 
 def _hashlib_func(context):
@@ -66,6 +79,7 @@ def _hashlib_func(context):
                         text=f"Use of weak {func.upper()} hash for security. "
                         "Consider usedforsecurity=False",
                         lineno=context.node.lineno,
+                        fix=context.unparse(transform(context.node)),
                     )
             elif func == "new":
                 args = context.call_args
@@ -79,6 +93,7 @@ def _hashlib_func(context):
                             text=f"Use of weak {name.upper()} hash for "
                             "security. Consider usedforsecurity=False",
                             lineno=context.node.lineno,
+                            fix=context.unparse(transform(context.node)),
                         )
 
 
@@ -92,12 +107,25 @@ def _hashlib_new(context):
             keywords = context.call_keywords
             name = args[0] if args else keywords.get("name", None)
             if isinstance(name, str) and name.lower() in WEAK_HASHES:
+                if len(context.node.args):
+                    if sys.version_info >= (3, 8):
+                        # Call(func=Attribute(value=Name(id='hashlib',
+                        # ctx=Load()), attr='new', ctx=Load()),
+                        # args=[Constant(value='md5', kind=None)], keywords=[])
+                        context.node.args[0].value = "sha224"
+                    elif isinstance(context.node.args[0], ast.Str):
+                        # Call(func=Attribute(value=Name(id='hashlib',
+                        # ctx=Load()), attr='new', ctx=Load()),
+                        # args=[Str(s='md5')], keywords=[])
+                        context.node.args[0] = ast.Str("sha224")
+
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,
                     cwe=issue.Cwe.BROKEN_CRYPTO,
                     text=f"Use of insecure {name.upper()} hash function.",
                     lineno=context.node.lineno,
+                    fix=context.unparse(context.node),
                 )
 
 
