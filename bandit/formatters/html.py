@@ -266,8 +266,8 @@ pre {
     <b>Test ID:</b> {test_id}<br>
     <b>Severity: </b>{severity}<br>
     <b>Confidence: </b>{confidence}<br>
-    <b>CWE: </b>{cwe}<br>
-    <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
+    <b>CWE: <a href="{cwe_link}" target="_blank">CWE-{cwe.id}</a><br>
+    <b>File: </b><a href="{path}" target="_blank">{path}</a><br>
     <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
@@ -367,6 +367,7 @@ pre {
             severity=issue.severity,
             confidence=issue.confidence,
             cwe=issue.cwe,
+            cwe_link=issue.cwe.link(),
             path=issue.fname,
             code=code,
             candidates=candidates,
