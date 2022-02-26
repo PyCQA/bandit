@@ -19,7 +19,7 @@ function variations of hashlib.
 
 :Example:
 
-    >> Issue: [B324:hashlib] Use of weak MD2, MD4, MD5, or SHA1 hash for
+    >> Issue: [B324:hashlib] Use of weak MD4, MD5, or SHA1 hash for
        security. Consider usedforsecurity=False
        Severity: High   Confidence: High
        CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
@@ -62,8 +62,8 @@ def _hashlib_func(context):
                         severity=bandit.HIGH,
                         confidence=bandit.HIGH,
                         cwe=issue.Cwe.BROKEN_CRYPTO,
-                        text="Use of weak MD2, MD4, MD5, or SHA1 hash "
-                        "for security. Consider usedforsecurity=False",
+                        text="Use of weak MD4, MD5, or SHA1 hash for "
+                        "security. Consider usedforsecurity=False",
                         lineno=context.node.lineno,
                     )
             elif func == "new":
@@ -78,8 +78,8 @@ def _hashlib_func(context):
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,
                             cwe=issue.Cwe.BROKEN_CRYPTO,
-                            text="Use of weak MD2, MD4, MD5, or SHA1 hash "
-                            "for security. Consider usedforsecurity=False",
+                            text="Use of weak MD4, MD5, or SHA1 hash for "
+                            "security. Consider usedforsecurity=False",
                             lineno=context.node.lineno,
                         )
 
@@ -103,8 +103,7 @@ def _hashlib_new(context):
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,
                     cwe=issue.Cwe.BROKEN_CRYPTO,
-                    text="Use of insecure MD2, MD4, MD5, or SHA1 hash "
-                    "function.",
+                    text="Use of insecure MD4, MD5, or SHA1 hash function.",
                     lineno=context.node.lineno,
                 )
 
