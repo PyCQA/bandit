@@ -7,9 +7,9 @@ import logging
 import yaml
 
 try:
-    import toml
+    import tomli
 except ImportError:
-    toml = None
+    tomli = None
 
 from bandit.core import constants
 from bandit.core import extension_loader
@@ -34,14 +34,14 @@ class BanditConfig:
 
         if config_file:
             try:
-                f = open(config_file)
+                f = open(config_file, "rb")
             except OSError:
                 raise utils.ConfigError(
                     "Could not read config file.", config_file
                 )
 
             if config_file.endswith(".toml"):
-                if toml is None:
+                if tomli is None:
                     raise utils.ConfigError(
                         "toml parser not available, reinstall with toml extra",
                         config_file,
@@ -49,8 +49,8 @@ class BanditConfig:
 
                 try:
                     with f:
-                        self._config = toml.load(f)["tool"]["bandit"]
-                except toml.TomlDecodeError as err:
+                        self._config = tomli.load(f)["tool"]["bandit"]
+                except tomli.TOMLDecodeError as err:
                     LOG.error(err)
                     raise utils.ConfigError("Error parsing file.", config_file)
             else:
