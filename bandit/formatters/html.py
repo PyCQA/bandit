@@ -2,7 +2,6 @@
 # Copyright (c) 2015 Hewlett Packard Enterprise
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==============
 HTML formatter
@@ -113,6 +112,7 @@ This formatter outputs the issues as HTML.
         <b>Test ID:</b> B506<br>
         <b>Severity: </b>MEDIUM<br>
         <b>Confidence: </b>HIGH<br>
+        <b>CWE: </b>CWE-20 (https://cwe.mitre.org/data/definitions/20.html)<br>
         <b>File: </b><a href="examples/yaml_load.py"
         target="_blank">examples/yaml_load.py</a> <br>
         <b>More info: </b><a href="https://bandit.readthedocs.io/en/latest/
@@ -139,12 +139,16 @@ This formatter outputs the issues as HTML.
 
 .. versionadded:: 0.14.0
 
-"""
-from __future__ import absolute_import
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
 
-from html import escape as html_escape
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
+
+"""
 import logging
 import sys
+from html import escape as html_escape
 
 from bandit.core import docs_utils
 from bandit.core import test_properties
@@ -165,7 +169,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     :param lines: Number of lines to report, -1 for all
     """
 
-    header_block = u"""
+    header_block = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -241,7 +245,7 @@ pre {
 </head>
 """
 
-    report_block = u"""
+    report_block = """
 <body>
 {metrics}
 {skipped}
@@ -255,14 +259,15 @@ pre {
 </html>
 """
 
-    issue_block = u"""
+    issue_block = """
 <div id="issue-{issue_no}">
 <div class="issue-block {issue_class}">
     <b>{test_name}: </b> {test_text}<br>
     <b>Test ID:</b> {test_id}<br>
     <b>Severity: </b>{severity}<br>
     <b>Confidence: </b>{confidence}<br>
-    <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
+    <b>CWE: <a href="{cwe_link}" target="_blank">CWE-{cwe.id}</a><br>
+    <b>File: </b><a href="{path}" target="_blank">{path}</a><br>
     <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
@@ -271,7 +276,7 @@ pre {
 </div>
 """
 
-    code_block = u"""
+    code_block = """
 <div class="code">
 <pre>
 {code}
@@ -279,7 +284,7 @@ pre {
 </div>
 """
 
-    candidate_block = u"""
+    candidate_block = """
 <div class="candidates">
 <br>
 <b>Candidates: </b>
@@ -287,7 +292,7 @@ pre {
 </div>
 """
 
-    candidate_issue = u"""
+    candidate_issue = """
 <div class="candidate">
 <div class="candidate-issues">
 <pre>{code}</pre>
@@ -295,7 +300,7 @@ pre {
 </div>
 """
 
-    skipped_block = u"""
+    skipped_block = """
 <br>
 <div id="skipped">
 <div class="bordered-box">
@@ -305,7 +310,7 @@ pre {
 </div>
 """
 
-    metrics_block = u"""
+    metrics_block = """
 <div id="metrics">
     <div class="metrics-box bordered-box">
         <div class="metrics-title">
@@ -323,54 +328,63 @@ pre {
     baseline = not isinstance(issues, list)
 
     # build the skipped string to insert in the report
-    skipped_str = ''.join('%s <b>reason:</b> %s<br>' % (fname, reason)
-                          for fname, reason in manager.get_skipped())
+    skipped_str = "".join(
+        f"{fname} <b>reason:</b> {reason}<br>"
+        for fname, reason in manager.get_skipped()
+    )
     if skipped_str:
         skipped_text = skipped_block.format(files_list=skipped_str)
     else:
-        skipped_text = ''
+        skipped_text = ""
 
     # build the results string to insert in the report
-    results_str = ''
+    results_str = ""
     for index, issue in enumerate(issues):
         if not baseline or len(issues[issue]) == 1:
-            candidates = ''
-            safe_code = html_escape(issue.get_code(lines, True).
-                                    strip('\n').lstrip(' '))
+            candidates = ""
+            safe_code = html_escape(
+                issue.get_code(lines, True).strip("\n").lstrip(" ")
+            )
             code = code_block.format(code=safe_code)
         else:
-            candidates_str = ''
-            code = ''
+            candidates_str = ""
+            code = ""
             for candidate in issues[issue]:
-                candidate_code = html_escape(candidate.get_code(lines, True).
-                                             strip('\n').lstrip(' '))
+                candidate_code = html_escape(
+                    candidate.get_code(lines, True).strip("\n").lstrip(" ")
+                )
                 candidates_str += candidate_issue.format(code=candidate_code)
 
             candidates = candidate_block.format(candidate_list=candidates_str)
 
         url = docs_utils.get_url(issue.test_id)
-        results_str += issue_block.format(issue_no=index,
-                                          issue_class='issue-sev-{}'.
-                                          format(issue.severity.lower()),
-                                          test_name=issue.test,
-                                          test_id=issue.test_id,
-                                          test_text=issue.text,
-                                          severity=issue.severity,
-                                          confidence=issue.confidence,
-                                          path=issue.fname, code=code,
-                                          candidates=candidates,
-                                          url=url,
-                                          line_number=issue.lineno)
+        results_str += issue_block.format(
+            issue_no=index,
+            issue_class=f"issue-sev-{issue.severity.lower()}",
+            test_name=issue.test,
+            test_id=issue.test_id,
+            test_text=issue.text,
+            severity=issue.severity,
+            confidence=issue.confidence,
+            cwe=issue.cwe,
+            cwe_link=issue.cwe.link(),
+            path=issue.fname,
+            code=code,
+            candidates=candidates,
+            url=url,
+            line_number=issue.lineno,
+        )
 
     # build the metrics string to insert in the report
     metrics_summary = metrics_block.format(
-        loc=manager.metrics.data['_totals']['loc'],
-        nosec=manager.metrics.data['_totals']['nosec'])
+        loc=manager.metrics.data["_totals"]["loc"],
+        nosec=manager.metrics.data["_totals"]["nosec"],
+    )
 
     # build the report and output it
-    report_contents = report_block.format(metrics=metrics_summary,
-                                          skipped=skipped_text,
-                                          results=results_str)
+    report_contents = report_block.format(
+        metrics=metrics_summary, skipped=skipped_text, results=results_str
+    )
 
     with fileobj:
         wrapped_file = utils.wrap_file_object(fileobj)

@@ -18,7 +18,13 @@ hashlib.new('sha', string='test')
 
 hashlib.new(name='SHA', string='test')
 
+# usedforsecurity arg only availabe in Python 3.9+
+hashlib.new('sha1', usedforsecurity=True)
+
 # Test that plugin does not flag valid hash functions.
 hashlib.new('sha256')
 
 hashlib.new('SHA512')
+
+# usedforsecurity arg only availabe in Python 3.9+
+hashlib.new(name='sha1', usedforsecurity=False)
