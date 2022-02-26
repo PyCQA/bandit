@@ -200,12 +200,12 @@ def escaped_bytes_representation(b):
 
 def calc_linerange(node):
     """Calculate linerange for subtree"""
-    if hasattr(node, '_bandit_linerange'):
+    if hasattr(node, "_bandit_linerange"):
         return node._bandit_linerange
 
     lines_min = 9999999999
     lines_max = -1
-    if hasattr(node, 'lineno'):
+    if hasattr(node, "lineno"):
         lines_min = node.lineno
         lines_max = node.lineno
     for n in ast.iter_child_nodes(node):
@@ -220,7 +220,7 @@ def calc_linerange(node):
 
 def linerange(node):
     """Get line number range from a node."""
-    if hasattr(node, '_bandit_linerange_stripped'):
+    if hasattr(node, "_bandit_linerange_stripped"):
         lines_minmax = node._bandit_linerange_stripped
         return list(range(lines_minmax[0], lines_minmax[1] + 1))
 
