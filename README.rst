@@ -1,8 +1,5 @@
-.. raw:: html
-
-    <p align="center">
-        <img src="https://raw.githubusercontent.com/pycqa/bandit/main/logo/logotype-sm.png" alt="Bandit">
-    </p>
+.. image:: https://raw.githubusercontent.com/pycqa/bandit/main/logo/logotype-sm.png
+    :alt: Bandit
 
 ======
 
