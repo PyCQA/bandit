@@ -52,9 +52,7 @@ def _hashlib_func(context):
 
         if "hashlib" in qualname_list:
             func = qualname_list[-1]
-            args = context.call_args
             keywords = context.call_keywords
-            name = args[0] if args else keywords["name"]
 
             if func in ("md4", "md5", "sha", "sha1"):
                 if keywords.get("usedforsecurity", "True") == "True":
@@ -67,6 +65,8 @@ def _hashlib_func(context):
                         lineno=context.node.lineno,
                     )
             elif func == "new":
+                args = context.call_args
+                name = args[0] if args else keywords.get("name", None)
                 if isinstance(name, str) and name.lower() in (
                     "md4",
                     "md5",
@@ -92,7 +92,7 @@ def _hashlib_new(context):
         if "hashlib" in qualname_list and func == "new":
             args = context.call_args
             keywords = context.call_keywords
-            name = args[0] if args else keywords["name"]
+            name = args[0] if args else keywords.get("name", None)
             if isinstance(name, str) and name.lower() in (
                 "md4",
                 "md5",
