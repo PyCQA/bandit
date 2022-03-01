@@ -299,6 +299,7 @@ class BanditNodeVisitor:
         # Run tests that do not require access to the AST,
         # but only to the whole file source:
         self.context = {
+            "file_data": self.fdata,
             "filename": self.fname,
             "lineno": 0,
             "linerange": [0, 1],
