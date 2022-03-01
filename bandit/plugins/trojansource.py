@@ -1,7 +1,5 @@
-# -*- coding:utf-8 -*-
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 =====================================================
 B113: TrojanSource - Bidirectional control characters
@@ -27,21 +25,30 @@ to reorder source code characters in a way that changes its logic.
 .. versionadded:: 1.7.2
 
 """  # noqa: E501
-
 from tokenize import detect_encoding
 
 import bandit
 from bandit.core import test_properties as test
 
 
-BIDI_CHARACTERS = ('\u202A', '\u202B', '\u202C', '\u202D', '\u202E',
-                   '\u2066', '\u2067', '\u2068', '\u2069', '\u200F')
+BIDI_CHARACTERS = (
+    "\u202A",
+    "\u202B",
+    "\u202C",
+    "\u202D",
+    "\u202E",
+    "\u2066",
+    "\u2067",
+    "\u2068",
+    "\u2069",
+    "\u200F",
+)
 
 
-@test.test_id('B113')
-@test.checks('File')
+@test.test_id("B113")
+@test.checks("File")
 def trojansource(context):
-    with open(context.filename, 'rb') as src_file:
+    with open(context.filename, "rb") as src_file:
         encoding, _ = detect_encoding(src_file.readline)
     with open(context.filename, encoding=encoding) as src_file:
         for lineno, line in enumerate(src_file.readlines(), start=1):
@@ -50,8 +57,10 @@ def trojansource(context):
                     col_offset = line.index(char) + 1
                 except ValueError:
                     continue
-                text = ("A Python source file contains bidirectional"
-                        " control characters (%r)." % char)
+                text = (
+                    "A Python source file contains bidirectional"
+                    " control characters (%r)." % char
+                )
                 return bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.MEDIUM,
