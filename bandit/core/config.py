@@ -43,7 +43,8 @@ class BanditConfig:
             if config_file.endswith(".toml"):
                 if toml is None:
                     raise utils.ConfigError(
-                        "toml parser not available, reinstall with toml extra"
+                        "toml parser not available, reinstall with toml extra",
+                        config_file,
                     )
 
                 try:
