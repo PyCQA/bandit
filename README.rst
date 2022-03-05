@@ -46,7 +46,7 @@ it generates a report.
 Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
 
-.. image:: https://raw.githubusercontent.com/pycqa/bandit/main/bandit-term.png
+.. image:: https://raw.githubusercontent.com/pycqa/bandit/main/bandit-terminal.png
     :alt: Bandit Example Screen Shot
 
 Show Your Style
