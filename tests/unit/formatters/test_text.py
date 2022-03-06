@@ -37,11 +37,11 @@ class TextFormatterTests(testtools.TestCase):
                     _issue.confidence.capitalize(),
                 ),
                 f"{_indent_val}   CWE: {_issue.cwe}",
-                "{}   Location: {}:{}:{}".format(
-                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
-                ),
                 "{}   More Info: {}".format(
                     _indent_val, docs_utils.get_url(_issue.test_id)
+                ),
+                "{}   Location: {}:{}:{}".format(
+                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
                 ),
             ]
             if _code:
