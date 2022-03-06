@@ -172,9 +172,7 @@ class BanditNodeVisitor:
         """
         self.context["str"] = node.s
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
-            self.context["linerange"] = b_utils.linerange_fix(
-                node._bandit_parent
-            )
+            self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Str"))
 
     def visit_Bytes(self, node):
@@ -187,9 +185,7 @@ class BanditNodeVisitor:
         """
         self.context["bytes"] = node.s
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
-            self.context["linerange"] = b_utils.linerange_fix(
-                node._bandit_parent
-            )
+            self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Bytes"))
 
     def pre_visit(self, node):
@@ -215,7 +211,7 @@ class BanditNodeVisitor:
             self.context["col_offset"] = node.col_offset
 
         self.context["node"] = node
-        self.context["linerange"] = b_utils.linerange_fix(node)
+        self.context["linerange"] = b_utils.linerange(node)
         self.context["filename"] = self.fname
         self.context["file_data"] = self.fdata
 
