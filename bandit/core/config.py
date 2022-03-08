@@ -3,13 +3,17 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import logging
+import sys
 
 import yaml
 
-try:
-    import tomli
-except ImportError:
-    tomli = None
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    try:
+        import tomli as tomllib
+    except ImportError:
+        tomllib = None
 
 from bandit.core import constants
 from bandit.core import extension_loader
@@ -41,7 +45,7 @@ class BanditConfig:
                 )
 
             if config_file.endswith(".toml"):
-                if tomli is None:
+                if tomllib is None:
                     raise utils.ConfigError(
                         "toml parser not available, reinstall with toml extra",
                         config_file,
@@ -49,8 +53,8 @@ class BanditConfig:
 
                 try:
                     with f:
-                        self._config = tomli.load(f)["tool"]["bandit"]
-                except tomli.TOMLDecodeError as err:
+                        self._config = tomllib.load(f)["tool"]["bandit"]
+                except tomllib.TOMLDecodeError as err:
                     LOG.error(err)
                     raise utils.ConfigError("Error parsing file.", config_file)
             else:
