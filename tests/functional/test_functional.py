@@ -196,14 +196,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("hardcoded-tmp.py", expect)
 
-    def test_httplib_https(self):
-        """Test for `httplib.HTTPSConnection`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("httplib_https.py", expect)
-
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
         if sys.version_info >= (3, 9):

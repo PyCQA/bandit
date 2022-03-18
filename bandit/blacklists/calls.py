@@ -137,6 +137,8 @@ be reviewed.
 B309: httpsconnection
 ---------------------
 
+The check for this call has been removed.
+
 Use of HTTPSConnection on older versions of Python prior to 2.7.9 and 3.4.3 do
 not provide security, see https://wiki.openstack.org/wiki/OSSN/OSSN-0033
 
@@ -479,21 +481,7 @@ def gen_blacklist():
         )
     )
 
-    sets.append(
-        utils.build_conf_dict(
-            "httpsconnection",
-            "B309",
-            issue.Cwe.CLEARTEXT_TRANSMISSION,
-            [
-                "httplib.HTTPSConnection",
-                "http.client.HTTPSConnection",
-                "six.moves.http_client.HTTPSConnection",
-            ],
-            "Use of HTTPSConnection on older versions of Python prior to 2.7.9"
-            " and 3.4.3 do not provide security, see "
-            "https://wiki.openstack.org/wiki/OSSN/OSSN-0033",
-        )
-    )
+    # skipped B309 as the check for a call to httpsconnection has been removed
 
     sets.append(
         utils.build_conf_dict(
