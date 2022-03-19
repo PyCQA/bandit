@@ -299,6 +299,8 @@ behavior that does not validate certificates or perform hostname checks.
 B325: tempnam
 --------------
 
+The check for this call has been removed.
+
 Use of os.tempnam() and os.tmpnam() is vulnerable to symlink attacks. Consider
 using tmpfile() instead.
 
@@ -684,15 +686,7 @@ def gen_blacklist():
 
     # skipped B324 (used in bandit/plugins/hashlib_new_insecure_functions.py)
 
-    sets.append(
-        utils.build_conf_dict(
-            "tempnam",
-            "B325",
-            issue.Cwe.INSECURE_TEMP_FILE,
-            ["os.tempnam", "os.tmpnam"],
-            "Use of os.tempnam() and os.tmpnam() is vulnerable to symlink "
-            "attacks. Consider using tmpfile() instead.",
-        )
-    )
+    # skipped B325 as the check for a call to os.tempnam and os.tmpnam have
+    # been removed
 
     return {"Call": sets}
