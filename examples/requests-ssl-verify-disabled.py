@@ -1,4 +1,6 @@
+import httpx
 import requests
+
 
 requests.get('https://gmail.com', verify=True)
 requests.get('https://gmail.com', verify=False)
@@ -14,3 +16,26 @@ requests.options('https://gmail.com', verify=True)
 requests.options('https://gmail.com', verify=False)
 requests.head('https://gmail.com', verify=True)
 requests.head('https://gmail.com', verify=False)
+
+httpx.request('GET', 'https://gmail.com', verify=True)
+httpx.request('GET', 'https://gmail.com', verify=False)
+httpx.get('https://gmail.com', verify=True)
+httpx.get('https://gmail.com', verify=False)
+httpx.options('https://gmail.com', verify=True)
+httpx.options('https://gmail.com', verify=False)
+httpx.head('https://gmail.com', verify=True)
+httpx.head('https://gmail.com', verify=False)
+httpx.post('https://gmail.com', verify=True)
+httpx.post('https://gmail.com', verify=False)
+httpx.put('https://gmail.com', verify=True)
+httpx.put('https://gmail.com', verify=False)
+httpx.patch('https://gmail.com', verify=True)
+httpx.patch('https://gmail.com', verify=False)
+httpx.delete('https://gmail.com', verify=True)
+httpx.delete('https://gmail.com', verify=False)
+httpx.stream('https://gmail.com', verify=True)
+httpx.stream('https://gmail.com', verify=False)
+httpx.Client()
+httpx.Client(verify=False)
+httpx.AsyncClient()
+httpx.AsyncClient(verify=False)
