@@ -1,5 +1,4 @@
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 =======================================
 B113: Test for missing requests timeout
@@ -44,7 +43,6 @@ Bandit will return a MEDIUM severity error.
 .. versionadded:: 1.7.5
 
 """  # noqa: E501
-
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
@@ -54,8 +52,10 @@ from bandit.core import test_properties as test
 @test.test_id("B113")
 def request_without_timeout(context):
     http_verbs = ("get", "options", "head", "post", "put", "patch", "delete")
-    if ("requests" in context.call_function_name_qual and
-            context.call_function_name in http_verbs):
+    if (
+         "requests" in context.call_function_name_qual
+         and context.call_function_name in http_verbs
+    ):
         # check for missing timeout
         if context.check_call_arg_value("timeout") is None:
             return bandit.Issue(
