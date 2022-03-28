@@ -20,8 +20,9 @@ Bandit will return a MEDIUM severity error.
 
     >> Issue: [B113:request_without_timeout] Requests call without timeout
        Severity: Medium   Confidence: Low
-       Location: examples/requests-missing-timeout.py:3:0
+       CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
        More Info: https://bandit.readthedocs.io/en/latest/plugins/b113_request_without_timeout.html
+       Location: examples/requests-missing-timeout.py:3:0
     2
     3	requests.get('https://gmail.com')
     4	requests.get('https://gmail.com', timeout=None)
@@ -29,8 +30,9 @@ Bandit will return a MEDIUM severity error.
     --------------------------------------------------
     >> Issue: [B113:request_without_timeout] Requests call with timeout set to None
        Severity: Medium   Confidence: Low
-       Location: examples/requests-missing-timeout.py:4:0
+       CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
        More Info: https://bandit.readthedocs.io/en/latest/plugins/b113_request_without_timeout.html
+       Location: examples/requests-missing-timeout.py:4:0
     3	requests.get('https://gmail.com')
     4	requests.get('https://gmail.com', timeout=None)
     5	requests.get('https://gmail.com', timeout=5)
@@ -58,7 +60,8 @@ def request_without_timeout(context):
             issue = bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
-                text="Requests call without timeout"
+                cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
+                text="Requests call without timeout",
             )
             return issue
         # check for timeout=None
@@ -66,6 +69,7 @@ def request_without_timeout(context):
             issue = bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
-                text="Requests call with timeout set to None"
+                cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
+                text="Requests call with timeout set to None",
             )
             return issue
