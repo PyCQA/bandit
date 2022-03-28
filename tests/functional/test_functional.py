@@ -393,6 +393,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("requests-ssl-verify-disabled.py", expect)
 
+    def test_requests_without_timeout(self):
+        """Test for the `requests` library missing timeouts."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 14, "MEDIUM": 0, "HIGH": 0},
+        }
+        self.check_example("requests-missing-timeout.py", expect)
+
     def test_skip(self):
         """Test `#nosec` and `#noqa` comments."""
         expect = {
