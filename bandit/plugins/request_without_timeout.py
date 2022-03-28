@@ -46,6 +46,7 @@ Bandit will return a MEDIUM severity error.
 """  # noqa: E501
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -57,19 +58,17 @@ def request_without_timeout(context):
             context.call_function_name in http_verbs):
         # check for missing timeout
         if context.check_call_arg_value("timeout") is None:
-            issue = bandit.Issue(
+            return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
                 cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
                 text="Requests call without timeout",
             )
-            return issue
         # check for timeout=None
         if context.check_call_arg_value("timeout", "None"):
-            issue = bandit.Issue(
+            return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
                 cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
                 text="Requests call with timeout set to None",
             )
-            return issue
