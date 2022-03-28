@@ -38,7 +38,8 @@ Bandit will return a MEDIUM severity error.
 .. seealso::
 
  - https://2.python-requests.org/en/master/user/quickstart/#timeouts
-    .. versionadded:: 1.7.1
+
+.. versionadded:: 1.7.5
 
 """  # noqa: E501
 
@@ -46,14 +47,14 @@ import bandit
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B113')
+@test.checks("Call")
+@test.test_id("B113")
 def request_without_timeout(context):
-    http_verbs = ('get', 'options', 'head', 'post', 'put', 'patch', 'delete')
-    if ('requests' in context.call_function_name_qual and
+    http_verbs = ("get", "options", "head", "post", "put", "patch", "delete")
+    if ("requests" in context.call_function_name_qual and
             context.call_function_name in http_verbs):
         # check for missing timeout
-        if context.check_call_arg_value('timeout') is None:
+        if context.check_call_arg_value("timeout") is None:
             issue = bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
@@ -61,7 +62,7 @@ def request_without_timeout(context):
             )
             return issue
         # check for timeout=None
-        if context.check_call_arg_value('timeout', 'None'):
+        if context.check_call_arg_value("timeout", "None"):
             issue = bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
