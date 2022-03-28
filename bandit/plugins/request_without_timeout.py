@@ -53,8 +53,8 @@ from bandit.core import test_properties as test
 def request_without_timeout(context):
     http_verbs = ("get", "options", "head", "post", "put", "patch", "delete")
     if (
-         "requests" in context.call_function_name_qual
-         and context.call_function_name in http_verbs
+        "requests" in context.call_function_name_qual
+        and context.call_function_name in http_verbs
     ):
         # check for missing timeout
         if context.check_call_arg_value("timeout") is None:
