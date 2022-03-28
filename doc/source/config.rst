@@ -41,6 +41,23 @@ security issue, it will not be reported::
 
     self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
 
+Because multiple issues can be reported for the same line, specific tests may
+be provided to suppress those reports. This will cause other issues not
+included to be reported. This can be useful in preventing situations where a
+nosec comment is used, but a separate vulnerability may be added to the line
+later causing the new vulnerability to be ignored.
+
+For example, this will suppress the report of B602 and B607::
+
+    self.process = subprocess.Popen('/bin/ls *', shell=True)  #nosec B602, B607
+
+Full test names rather than the test ID may also be used.
+
+For example, this will suppress the report of B101 and continue to report B506
+as an issue.::
+
+    assert yaml.load("{}") == []  # nosec assert_used
+
 -----------------
 Scanning Behavior
 -----------------

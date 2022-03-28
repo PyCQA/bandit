@@ -31,17 +31,17 @@ class TextFormatterTests(testtools.TestCase):
                 "{}>> Issue: [{}:{}] {}".format(
                     _indent_val, _issue.test_id, _issue.test, _issue.text
                 ),
-                "{}   Severity: {} CWE: {} Confidence: {}".format(
+                "{}   Severity: {}   Confidence: {}".format(
                     _indent_val,
                     _issue.severity.capitalize(),
-                    _issue.cwe,
                     _issue.confidence.capitalize(),
+                ),
+                f"{_indent_val}   CWE: {_issue.cwe}",
+                "{}   More Info: {}".format(
+                    _indent_val, docs_utils.get_url(_issue.test_id)
                 ),
                 "{}   Location: {}:{}:{}".format(
                     _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
-                ),
-                "{}   More Info: {}".format(
-                    _indent_val, docs_utils.get_url(_issue.test_id)
                 ),
             ]
             if _code:
@@ -107,7 +107,11 @@ class TextFormatterTests(testtools.TestCase):
 
         get_issue_list.return_value = [issue_a, issue_b]
 
-        self.manager.metrics.data["_totals"] = {"loc": 1000, "nosec": 50}
+        self.manager.metrics.data["_totals"] = {
+            "loc": 1000,
+            "nosec": 50,
+            "skipped_tests": 0,
+        }
         for category in ["SEVERITY", "CONFIDENCE"]:
             for level in ["UNDEFINED", "LOW", "MEDIUM", "HIGH"]:
                 self.manager.metrics.data["_totals"][f"{category}.{level}"] = 1
@@ -153,6 +157,8 @@ class TextFormatterTests(testtools.TestCase):
                 "High: 1",
                 "Total lines skipped ",
                 "(#nosec): 50",
+                "Total potential issues skipped due to specifically being ",
+                "disabled (e.g., #nosec BXXX): 0",
                 "Total issues (by severity)",
                 "Total issues (by confidence)",
                 "Files skipped (1)",

@@ -15,7 +15,9 @@ LOG = logging.getLogger(__name__)
 
 
 class BanditNodeVisitor:
-    def __init__(self, fname, metaast, testset, debug, nosec_lines, metrics):
+    def __init__(
+        self, fname, fdata, metaast, testset, debug, nosec_lines, metrics
+    ):
         self.debug = debug
         self.nosec_lines = nosec_lines
         self.seen = 0
@@ -25,19 +27,20 @@ class BanditNodeVisitor:
         }
         self.depth = 0
         self.fname = fname
+        self.fdata = fdata
         self.metaast = metaast
         self.testset = testset
         self.imports = set()
         self.import_aliases = {}
         self.tester = b_tester.BanditTester(
-            self.testset, self.debug, nosec_lines
+            self.testset, self.debug, nosec_lines, metrics
         )
 
         # in some cases we can't determine a qualified name
         try:
             self.namespace = b_utils.get_module_qualname_from_path(fname)
         except b_utils.InvalidModulePath:
-            LOG.info(
+            LOG.warning(
                 "Unable to find qualified name for module: %s", self.fname
             )
             self.namespace = ""
@@ -169,9 +172,7 @@ class BanditNodeVisitor:
         """
         self.context["str"] = node.s
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
-            self.context["linerange"] = b_utils.linerange_fix(
-                node._bandit_parent
-            )
+            self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Str"))
 
     def visit_Bytes(self, node):
@@ -184,9 +185,7 @@ class BanditNodeVisitor:
         """
         self.context["bytes"] = node.s
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
-            self.context["linerange"] = b_utils.linerange_fix(
-                node._bandit_parent
-            )
+            self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Bytes"))
 
     def pre_visit(self, node):
@@ -201,16 +200,20 @@ class BanditNodeVisitor:
         if hasattr(node, "lineno"):
             self.context["lineno"] = node.lineno
 
-            if node.lineno in self.nosec_lines:
-                LOG.debug("skipped, nosec")
+            # explicitly check for empty set to skip all tests for a line
+            nosec_tests = self.nosec_lines.get(node.lineno)
+            if nosec_tests is not None and not len(nosec_tests):
+                LOG.debug("skipped, nosec without test number")
                 self.metrics.note_nosec()
                 return False
+
         if hasattr(node, "col_offset"):
             self.context["col_offset"] = node.col_offset
 
         self.context["node"] = node
-        self.context["linerange"] = b_utils.linerange_fix(node)
+        self.context["linerange"] = b_utils.linerange(node)
         self.context["filename"] = self.fname
+        self.context["file_data"] = self.fdata
 
         self.seen += 1
         LOG.debug(

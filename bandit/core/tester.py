@@ -15,12 +15,13 @@ LOG = logging.getLogger(__name__)
 
 
 class BanditTester:
-    def __init__(self, testset, debug, nosec_lines):
+    def __init__(self, testset, debug, nosec_lines, metrics):
         self.results = []
         self.testset = testset
         self.last_result = None
         self.debug = debug
         self.nosec_lines = nosec_lines
+        self.metrics = metrics
 
     def run_tests(self, raw_context, checktype):
         """Runs all tests for a certain type of check, for example
@@ -30,8 +31,8 @@ class BanditTester:
 
         :param raw_context: Raw context dictionary
         :param checktype: The type of checks to run
-        :param nosec_lines: Lines which should be skipped because of nosec
-        :return: a score based on the number and type of test results
+        :return: a score based on the number and type of test results with
+                extra metrics about nosec comments
         """
 
         scores = {
@@ -51,17 +52,16 @@ class BanditTester:
                 else:
                     result = test(context)
 
-                # if we have a result, record it and update scores
-                if (
-                    result is not None
-                    and result.lineno not in self.nosec_lines
-                    and temp_context["lineno"] not in self.nosec_lines
-                ):
+                if result is not None:
+                    nosec_tests_to_skip = self._get_nosecs_from_contexts(
+                        temp_context, test_result=result
+                    )
 
                     if isinstance(temp_context["filename"], bytes):
                         result.fname = temp_context["filename"].decode("utf-8")
                     else:
                         result.fname = temp_context["filename"]
+                    result.fdata = temp_context["file_data"]
 
                     if result.lineno is None:
                         result.lineno = temp_context["lineno"]
@@ -70,6 +70,20 @@ class BanditTester:
                     result.test = name
                     if result.test_id == "":
                         result.test_id = test._test_id
+
+                    # don't skip the test if there was no nosec comment
+                    if nosec_tests_to_skip is not None:
+                        # if the set is empty or the test id is in the set of
+                        # tests to skip, log and increment the skip by test
+                        # count
+                        if not nosec_tests_to_skip or (
+                            result.test_id in nosec_tests_to_skip
+                        ):
+                            LOG.debug(
+                                "skipped, nosec for test %s" % result.test_id
+                            )
+                            self.metrics.note_skipped_test()
+                            continue
 
                     self.results.append(result)
 
@@ -80,6 +94,18 @@ class BanditTester:
                     con = constants.RANKING.index(result.confidence)
                     val = constants.RANKING_VALUES[result.confidence]
                     scores["CONFIDENCE"][con] += val
+                else:
+                    nosec_tests_to_skip = self._get_nosecs_from_contexts(
+                        temp_context
+                    )
+                    if (
+                        nosec_tests_to_skip
+                        and test._test_id in nosec_tests_to_skip
+                    ):
+                        LOG.warning(
+                            f"nosec encountered ({test._test_id}), but no "
+                            f"failed test on line {temp_context['lineno']}"
+                        )
 
             except Exception as e:
                 self.report_error(name, context, e)
@@ -87,6 +113,35 @@ class BanditTester:
                     raise
         LOG.debug("Returning scores: %s", scores)
         return scores
+
+    def _get_nosecs_from_contexts(self, context, test_result=None):
+        """Use context and optional test result to get set of tests to skip.
+        :param context: temp context
+        :param test_result: optional test result
+        :return: set of tests to skip for the line based on contexts
+        """
+        nosec_tests_to_skip = set()
+        base_tests = (
+            self.nosec_lines.get(test_result.lineno, None)
+            if test_result
+            else None
+        )
+        context_tests = self.nosec_lines.get(context["lineno"], None)
+
+        # if both are none there were no comments
+        # this is explicitly different from being empty.
+        # empty set indicates blanket nosec comment without
+        # individual test names or ids
+        if base_tests is None and context_tests is None:
+            nosec_tests_to_skip = None
+
+        # combine tests from current line and context line
+        if base_tests is not None:
+            nosec_tests_to_skip.update(base_tests)
+        if context_tests is not None:
+            nosec_tests_to_skip.update(context_tests)
+
+        return nosec_tests_to_skip
 
     @staticmethod
     def report_error(test, context, error):

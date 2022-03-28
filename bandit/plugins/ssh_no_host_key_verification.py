@@ -22,6 +22,7 @@ verification is disabled, Bandit will return a HIGH severity error.
     >> Issue: [B507:ssh_no_host_key_verification] Paramiko call with policy set
     to automatically trust the unknown host key.
     Severity: High   Confidence: Medium
+    CWE: CWE-295 (https://cwe.mitre.org/data/definitions/295.html)
     Location: examples/no_host_key_verification.py:4
     3   ssh_client = client.SSHClient()
     4   ssh_client.set_missing_host_key_policy(client.AutoAddPolicy)
@@ -30,9 +31,12 @@ verification is disabled, Bandit will return a HIGH severity error.
 
 .. versionadded:: 1.5.1
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -47,14 +51,13 @@ def ssh_no_host_key_verification(context):
             "AutoAddPolicy",
             "WarningPolicy",
         ]:
-            issue = bandit.Issue(
+            return bandit.Issue(
                 severity=bandit.HIGH,
-                cwe=cwemap.CWEMAP["B507"],
                 confidence=bandit.MEDIUM,
+                cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
                 text="Paramiko call with policy set to automatically trust "
                 "the unknown host key.",
                 lineno=context.get_lineno_for_call_arg(
                     "set_missing_host_key_policy"
                 ),
             )
-            return issue

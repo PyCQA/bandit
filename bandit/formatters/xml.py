@@ -17,12 +17,20 @@ This formatter outputs the issues as XML.
     message="Use of unsafe yaml load. Allows instantiation of arbitrary
     objects. Consider yaml.safe_load().&#10;" type="MEDIUM"
     more_info="https://bandit.readthedocs.io/en/latest/">Test ID: B301
-    Severity: MEDIUM Confidence: HIGH Use of unsafe yaml load. Allows
-    instantiation of arbitrary objects. Consider yaml.safe_load().
+    Severity: MEDIUM Confidence: HIGH
+    CWE: CWE-20 (https://cwe.mitre.org/data/definitions/20.html) Use of unsafe
+    yaml load.
+    Allows instantiation of arbitrary objects. Consider yaml.safe_load().
 
     Location examples/yaml_load.py:5</error></testcase></testsuite>
 
 .. versionadded:: 0.12.0
+
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
 
 """
 # This future import is necessary here due to the xml import below on Python
@@ -56,14 +64,14 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         )
 
         text = (
-            "Test ID: %s Severity: %s CWE: %s Confidence: %s\n%s\n"
+            "Test ID: %s Severity: %s Confidence: %s\nCWE: %s\n%s\n"
             "Location %s:%s"
         )
         text = text % (
             issue.test_id,
             issue.severity,
-            issue.cwe,
             issue.confidence,
+            issue.cwe,
             issue.text,
             issue.fname,
             issue.lineno,

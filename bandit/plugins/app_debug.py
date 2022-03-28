@@ -22,22 +22,27 @@ of the Patreon breach in 2015 [3]_.
     >> Issue: A Flask app appears to be run with debug=True, which exposes
     the Werkzeug debugger and allows the execution of arbitrary code.
        Severity: High   Confidence: High
-          Location: examples/flask_debug.py:10
-          9 #bad
-          10    app.run(debug=True)
-          11
+       CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
+       Location: examples/flask_debug.py:10
+    9 #bad
+    10    app.run(debug=True)
+    11
 
 .. seealso::
 
  .. [1] https://flask.palletsprojects.com/en/1.1.x/quickstart/#debug-mode
  .. [2] https://werkzeug.palletsprojects.com/en/1.0.x/debug/
  .. [3] https://labs.detectify.com/2015/10/02/how-patreon-got-hacked-publicly-exposed-werkzeug-debugger/
+ .. https://cwe.mitre.org/data/definitions/94.html
 
 .. versionadded:: 0.15.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """  # noqa: E501
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -49,8 +54,8 @@ def flask_debug_true(context):
             if context.check_call_arg_value("debug", "True"):
                 return bandit.Issue(
                     severity=bandit.HIGH,
-                    cwe=cwemap.CWEMAP["B201"],
                     confidence=bandit.MEDIUM,
+                    cwe=issue.Cwe.CODE_INJECTION,
                     text="A Flask app appears to be run with debug=True, "
                     "which exposes the Werkzeug debugger and allows "
                     "the execution of arbitrary code.",

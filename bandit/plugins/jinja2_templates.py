@@ -26,6 +26,7 @@ false. A HIGH severity warning is generated in either of these scenarios.
     >> Issue: Using jinja2 templates with autoescape=False is dangerous and can
     lead to XSS. Use autoescape=True to mitigate XSS vulnerabilities.
        Severity: High   Confidence: High
+       CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
        Location: ./examples/jinja2_templating.py:11
     10  templateEnv = jinja2.Environment(autoescape=False,
         loader=templateLoader)
@@ -38,6 +39,7 @@ false. A HIGH severity warning is generated in either of these scenarios.
     autoescape=True or use the select_autoescape function to mitigate XSS
     vulnerabilities.
        Severity: High   Confidence: High
+       CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
        Location: ./examples/jinja2_templating.py:15
     14
     15  Environment(loader=templateLoader,
@@ -53,14 +55,18 @@ false. A HIGH severity warning is generated in either of these scenarios.
  - https://realpython.com/primer-on-jinja-templating/
  - https://jinja.palletsprojects.com/en/2.11.x/api/#autoescaping
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
+ - https://cwe.mitre.org/data/definitions/94.html
 
 .. versionadded:: 0.10.0
+
+.. versionchanged:: 1.7.3
+    CWE information added
 
 """
 import ast
 
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -81,8 +87,8 @@ def jinja2_autoescape_false(context):
                     ):
                         return bandit.Issue(
                             severity=bandit.HIGH,
-                            cwe=cwemap.CWEMAP["B701"],
                             confidence=bandit.HIGH,
+                            cwe=issue.Cwe.CODE_INJECTION,
                             text="Using jinja2 templates with autoescape="
                             "False is dangerous and can lead to XSS. "
                             "Use autoescape=True or use the "
@@ -107,8 +113,8 @@ def jinja2_autoescape_false(context):
                         else:
                             return bandit.Issue(
                                 severity=bandit.HIGH,
-                                cwe=cwemap.CWEMAP["B701"],
                                 confidence=bandit.MEDIUM,
+                                cwe=issue.Cwe.CODE_INJECTION,
                                 text="Using jinja2 templates with autoescape="
                                 "False is dangerous and can lead to XSS. "
                                 "Ensure autoescape=True or use the "
@@ -119,8 +125,8 @@ def jinja2_autoescape_false(context):
             # behavior
             return bandit.Issue(
                 severity=bandit.HIGH,
-                cwe=cwemap.CWEMAP["B701"],
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.CODE_INJECTION,
                 text="By default, jinja2 sets autoescape to False. Consider "
                 "using autoescape=True or use the select_autoescape "
                 "function to mitigate XSS vulnerabilities.",

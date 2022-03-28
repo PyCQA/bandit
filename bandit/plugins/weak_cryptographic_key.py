@@ -20,6 +20,7 @@ medium severity error for those lower than the higher threshold.
 
     >> Issue: DSA key sizes below 1024 bits are considered breakable.
        Severity: High   Confidence: High
+       CWE: CWE-326 (https://cwe.mitre.org/data/definitions/326.html)
        Location: examples/weak_cryptographic_key_sizes.py:36
     35  # Also incorrect: without keyword args
     36  dsa.generate_private_key(512,
@@ -30,12 +31,16 @@ medium severity error for those lower than the higher threshold.
 
  - https://csrc.nist.gov/publications/detail/sp/800-131a/rev-2/final
  - https://security.openstack.org/guidelines/dg_strong-crypto.html
+ - https://cwe.mitre.org/data/definitions/326.html
 
 .. versionadded:: 0.14.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -75,8 +80,8 @@ def _classify_key_size(config, key_type, key_size):
         if key_size < size:
             return bandit.Issue(
                 severity=level,
-                cwe=cwemap.CWEMAP["B505"],
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.INADEQUATE_ENCRYPTION_STRENGTH,
                 text="%s key sizes below %d bits are considered breakable. "
                 % (key_type, size),
             )

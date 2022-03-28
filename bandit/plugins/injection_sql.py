@@ -35,6 +35,7 @@ If so, a MEDIUM issue is reported. For example:
     >> Issue: Possible SQL injection vector through string-based query
     construction.
        Severity: Medium   Confidence: Low
+       CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
        Location: ./examples/sql_statements_without_sql_alchemy.py:4
     3 query = "DELETE FROM foo WHERE id = '%s'" % identifier
     4 query = "UPDATE foo SET value = 'b' WHERE id = '%s'" % identifier
@@ -44,15 +45,19 @@ If so, a MEDIUM issue is reported. For example:
 
  - https://www.owasp.org/index.php/SQL_Injection
  - https://security.openstack.org/guidelines/dg_parameterize-database-queries.html
+ - https://cwe.mitre.org/data/definitions/89.html
 
 .. versionadded:: 0.9.0
+
+.. versionchanged:: 1.7.3
+    CWE information added
 
 """  # noqa: E501
 import ast
 import re
 
 import bandit
-from bandit.core import cwemap
+from bandit.core import issue
 from bandit.core import test_properties as test
 from bandit.core import utils
 
@@ -105,8 +110,8 @@ def hardcoded_sql_expressions(context):
     if _check_string(val[1]):
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            cwe=cwemap.CWEMAP["B608"],
             confidence=bandit.MEDIUM if val[0] else bandit.LOW,
+            cwe=issue.Cwe.SQL_INJECTION,
             text="Possible SQL injection vector through string-based "
             "query construction.",
         )

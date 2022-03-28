@@ -21,6 +21,9 @@ Allowing use of file:/ or custom schemes is often unexpected.
 
 .. versionadded:: 1.5.0
 
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
+
 """
 import logging
 import os
@@ -78,6 +81,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
         "msg": lambda issue: issue.text,
         "confidence": lambda issue: issue.confidence,
         "range": lambda issue: issue.linerange,
+        "cwe": lambda issue: issue.cwe,
     }
 
     # Create dictionary with tag sets to speed up search for similar tags

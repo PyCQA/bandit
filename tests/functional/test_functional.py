@@ -108,10 +108,36 @@ class FunctionalTests(testtools.TestCase):
 
     def test_crypto_md5(self):
         """Test the `hashlib.md5` example."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 15, "HIGH": 4},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 19},
-        }
+        if sys.version_info >= (3, 9):
+            expect = {
+                "SEVERITY": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 10,
+                    "HIGH": 9,
+                },
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 19,
+                },
+            }
+        else:
+            expect = {
+                "SEVERITY": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 16,
+                    "HIGH": 4,
+                },
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 20,
+                },
+            }
         self.check_example("crypto-md5.py", expect)
 
     def test_ciphers(self):
@@ -157,8 +183,8 @@ class FunctionalTests(testtools.TestCase):
     def test_hardcoded_passwords(self):
         """Test for hard-coded passwords."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 12, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 12, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 14, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
         }
         self.check_example("hardcoded-passwords.py", expect)
 
@@ -170,20 +196,28 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("hardcoded-tmp.py", expect)
 
-    def test_httplib_https(self):
-        """Test for `httplib.HTTPSConnection`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("httplib_https.py", expect)
-
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 5, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
-        }
+        if sys.version_info >= (3, 9):
+            expect = {
+                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 1, "HIGH": 4},
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 9,
+                },
+            }
+        else:
+            expect = {
+                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 5, "HIGH": 0},
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 9,
+                },
+            }
         self.check_example("imports-aliases.py", expect)
 
     def test_imports_from(self):
@@ -241,14 +275,6 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("mktemp.py", expect)
-
-    def test_tempnam(self):
-        """Test for `os.tempnam` / `os.tmpnam`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 6, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 6},
-        }
-        self.check_example("tempnam.py", expect)
 
     def test_nonsense(self):
         """Test that a syntactically invalid module is skipped."""
@@ -362,8 +388,8 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_ssl_verify_disabled(self):
         """Test for the `requests` library skipping verification."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 18},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 18},
         }
         self.check_example("requests-ssl-verify-disabled.py", expect)
 
@@ -393,41 +419,21 @@ class FunctionalTests(testtools.TestCase):
 
     def test_sql_statements(self):
         """Test for SQL injection through string building."""
-        filename = "sql_statements{}.py"
-        if sys.version_info <= (3, 6):
-            filename = filename.format("")
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 14,
-                    "HIGH": 0,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 8,
-                    "MEDIUM": 6,
-                    "HIGH": 0,
-                },
-            }
-        else:
-            filename = filename.format("-py36")
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 16,
-                    "HIGH": 0,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 9,
-                    "MEDIUM": 7,
-                    "HIGH": 0,
-                },
-            }
-
-        self.check_example(filename, expect)
+        expect = {
+            "SEVERITY": {
+                "UNDEFINED": 0,
+                "LOW": 0,
+                "MEDIUM": 14,
+                "HIGH": 0,
+            },
+            "CONFIDENCE": {
+                "UNDEFINED": 0,
+                "LOW": 8,
+                "MEDIUM": 6,
+                "HIGH": 0,
+            },
+        }
+        self.check_example("sql_statements.py", expect)
 
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""
@@ -724,17 +730,25 @@ class FunctionalTests(testtools.TestCase):
         )
 
         issues = self.b_mgr.get_issue_list()
-        self.assertEqual(2, len(issues))
+        self.assertEqual(3, len(issues))
         self.assertTrue(
             issues[0].fname.endswith("examples/multiline_statement.py")
         )
-
         self.assertEqual(1, issues[0].lineno)
-        self.assertEqual(list(range(1, 3)), issues[0].linerange)
+        if sys.version_info >= (3, 8):
+            self.assertEqual(list(range(1, 2)), issues[0].linerange)
+        else:
+            self.assertEqual(list(range(1, 3)), issues[0].linerange)
         self.assertIn("subprocess", issues[0].get_code())
         self.assertEqual(5, issues[1].lineno)
         self.assertEqual(list(range(3, 6 + 1)), issues[1].linerange)
         self.assertIn("shell=True", issues[1].get_code())
+        self.assertEqual(11, issues[2].lineno)
+        if sys.version_info >= (3, 8):
+            self.assertEqual(list(range(8, 13 + 1)), issues[2].linerange)
+        else:
+            self.assertEqual(list(range(8, 12 + 1)), issues[2].linerange)
+        self.assertIn("shell=True", issues[2].get_code())
 
     def test_code_line_numbers(self):
         self.run_example("binding.py")
@@ -755,8 +769,8 @@ class FunctionalTests(testtools.TestCase):
 
     def test_nosec(self):
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 5, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 5},
         }
         self.check_example("nosec.py", expect)
 
@@ -808,10 +822,36 @@ class FunctionalTests(testtools.TestCase):
 
     def test_hashlib_new_insecure_functions(self):
         """Test insecure hash functions created by `hashlib.new`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 9, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
-        }
+        if sys.version_info >= (3, 9):
+            expect = {
+                "SEVERITY": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 10,
+                },
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 10,
+                },
+            }
+        else:
+            expect = {
+                "SEVERITY": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 11,
+                    "HIGH": 0,
+                },
+                "CONFIDENCE": {
+                    "UNDEFINED": 0,
+                    "LOW": 0,
+                    "MEDIUM": 0,
+                    "HIGH": 11,
+                },
+            }
         self.check_example("hashlib_new_insecure_functions.py", expect)
 
     def test_blacklist_pycrypto(self):
@@ -832,3 +872,19 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("pycryptodome.py", expect)
+
+    def test_blacklist_pyghmi(self):
+        """Test calling pyghmi methods"""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 1},
+        }
+        self.check_example("pyghmi.py", expect)
+
+    def test_snmp_security_check(self):
+        """Test insecure and weak crypto usage of SNMP."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+        }
+        self.check_example("snmp.py", expect)

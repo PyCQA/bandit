@@ -35,18 +35,24 @@ class ScreenFormatterTests(testtools.TestCase):
                     _issue.test,
                     _issue.text,
                 ),
-                "{}   Severity: {} CWE: {} Confidence: {}".format(
+                "{}   Severity: {}   Confidence: {}".format(
                     _indent_val,
                     _issue.severity.capitalize(),
-                    _issue.cwe,
                     _issue.confidence.capitalize(),
                 ),
-                "{}   Location: {}:{}:{}".format(
-                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
+                "{}   CWE: {}".format(
+                    _indent_val,
+                    _issue.cwe,
                 ),
-                "{}   More Info: {}{}".format(
+                "{}   More Info: {}".format(
                     _indent_val,
                     docs_utils.get_url(_issue.test_id),
+                ),
+                "{}   Location: {}:{}:{}{}".format(
+                    _indent_val,
+                    _issue.fname,
+                    _issue.lineno,
+                    _issue.col_offset,
                     screen.COLOR["DEFAULT"],
                 ),
             ]

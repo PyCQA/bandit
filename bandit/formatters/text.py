@@ -16,13 +16,20 @@ This formatter outputs the issues as plain text.
        instantiation of arbitrary objects. Consider yaml.safe_load().
 
        Severity: Medium   Confidence: High
-       Location: examples/yaml_load.py:5
+       CWE: CWE-20 (https://cwe.mitre.org/data/definitions/20.html)
        More Info: https://bandit.readthedocs.io/en/latest/
+       Location: examples/yaml_load.py:5
     4       ystr = yaml.dump({'a' : 1, 'b' : 2, 'c' : 3})
     5       y = yaml.load(ystr)
     6       yaml.dump(y)
 
 .. versionadded:: 0.9.0
+
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
 
 """
 import datetime
@@ -79,14 +86,17 @@ def _output_issue_str(
     )
 
     bits.append(
-        "%s   Severity: %s CWE: %s Confidence: %s"
+        "%s   Severity: %s   Confidence: %s"
         % (
             indent,
             issue.severity.capitalize(),
-            str(issue.cwe),
             issue.confidence.capitalize(),
         )
     )
+
+    bits.append(f"{indent}   CWE: {str(issue.cwe)}")
+
+    bits.append(f"{indent}   More Info: {docs_utils.get_url(issue.test_id)}")
 
     bits.append(
         "%s   Location: %s:%s:%s"
@@ -97,8 +107,6 @@ def _output_issue_str(
             issue.col_offset if show_lineno else "",
         )
     )
-
-    bits.append(f"{indent}   More Info: {docs_utils.get_url(issue.test_id)}")
 
     if show_code:
         bits.extend(
@@ -170,6 +178,11 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         bits.append(
             "\tTotal lines skipped (#nosec): %i"
             % (manager.metrics.data["_totals"]["nosec"])
+        )
+        bits.append(
+            "\tTotal potential issues skipped due to specifically being "
+            "disabled (e.g., #nosec BXXX): %i"
+            % (manager.metrics.data["_totals"]["skipped_tests"])
         )
 
         skipped = manager.get_skipped()

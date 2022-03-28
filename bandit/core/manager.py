@@ -4,12 +4,16 @@
 # SPDX-License-Identifier: Apache-2.0
 import collections
 import fnmatch
+import io
 import json
 import logging
 import os
+import re
 import sys
 import tokenize
 import traceback
+
+from rich import progress
 
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
@@ -21,6 +25,9 @@ from bandit.core import test_set as b_test_set
 
 
 LOG = logging.getLogger(__name__)
+NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
+NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z_]+),?)+", re.IGNORECASE)
+PROGRESS_THRESHOLD = 50
 
 
 class BanditManager:
@@ -65,9 +72,6 @@ class BanditManager:
         self.agg_type = agg_type
         self.metrics = metrics.Metrics()
         self.b_ts = b_test_set.BanditTestSet(config, profile)
-
-        # set the increment of after how many files to show progress
-        self.progress = b_constants.progress_increment
         self.scores = []
 
     def get_skipped(self):
@@ -160,7 +164,15 @@ class BanditManager:
         try:
             formatters_mgr = extension_loader.MANAGER.formatters_mgr
             if output_format not in formatters_mgr:
-                output_format = "screen" if sys.stdout.isatty() else "txt"
+                output_format = (
+                    "screen"
+                    if (
+                        sys.stdout.isatty()
+                        and os.getenv("NO_COLOR") is None
+                        and os.getenv("TERM") != "dumb"
+                    )
+                    else "txt"
+                )
 
             formatter = formatters_mgr[output_format]
             report_func = formatter.plugin
@@ -251,23 +263,28 @@ class BanditManager:
 
         :return: -
         """
-        self._show_progress("%s [" % len(self.files_list))
-
         # if we have problems with a file, we'll remove it from the files_list
         # and add it to the skipped list instead
         new_files_list = list(self.files_list)
+        if (
+            len(self.files_list) > PROGRESS_THRESHOLD
+            and LOG.getEffectiveLevel() <= logging.INFO
+        ):
+            files = progress.track(self.files_list)
+        else:
+            files = self.files_list
 
-        for count, fname in enumerate(self.files_list):
+        for count, fname in enumerate(files):
             LOG.debug("working on file : %s", fname)
 
-            if len(self.files_list) > self.progress:
-                # is it time to update the progress indicator?
-                if count % self.progress == 0:
-                    self._show_progress("%s.. " % count, flush=True)
             try:
                 if fname == "-":
-                    sys.stdin = os.fdopen(sys.stdin.fileno(), "rb", 0)
-                    self._parse_file("<stdin>", sys.stdin, new_files_list)
+                    open_fd = os.fdopen(sys.stdin.fileno(), "rb", 0)
+                    fdata = io.BytesIO(open_fd.read())
+                    new_files_list = [
+                        "<stdin>" if x == "-" else x for x in new_files_list
+                    ]
+                    self._parse_file("<stdin>", fdata, new_files_list)
                 else:
                     with open(fname, "rb") as fdata:
                         self._parse_file(fname, fdata, new_files_list)
@@ -275,31 +292,11 @@ class BanditManager:
                 self.skipped.append((fname, e.strerror))
                 new_files_list.remove(fname)
 
-        self._show_progress("]\n", flush=True)
-
         # reflect any files which may have been skipped
         self.files_list = new_files_list
 
         # do final aggregation of metrics
         self.metrics.aggregate()
-
-    def _show_progress(self, message, flush=False):
-        """Show progress on stderr
-
-        Write progress message to stderr, if number of files warrants it and
-        log level is high enough.
-
-        :param message: The message to write to stderr
-        :param flush: Whether to flush stderr after writing the message
-        :return:
-        """
-        if (
-            len(self.files_list) > self.progress
-            and LOG.getEffectiveLevel() <= logging.INFO
-        ):
-            sys.stderr.write(message)
-            if flush:
-                sys.stderr.flush()
 
     def _parse_file(self, fname, fdata, new_files_list):
         try:
@@ -308,28 +305,23 @@ class BanditManager:
             lines = data.splitlines()
             self.metrics.begin(fname)
             self.metrics.count_locs(lines)
-            if self.ignore_nosec:
-                nosec_lines = set()
-            else:
-                try:
-                    fdata.seek(0)
-                    tokens = tokenize.tokenize(fdata.readline)
-                    nosec_lines = {
-                        lineno
-                        for toktype, tokval, (lineno, _), _, _ in tokens
-                        if toktype == tokenize.COMMENT
-                        and "#nosec" in tokval
-                        or "# nosec" in tokval
-                    }
-                except tokenize.TokenError:
-                    nosec_lines = set()
-            score = self._execute_ast_visitor(fname, data, nosec_lines)
+            # nosec_lines is a dict of line number -> set of tests to ignore
+            #                                         for the line
+            nosec_lines = dict()
+            try:
+                fdata.seek(0)
+                tokens = tokenize.tokenize(fdata.readline)
+
+                if not self.ignore_nosec:
+                    for toktype, tokval, (lineno, _), _, _ in tokens:
+                        if toktype == tokenize.COMMENT:
+                            nosec_lines[lineno] = _parse_nosec_comment(tokval)
+
+            except tokenize.TokenError:
+                pass
+            score = self._execute_ast_visitor(fname, fdata, data, nosec_lines)
             self.scores.append(score)
-            self.metrics.count_issues(
-                [
-                    score,
-                ]
-            )
+            self.metrics.count_issues([score])
         except KeyboardInterrupt:
             sys.exit(2)
         except SyntaxError:
@@ -350,7 +342,7 @@ class BanditManager:
             LOG.debug("  Exception string: %s", e)
             LOG.debug("  Exception traceback: %s", traceback.format_exc())
 
-    def _execute_ast_visitor(self, fname, data, nosec_lines):
+    def _execute_ast_visitor(self, fname, fdata, data, nosec_lines):
         """Execute AST parse on each file
 
         :param fname: The name of the file being parsed
@@ -360,7 +352,13 @@ class BanditManager:
         """
         score = []
         res = b_node_visitor.BanditNodeVisitor(
-            fname, self.b_ma, self.b_ts, self.debug, nosec_lines, self.metrics
+            fname,
+            fdata,
+            self.b_ma,
+            self.b_ts,
+            self.debug,
+            nosec_lines,
+            self.metrics,
         )
 
         score = res.process(data)
@@ -448,7 +446,7 @@ def _find_candidate_matches(unmatched_issues, results_list):
     be able to pick out the new one.
 
     :param unmatched_issues: List of issues that weren't present before
-    :param results_list: Master list of current Bandit findings
+    :param results_list: main list of current Bandit findings
     :return: A dictionary with a list of candidates for each issue
     """
 
@@ -460,3 +458,41 @@ def _find_candidate_matches(unmatched_issues, results_list):
         ]
 
     return issue_candidates
+
+
+def _find_test_id_from_nosec_string(extman, match):
+    plugin_id = extman.check_id(match)
+    if plugin_id:
+        return match
+    # Finding by short_id didn't work, let's check the plugin name
+    plugin_id = extman.get_plugin_id(match)
+    if not plugin_id:
+        # Name and short id didn't work:
+        LOG.warning(
+            "Test in comment: %s is not a test name or id, ignoring", match
+        )
+    return plugin_id  # We want to return None or the string here regardless
+
+
+def _parse_nosec_comment(comment):
+    found_no_sec_comment = NOSEC_COMMENT.search(comment)
+    if not found_no_sec_comment:
+        # there was no nosec comment
+        return None
+
+    matches = found_no_sec_comment.groupdict()
+    nosec_tests = matches.get("tests", set())
+
+    # empty set indicates that there was a nosec comment without specific
+    # test ids or names
+    test_ids = set()
+    if nosec_tests:
+        extman = extension_loader.MANAGER
+        # lookup tests by short code or name
+        for test in NOSEC_COMMENT_TESTS.finditer(nosec_tests):
+            test_match = test.group(1)
+            test_id = _find_test_id_from_nosec_string(extman, test_match)
+            if test_id:
+                test_ids.add(test_id)
+
+    return test_ids

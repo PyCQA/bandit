@@ -1,4 +1,4 @@
-.. image:: https://github.com/PyCQA/bandit/blob/master/logo/logotype-sm.png
+.. image:: https://raw.githubusercontent.com/pycqa/bandit/main/logo/logotype-sm.png
     :alt: Bandit
 
 ======
@@ -24,7 +24,7 @@
     :alt: Format
 
 .. image:: https://img.shields.io/badge/license-Apache%202-blue.svg
-    :target: https://github.com/PyCQA/bandit/blob/master/LICENSE
+    :target: https://github.com/PyCQA/bandit/blob/main/LICENSE
     :alt: License
 
 A security linter from PyCQA
@@ -33,7 +33,7 @@ A security linter from PyCQA
 * Documentation: https://bandit.readthedocs.io/en/latest/
 * Source: https://github.com/PyCQA/bandit
 * Bugs: https://github.com/PyCQA/bandit/issues
-* Contributing: https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
+* Contributing: https://github.com/PyCQA/bandit/blob/main/CONTRIBUTING.md
 
 Overview
 --------
@@ -46,31 +46,8 @@ it generates a report.
 Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
 
-References
-----------
-
-Bandit docs: https://bandit.readthedocs.io/en/latest/
-
-Python AST module documentation: https://docs.python.org/3/library/ast.html
-
-Green Tree Snakes - the missing Python AST docs:
-https://greentreesnakes.readthedocs.org/en/latest/
-
-Documentation of the various types of AST nodes that Bandit currently covers
-or could be extended to cover:
-https://greentreesnakes.readthedocs.org/en/latest/nodes.html
-
-Contributing
-------------
-
-Follow our Contributing file:
-https://github.com/PyCQA/bandit/blob/master/CONTRIBUTING.md
-
-Reporting Bugs
---------------
-
-Bugs should be reported on github. To file a bug against Bandit, visit:
-https://github.com/PyCQA/bandit/issues
+.. image:: https://raw.githubusercontent.com/pycqa/bandit/main/bandit-terminal.png
+    :alt: Bandit Example Screen Shot
 
 Show Your Style
 ---------------
@@ -90,3 +67,15 @@ using RST::
     .. image:: https://img.shields.io/badge/security-bandit-yellow.svg
         :target: https://github.com/PyCQA/bandit
         :alt: Security Status
+
+References
+----------
+
+Python AST module documentation: https://docs.python.org/3/library/ast.html
+
+Green Tree Snakes - the missing Python AST docs:
+https://greentreesnakes.readthedocs.org/en/latest/
+
+Documentation of the various types of AST nodes that Bandit currently covers
+or could be extended to cover:
+https://greentreesnakes.readthedocs.org/en/latest/nodes.html
