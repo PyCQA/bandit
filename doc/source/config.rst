@@ -29,6 +29,10 @@ For example:
    tests = B101,B102,B301
 
 
+Note that Bandit will look for `.bandit` file only if it is invoked with `-r` option.
+If you do not use `-r` or the INI file's name is not `.bandit`, you can specify
+the file's path explicitly with `--ini` option.
+
 Exclusions
 ----------
 In the event that a line of code triggers a Bandit issue, but that the line
