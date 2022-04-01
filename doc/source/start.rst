@@ -40,11 +40,6 @@ context and only reporting on the high-severity issues::
 
     bandit examples/*.py -n 3 -lll
 
-Bandit can be run with profiles. To run Bandit against the examples directory
-using only the plugins listed in the ``ShellInjection`` profile::
-
-    bandit examples/*.py -p ShellInjection
-
 Bandit also supports passing lines of code to scan using standard input. To
 run Bandit with standard input::
 
