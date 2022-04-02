@@ -36,22 +36,21 @@ across the socket with signature verification or encryption/decryption.
 .. versionadded:: 1.7.5
 
 """
-
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B612')
+@test.checks("Call")
+@test.test_id("B612")
 def logging_config_insecure_listen(context):
     if (
-        context.call_function_name_qual == 'logging.config.listen'
-        and 'verify' not in context.call_keywords
+        context.call_function_name_qual == "logging.config.listen"
+        and "verify" not in context.call_keywords
     ):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
             cwe=issue.Cwe.CODE_INJECTION,
-            text="Use of insecure logging.config.listen detected."
+            text="Use of insecure logging.config.listen detected.",
         )
