@@ -1,5 +1,5 @@
------------------
-B101: assert_used
------------------
+-----------
+assert_used
+-----------
 
 .. automodule:: bandit.plugins.asserts

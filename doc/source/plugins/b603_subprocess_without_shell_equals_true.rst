@@ -1,6 +1,6 @@
-------------------------------------------
-B603: subprocess_without_shell_equals_true
-------------------------------------------
+------------------------------------
+subprocess_without_shell_equals_true
+------------------------------------
 
 .. currentmodule:: bandit.plugins.injection_shell
 

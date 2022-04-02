@@ -1,5 +1,5 @@
--------------
-B324: hashlib
--------------
+-------
+hashlib
+-------
 
 .. automodule:: bandit.plugins.hashlib_insecure_functions
