@@ -38,7 +38,8 @@ across the socket with signature verification or encryption/decryption.
 """
 
 import bandit
-from bandit.core import issue, test_properties as test
+from bandit.core import issue
+from bandit.core import test_properties as test
 
 
 @test.checks('Call')
