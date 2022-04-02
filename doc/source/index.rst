@@ -23,9 +23,11 @@ Contributing
 
 * `Source code`_
 * `Issue tracker`_
+* Join us on `Discord`_
 
 .. _`Source code`: https://github.com/PyCQA/bandit
 .. _`Issue tracker`: https://github.com/PyCQA/bandit/issues
+.. _`Discord`: https://discord.gg/qYxpadCgkx
 
 Indices and tables
 ==================
