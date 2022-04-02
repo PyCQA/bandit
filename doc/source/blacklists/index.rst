@@ -1,5 +1,5 @@
-Bandit Blacklist Plugins
-========================
+Blacklist Plugins
+=================
 
 Bandit supports built in functionality to implement blacklisting of imports and
 function calls, this functionality is provided by built in test 'B001'. This
