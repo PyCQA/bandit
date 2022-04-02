@@ -1,7 +1,6 @@
 # Copyright (c) 2022 Rajesh Pangare
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ====================================================
 B612: Test for insecure use of logging.config.listen
