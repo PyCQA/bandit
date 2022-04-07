@@ -134,19 +134,14 @@ def _log_info(args, profile):
 def main():
     """Bandit CLI."""
     # bring our logging stuff up as early as possible
-    debug = (
-        logging.DEBUG
-        if "-d" in sys.argv or "--debug" in sys.argv
-        else logging.INFO
-    )
+    debug = logging.DEBUG if "-d" in sys.argv or "--debug" in sys.argv else logging.INFO
     _init_logger(debug)
     extension_mgr = _init_extensions()
 
     baseline_formatters = [
         f.name
         for f in filter(
-            lambda x: hasattr(x.plugin, "_accepts_baseline"),
-            extension_mgr.formatters,
+            lambda x: hasattr(x.plugin, "_accepts_baseline"), extension_mgr.formatters,
         )
     ]
 
@@ -278,14 +273,14 @@ def main():
     # argument list is empty and then attach the default
     # Python Issue 16399
     parser.add_argument(
-        '-f',
-        '--format',
-        dest='output_format',
-        action='append',
+        "-f",
+        "--format",
+        dest="output_format",
+        action="append",
         choices=sorted(extension_mgr.formatter_names),
-        help='specify output format, can be specified '
-             'multiple times to output multiple '
-             'formats'
+        help="specify output format, can be specified "
+        "multiple times to output multiple "
+        "formats",
     )
     parser.add_argument(
         "--msg-template",
@@ -300,15 +295,15 @@ def main():
     # argument list is empty and then attach the default
     # Python Issue 16399
     parser.add_argument(
-        '-o',
-        '--output',
-        dest='output_file',
-        action='append',
-        type=argparse.FileType('w'),
-        help='write report to filename, should be used the same number of '
-             'times as -f argument. If only 1 format is specified '
-             'and no output is specified, then STDOUT will be used '
-             'as the default output.'
+        "-o",
+        "--output",
+        dest="output_file",
+        action="append",
+        type=argparse.FileType("w"),
+        help="write report to filename, should be used the same number of "
+        "times as -f argument. If only 1 format is specified "
+        "and no output is specified, then STDOUT will be used "
+        "as the default output.",
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
@@ -319,11 +314,7 @@ def main():
         help="output extra information like excluded and included files",
     )
     parser.add_argument(
-        "-d",
-        "--debug",
-        dest="debug",
-        action="store_true",
-        help="turn on debug mode",
+        "-d", "--debug", dest="debug", action="store_true", help="turn on debug mode",
     )
     group.add_argument(
         "-q",
@@ -389,9 +380,7 @@ def main():
     parser.set_defaults(quiet=False)
     parser.set_defaults(ignore_nosec=False)
 
-    plugin_info = [
-        f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()
-    ]
+    plugin_info = [f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()]
     blacklist_info = []
     for a in extension_mgr.blacklist.items():
         for b in a[1]:
@@ -443,29 +432,30 @@ def main():
 
     # Before we error check, check if screen was specified and if
     # there was no stdout specified
-    if any(f == 'screen' for f in args.output_format) \
-            and all(o != sys.stdout for o in args.output_file):
+    if any(f == "screen" for f in args.output_format) and all(
+        o != sys.stdout for o in args.output_file
+    ):
         # Lets specify stdout for the screen format
         # We'll remove all instances of screen, and insert it back in
         # Screen should only be specified once, so we don't care if
         # we remove duplicates
-        args.output_format = list(filter(
-            lambda f: f != 'screen', args.output_format))
+        args.output_format = list(filter(lambda f: f != "screen", args.output_format))
 
         # Now append both screen and stdout to the end
-        args.output_format.append('screen')
+        args.output_format.append("screen")
         args.output_file.append(sys.stdout)
 
     # Ensure we have the same number of formats and outputs. If we don't
     # then error
     if len(args.output_format) != len(args.output_file):
-        LOG.warning('You must specify an output for each format. '
-                    'formats: ' + str(args.output_format)
-                    + ' outputs: ' + str(args.output_file))
+        LOG.warning(
+            "You must specify an output for each format. "
+            "formats: " + str(args.output_format) + " outputs: " + str(args.output_file)
+        )
         sys.exit(2)
 
     # Check if `--msg-template` is not present without custom formatter
-    if 'custom' not in args.output_format and args.msg_template is not None:
+    if "custom" not in args.output_format and args.msg_template is not None:
         parser.error("--msg-template can only be used with --format=custom")
 
     # Check if confidence or severity level have been specified with strings
@@ -677,8 +667,10 @@ def main():
             sys.exit(2)
 
         if any(x not in baseline_formatters for x in args.output_format):
-            LOG.warning('Baseline must be used with one of the following '
-                        'formats: ' + str(baseline_formatters))
+            LOG.warning(
+                "Baseline must be used with one of the following "
+                "formats: " + str(baseline_formatters)
+            )
             sys.exit(2)
 
     if "json" not in args.output_format:
@@ -715,13 +707,14 @@ def main():
         out_format = args.output_format[i]
         out_file = args.output_file[i]
 
-        b_mgr.output_results(args.context_lines,
-                             sev_level,
-                             conf_level,
-                             out_file,
-                             out_format,
-                             args.msg_template if out_format == 'custom'
-                             else None)
+        b_mgr.output_results(
+            args.context_lines,
+            sev_level,
+            conf_level,
+            out_file,
+            out_format,
+            args.msg_template if out_format == "custom" else None,
+        )
 
     if (
         b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
