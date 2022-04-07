@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ==========================================
 B701: Test for not auto escaping in jinja2
@@ -28,6 +26,7 @@ false. A HIGH severity warning is generated in either of these scenarios.
     >> Issue: Using jinja2 templates with autoescape=False is dangerous and can
     lead to XSS. Use autoescape=True to mitigate XSS vulnerabilities.
        Severity: High   Confidence: High
+       CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
        Location: ./examples/jinja2_templating.py:11
     10  templateEnv = jinja2.Environment(autoescape=False,
         loader=templateLoader)
@@ -40,6 +39,7 @@ false. A HIGH severity warning is generated in either of these scenarios.
     autoescape=True or use the select_autoescape function to mitigate XSS
     vulnerabilities.
        Severity: High   Confidence: High
+       CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
        Location: ./examples/jinja2_templating.py:15
     14
     15  Environment(loader=templateLoader,
@@ -52,70 +52,82 @@ false. A HIGH severity warning is generated in either of these scenarios.
 .. seealso::
 
  - `OWASP XSS <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>`_
- - https://realpython.com/blog/python/primer-on-jinja-templating/
- - http://jinja.pocoo.org/docs/dev/api/#autoescaping
- - https://security.openstack.org
+ - https://realpython.com/primer-on-jinja-templating/
+ - https://jinja.palletsprojects.com/en/2.11.x/api/#autoescaping
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
+ - https://cwe.mitre.org/data/definitions/94.html
 
 .. versionadded:: 0.10.0
 
-"""
+.. versionchanged:: 1.7.3
+    CWE information added
 
+"""
 import ast
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B701')
+@test.checks("Call")
+@test.test_id("B701")
 def jinja2_autoescape_false(context):
     # check type just to be safe
     if isinstance(context.call_function_name_qual, str):
-        qualname_list = context.call_function_name_qual.split('.')
+        qualname_list = context.call_function_name_qual.split(".")
         func = qualname_list[-1]
-        if 'jinja2' in qualname_list and func == 'Environment':
+        if "jinja2" in qualname_list and func == "Environment":
             for node in ast.walk(context.node):
                 if isinstance(node, ast.keyword):
                     # definite autoescape = False
-                    if (getattr(node, 'arg', None) == 'autoescape' and
-                            (getattr(node.value, 'id', None) == 'False' or
-                             getattr(node.value, 'value', None) is False)):
+                    if getattr(node, "arg", None) == "autoescape" and (
+                        getattr(node.value, "id", None) == "False"
+                        or getattr(node.value, "value", None) is False
+                    ):
                         return bandit.Issue(
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,
+                            cwe=issue.Cwe.CODE_INJECTION,
                             text="Using jinja2 templates with autoescape="
-                                 "False is dangerous and can lead to XSS. "
-                                 "Use autoescape=True or use the "
-                                 "select_autoescape function to mitigate XSS "
-                                 "vulnerabilities."
+                            "False is dangerous and can lead to XSS. "
+                            "Use autoescape=True or use the "
+                            "select_autoescape function to mitigate XSS "
+                            "vulnerabilities.",
                         )
                     # found autoescape
-                    if getattr(node, 'arg', None) == 'autoescape':
-                        value = getattr(node, 'value', None)
-                        if (getattr(value, 'id', None) == 'True' or
-                                getattr(value, 'value', None) is True):
+                    if getattr(node, "arg", None) == "autoescape":
+                        value = getattr(node, "value", None)
+                        if (
+                            getattr(value, "id", None) == "True"
+                            or getattr(value, "value", None) is True
+                        ):
                             return
                         # Check if select_autoescape function is used.
-                        elif isinstance(value, ast.Call) and getattr(
-                                value.func, 'id', None) == 'select_autoescape':
+                        elif (
+                            isinstance(value, ast.Call)
+                            and getattr(value.func, "id", None)
+                            == "select_autoescape"
+                        ):
                             return
                         else:
                             return bandit.Issue(
                                 severity=bandit.HIGH,
                                 confidence=bandit.MEDIUM,
+                                cwe=issue.Cwe.CODE_INJECTION,
                                 text="Using jinja2 templates with autoescape="
-                                     "False is dangerous and can lead to XSS. "
-                                     "Ensure autoescape=True or use the "
-                                     "select_autoescape function to mitigate "
-                                     "XSS vulnerabilities."
+                                "False is dangerous and can lead to XSS. "
+                                "Ensure autoescape=True or use the "
+                                "select_autoescape function to mitigate "
+                                "XSS vulnerabilities.",
                             )
             # We haven't found a keyword named autoescape, indicating default
             # behavior
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.CODE_INJECTION,
                 text="By default, jinja2 sets autoescape to False. Consider "
-                     "using autoescape=True or use the select_autoescape "
-                     "function to mitigate XSS vulnerabilities."
+                "using autoescape=True or use the select_autoescape "
+                "function to mitigate XSS vulnerabilities.",
             )

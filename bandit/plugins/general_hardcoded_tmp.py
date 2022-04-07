@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ===================================================
 B108: Test for insecure usage of tmp file/directory
@@ -38,39 +36,45 @@ issue.
 
     >> Issue: Probable insecure usage of temp file/directory.
        Severity: Medium   Confidence: Medium
+       CWE: CWE-377 (https://cwe.mitre.org/data/definitions/377.html)
        Location: ./examples/hardcoded-tmp.py:1
     1 f = open('/tmp/abc', 'w')
     2 f.write('def')
 
 .. seealso::
 
- - https://security.openstack.org/guidelines/dg_using-temporary-files-securely.html  # noqa
+ - https://security.openstack.org/guidelines/dg_using-temporary-files-securely.html
+ - https://cwe.mitre.org/data/definitions/377.html
 
 .. versionadded:: 0.9.0
 
-"""
+.. versionchanged:: 1.7.3
+    CWE information added
 
+"""  # noqa: E501
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
 def gen_config(name):
-    if name == 'hardcoded_tmp_directory':
-        return {'tmp_dirs': ['/tmp', '/var/tmp', '/dev/shm']}
+    if name == "hardcoded_tmp_directory":
+        return {"tmp_dirs": ["/tmp", "/var/tmp", "/dev/shm"]}
 
 
 @test.takes_config
-@test.checks('Str')
-@test.test_id('B108')
+@test.checks("Str")
+@test.test_id("B108")
 def hardcoded_tmp_directory(context, config):
-    if config is not None and 'tmp_dirs' in config:
-        tmp_dirs = config['tmp_dirs']
+    if config is not None and "tmp_dirs" in config:
+        tmp_dirs = config["tmp_dirs"]
     else:
-        tmp_dirs = ['/tmp', '/var/tmp', '/dev/shm']
+        tmp_dirs = ["/tmp", "/var/tmp", "/dev/shm"]
 
     if any(context.string_val.startswith(s) for s in tmp_dirs):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
-            text="Probable insecure usage of temp file/directory."
+            cwe=issue.Cwe.INSECURE_TEMP_FILE,
+            text="Probable insecure usage of temp file/directory.",
         )
