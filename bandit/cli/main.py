@@ -134,14 +134,19 @@ def _log_info(args, profile):
 def main():
     """Bandit CLI."""
     # bring our logging stuff up as early as possible
-    debug = logging.DEBUG if "-d" in sys.argv or "--debug" in sys.argv else logging.INFO
+    debug = (
+        logging.DEBUG
+        if "-d" in sys.argv or "--debug" in sys.argv
+        else logging.INFO
+    )
     _init_logger(debug)
     extension_mgr = _init_extensions()
 
     baseline_formatters = [
         f.name
         for f in filter(
-            lambda x: hasattr(x.plugin, "_accepts_baseline"), extension_mgr.formatters,
+            lambda x: hasattr(x.plugin, "_accepts_baseline"),
+            extension_mgr.formatters,
         )
     ]
 
@@ -314,7 +319,11 @@ def main():
         help="output extra information like excluded and included files",
     )
     parser.add_argument(
-        "-d", "--debug", dest="debug", action="store_true", help="turn on debug mode",
+        "-d",
+        "--debug",
+        dest="debug",
+        action="store_true",
+        help="turn on debug mode",
     )
     group.add_argument(
         "-q",
@@ -380,7 +389,9 @@ def main():
     parser.set_defaults(quiet=False)
     parser.set_defaults(ignore_nosec=False)
 
-    plugin_info = [f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()]
+    plugin_info = [
+        f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()
+    ]
     blacklist_info = []
     for a in extension_mgr.blacklist.items():
         for b in a[1]:
@@ -439,7 +450,9 @@ def main():
         # We'll remove all instances of screen, and insert it back in
         # Screen should only be specified once, so we don't care if
         # we remove duplicates
-        args.output_format = list(filter(lambda f: f != "screen", args.output_format))
+        args.output_format = list(
+            filter(lambda f: f != "screen", args.output_format)
+        )
 
         # Now append both screen and stdout to the end
         args.output_format.append("screen")
@@ -450,7 +463,10 @@ def main():
     if len(args.output_format) != len(args.output_file):
         LOG.warning(
             "You must specify an output for each format. "
-            "formats: " + str(args.output_format) + " outputs: " + str(args.output_file)
+            "formats: "
+            + str(args.output_format)
+            + " outputs: "
+            + str(args.output_file)
         )
         sys.exit(2)
 
