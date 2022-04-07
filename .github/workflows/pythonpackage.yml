@@ -3,6 +3,13 @@ name: Build and Test Bandit
 on: [push, pull_request]
 
 jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v1
   format:
     runs-on: ubuntu-latest
     strategy:
