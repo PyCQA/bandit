@@ -274,14 +274,13 @@ def main():
         )
         else "txt"
     )
-    output_format = 'screen' if sys.stdout.isatty() else 'txt'
     # Instead of specifying a default here, we check if the
     # argument list is empty and then attach the default
     # Python Issue 16399
     parser.add_argument(
-        '-f', 
-        '--format', 
-        dest='output_format', 
+        '-f',
+        '--format',
+        dest='output_format',
         action='append',
         choices=sorted(extension_mgr.formatter_names),
         help='specify output format, can be specified '
@@ -301,9 +300,9 @@ def main():
     # argument list is empty and then attach the default
     # Python Issue 16399
     parser.add_argument(
-        '-o', 
-        '--output', 
-        dest='output_file', 
+        '-o',
+        '--output',
+        dest='output_file',
         action='append',
         type=argparse.FileType('w'),
         help='write report to filename, should be used the same number of '
