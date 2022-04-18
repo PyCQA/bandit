@@ -16,7 +16,6 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    pip3 install bandit
 
 Run Bandit::
 
