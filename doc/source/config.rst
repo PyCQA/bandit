@@ -78,7 +78,7 @@ look like the following:
 
 .. code-block:: yaml
 
-  ### configuration may optionally select or skip tests
+  ### profile may optionally select or skip tests
 
   # (optional) list included tests here:
   tests: ['B201', 'B301']
