@@ -49,7 +49,7 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          ["3.7", "37"], ["3.8", "38"], ["3.9", "39"], ["3.10", "310"]
+          ["3.7", "37"], ["3.8", "38"], ["3.9", "39"], ["3.10", "310"], ["3.11.0-alpha.7", "311"]
         ]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
