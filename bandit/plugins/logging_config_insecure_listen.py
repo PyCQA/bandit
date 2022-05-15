@@ -20,6 +20,9 @@ logging.config.listen provides the ability to verify bytes received
 across the socket with signature verification or encryption/decryption.
 
 :Example:
+
+.. code-block:: none
+
     >> Issue: [B612:logging_config_listen] Use of insecure
     logging.config.listen detected.
        Severity: Medium   Confidence: High
