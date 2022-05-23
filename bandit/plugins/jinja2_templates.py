@@ -70,6 +70,16 @@ from bandit.core import issue
 from bandit.core import test_properties as test
 
 
+def is_select_autoescape(node):
+    if isinstance(node.func, ast.Name):
+        # user wrote select_autoescape
+        return getattr(node.func, "id", None) == "select_autoescape"
+    elif isinstance(node.func, ast.Attribute):
+        # user wrote jinja2.select_autoescape
+        return getattr(node.func, "attr", None) == "select_autoescape"
+    return False
+
+
 @test.checks("Call")
 @test.test_id("B701")
 def jinja2_autoescape_false(context):
@@ -106,8 +116,7 @@ def jinja2_autoescape_false(context):
                         # Check if select_autoescape function is used.
                         elif (
                             isinstance(value, ast.Call)
-                            and getattr(value.func, "id", None)
-                            == "select_autoescape"
+                            and is_select_autoescape(value.func)
                         ):
                             return
                         else:
