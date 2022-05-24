@@ -461,7 +461,7 @@ def main():
         # Other strings will be blocked by argparse
 
     if args.no_line_numbers is not None:
-        os.environ["BANDIT_NO_LINES"] = args.no_line_numbers
+        os.environ["BANDIT_NO_LINES"] = str(args.no_line_numbers)
 
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
