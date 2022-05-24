@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import linecache
+import os
 
 from bandit.core import constants
 
@@ -181,7 +182,11 @@ class Issue:
             for line_num in range(1, lmin):
                 self.fdata.readline()
 
-        tmplt = "%i\t%s" if tabbed else "%i %s"
+        no_lines = os.getenv("BANDIT_NO_LINES")
+        if no_lines == "True" or no_lines == "true" or no_lines == "TRUE":
+            tmplt = "\t%s" if tabbed else " %s"
+        else:
+            tmplt = "%i\t%s" if tabbed else "%i %s"
         for line in range(lmin, lmax):
             if self.fname == "<stdin>":
                 text = self.fdata.readline()
@@ -193,7 +198,11 @@ class Issue:
 
             if not len(text):
                 break
-            lines.append(tmplt % (line, text))
+            if no_lines == "True" or no_lines == "true" or no_lines == "TRUE":
+                lines.append(tmplt % (text))
+            else:
+                lines.append(tmplt % (line, text))
+
         return "".join(lines)
 
     def as_dict(self, with_code=True, max_lines=3):
