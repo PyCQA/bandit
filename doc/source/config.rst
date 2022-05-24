@@ -5,7 +5,7 @@ Configuration
 Bandit Settings
 ---------------
 
-Projects may include a YAML file named `.bandit` that specifies command line
+Projects may include an INI file named `.bandit` that specifies command line
 arguments that should be supplied for that project. The currently supported
 arguments are:
 
@@ -14,20 +14,24 @@ arguments are:
  - skips: comma separated list of tests to skip
  - tests: comma separated list of tests to run
 
-To use this, put a YAML file named `.bandit` in your project's directory.
+To use this, put an INI file named `.bandit` in your project's directory.
+Command line arguments must be in `[bandit]` section.
 For example:
 
 ::
 
+   [bandit]
    exclude: /test
 
 ::
 
-   tests:
-     - B101
-     - B102
-     - B301
+   [bandit]
+   tests = B101,B102,B301
 
+
+Note that Bandit will look for `.bandit` file only if it is invoked with `-r` option.
+If you do not use `-r` or the INI file's name is not `.bandit`, you can specify
+the file's path explicitly with `--ini` option.
 
 Exclusions
 ----------

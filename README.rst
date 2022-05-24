@@ -27,6 +27,10 @@
     :target: https://github.com/PyCQA/bandit/blob/main/LICENSE
     :alt: License
 
+.. image:: https://img.shields.io/discord/825463413634891776.svg
+    :target: https://discord.gg/qYxpadCgkx
+    :alt: Discord
+
 A security linter from PyCQA
 
 * Free software: Apache license

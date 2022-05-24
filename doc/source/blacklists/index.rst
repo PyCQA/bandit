@@ -1,5 +1,5 @@
-Bandit Blacklist Plugins
-========================
+Blacklist Plugins
+=================
 
 Bandit supports built in functionality to implement blacklisting of imports and
 function calls, this functionality is provided by built in test 'B001'. This
@@ -46,7 +46,8 @@ A utility method bandit.blacklists.utils.build_conf_dict is provided to aid
 building these dictionaries.
 
 :Example:
-  .. code-block:: none
+
+.. code-block:: none
 
     >> Issue: [B317:blacklist] Using xml.sax.parse to parse untrusted XML data
     is known to be vulnerable to XML attacks. Replace xml.sax.parse with its

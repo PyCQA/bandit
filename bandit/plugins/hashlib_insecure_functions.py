@@ -19,6 +19,8 @@ function variations of hashlib.
 
 :Example:
 
+.. code-block:: none
+
     >> Issue: [B324:hashlib] Use of weak MD4, MD5, or SHA1 hash for
        security. Consider usedforsecurity=False
        Severity: High   Confidence: High
