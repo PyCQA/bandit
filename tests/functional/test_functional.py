@@ -196,14 +196,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("hardcoded-tmp.py", expect)
 
-    def test_httplib_https(self):
-        """Test for `httplib.HTTPSConnection`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("httplib_https.py", expect)
-
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
         if sys.version_info >= (3, 9):
@@ -283,14 +275,6 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("mktemp.py", expect)
-
-    def test_tempnam(self):
-        """Test for `os.tempnam` / `os.tmpnam`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 6, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 6},
-        }
-        self.check_example("tempnam.py", expect)
 
     def test_nonsense(self):
         """Test that a syntactically invalid module is skipped."""
@@ -404,10 +388,18 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_ssl_verify_disabled(self):
         """Test for the `requests` library skipping verification."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 18},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 18},
         }
         self.check_example("requests-ssl-verify-disabled.py", expect)
+
+    def test_requests_without_timeout(self):
+        """Test for the `requests` library missing timeouts."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 14, "MEDIUM": 0, "HIGH": 0},
+        }
+        self.check_example("requests-missing-timeout.py", expect)
 
     def test_skip(self):
         """Test `#nosec` and `#noqa` comments."""
@@ -500,8 +492,8 @@ class FunctionalTests(testtools.TestCase):
     def test_yaml(self):
         """Test for `yaml.load`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
         }
         self.check_example("yaml_load.py", expect)
 

@@ -2,7 +2,7 @@ import requests
 import wsgiref.handlers
 
 def application(environ, start_response):
-    r = requests.get('https://192.168.0.42/private/api/foobar')
+    r = requests.get('https://192.168.0.42/private/api/foobar', timeout=30)
     start_response('200 OK', [('Content-Type', 'text/plain')])
     return [r.content]
 
