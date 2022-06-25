@@ -331,12 +331,13 @@ class BanditManager:
             new_files_list.remove(fname)
         except Exception as e:
             LOG.error(
-                "Exception occurred when executing tests against "
-                '%s. Run "bandit --debug %s" to see the full '
-                "traceback.",
+                "Exception occurred when executing tests against %s.",
                 fname,
                 fname,
             )
+            if not LOG.isEnabledFor(logging.DEBUG):
+                LOG.error('Run "bandit --debug %s" to see the full traceback.')
+
             self.skipped.append((fname, "exception while scanning file"))
             new_files_list.remove(fname)
             LOG.debug("  Exception string: %s", e)
