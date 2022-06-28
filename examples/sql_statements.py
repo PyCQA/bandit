@@ -20,6 +20,12 @@ cur.execute("UPDATE foo SET value = 'b' WHERE id = '%s'" % identifier)
 cur.execute("SELECT * FROM foo WHERE id = '" + identifier + "'")
 cur.execute("SELECT * FROM foo WHERE id = '{}'".format(identifier))
 
+# bad f-strings
+cur.execute(f"SELECT {column_name} FROM foo WHERE id = 1")
+cur.execute(f"SELECT {a + b} FROM foo WHERE id = 1")
+cur.execute(f"INSERT INTO {table_name} VALUES (1)")
+cur.execute(f"UPDATE {table_name} SET id = 1")
+
 # good
 cur.execute("SELECT * FROM foo WHERE id = '%s'", identifier)
 cur.execute("INSERT INTO foo VALUES ('a', 'b', '%s')", value)

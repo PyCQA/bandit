@@ -439,13 +439,13 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {
                 "UNDEFINED": 0,
                 "LOW": 0,
-                "MEDIUM": 14,
+                "MEDIUM": 18,
                 "HIGH": 0,
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
                 "LOW": 8,
-                "MEDIUM": 6,
+                "MEDIUM": 10,
                 "HIGH": 0,
             },
         }
