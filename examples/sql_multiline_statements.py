@@ -121,3 +121,62 @@ def a():
 
 a()("""SELECT %s
 FROM foo""" % val)
+
+# skip
+query = """SELECT *
+FROM foo WHERE id = '%s'""" % identifier  # nosec
+query = """SELECT *
+FROM foo WHERE id = '%s'""" % identifier  # nosec B608
+query = """
+SELECT *
+FROM foo
+WHERE id = '%s'
+""" % identifier  # nosec B608
+
+query = f"""
+SELECT *
+FROM foo
+WHERE id = {identifier}
+"""  # nosec
+query = f"""
+SELECT *
+FROM foo
+WHERE id = {identifier}
+"""  # nosec B608
+
+query = f"""
+SELECT *
+FROM foo
+WHERE id = {identifier}"""  # nosec
+query = f"""
+SELECT *
+FROM foo
+WHERE id = {identifier}"""  # nosec B608
+
+cur.execute("SELECT * "  # nosec
+            "FROM foo "
+            f"WHERE id = {identifier}")
+cur.execute("SELECT * "  # nosec B608
+            "FROM foo "
+            f"WHERE id = {identifier}")
+
+query = ("SELECT * "  # nosec
+         "FROM foo "
+         f"WHERE id = {identifier}")
+query = ("SELECT * "  # nosec B608
+         "FROM foo "
+         f"WHERE id = {identifier}")
+
+# nosec is not recognized for the 4 below cases in python 3.7
+query = ("SELECT * "
+         "FROM foo "  # nosec
+         f"WHERE id = {identifier}")
+query = ("SELECT * "
+         "FROM foo "  # nosec B608
+         f"WHERE id = {identifier}")
+query = ("SELECT * "
+         "FROM foo "
+         f"WHERE id = {identifier}")  # nosec
+query = ("SELECT * "
+         "FROM foo "
+         f"WHERE id = {identifier}")  # nosec B608
