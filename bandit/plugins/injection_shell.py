@@ -2,12 +2,12 @@
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-import ast
 import re
 
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+from bandit.core import utils
 
 
 # yuck, regex: starts with a windows drive letter (eg C:)
@@ -16,7 +16,7 @@ full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")
 
 
 def _evaluate_shell_call(context):
-    no_formatting = isinstance(context.node.args[0], ast.Str)
+    no_formatting = utils.is_instance(context.node.args[0], "Str")
 
     if no_formatting:
         return bandit.LOW
@@ -82,15 +82,18 @@ def has_shell(context):
         for key in keywords:
             if key.arg == "shell":
                 val = key.value
-                if isinstance(val, ast.Num):
+                if utils.is_instance(val, "Num"):
                     result = bool(val.n)
-                elif isinstance(val, ast.List):
+                elif utils.is_instance(val, "List"):
                     result = bool(val.elts)
-                elif isinstance(val, ast.Dict):
+                elif utils.is_instance(val, "Dict"):
                     result = bool(val.keys)
-                elif isinstance(val, ast.Name) and val.id in ["False", "None"]:
+                elif utils.is_instance(val, "Name") and val.id in [
+                    "False",
+                    "None",
+                ]:
                     result = False
-                elif isinstance(val, ast.NameConstant):
+                elif utils.is_instance(val, "NameConstant"):
                     result = val.value
                 else:
                     result = True
@@ -681,11 +684,13 @@ def start_process_with_partial_path(context, config):
 
             node = context.node.args[0]
             # some calls take an arg list, check the first part
-            if isinstance(node, ast.List):
+            if utils.is_instance(node, "List"):
                 node = node.elts[0]
 
             # make sure the param is a string literal and not a var name
-            if isinstance(node, ast.Str) and not full_path_match.match(node.s):
+            if utils.is_instance(node, "Str") and not full_path_match.match(
+                node.s
+            ):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,

@@ -6,6 +6,7 @@ import ast
 import logging
 import os.path
 import sys
+from operator import attrgetter
 
 try:
     import configparser
@@ -370,3 +371,13 @@ def check_ast_node(name):
         pass
 
     raise TypeError("Error: %s is not a valid node type in AST" % name)
+
+
+def is_instance(node, type_name):
+    "Check if the given node is an instance AST type."
+    if isinstance(type_name, tuple):
+        f = attrgetter(*type_name)
+        return isinstance(node, f(ast))
+    else:
+        node_type = getattr(ast, type_name)
+        return isinstance(node, node_type)

@@ -7,6 +7,7 @@ import ast
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+from bandit.core import utils
 
 
 class DeepAssignation:
@@ -32,45 +33,45 @@ class DeepAssignation:
                 if isinstance(node, self.ignore_nodes):
                     return assigned
 
-        if isinstance(node, ast.Expr):
+        if utils.is_instance(node, "Expr"):
             assigned = self.is_assigned(node.value)
-        elif isinstance(node, ast.FunctionDef):
+        elif utils.is_instance(node, "FunctionDef"):
             for name in node.args.args:
-                if isinstance(name, ast.Name):
+                if utils.is_instance(name, "Name"):
                     if name.id == self.var_name.id:
                         # If is param the assignations are not affected
                         return assigned
             assigned = self.is_assigned_in(node.body)
-        elif isinstance(node, ast.With):
+        elif utils.is_instance(node, "With"):
             for withitem in node.items:
                 var_id = getattr(withitem.optional_vars, "id", None)
                 if var_id == self.var_name.id:
                     assigned = node
                 else:
                     assigned = self.is_assigned_in(node.body)
-        elif isinstance(node, ast.Try):
+        elif utils.is_instance(node, "Try"):
             assigned = []
             assigned.extend(self.is_assigned_in(node.body))
             assigned.extend(self.is_assigned_in(node.handlers))
             assigned.extend(self.is_assigned_in(node.orelse))
             assigned.extend(self.is_assigned_in(node.finalbody))
-        elif isinstance(node, ast.ExceptHandler):
+        elif utils.is_instance(node, "ExceptHandler"):
             assigned = []
             assigned.extend(self.is_assigned_in(node.body))
-        elif isinstance(node, (ast.If, ast.For, ast.While)):
+        elif utils.is_instance(node, ("If", "For", "While")):
             assigned = []
             assigned.extend(self.is_assigned_in(node.body))
             assigned.extend(self.is_assigned_in(node.orelse))
-        elif isinstance(node, ast.AugAssign):
-            if isinstance(node.target, ast.Name):
+        elif utils.is_instance(node, "AugAssign"):
+            if utils.is_instance(node.target, "Name"):
                 if node.target.id == self.var_name.id:
                     assigned = node.value
-        elif isinstance(node, ast.Assign) and node.targets:
+        elif utils.is_instance(node, "Assign") and node.targets:
             target = node.targets[0]
-            if isinstance(target, ast.Name):
+            if utils.is_instance(target, "Name"):
                 if target.id == self.var_name.id:
                     assigned = node.value
-            elif isinstance(target, ast.Tuple):
+            elif utils.is_instance(target, "Tuple"):
                 pos = 0
                 for name in target.elts:
                     if name.id == self.var_name.id:
@@ -82,8 +83,8 @@ class DeepAssignation:
 
 def evaluate_var(xss_var, parent, until, ignore_nodes=None):
     secure = False
-    if isinstance(xss_var, ast.Name):
-        if isinstance(parent, ast.FunctionDef):
+    if utils.is_instance(xss_var, "Name"):
+        if utils.is_instance(parent, "FunctionDef"):
             for name in parent.args.args:
                 if name.arg == xss_var.id:
                     return False  # Params are not secure
@@ -94,18 +95,18 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
                 break
             to = analyser.is_assigned(node)
             if to:
-                if isinstance(to, ast.Str):
+                if utils.is_instance(to, "Str"):
                     secure = True
-                elif isinstance(to, ast.Name):
+                elif utils.is_instance(to, "Name"):
                     secure = evaluate_var(to, parent, to.lineno, ignore_nodes)
-                elif isinstance(to, ast.Call):
+                elif utils.is_instance(to, "Call"):
                     secure = evaluate_call(to, parent, ignore_nodes)
                 elif isinstance(to, (list, tuple)):
                     num_secure = 0
                     for some_to in to:
-                        if isinstance(some_to, ast.Str):
+                        if utils.is_instance(some_to, "Str"):
                             num_secure += 1
-                        elif isinstance(some_to, ast.Name):
+                        elif utils.is_instance(some_to, "Name"):
                             if evaluate_var(
                                 some_to, parent, node.lineno, ignore_nodes
                             ):
@@ -128,8 +129,13 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
 def evaluate_call(call, parent, ignore_nodes=None):
     secure = False
     evaluate = False
-    if isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute):
-        if isinstance(call.func.value, ast.Str) and call.func.attr == "format":
+    if utils.is_instance(call, "Call") and utils.is_instance(
+        call.func, "Attribute"
+    ):
+        if (
+            utils.is_instance(call.func.value, "Str")
+            and call.func.attr == "format"
+        ):
             evaluate = True
             if call.keywords:
                 evaluate = False  # TODO(??) get support for this
@@ -138,20 +144,20 @@ def evaluate_call(call, parent, ignore_nodes=None):
         args = list(call.args)
         num_secure = 0
         for arg in args:
-            if isinstance(arg, ast.Str):
+            if utils.is_instance(arg, "Str"):
                 num_secure += 1
-            elif isinstance(arg, ast.Name):
+            elif utils.is_instance(arg, "Name"):
                 if evaluate_var(arg, parent, call.lineno, ignore_nodes):
                     num_secure += 1
                 else:
                     break
-            elif isinstance(arg, ast.Call):
+            elif utils.is_instance(arg, "Call"):
                 if evaluate_call(arg, parent, ignore_nodes):
                     num_secure += 1
                 else:
                     break
-            elif isinstance(arg, ast.Starred) and isinstance(
-                arg.value, (ast.List, ast.Tuple)
+            elif utils.is_instance(arg, "Starred") and utils.is_instance(
+                arg.value, ("List", "Tuple")
             ):
                 args.extend(arg.value.elts)
                 num_secure += 1
@@ -163,9 +169,9 @@ def evaluate_call(call, parent, ignore_nodes=None):
 
 
 def transform2call(var):
-    if isinstance(var, ast.BinOp):
-        is_mod = isinstance(var.op, ast.Mod)
-        is_left_str = isinstance(var.left, ast.Str)
+    if utils.is_instance(var, "BinOp"):
+        is_mod = utils.is_instance(var.op, "Mod")
+        is_left_str = utils.is_instance(var.left, "Str")
         if is_mod and is_left_str:
             new_call = ast.Call()
             new_call.args = []
@@ -175,7 +181,7 @@ def transform2call(var):
             new_call.func = ast.Attribute()
             new_call.func.value = var.left
             new_call.func.attr = "format"
-            if isinstance(var.right, ast.Tuple):
+            if utils.is_instance(var.right, "Tuple"):
                 new_call.args = var.right.elts
             else:
                 new_call.args = [var.right]
@@ -188,14 +194,14 @@ def check_risk(node):
 
     secure = False
 
-    if isinstance(xss_var, ast.Name):
+    if utils.is_instance(xss_var, "Name"):
         # Check if the var are secure
         parent = node._bandit_parent
-        while not isinstance(parent, (ast.Module, ast.FunctionDef)):
+        while not utils.is_instance(parent, ("Module", "FunctionDef")):
             parent = parent._bandit_parent
 
         is_param = False
-        if isinstance(parent, ast.FunctionDef):
+        if utils.is_instance(parent, "FunctionDef"):
             for name in parent.args.args:
                 if name.arg == xss_var.id:
                     is_param = True
@@ -203,17 +209,17 @@ def check_risk(node):
 
         if not is_param:
             secure = evaluate_var(xss_var, parent, node.lineno)
-    elif isinstance(xss_var, ast.Call):
+    elif utils.is_instance(xss_var, "Call"):
         parent = node._bandit_parent
-        while not isinstance(parent, (ast.Module, ast.FunctionDef)):
+        while not utils.is_instance(parent, ("Module", "FunctionDef")):
             parent = parent._bandit_parent
         secure = evaluate_call(xss_var, parent)
-    elif isinstance(xss_var, ast.BinOp):
-        is_mod = isinstance(xss_var.op, ast.Mod)
-        is_left_str = isinstance(xss_var.left, ast.Str)
+    elif utils.is_instance(xss_var, "BinOp"):
+        is_mod = utils.is_instance(xss_var.op, "Mod")
+        is_left_str = utils.is_instance(xss_var.left, "Str")
         if is_mod and is_left_str:
             parent = node._bandit_parent
-            while not isinstance(parent, (ast.Module, ast.FunctionDef)):
+            while not utils.is_instance(parent, ("Module", "FunctionDef")):
                 parent = parent._bandit_parent
             new_call = transform2call(xss_var)
             secure = evaluate_call(new_call, parent)
@@ -270,5 +276,5 @@ def django_mark_safe(context):
         ]
         if context.call_function_name in affected_functions:
             xss = context.node.args[0]
-            if not isinstance(xss, ast.Str):
+            if not utils.is_instance(xss, "Str"):
                 return check_risk(context.node)

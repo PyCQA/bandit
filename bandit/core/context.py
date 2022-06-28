@@ -2,8 +2,6 @@
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-import ast
-
 from bandit.core import utils
 
 
@@ -178,44 +176,44 @@ class Context:
         :param literal: The AST literal to convert
         :return: The value of the AST literal
         """
-        if isinstance(literal, ast.Num):
+        if utils.is_instance(literal, "Num"):
             literal_value = literal.n
 
-        elif isinstance(literal, ast.Str):
+        elif utils.is_instance(literal, "Str"):
             literal_value = literal.s
 
-        elif isinstance(literal, ast.List):
+        elif utils.is_instance(literal, "List"):
             return_list = list()
             for li in literal.elts:
                 return_list.append(self._get_literal_value(li))
             literal_value = return_list
 
-        elif isinstance(literal, ast.Tuple):
+        elif utils.is_instance(literal, "Tuple"):
             return_tuple = tuple()
             for ti in literal.elts:
                 return_tuple = return_tuple + (self._get_literal_value(ti),)
             literal_value = return_tuple
 
-        elif isinstance(literal, ast.Set):
+        elif utils.is_instance(literal, "Set"):
             return_set = set()
             for si in literal.elts:
                 return_set.add(self._get_literal_value(si))
             literal_value = return_set
 
-        elif isinstance(literal, ast.Dict):
+        elif utils.is_instance(literal, "Dict"):
             literal_value = dict(zip(literal.keys, literal.values))
 
-        elif isinstance(literal, ast.Ellipsis):
+        elif utils.is_instance(literal, "Ellipsis"):
             # what do we want to do with this?
             literal_value = None
 
-        elif isinstance(literal, ast.Name):
+        elif utils.is_instance(literal, "Name"):
             literal_value = literal.id
 
-        elif isinstance(literal, ast.NameConstant):
+        elif utils.is_instance(literal, "NameConstant"):
             literal_value = str(literal.value)
 
-        elif isinstance(literal, ast.Bytes):
+        elif utils.is_instance(literal, "Bytes"):
             literal_value = literal.s
 
         else:
