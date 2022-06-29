@@ -492,8 +492,8 @@ class FunctionalTests(testtools.TestCase):
     def test_yaml(self):
         """Test for `yaml.load`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
         }
         self.check_example("yaml_load.py", expect)
 
@@ -828,13 +828,13 @@ class FunctionalTests(testtools.TestCase):
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 10,
+                    "HIGH": 9,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 10,
+                    "HIGH": 9,
                 },
             }
         else:
@@ -842,14 +842,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 11,
+                    "MEDIUM": 10,
                     "HIGH": 0,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 11,
+                    "HIGH": 10,
                 },
             }
         self.check_example("hashlib_new_insecure_functions.py", expect)
