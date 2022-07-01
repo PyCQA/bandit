@@ -98,14 +98,6 @@ class FunctionalTests(testtools.TestCase):
                         expected = expect["issues"][criteria][rank]
                     self.assertEqual(expected, m["_totals"][label])
 
-    def test_binding(self):
-        """Test the bind-to-0.0.0.0 example."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-        }
-        self.check_example("binding.py", expect)
-
     def test_crypto_md5(self):
         """Test the `hashlib.md5` example."""
         if sys.version_info >= (3, 9):
@@ -171,30 +163,6 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         self.check_example("mark_safe.py", expect)
-
-    def test_exec(self):
-        """Test the `exec` example."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
-        }
-        self.check_example("exec.py", expect)
-
-    def test_hardcoded_passwords(self):
-        """Test for hard-coded passwords."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 14, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
-        }
-        self.check_example("hardcoded-passwords.py", expect)
-
-    def test_hardcoded_tmp(self):
-        """Test for hard-coded /tmp, /var/tmp, /dev/shm."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-        }
-        self.check_example("hardcoded-tmp.py", expect)
 
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
@@ -297,54 +265,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("init-py-test/subdirectory-okay.py", expect)
 
-    def test_os_chmod(self):
-        """Test setting file permissions."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 8},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 9},
-        }
-        self.check_example("os-chmod.py", expect)
-
-    def test_os_exec(self):
-        """Test for `os.exec*`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 8, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
-        }
-        self.check_example("os-exec.py", expect)
-
-    def test_os_popen(self):
-        """Test for `os.popen`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 8, "MEDIUM": 0, "HIGH": 1},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
-        }
-        self.check_example("os-popen.py", expect)
-
-    def test_os_spawn(self):
-        """Test for `os.spawn*`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 8, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
-        }
-        self.check_example("os-spawn.py", expect)
-
-    def test_os_startfile(self):
-        """Test for `os.startfile`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 3, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-        }
-        self.check_example("os-startfile.py", expect)
-
-    def test_os_system(self):
-        """Test for `os.system`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
-        }
-        self.check_example("os_system.py", expect)
-
     def test_pickle(self):
         """Test for the `pickle` module."""
         expect = {
@@ -369,14 +289,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("shelve_open.py", expect)
 
-    def test_popen_wrappers(self):
-        """Test the `popen2` and `commands` modules."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 7, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
-        }
-        self.check_example("popen_wrappers.py", expect)
-
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
@@ -384,22 +296,6 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
         }
         self.check_example("random_module.py", expect)
-
-    def test_requests_ssl_verify_disabled(self):
-        """Test for the `requests` library skipping verification."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 18},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 18},
-        }
-        self.check_example("requests-ssl-verify-disabled.py", expect)
-
-    def test_requests_without_timeout(self):
-        """Test for the `requests` library missing timeouts."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 14, "MEDIUM": 0, "HIGH": 0},
-        }
-        self.check_example("requests-missing-timeout.py", expect)
 
     def test_skip(self):
         """Test `#nosec` and `#noqa` comments."""
@@ -417,44 +313,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("skip.py", expect, ignore_nosec=True)
 
-    def test_sql_statements(self):
-        """Test for SQL injection through string building."""
-        expect = {
-            "SEVERITY": {
-                "UNDEFINED": 0,
-                "LOW": 0,
-                "MEDIUM": 14,
-                "HIGH": 0,
-            },
-            "CONFIDENCE": {
-                "UNDEFINED": 0,
-                "LOW": 8,
-                "MEDIUM": 6,
-                "HIGH": 0,
-            },
-        }
-        self.check_example("sql_statements.py", expect)
-
-    def test_ssl_insecure_version(self):
-        """Test for insecure SSL protocol versions."""
-        expect = {
-            "SEVERITY": {"LOW": 1, "MEDIUM": 10, "HIGH": 7},
-            "CONFIDENCE": {"LOW": 0, "MEDIUM": 11, "HIGH": 7},
-        }
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 10, "HIGH": 7},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 11, "HIGH": 7},
-        }
-        self.check_example("ssl-insecure-version.py", expect)
-
-    def test_subprocess_shell(self):
-        """Test for `subprocess.Popen` with `shell=True`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 21, "MEDIUM": 1, "HIGH": 11},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 32},
-        }
-        self.check_example("subprocess_shell.py", expect)
-
     def test_urlopen(self):
         """Test for dangerous URL opening."""
         expect = {
@@ -462,86 +320,6 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 14},
         }
         self.check_example("urlopen.py", expect)
-
-    def test_wildcard_injection(self):
-        """Test for wildcard injection in shell commands."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 10, "MEDIUM": 0, "HIGH": 4},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 5, "HIGH": 9},
-        }
-        self.check_example("wildcard-injection.py", expect)
-
-    def test_django_sql_injection(self):
-        """Test insecure extra functions on Django."""
-
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 11, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 11, "HIGH": 0},
-        }
-        self.check_example("django_sql_injection_extra.py", expect)
-
-    def test_django_sql_injection_raw(self):
-        """Test insecure raw functions on Django."""
-
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
-        }
-        self.check_example("django_sql_injection_raw.py", expect)
-
-    def test_yaml(self):
-        """Test for `yaml.load`."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-        }
-        self.check_example("yaml_load.py", expect)
-
-    def test_host_key_verification(self):
-        """Test for ignoring host key verification."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
-        }
-        self.check_example("no_host_key_verification.py", expect)
-
-    def test_jinja2_templating(self):
-        """Test jinja templating for potential XSS bugs."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 5},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 3},
-        }
-        self.check_example("jinja2_templating.py", expect)
-
-    def test_mako_templating(self):
-        """Test Mako templates for XSS."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("mako_templating.py", expect)
-
-    def test_django_xss_secure(self):
-        """Test false positives for Django XSS"""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
-        }
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
-        )
-        self.check_example("mark_safe_secure.py", expect)
-
-    def test_django_xss_insecure(self):
-        """Test for Django XSS via django.utils.safestring"""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 28, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 28},
-        }
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
-        )
-        self.check_example("mark_safe_insecure.py", expect)
 
     def test_xml(self):
         """Test xml vulnerabilities."""
@@ -609,7 +387,7 @@ class FunctionalTests(testtools.TestCase):
         self.check_example("httpoxy_twisted_script.py", expect)
         self.check_example("httpoxy_twisted_directory.py", expect)
 
-    def test_asserts(self):
+    def test_skips(self):
         """Test catching the use of assert."""
         test = next(
             x
@@ -638,66 +416,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("assert.py", expect)
 
-    def test_paramiko_injection(self):
-        """Test paramiko command execution."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-        }
-        self.check_example("paramiko_injection.py", expect)
-
-    def test_partial_path(self):
-        """Test process spawning with partial file paths."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 11, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 11},
-        }
-        self.check_example("partial_path_process.py", expect)
-
-    def test_try_except_continue(self):
-        """Test try, except, continue detection."""
-        test = next(
-            x
-            for x in self.b_mgr.b_ts.tests["ExceptHandler"]
-            if x.__name__ == "try_except_continue"
-        )
-
-        test._config = {"check_typed_exception": True}
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 3, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("try_except_continue.py", expect)
-
-        test._config = {"check_typed_exception": False}
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-        }
-        self.check_example("try_except_continue.py", expect)
-
-    def test_try_except_pass(self):
-        """Test try, except pass detection."""
-        test = next(
-            x
-            for x in self.b_mgr.b_ts.tests["ExceptHandler"]
-            if x.__name__ == "try_except_pass"
-        )
-
-        test._config = {"check_typed_exception": True}
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 3, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("try_except_pass.py", expect)
-
-        test._config = {"check_typed_exception": False}
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-        }
-        self.check_example("try_except_pass.py", expect)
-
     def test_metric_gathering(self):
         expect = {
             "nosec": 2,
@@ -711,14 +429,6 @@ class FunctionalTests(testtools.TestCase):
             "issues": {"CONFIDENCE": {"HIGH": 2}, "SEVERITY": {"LOW": 2}},
         }
         self.check_metrics("imports.py", expect)
-
-    def test_weak_cryptographic_key(self):
-        """Test for weak key sizes."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 8},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 16},
-        }
-        self.check_example("weak_cryptographic_key_sizes.py", expect)
 
     def test_multiline_code(self):
         """Test issues in multiline statements return code as expected."""
@@ -759,13 +469,6 @@ class FunctionalTests(testtools.TestCase):
         self.assertEqual("%i " % (lineno - 1), code_lines[0][:2])
         self.assertEqual("%i " % (lineno), code_lines[1][:2])
         self.assertEqual("%i " % (lineno + 1), code_lines[2][:2])
-
-    def test_flask_debug_true(self):
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-        }
-        self.check_example("flask_debug.py", expect)
 
     def test_nosec(self):
         expect = {
@@ -820,40 +523,6 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("unverified_context.py", expect)
 
-    def test_hashlib_new_insecure_functions(self):
-        """Test insecure hash functions created by `hashlib.new`."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 10,
-                    "HIGH": 0,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 10,
-                },
-            }
-        self.check_example("hashlib_new_insecure_functions.py", expect)
-
     def test_blacklist_pycrypto(self):
         """Test importing pycrypto module"""
         expect = {
@@ -880,11 +549,3 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 1},
         }
         self.check_example("pyghmi.py", expect)
-
-    def test_snmp_security_check(self):
-        """Test insecure and weak crypto usage of SNMP."""
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
-        }
-        self.check_example("snmp.py", expect)
