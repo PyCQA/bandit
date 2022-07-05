@@ -512,7 +512,8 @@ def main():
         args.context_lines = _log_option_source(
             parser.get_default("context_lines"),
             args.context_lines,
-            ini_options.get("number"),
+            (None if ini_options.get("number") is None
+                else int(ini_options.get("number"))),
             "max code lines output for issue",
         )
 
