@@ -86,7 +86,7 @@ class BanditCLIMainTests(testtools.TestCase):
     def test_get_options_from_ini_no_ini_path_no_target(self):
         # Test that no config options are loaded when no ini path or target
         # directory are provided
-        self.assertIsNone(bandit._get_options_from_ini(None, []))
+        self.assertEqual(bandit._get_options_from_ini(None, []), {})
 
     def test_get_options_from_ini_empty_directory_no_target(self):
         # Test that no config options are loaded when an empty directory is
@@ -96,10 +96,11 @@ class BanditCLIMainTests(testtools.TestCase):
 
     def test_get_options_from_ini_no_ini_path_no_bandit_files(self):
         # Test that no config options are loaded when no ini path is provided
-        # and the target directory contains no bandit config files (.bandit)
+        # and the target directory contains no bandit config files
         target_directory = self.useFixture(fixtures.TempDir()).path
-        self.assertIsNone(
-            bandit._get_options_from_ini(None, [target_directory])
+        self.assertEqual(
+            bandit._get_options_from_ini(None, [target_directory]),
+            {}
         )
 
     def test_get_options_from_ini_no_ini_path_multi_bandit_files(self):

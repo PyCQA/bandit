@@ -25,15 +25,6 @@ class RuntimeTests(testtools.TestCase):
             cmdlist.append(os.path.join(os.getcwd(), "examples", t))
         return self._test_runtime(cmdlist)
 
-    def test_no_arguments(self):
-        (retcode, output) = self._test_runtime(
-            [
-                "bandit",
-            ]
-        )
-        self.assertEqual(2, retcode)
-        self.assertIn("usage: bandit [-h]", output)
-
     def test_piped_input(self):
         with open("examples/imports.py") as infile:
             (retcode, output) = self._test_runtime(["bandit", "-"], infile)
@@ -88,6 +79,33 @@ class RuntimeTests(testtools.TestCase):
         )
         self.assertEqual(0, retcode)
         self.assertIn("Total lines of code: 1", output)
+        self.assertIn("Files skipped (0):", output)
+        self.assertIn("No issues identified.", output)
+
+    def test_recurse(self):
+        (retcode, output) = self._test_runtime(['bandit', '-r',
+                                                'examples/recursive1'])
+        self.assertEqual(0, retcode)
+        self.assertIn("Total lines of code: 2", output)
+        self.assertIn("Files skipped (0):", output)
+        self.assertIn("No issues identified.", output)
+
+    def test_ini_file_override(self):
+        """Tests that ini file properly overrides default values"""
+        (retcode, output) = self._test_runtime(
+            ['bandit', 'examples/ini_file_test_2', '--ini', 'examples/ini_file_test_2/setup.cfg'])
+        self.assertEqual(0, retcode)
+        self.assertIn("Total lines of code: 2", output)
+        self.assertIn("Files skipped (0):", output)
+        self.assertIn("No issues identified.", output)
+
+    def test_cli_before_ini_file(self):
+        """Tests that ini file doesn't override cli args"""
+        (retcode, output) = self._test_runtime(
+            ['bandit', '-r', 'examples/ini_file_test', '--ini', 'examples/ini_file_test/setup.cfg']
+        )
+        self.assertEqual(0, retcode)
+        self.assertIn("Total lines of code: 2", output)
         self.assertIn("Files skipped (0):", output)
         self.assertIn("No issues identified.", output)
 
