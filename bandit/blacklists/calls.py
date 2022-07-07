@@ -33,6 +33,8 @@ deserialize untrusted data, possible security issue.
 |      |                     | - shelve.open                      |           |
 |      |                     | - shelve.DbfilenameShelf           |           |
 |      |                     | - jsonpickle.decode                |           |
+|      |                     | - jsonpickle.unpickler.decode      |           |
+|      |                     | - jsonpickle.unpickler.Unpickler   |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -354,6 +356,8 @@ def gen_blacklist():
                 "shelve.open",
                 "shelve.DbfilenameShelf",
                 "jsonpickle.decode",
+                "jsonpickle.unpickler.decode",
+                "jsonpickle.unpickler.Unpickler",
             ],
             "Pickle and modules that wrap it can be unsafe when used to "
             "deserialize untrusted data, possible security issue.",
