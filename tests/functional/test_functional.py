@@ -369,6 +369,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("shelve_open.py", expect)
 
+    def test_jsonpickle(self):
+        """Test for the `jsonpickle` module."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+        }
+        self.check_example("jsonpickle.py", expect)
+
     def test_popen_wrappers(self):
         """Test the `popen2` and `commands` modules."""
         expect = {
