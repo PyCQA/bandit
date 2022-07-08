@@ -24,9 +24,6 @@ deserialize untrusted data, possible security issue.
 | B301 | pickle              | - pickle.loads                     | Medium    |
 |      |                     | - pickle.load                      |           |
 |      |                     | - pickle.Unpickler                 |           |
-|      |                     | - cPickle.loads                    |           |
-|      |                     | - cPickle.load                     |           |
-|      |                     | - cPickle.Unpickler                |           |
 |      |                     | - dill.loads                       |           |
 |      |                     | - dill.load                        |           |
 |      |                     | - dill.Unpickler                   |           |
@@ -347,9 +344,6 @@ def gen_blacklist():
                 "pickle.loads",
                 "pickle.load",
                 "pickle.Unpickler",
-                "cPickle.loads",
-                "cPickle.load",
-                "cPickle.Unpickler",
                 "dill.loads",
                 "dill.load",
                 "dill.Unpickler",
