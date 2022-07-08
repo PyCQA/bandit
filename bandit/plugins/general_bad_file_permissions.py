@@ -49,6 +49,9 @@ file is set world write or executable. Warnings are given with HIGH confidence.
 .. versionchanged:: 1.7.3
     CWE information added
 
+.. versionchanged:: 1.7.5
+    Added checks for S_IWGRP and S_IXOTH
+
 """  # noqa: E501
 import stat
 
@@ -58,10 +61,12 @@ from bandit.core import test_properties as test
 
 
 def _stat_is_dangerous(mode):
-    return (mode & stat.S_IWOTH
-            or mode & stat.S_IWGRP
-            or mode & stat.S_IXGRP
-            or mode & stat.S_IXOTH)
+    return (
+        mode & stat.S_IWOTH
+        or mode & stat.S_IWGRP
+        or mode & stat.S_IXGRP
+        or mode & stat.S_IXOTH
+    )
 
 
 @test.checks("Call")
