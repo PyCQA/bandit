@@ -285,17 +285,12 @@ class FunctionalTests(testtools.TestCase):
         self.check_example('init-py-test/subdirectory-okay.py', expect)
 
     def test_os_chmod(self):
-        '''Test setting file permissions.'''
-        filename = 'os-chmod-{}.py'
-        if six.PY2:
-            filename = filename.format('py2')
-        else:
-            filename = filename.format('py3')
+        """Test setting file permissions."""
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 8},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 11},
         }
-        self.check_example(filename, expect)
+        self.check_example("os-chmod.py", expect)
 
     def test_os_exec(self):
         '''Test for `os.exec*`.'''
