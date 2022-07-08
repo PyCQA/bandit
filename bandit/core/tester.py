@@ -67,6 +67,9 @@ class BanditTester:
                         result.lineno = temp_context["lineno"]
                     result.linerange = temp_context["linerange"]
                     result.col_offset = temp_context["col_offset"]
+                    result.end_col_offset = temp_context.get(
+                        "end_col_offset", 0
+                    )
                     result.test = name
                     if result.test_id == "":
                         result.test_id = test._test_id
