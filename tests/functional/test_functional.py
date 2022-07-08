@@ -380,7 +380,7 @@ class FunctionalTests(testtools.TestCase):
     def test_pandas_read_pickle(self):
         """Test for the `pandas.read_pickle` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0}
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         self.check_example("pandas_read_pickle.py", expect)
