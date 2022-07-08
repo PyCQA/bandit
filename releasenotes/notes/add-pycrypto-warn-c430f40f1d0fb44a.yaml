@@ -1,6 +1,0 @@
----
-features:
-  - |
-    PyCrypto library is no longer actively maintained and should be replaced
-    with ``cryptography`` library. A new rule is added to detect and warn the
-    import and use of ``pycrypto`` module.

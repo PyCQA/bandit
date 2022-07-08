@@ -1,5 +1,5 @@
-Bandit Report Formatters
-========================
+Report Formatters
+=================
 
 Bandit supports many different formatters to output various security issues in
 python code. These formatters are created as plugins and new ones can be
