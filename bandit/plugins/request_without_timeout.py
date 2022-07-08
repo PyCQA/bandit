@@ -38,7 +38,7 @@ Bandit will return a MEDIUM severity error.
 
 .. seealso::
 
- - https://2.python-requests.org/en/master/user/quickstart/#timeouts
+ - https://requests.readthedocs.io/en/latest/user/advanced/#timeouts
 
 .. versionadded:: 1.7.5
 
