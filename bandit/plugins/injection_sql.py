@@ -53,13 +53,13 @@ If so, a MEDIUM issue is reported. For example:
     CWE information added
 
 """  # noqa: E501
-import ast
 import re
 
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 from bandit.core import utils
+
 
 SIMPLE_SQL_RE = re.compile(
     r"(select\s.*from\s|"
@@ -78,24 +78,24 @@ def _evaluate_ast(node):
     wrapper = None
     statement = ""
 
-    if isinstance(node._bandit_parent, ast.BinOp):
+    if utils.is_instance(node._bandit_parent, "BinOp"):
         out = utils.concat_string(node, node._bandit_parent)
         wrapper = out[0]._bandit_parent
         statement = out[1]
     elif (
-        isinstance(node._bandit_parent, ast.Attribute)
+        utils.is_instance(node._bandit_parent, "Attribute")
         and node._bandit_parent.attr == "format"
     ):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node._bandit_parent._bandit_parent._bandit_parent
-    elif hasattr(ast, "JoinedStr") and isinstance(
-        node._bandit_parent, ast.JoinedStr
+    elif utils.check_ast_node("JoinedStr") and utils.is_instance(
+        node._bandit_parent, "JoinedStr"
     ):
         statement = node.s
         wrapper = node._bandit_parent._bandit_parent
 
-    if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
+    if utils.is_instance(wrapper, "Call"):  # wrapped in "execute" call?
         names = ["execute", "executemany"]
         name = utils.get_called_name(wrapper)
         return (name in names, statement)

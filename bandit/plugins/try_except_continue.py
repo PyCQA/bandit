@@ -74,11 +74,10 @@ following would not generate a warning if the configuration option
     CWE information added
 
 """
-import ast
-
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+from bandit.core import utils
 
 
 def gen_config(name):
@@ -99,7 +98,7 @@ def try_except_continue(context, config):
         ):
             return
 
-        if isinstance(node.body[0], ast.Continue):
+        if utils.is_instance(node.body[0], "Continue"):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,

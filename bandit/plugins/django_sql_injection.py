@@ -2,17 +2,16 @@
 # Copyright (C) 2018 [Victor Torre](https://github.com/ehooo)
 #
 # SPDX-License-Identifier: Apache-2.0
-import ast
-
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+from bandit.core import utils
 
 
 def keywords2dict(keywords):
     kwargs = {}
     for node in keywords:
-        if isinstance(node, ast.keyword):
+        if utils.is_instance(node, "keyword"):
             kwargs[node.arg] = node.value
     return kwargs
 
@@ -66,23 +65,23 @@ def django_extra_used(context):
         insecure = False
         for key in ["where", "tables"]:
             if key in kwargs:
-                if isinstance(kwargs[key], ast.List):
+                if utils.is_instance(kwargs[key], "List"):
                     for val in kwargs[key].elts:
-                        if not isinstance(val, ast.Str):
+                        if not utils.is_instance(val, "Str"):
                             insecure = True
                             break
                 else:
                     insecure = True
                     break
         if not insecure and "select" in kwargs:
-            if isinstance(kwargs["select"], ast.Dict):
+            if utils.is_instance(kwargs["select"], "Dict"):
                 for k in kwargs["select"].keys:
-                    if not isinstance(k, ast.Str):
+                    if not utils.is_instance(k, "Str"):
                         insecure = True
                         break
                 if not insecure:
                     for v in kwargs["select"].values:
-                        if not isinstance(v, ast.Str):
+                        if not utils.is_instance(v, "Str"):
                             insecure = True
                             break
             else:
@@ -130,7 +129,7 @@ def django_rawsql_used(context):
     if context.is_module_imported_like("django.db.models"):
         if context.call_function_name == "RawSQL":
             sql = context.node.args[0]
-            if not isinstance(sql, ast.Str):
+            if not utils.is_instance(sql, "Str"):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.MEDIUM,

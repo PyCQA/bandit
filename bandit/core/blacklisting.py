@@ -2,10 +2,10 @@
 # Copyright 2016 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-import ast
 import fnmatch
 
 from bandit.core import issue
+from bandit.core import utils
 
 
 def report_issue(check, name):
@@ -34,9 +34,9 @@ def blacklist(context, config):
 
     if node_type == "Call":
         func = context.node.func
-        if isinstance(func, ast.Name) and func.id == "__import__":
+        if utils.is_instance(func, "Name") and func.id == "__import__":
             if len(context.node.args):
-                if isinstance(context.node.args[0], ast.Str):
+                if utils.is_instance(context.node.args[0], "Str"):
                     name = context.node.args[0].s
                 else:
                     # TODO(??): import through a variable, need symbol tab

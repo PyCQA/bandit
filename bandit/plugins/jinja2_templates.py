@@ -68,6 +68,7 @@ import ast
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+from bandit.core import utils
 
 
 @test.checks("Call")
@@ -79,7 +80,7 @@ def jinja2_autoescape_false(context):
         func = qualname_list[-1]
         if "jinja2" in qualname_list and func == "Environment":
             for node in ast.walk(context.node):
-                if isinstance(node, ast.keyword):
+                if utils.is_instance(node, "keyword"):
                     # definite autoescape = False
                     if getattr(node, "arg", None) == "autoescape" and (
                         getattr(node.value, "id", None) == "False"
@@ -105,7 +106,7 @@ def jinja2_autoescape_false(context):
                             return
                         # Check if select_autoescape function is used.
                         elif (
-                            isinstance(value, ast.Call)
+                            utils.is_instance(value, "Call")
                             and getattr(value.func, "id", None)
                             == "select_autoescape"
                         ):
