@@ -35,6 +35,7 @@ deserialize untrusted data, possible security issue.
 |      |                     | - jsonpickle.decode                |           |
 |      |                     | - jsonpickle.unpickler.decode      |           |
 |      |                     | - jsonpickle.unpickler.Unpickler   |           |
+|      |                     | - pandas.read_pickle               |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -358,6 +359,7 @@ def gen_blacklist():
                 "jsonpickle.decode",
                 "jsonpickle.unpickler.decode",
                 "jsonpickle.unpickler.Unpickler",
+                "pandas.read_pickle",
             ],
             "Pickle and modules that wrap it can be unsafe when used to "
             "deserialize untrusted data, possible security issue.",
