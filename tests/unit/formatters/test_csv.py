@@ -23,6 +23,8 @@ class CsvFormatterTests(testtools.TestCase):
             "filename": self.tmp_fname,
             "lineno": 4,
             "linerange": [4],
+            "col_offset": 8,
+            "end_col_offset": 16,
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
@@ -36,6 +38,8 @@ class CsvFormatterTests(testtools.TestCase):
         self.issue.fname = self.context["filename"]
         self.issue.lineno = self.context["lineno"]
         self.issue.linerange = self.context["linerange"]
+        self.issue.col_offset = self.context["col_offset"]
+        self.issue.end_col_offset = self.context["end_col_offset"]
         self.issue.test = self.check_name
 
         self.manager.results.append(self.issue)
@@ -62,3 +66,7 @@ class CsvFormatterTests(testtools.TestCase):
             )
             self.assertEqual(self.check_name, data["test_name"])
             self.assertIsNotNone(data["more_info"])
+            self.assertEqual(str(self.issue.col_offset), data["col_offset"])
+            self.assertEqual(
+                str(self.issue.end_col_offset), data["end_col_offset"]
+            )

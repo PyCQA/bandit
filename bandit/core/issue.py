@@ -108,7 +108,7 @@ class Issue:
     def __str__(self):
         return (
             "Issue: '%s' from %s:%s: CWE: %s, Severity: %s Confidence: "
-            "%s at %s:%i"
+            "%s at %s:%i:%i"
         ) % (
             self.text,
             self.test_id,
@@ -118,6 +118,7 @@ class Issue:
             self.confidence,
             self.fname,
             self.lineno,
+            self.col_offset,
         )
 
     def __eq__(self, other):
