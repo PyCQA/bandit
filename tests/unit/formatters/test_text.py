@@ -36,11 +36,12 @@ class TextFormatterTests(testtools.TestCase):
                     _issue.severity.capitalize(),
                     _issue.confidence.capitalize(),
                 ),
-                "{}   Location: {}:{}:{}".format(
-                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
-                ),
+                f"{_indent_val}   CWE: {_issue.cwe}",
                 "{}   More Info: {}".format(
                     _indent_val, docs_utils.get_url(_issue.test_id)
+                ),
+                "{}   Location: {}:{}:{}".format(
+                    _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
                 ),
             ]
             if _code:
@@ -106,7 +107,11 @@ class TextFormatterTests(testtools.TestCase):
 
         get_issue_list.return_value = [issue_a, issue_b]
 
-        self.manager.metrics.data["_totals"] = {"loc": 1000, "nosec": 50}
+        self.manager.metrics.data["_totals"] = {
+            "loc": 1000,
+            "nosec": 50,
+            "skipped_tests": 0,
+        }
         for category in ["SEVERITY", "CONFIDENCE"]:
             for level in ["UNDEFINED", "LOW", "MEDIUM", "HIGH"]:
                 self.manager.metrics.data["_totals"][f"{category}.{level}"] = 1
@@ -143,6 +148,7 @@ class TextFormatterTests(testtools.TestCase):
                 "binding.py (score: ",
                 "CONFIDENCE: 1",
                 "SEVERITY: 1",
+                "CWE: %s" % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)),
                 "Files excluded (1):",
                 "def.py",
                 "Undefined: 1",
@@ -151,6 +157,8 @@ class TextFormatterTests(testtools.TestCase):
                 "High: 1",
                 "Total lines skipped ",
                 "(#nosec): 50",
+                "Total potential issues skipped due to specifically being ",
+                "disabled (e.g., #nosec BXXX): 0",
                 "Total issues (by severity)",
                 "Total issues (by confidence)",
                 "Files skipped (1)",
@@ -202,8 +210,12 @@ class TextFormatterTests(testtools.TestCase):
             output_str.assert_has_calls(calls, any_order=True)
 
 
-def _get_issue_instance(severity=bandit.MEDIUM, confidence=bandit.MEDIUM):
-    new_issue = issue.Issue(severity, confidence, "Test issue")
+def _get_issue_instance(
+    severity=bandit.MEDIUM,
+    cwe=issue.Cwe.MULTIPLE_BINDS,
+    confidence=bandit.MEDIUM,
+):
+    new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "code.py"
     new_issue.test = "bandit_plugin"
     new_issue.lineno = 1

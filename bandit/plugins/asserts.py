@@ -34,6 +34,7 @@ use assert statements in test cases.
     >> Issue: Use of assert detected. The enclosed code will be removed when
        compiling to optimised byte code.
        Severity: Low   Confidence: High
+       CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
        Location: ./examples/assert.py:1
     1 assert logged_in
     2 display_assets()
@@ -43,13 +44,18 @@ use assert statements in test cases.
  - https://bugs.launchpad.net/juniperopenstack/+bug/1456193
  - https://bugs.launchpad.net/heat/+bug/1397883
  - https://docs.python.org/3/reference/simple_stmts.html#the-assert-statement
+ - https://cwe.mitre.org/data/definitions/703.html
 
 .. versionadded:: 0.11.0
+
+.. versionchanged:: 1.7.3
+    CWE information added
 
 """
 import fnmatch
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -69,6 +75,7 @@ def assert_used(context, config):
     return bandit.Issue(
         severity=bandit.LOW,
         confidence=bandit.HIGH,
+        cwe=issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
         text=(
             "Use of assert detected. The enclosed code "
             "will be removed when compiling to optimised byte code."

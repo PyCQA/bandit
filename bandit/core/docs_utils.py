@@ -2,11 +2,13 @@
 # Copyright 2016 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-# where our docs are hosted
-BASE_URL = "https://bandit.readthedocs.io/en/latest/"
+import bandit
 
 
 def get_url(bid):
+    # where our docs are hosted
+    base_url = f"https://bandit.readthedocs.io/en/{bandit.__version__}/"
+
     # NOTE(tkelsey): for some reason this import can't be found when stevedore
     # loads up the formatter plugin that imports this file. It is available
     # later though.
@@ -15,7 +17,7 @@ def get_url(bid):
     info = extension_loader.MANAGER.plugins_by_id.get(bid)
     if info is not None:
         return "{}plugins/{}_{}.html".format(
-            BASE_URL,
+            base_url,
             bid.lower(),
             info.plugin.__name__,
         )
@@ -51,6 +53,6 @@ def get_url(bid):
                 kind="imports", id=info["id"], name=info["name"]
             )
 
-        return BASE_URL + ext.lower()
+        return base_url + ext.lower()
 
-    return BASE_URL  # no idea, give the docs main page
+    return base_url  # no idea, give the docs main page

@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -85,6 +86,7 @@ def ssl_with_bad_version(context, config):
         >> Issue: ssl.wrap_socket call with insecure SSL/TLS protocol version
         identified, security issue.
            Severity: High   Confidence: High
+           CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
            Location: ./examples/ssl-insecure-version.py:13
         12  # strict tests
         13  ssl.wrap_socket(ssl_version=ssl.PROTOCOL_SSLv3)
@@ -97,8 +99,13 @@ def ssl_with_bad_version(context, config):
      - https://heartbleed.com/
      - https://en.wikipedia.org/wiki/POODLE
      - https://security.openstack.org/guidelines/dg_move-data-securely.html
+     - https://cwe.mitre.org/data/definitions/327.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """
     bad_ssl_versions = get_bad_proto_versions(config)
     if context.call_function_name_qual == "ssl.wrap_socket":
@@ -106,6 +113,7 @@ def ssl_with_bad_version(context, config):
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.BROKEN_CRYPTO,
                 text="ssl.wrap_socket call with insecure SSL/TLS protocol "
                 "version identified, security issue.",
                 lineno=context.get_lineno_for_call_arg("ssl_version"),
@@ -115,6 +123,7 @@ def ssl_with_bad_version(context, config):
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.BROKEN_CRYPTO,
                 text="SSL.Context call with insecure SSL/TLS protocol "
                 "version identified, security issue.",
                 lineno=context.get_lineno_for_call_arg("method"),
@@ -133,6 +142,7 @@ def ssl_with_bad_version(context, config):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
+                cwe=issue.Cwe.BROKEN_CRYPTO,
                 text="Function call with insecure SSL/TLS protocol "
                 "identified, possible security issue.",
                 lineno=lineno,
@@ -167,6 +177,7 @@ def ssl_with_bad_defaults(context, config):
         >> Issue: Function definition identified with insecure SSL/TLS protocol
         version by default, possible security issue.
            Severity: Medium   Confidence: Medium
+           CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
            Location: ./examples/ssl-insecure-version.py:28
         27
         28  def open_ssl_socket(version=SSL.SSLv2_METHOD):
@@ -181,6 +192,10 @@ def ssl_with_bad_defaults(context, config):
      - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """
 
     bad_ssl_versions = get_bad_proto_versions(config)
@@ -190,6 +205,7 @@ def ssl_with_bad_defaults(context, config):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
+                cwe=issue.Cwe.BROKEN_CRYPTO,
                 text="Function definition identified with insecure SSL/TLS "
                 "protocol version by default, possible security "
                 "issue.",
@@ -224,6 +240,7 @@ def ssl_with_no_version(context):
         specified, the default SSLv23 could be insecure, possible security
         issue.
            Severity: Low   Confidence: Medium
+           CWE: CWE-327 (https://cwe.mitre.org/data/definitions/327.html)
            Location: ./examples/ssl-insecure-version.py:23
         22
         23  ssl.wrap_socket()
@@ -238,6 +255,10 @@ def ssl_with_no_version(context):
      - https://security.openstack.org/guidelines/dg_move-data-securely.html
 
     .. versionadded:: 0.9.0
+
+    .. versionchanged:: 1.7.3
+        CWE information added
+
     """
     if context.call_function_name_qual == "ssl.wrap_socket":
         if context.check_call_arg_value("ssl_version") is None:
@@ -248,6 +269,7 @@ def ssl_with_no_version(context):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.MEDIUM,
+                cwe=issue.Cwe.BROKEN_CRYPTO,
                 text="ssl.wrap_socket call with no SSL/TLS protocol version "
                 "specified, the default SSLv23 could be insecure, "
                 "possible security issue.",

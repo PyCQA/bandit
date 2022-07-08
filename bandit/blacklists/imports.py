@@ -212,8 +212,20 @@ of pyca/cryptography which has more support among the Python community.
 |      |                     | - Cryptodome.Util                  |           |
 +------+---------------------+------------------------------------+-----------+
 
+B415: import_pyghmi
+-------------------
+An IPMI-related module is being imported. IPMI is considered insecure. Use
+an encrypted protocol.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B415 | import_pyghmi       | - pyghmi                           | high      |
++------+---------------------+------------------------------------+-----------+
+
 """
 from bandit.blacklists import utils
+from bandit.core import issue
 
 
 def gen_blacklist():
@@ -232,6 +244,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_telnetlib",
             "B401",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
             ["telnetlib"],
             "A telnet-related module is being imported.  Telnet is "
             "considered insecure. Use SSH or some other encrypted protocol.",
@@ -243,6 +256,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_ftplib",
             "B402",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
             ["ftplib"],
             "A FTP-related module is being imported.  FTP is considered "
             "insecure. Use SSH/SFTP/SCP or some other encrypted protocol.",
@@ -254,6 +268,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_pickle",
             "B403",
+            issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
             ["pickle", "cPickle", "dill", "shelve"],
             "Consider possible security implications associated with "
             "{name} module.",
@@ -265,6 +280,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_subprocess",
             "B404",
+            issue.Cwe.OS_COMMAND_INJECTION,
             ["subprocess"],
             "Consider possible security implications associated with the "
             "subprocess module.",
@@ -291,6 +307,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_xml_etree",
             "B405",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.etree.cElementTree", "xml.etree.ElementTree"],
             xml_msg,
             "LOW",
@@ -299,7 +316,12 @@ def gen_blacklist():
 
     sets.append(
         utils.build_conf_dict(
-            "import_xml_sax", "B406", ["xml.sax"], xml_msg, "LOW"
+            "import_xml_sax",
+            "B406",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
+            ["xml.sax"],
+            xml_msg,
+            "LOW",
         )
     )
 
@@ -307,6 +329,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_xml_expat",
             "B407",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.dom.expatbuilder"],
             xml_msg,
             "LOW",
@@ -315,24 +338,42 @@ def gen_blacklist():
 
     sets.append(
         utils.build_conf_dict(
-            "import_xml_minidom", "B408", ["xml.dom.minidom"], xml_msg, "LOW"
+            "import_xml_minidom",
+            "B408",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
+            ["xml.dom.minidom"],
+            xml_msg,
+            "LOW",
         )
     )
 
     sets.append(
         utils.build_conf_dict(
-            "import_xml_pulldom", "B409", ["xml.dom.pulldom"], xml_msg, "LOW"
+            "import_xml_pulldom",
+            "B409",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
+            ["xml.dom.pulldom"],
+            xml_msg,
+            "LOW",
         )
     )
 
     sets.append(
-        utils.build_conf_dict("import_lxml", "B410", ["lxml"], lxml_msg, "LOW")
+        utils.build_conf_dict(
+            "import_lxml",
+            "B410",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
+            ["lxml"],
+            lxml_msg,
+            "LOW",
+        )
     )
 
     sets.append(
         utils.build_conf_dict(
             "import_xmlrpclib",
             "B411",
+            issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xmlrpclib"],
             "Using {name} to parse untrusted XML data is known to be "
             "vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() "
@@ -346,6 +387,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_httpoxy",
             "B412",
+            issue.Cwe.IMPROPER_ACCESS_CONTROL,
             [
                 "wsgiref.handlers.CGIHandler",
                 "twisted.web.twcgi.CGIScript",
@@ -361,6 +403,7 @@ def gen_blacklist():
         utils.build_conf_dict(
             "import_pycrypto",
             "B413",
+            issue.Cwe.BROKEN_CRYPTO,
             [
                 "Crypto.Cipher",
                 "Crypto.Hash",
@@ -374,6 +417,18 @@ def gen_blacklist():
             "The pyCrypto library and its module {name} are no longer actively"
             " maintained and have been deprecated. "
             "Consider using pyca/cryptography library.",
+            "HIGH",
+        )
+    )
+
+    sets.append(
+        utils.build_conf_dict(
+            "import_pyghmi",
+            "B415",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
+            ["pyghmi"],
+            "An IPMI-related module is being imported. IPMI is considered "
+            "insecure. Use an encrypted protocol.",
             "HIGH",
         )
     )

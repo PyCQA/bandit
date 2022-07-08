@@ -55,6 +55,7 @@ would not generate a warning if the configuration option
 
     >> Issue: Try, Except, Pass detected.
        Severity: Low   Confidence: High
+       CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
        Location: ./examples/try_except_pass.py:4
     3        a = 1
     4    except:
@@ -63,13 +64,18 @@ would not generate a warning if the configuration option
 .. seealso::
 
  - https://security.openstack.org
+ - https://cwe.mitre.org/data/definitions/703.html
 
 .. versionadded:: 0.13.0
+
+.. versionchanged:: 1.7.3
+    CWE information added
 
 """
 import ast
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -95,5 +101,6 @@ def try_except_pass(context, config):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
                 text=("Try, Except, Pass detected."),
             )

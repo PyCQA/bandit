@@ -1,4 +1,4 @@
-exclude: ^(examples|tools|doc|releasenotes)
+exclude: ^(examples|tools|doc)
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.0.1
@@ -11,17 +11,17 @@ repos:
   rev: v2.6.0
   hooks:
   - id: reorder-python-imports
-    args: [--application-directories, '.:src', --py36-plus]
+    args: [--application-directories, '.:src', --py37-plus]
 - repo: https://github.com/psf/black
-  rev: 21.10b0
+  rev: 22.3.0
   hooks:
   - id: black
-    args: [--line-length=79, --target-version=py36]
+    args: [--line-length=79, --target-version=py37]
 - repo: https://github.com/asottile/pyupgrade
   rev: v2.29.0
   hooks:
   - id: pyupgrade
-    args: [--py36-plus]
+    args: [--py37-plus]
 - repo: https://github.com/jorisroovers/gitlint
   rev: v0.16.0
   hooks:

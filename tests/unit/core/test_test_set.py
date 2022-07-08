@@ -9,6 +9,7 @@ from stevedore import extension
 
 from bandit.blacklists import utils
 from bandit.core import extension_loader
+from bandit.core import issue
 from bandit.core import test_properties as test
 from bandit.core import test_set
 
@@ -21,6 +22,7 @@ def test_plugin():
         utils.build_conf_dict(
             "telnet",
             "B401",
+            issue.Cwe.CLEARTEXT_TRANSMISSION,
             ["telnetlib"],
             "A telnet-related module is being imported.  Telnet is "
             "considered insecure. Use SSH or some other encrypted protocol.",
@@ -32,6 +34,7 @@ def test_plugin():
         utils.build_conf_dict(
             "marshal",
             "B302",
+            issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
             ["marshal.load", "marshal.loads"],
             "Deserialization with the marshal module is possibly dangerous.",
         )
@@ -147,6 +150,7 @@ class BanditTestSetTests(testtools.TestCase):
             utils.build_conf_dict(
                 "marshal",
                 "B302",
+                issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
                 ["marshal.load", "marshal.loads"],
                 (
                     "Deserialization with the marshal module is possibly "

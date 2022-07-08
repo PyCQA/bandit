@@ -265,7 +265,15 @@ def main():
         ' not be listed in "low".',
         choices=["all", "low", "medium", "high"],
     )
-    output_format = "screen" if sys.stdout.isatty() else "txt"
+    output_format = (
+        "screen"
+        if (
+            sys.stdout.isatty()
+            and os.getenv("NO_COLOR") is None
+            and os.getenv("TERM") != "dumb"
+        )
+        else "txt"
+    )
     parser.add_argument(
         "-f",
         "--format",
@@ -504,7 +512,7 @@ def main():
         args.context_lines = _log_option_source(
             parser.get_default("context_lines"),
             args.context_lines,
-            ini_options.get("number"),
+            int(ini_options.get("number") or 0) or None,
             "max code lines output for issue",
         )
 
@@ -586,8 +594,9 @@ def main():
         )
 
     if not args.targets:
-        LOG.error("No targets found in CLI or ini files, exiting.")
+        parser.print_usage()
         sys.exit(2)
+
     # if the log format string was set in the options, reinitialize
     if b_conf.get_option("log_format"):
         log_format = b_conf.get_option("log_format")

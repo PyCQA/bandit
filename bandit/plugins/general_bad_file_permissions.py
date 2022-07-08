@@ -23,6 +23,7 @@ set world writable. Warnings are given with HIGH confidence.
 
     >> Issue: Probable insecure usage of temp file/directory.
        Severity: Medium   Confidence: Medium
+       CWE: CWE-732 (https://cwe.mitre.org/data/definitions/732.html)
        Location: ./examples/os-chmod.py:15
     14  os.chmod('/etc/hosts', 0o777)
     15  os.chmod('/tmp/oh_hai', 0x1ff)
@@ -30,6 +31,7 @@ set world writable. Warnings are given with HIGH confidence.
 
     >> Issue: Chmod setting a permissive mask 0777 on file (key_file).
        Severity: High   Confidence: High
+       CWE: CWE-732 (https://cwe.mitre.org/data/definitions/732.html)
        Location: ./examples/os-chmod.py:17
     16  os.chmod('/etc/passwd', stat.S_IRWXU)
     17  os.chmod(key_file, 0o777)
@@ -40,13 +42,18 @@ set world writable. Warnings are given with HIGH confidence.
  - https://security.openstack.org/guidelines/dg_apply-restrictive-file-permissions.html
  - https://en.wikipedia.org/wiki/File_system_permissions
  - https://security.openstack.org
+ - https://cwe.mitre.org/data/definitions/732.html
 
 .. versionadded:: 0.9.0
+
+.. versionchanged:: 1.7.3
+    CWE information added
 
 """  # noqa: E501
 import stat
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -74,6 +81,7 @@ def set_bad_file_permissions(context):
                 return bandit.Issue(
                     severity=sev_level,
                     confidence=bandit.HIGH,
+                    cwe=issue.Cwe.INCORRECT_PERMISSION_ASSIGNMENT,
                     text="Chmod setting a permissive mask %s on file (%s)."
                     % (oct(mode), filename),
                 )

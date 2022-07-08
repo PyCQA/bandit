@@ -112,6 +112,7 @@ This formatter outputs the issues as HTML.
         <b>Test ID:</b> B506<br>
         <b>Severity: </b>MEDIUM<br>
         <b>Confidence: </b>HIGH<br>
+        <b>CWE: </b>CWE-20 (https://cwe.mitre.org/data/definitions/20.html)<br>
         <b>File: </b><a href="examples/yaml_load.py"
         target="_blank">examples/yaml_load.py</a> <br>
         <b>More info: </b><a href="https://bandit.readthedocs.io/en/latest/
@@ -137,6 +138,12 @@ This formatter outputs the issues as HTML.
     </html>
 
 .. versionadded:: 0.14.0
+
+.. versionchanged:: 1.5.0
+    New field `more_info` added to output
+
+.. versionchanged:: 1.7.3
+    New field `CWE` added to output
 
 """
 import logging
@@ -259,7 +266,8 @@ pre {
     <b>Test ID:</b> {test_id}<br>
     <b>Severity: </b>{severity}<br>
     <b>Confidence: </b>{confidence}<br>
-    <b>File: </b><a href="{path}" target="_blank">{path}</a> <br>
+    <b>CWE: </b><a href="{cwe_link}" target="_blank">CWE-{cwe.id}</a><br>
+    <b>File: </b><a href="{path}" target="_blank">{path}</a><br>
     <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
@@ -358,6 +366,8 @@ pre {
             test_text=issue.text,
             severity=issue.severity,
             confidence=issue.confidence,
+            cwe=issue.cwe,
+            cwe_link=issue.cwe.link(),
             path=issue.fname,
             code=code,
             candidates=candidates,

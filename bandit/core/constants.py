@@ -5,9 +5,6 @@
 # default plugin name pattern
 plugin_name_pattern = "*.py"
 
-# default progress increment
-progress_increment = 50
-
 RANKING = ["UNDEFINED", "LOW", "MEDIUM", "HIGH"]
 RANKING_VALUES = {"UNDEFINED": 1, "LOW": 3, "MEDIUM": 5, "HIGH": 10}
 CRITERIA = [("SEVERITY", "UNDEFINED"), ("CONFIDENCE", "UNDEFINED")]

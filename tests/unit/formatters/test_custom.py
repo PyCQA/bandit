@@ -22,10 +22,13 @@ class CustomFormatterTests(testtools.TestCase):
             "lineno": 4,
             "linerange": [4],
             "col_offset": 30,
+            "end_col_offset": 38,
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
-            bandit.MEDIUM, bandit.MEDIUM, "Possible binding to all interfaces."
+            bandit.MEDIUM,
+            bandit.MEDIUM,
+            text="Possible binding to all interfaces.",
         )
         self.manager.out_file = self.tmp_fname
 
@@ -33,6 +36,7 @@ class CustomFormatterTests(testtools.TestCase):
         self.issue.lineno = self.context["lineno"]
         self.issue.linerange = self.context["linerange"]
         self.issue.col_offset = self.context["col_offset"]
+        self.issue.end_col_offset = self.context["end_col_offset"]
         self.issue.test = self.check_name
 
         self.manager.results.append(self.issue)
@@ -44,13 +48,18 @@ class CustomFormatterTests(testtools.TestCase):
                 tmp_file,
                 self.issue.severity,
                 self.issue.confidence,
-                template="{line},{col},{severity},{msg}",
+                template="{line},{col},{end_col},{severity},{msg}",
             )
 
         with open(self.tmp_fname) as f:
-            reader = csv.DictReader(f, ["line", "col", "severity", "message"])
+            reader = csv.DictReader(
+                f, ["line", "col", "end_col", "severity", "message"]
+            )
             data = next(reader)
             self.assertEqual(str(self.context["lineno"]), data["line"])
             self.assertEqual(str(self.context["col_offset"]), data["col"])
+            self.assertEqual(
+                str(self.context["end_col_offset"]), data["end_col"]
+            )
             self.assertEqual(self.issue.severity, data["severity"])
             self.assertEqual(self.issue.text, data["message"])

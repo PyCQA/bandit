@@ -5,6 +5,7 @@
 import ast
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -21,14 +22,30 @@ def keywords2dict(keywords):
 def django_extra_used(context):
     """**B610: Potential SQL injection on extra function**
 
+    :Example:
+
+    .. code-block:: none
+
+        >> Issue: [B610:django_extra_used] Use of extra potential SQL attack vector.
+           Severity: Medium Confidence: Medium
+           CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+           Location: examples/django_sql_injection_extra.py:29:0
+           More Info: https://bandit.readthedocs.io/en/latest/plugins/b610_django_extra_used.html
+        28  tables_str = 'django_content_type" WHERE "auth_user"."username"="admin'
+        29  User.objects.all().extra(tables=[tables_str]).distinct()
+
     .. seealso::
 
      - https://docs.djangoproject.com/en/dev/topics/security/\
 #sql-injection-protection
+     - https://cwe.mitre.org/data/definitions/89.html
 
     .. versionadded:: 1.5.0
 
-    """
+    .. versionchanged:: 1.7.3
+        CWE information added
+
+    """  # noqa: E501
     description = "Use of extra potential SQL attack vector."
     if context.call_function_name == "extra":
         kwargs = keywords2dict(context.node.keywords)
@@ -75,6 +92,7 @@ def django_extra_used(context):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.MEDIUM,
+                cwe=issue.Cwe.SQL_INJECTION,
                 text=description,
             )
 
@@ -84,14 +102,30 @@ def django_extra_used(context):
 def django_rawsql_used(context):
     """**B611: Potential SQL injection on RawSQL function**
 
+    :Example:
+
+    .. code-block:: none
+
+        >> Issue: [B611:django_rawsql_used] Use of RawSQL potential SQL attack vector.
+           Severity: Medium Confidence: Medium
+           CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
+           Location: examples/django_sql_injection_raw.py:11:26
+           More Info: https://bandit.readthedocs.io/en/latest/plugins/b611_django_rawsql_used.html
+        10        ' WHERE "username"="admin" OR 1=%s --'
+        11  User.objects.annotate(val=RawSQL(raw, [0]))
+
     .. seealso::
 
      - https://docs.djangoproject.com/en/dev/topics/security/\
 #sql-injection-protection
+     - https://cwe.mitre.org/data/definitions/89.html
 
     .. versionadded:: 1.5.0
 
-    """
+    .. versionchanged:: 1.7.3
+        CWE information added
+
+    """  # noqa: E501
     description = "Use of RawSQL potential SQL attack vector."
     if context.is_module_imported_like("django.db.models"):
         if context.call_function_name == "RawSQL":
@@ -100,5 +134,6 @@ def django_rawsql_used(context):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.MEDIUM,
+                    cwe=issue.Cwe.SQL_INJECTION,
                     text=description,
                 )

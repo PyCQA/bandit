@@ -160,7 +160,7 @@ def initialize():
 
     # #################### Parse Args #########################################
     parser = argparse.ArgumentParser(
-        description='Bandit Baseline - Generates Bandit results compared to "'
+        description="Bandit Baseline - Generates Bandit results compared to "
         "a baseline",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="Additional Bandit arguments such as severity filtering (-ll) "

@@ -20,6 +20,7 @@ medium severity error for those lower than the higher threshold.
 
     >> Issue: DSA key sizes below 1024 bits are considered breakable.
        Severity: High   Confidence: High
+       CWE: CWE-326 (https://cwe.mitre.org/data/definitions/326.html)
        Location: examples/weak_cryptographic_key_sizes.py:36
     35  # Also incorrect: without keyword args
     36  dsa.generate_private_key(512,
@@ -30,11 +31,16 @@ medium severity error for those lower than the higher threshold.
 
  - https://csrc.nist.gov/publications/detail/sp/800-131a/rev-2/final
  - https://security.openstack.org/guidelines/dg_strong-crypto.html
+ - https://cwe.mitre.org/data/definitions/326.html
 
 .. versionadded:: 0.14.0
 
+.. versionchanged:: 1.7.3
+    CWE information added
+
 """
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
@@ -75,6 +81,7 @@ def _classify_key_size(config, key_type, key_size):
             return bandit.Issue(
                 severity=level,
                 confidence=bandit.HIGH,
+                cwe=issue.Cwe.INADEQUATE_ENCRYPTION_STRENGTH,
                 text="%s key sizes below %d bits are considered breakable. "
                 % (key_type, size),
             )
@@ -104,6 +111,22 @@ def _weak_crypto_key_size_cryptography_io(context, config):
         return _classify_key_size(config, key_type, key_size)
     elif key_type == "EC":
         curve_key_sizes = {
+            "SECT571K1": 571,
+            "SECT571R1": 570,
+            "SECP521R1": 521,
+            "BrainpoolP512R1": 512,
+            "SECT409K1": 409,
+            "SECT409R1": 409,
+            "BrainpoolP384R1": 384,
+            "SECP384R1": 384,
+            "SECT283K1": 283,
+            "SECT283R1": 283,
+            "BrainpoolP256R1": 256,
+            "SECP256K1": 256,
+            "SECP256R1": 256,
+            "SECT233K1": 233,
+            "SECT233R1": 233,
+            "SECP224R1": 224,
             "SECP192R1": 192,
             "SECT163K1": 163,
             "SECT163R2": 163,
