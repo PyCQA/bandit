@@ -1,5 +1,7 @@
 import json
 import yaml
+from yaml import CSafeLoader
+from yaml import SafeLoader
 
 
 def test_yaml_load():
@@ -18,3 +20,9 @@ def test_json_load():
     j = json.load("{}")
 
 yaml.load("{}", Loader=yaml.Loader)
+
+# no issue should be found
+yaml.load("{}", SafeLoader)
+yaml.load("{}", yaml.SafeLoader)
+yaml.load("{}", CSafeLoader)
+yaml.load("{}", yaml.CSafeLoader)

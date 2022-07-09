@@ -276,9 +276,8 @@ class Context:
         """
         max_args = self.call_args_count
         if max_args and position_num < max_args:
-            return self._get_literal_value(
-                self._context["call"].args[position_num]
-            )
+            arg = self._context["call"].args[position_num]
+            return getattr(arg, "attr", None) or self._get_literal_value(arg)
         else:
             return None
 
