@@ -2,17 +2,14 @@
 # Copyright 2018 Victor Torre
 #
 # SPDX-License-Identifier: Apache-2.0
-
-
 import ast
 
-import six
-
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
-class DeepAssignation(object):
+class DeepAssignation:
     def __init__(self, var_name, ignore_nodes=None):
         self.var_name = var_name
         self.ignore_nodes = ignore_nodes
@@ -45,27 +42,13 @@ class DeepAssignation(object):
                         return assigned
             assigned = self.is_assigned_in(node.body)
         elif isinstance(node, ast.With):
-            if six.PY2:
-                if node.optional_vars.id == self.var_name.id:
+            for withitem in node.items:
+                var_id = getattr(withitem.optional_vars, "id", None)
+                if var_id == self.var_name.id:
                     assigned = node
                 else:
                     assigned = self.is_assigned_in(node.body)
-            else:
-                for withitem in node.items:
-                    if withitem.optional_vars.id == self.var_name.id:
-                        assigned = node
-                    else:
-                        assigned = self.is_assigned_in(node.body)
-        elif six.PY2 and isinstance(node, ast.TryFinally):
-            assigned = []
-            assigned.extend(self.is_assigned_in(node.body))
-            assigned.extend(self.is_assigned_in(node.finalbody))
-        elif six.PY2 and isinstance(node, ast.TryExcept):
-            assigned = []
-            assigned.extend(self.is_assigned_in(node.body))
-            assigned.extend(self.is_assigned_in(node.handlers))
-            assigned.extend(self.is_assigned_in(node.orelse))
-        elif not six.PY2 and isinstance(node, ast.Try):
+        elif isinstance(node, ast.Try):
             assigned = []
             assigned.extend(self.is_assigned_in(node.body))
             assigned.extend(self.is_assigned_in(node.handlers))
@@ -102,8 +85,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
     if isinstance(xss_var, ast.Name):
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.id if six.PY2 else name.arg
-                if arg_name == xss_var.id:
+                if name.arg == xss_var.id:
                     return False  # Params are not secure
 
         analyser = DeepAssignation(xss_var, ignore_nodes)
@@ -115,8 +97,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
                 if isinstance(to, ast.Str):
                     secure = True
                 elif isinstance(to, ast.Name):
-                    secure = evaluate_var(to, parent,
-                                          to.lineno, ignore_nodes)
+                    secure = evaluate_var(to, parent, to.lineno, ignore_nodes)
                 elif isinstance(to, ast.Call):
                     secure = evaluate_call(to, parent, ignore_nodes)
                 elif isinstance(to, (list, tuple)):
@@ -125,8 +106,9 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
                         if isinstance(some_to, ast.Str):
                             num_secure += 1
                         elif isinstance(some_to, ast.Name):
-                            if evaluate_var(some_to, parent,
-                                            node.lineno, ignore_nodes):
+                            if evaluate_var(
+                                some_to, parent, node.lineno, ignore_nodes
+                            ):
                                 num_secure += 1
                             else:
                                 break
@@ -147,17 +129,13 @@ def evaluate_call(call, parent, ignore_nodes=None):
     secure = False
     evaluate = False
     if isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute):
-        if isinstance(call.func.value, ast.Str) and call.func.attr == 'format':
+        if isinstance(call.func.value, ast.Str) and call.func.attr == "format":
             evaluate = True
-            if call.keywords or (six.PY2 and call.kwargs):
+            if call.keywords:
                 evaluate = False  # TODO(??) get support for this
 
     if evaluate:
         args = list(call.args)
-        if six.PY2 and call.starargs and isinstance(call.starargs,
-                                                    (ast.List, ast.Tuple)):
-            args.extend(call.starargs.elts)
-
         num_secure = 0
         for arg in args:
             if isinstance(arg, ast.Str):
@@ -172,8 +150,9 @@ def evaluate_call(call, parent, ignore_nodes=None):
                     num_secure += 1
                 else:
                     break
-            elif not six.PY2 and isinstance(arg, ast.Starred) and isinstance(
-                    arg.value, (ast.List, ast.Tuple)):
+            elif isinstance(arg, ast.Starred) and isinstance(
+                arg.value, (ast.List, ast.Tuple)
+            ):
                 args.extend(arg.value.elts)
                 num_secure += 1
             else:
@@ -191,19 +170,13 @@ def transform2call(var):
             new_call = ast.Call()
             new_call.args = []
             new_call.args = []
-            if six.PY2:
-                new_call.starargs = None
             new_call.keywords = None
-            if six.PY2:
-                new_call.kwargs = None
             new_call.lineno = var.lineno
             new_call.func = ast.Attribute()
             new_call.func.value = var.left
-            new_call.func.attr = 'format'
+            new_call.func.attr = "format"
             if isinstance(var.right, ast.Tuple):
                 new_call.args = var.right.elts
-            elif six.PY2 and isinstance(var.right, ast.Dict):
-                new_call.kwargs = var.right
             else:
                 new_call.args = [var.right]
             return new_call
@@ -224,8 +197,7 @@ def check_risk(node):
         is_param = False
         if isinstance(parent, ast.FunctionDef):
             for name in parent.args.args:
-                arg_name = name.id if six.PY2 else name.arg
-                if arg_name == xss_var.id:
+                if name.arg == xss_var.id:
                     is_param = True
                     break
 
@@ -250,14 +222,27 @@ def check_risk(node):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
-            text=description
+            cwe=issue.Cwe.BASIC_XSS,
+            text=description,
         )
 
 
-@test.checks('Call')
-@test.test_id('B703')
+@test.checks("Call")
+@test.test_id("B703")
 def django_mark_safe(context):
     """**B703: Potential XSS on mark_safe function**
+
+    :Example:
+
+    .. code-block:: none
+
+        >> Issue: [B703:django_mark_safe] Potential XSS on mark_safe function.
+           Severity: Medium Confidence: High
+           CWE: CWE-80 (https://cwe.mitre.org/data/definitions/80.html)
+           Location: examples/mark_safe_insecure.py:159:4
+           More Info: https://bandit.readthedocs.io/en/latest/plugins/b703_django_mark_safe.html
+        158         str_arg = 'could be insecure'
+        159     safestring.mark_safe(str_arg)
 
     .. seealso::
 
@@ -267,17 +252,21 @@ def django_mark_safe(context):
 #module-django.utils.safestring
      - https://docs.djangoproject.com/en/dev/ref/utils/\
 #django.utils.html.format_html
+     - https://cwe.mitre.org/data/definitions/80.html
 
     .. versionadded:: 1.5.0
 
-    """
-    if context.is_module_imported_like('django.utils.safestring'):
+    .. versionchanged:: 1.7.3
+        CWE information added
+
+    """  # noqa: E501
+    if context.is_module_imported_like("django.utils.safestring"):
         affected_functions = [
-            'mark_safe',
-            'SafeText',
-            'SafeUnicode',
-            'SafeString',
-            'SafeBytes'
+            "mark_safe",
+            "SafeText",
+            "SafeUnicode",
+            "SafeString",
+            "SafeBytes",
         ]
         if context.call_function_name in affected_functions:
             xss = context.node.args[0]

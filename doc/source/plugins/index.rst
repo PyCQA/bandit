@@ -1,5 +1,5 @@
-Bandit Test Plugins
-===================
+Test Plugins
+============
 
 Bandit supports many different tests to detect various security issues in
 python code. These tests are created as plugins and new ones can be created to

@@ -18,6 +18,8 @@ print(hashlib.md5("1"))
 
 hashlib.sha1(1)
 
+hashlib.sha1(usedforsecurity=False)
+
 pycrypto_md2.new()
 pycrypto_md4.new()
 pycrypto_md5.new()
