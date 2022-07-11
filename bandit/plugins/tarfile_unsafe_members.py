@@ -43,12 +43,13 @@ unless you explicitly need them.
 
 """
 import ast
+
 import bandit
 
 from bandit.core import test_properties as test
 
 
-def exec_issue(level, members=''):
+def exec_issue(level, members=""):
     if level == bandit.LOW:
         return bandit.Issue(
             severity=bandit.LOW,
@@ -75,24 +76,24 @@ def exec_issue(level, members=''):
 
 def get_members_value(context):
     for keyword in context.node.keywords:
-        if keyword.arg == 'members':
+        if keyword.arg == "members":
             arg = keyword.value
             if isinstance(arg, ast.Call):
-                return {'Function': arg.func.id}
+                return {"Function": arg.func.id}
             else:
                 value = arg.id if isinstance(arg, ast.Name) else arg
-                return {'Other': value}
+                return {"Other": value}
 
 
-@test.test_id('B202')
-@test.checks('Call')
+@test.test_id("B202")
+@test.checks("Call")
 def tarfile_unsafe_members(context):
     if all([
-            context.is_module_imported_exact('tarfile'),
-            'extractall' in context.call_function_name]):
-        if 'members' in context.call_keywords:
+            context.is_module_imported_exact("tarfile"),
+            "extractall" in context.call_function_name]):
+        if "members" in context.call_keywords:
             members = get_members_value(context)
-            if 'Function' in members:
+            if "Function" in members:
                 return exec_issue(
                     bandit.LOW,
                     members)
