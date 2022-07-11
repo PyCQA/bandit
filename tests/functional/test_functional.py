@@ -904,3 +904,11 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("snmp.py", expect)
+
+    def test_tarfile_unsafe_members(self):
+        """Test insecure usage of tarfile."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
+        }
+        self.check_example("tarfile_extractall.py", expect)
