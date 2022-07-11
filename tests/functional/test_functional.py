@@ -454,12 +454,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""
         expect = {
-            "SEVERITY": {"LOW": 1, "MEDIUM": 10, "HIGH": 7},
-            "CONFIDENCE": {"LOW": 0, "MEDIUM": 11, "HIGH": 7},
-        }
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 10, "HIGH": 7},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 11, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 13, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 9},
         }
         self.check_example("ssl-insecure-version.py", expect)
 

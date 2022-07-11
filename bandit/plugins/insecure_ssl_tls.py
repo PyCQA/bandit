@@ -22,6 +22,8 @@ def gen_config(name):
                 "PROTOCOL_TLSv1",  # strict option
                 "SSLv3_METHOD",  # strict option
                 "TLSv1_METHOD",
+                "PROTOCOL_TLSv1_1",
+                "TLSv1_1_METHOD",
             ]
         }  # strict option
 
@@ -105,6 +107,9 @@ def ssl_with_bad_version(context, config):
 
     .. versionchanged:: 1.7.3
         CWE information added
+
+    .. versionchanged:: 1.7.5
+        Added TLS 1.1
 
     """
     bad_ssl_versions = get_bad_proto_versions(config)
@@ -195,6 +200,9 @@ def ssl_with_bad_defaults(context, config):
 
     .. versionchanged:: 1.7.3
         CWE information added
+
+    .. versionchanged:: 1.7.5
+        Added TLS 1.1
 
     """
 
