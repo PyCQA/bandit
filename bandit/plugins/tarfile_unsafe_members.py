@@ -14,7 +14,7 @@
 
 r"""
 =================================
-B612: Test for tarfile.extractall
+B202: Test for tarfile.extractall
 =================================
 
 This plugin will look for usage of ``tarfile.extractall()``
