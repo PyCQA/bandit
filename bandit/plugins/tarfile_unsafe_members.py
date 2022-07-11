@@ -1,5 +1,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
+#
 r"""
 =================================
 B202: Test for tarfile.extractall
