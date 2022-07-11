@@ -83,7 +83,7 @@ def get_members_value(context):
                 return {'Other': value}
 
 
-@test.test_id('B612')
+@test.test_id('B202')
 @test.checks('Call')
 def tarfile_unsafe_members(context):
     if all([
