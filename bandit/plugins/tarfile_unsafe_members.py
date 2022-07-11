@@ -22,7 +22,7 @@ unless you explicitly need them.
 
 .. code-block:: none
 
-    >> Issue: [B612:tarfile_unsafe_members] tarfile.extractall used without
+    >> Issue: [B202:tarfile_unsafe_members] tarfile.extractall used without
     any validation. You should check members and discard dangerous ones
     Severity: High   Confidence: High
     Location: examples/tarfile_extractall.py:8
