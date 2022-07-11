@@ -104,15 +104,10 @@ def jinja2_autoescape_false(context):
                         ):
                             return
                         # Check if select_autoescape function is used.
-                        elif (
-                            isinstance(value, ast.Call)
-                            and getattr(value.func, "id", None)
+                        elif isinstance(value, ast.Call) and (
+                            getattr(value.func, "attr", None)
                             == "select_autoescape"
-                        ):
-                            return
-                        elif (
-                            isinstance(value, ast.Call)
-                            and getattr(value.func, "attr", None)
+                            or getattr(value.func, "id", None)
                             == "select_autoescape"
                         ):
                             return
