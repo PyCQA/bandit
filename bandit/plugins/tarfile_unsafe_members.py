@@ -1,4 +1,3 @@
-# Copyright (c) 2019 VMware, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
 # not use this file except in compliance with the License. You may obtain
