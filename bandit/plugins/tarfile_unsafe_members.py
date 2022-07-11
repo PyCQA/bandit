@@ -45,7 +45,6 @@ unless you explicitly need them.
 import ast
 
 import bandit
-
 from bandit.core import test_properties as test
 
 
@@ -55,23 +54,25 @@ def exec_issue(level, members=""):
             severity=bandit.LOW,
             confidence=bandit.LOW,
             text="Usage of tarfile.extractall(members=function(tarfile)). "
-                 "Make sure your function properly discards dangerous members "
-                 "{members}).".format(members=members))
+            "Make sure your function properly discards dangerous members "
+            "{members}).".format(members=members),
+        )
     elif level == bandit.MEDIUM:
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
             text="Found tarfile.extractall(members=?) but couldn't "
-                 "identify the type of members. "
-                 "Check if the members were properly validated "
-                 "{members}).".format(members=members))
+            "identify the type of members. "
+            "Check if the members were properly validated "
+            "{members}).".format(members=members),
+        )
     else:
         return bandit.Issue(
             severity=bandit.HIGH,
             confidence=bandit.HIGH,
             text="tarfile.extractall used without any validation. "
-                 "Please check and discard dangerous members."
-            )
+            "Please check and discard dangerous members.",
+        )
 
 
 def get_members_value(context):
@@ -88,17 +89,16 @@ def get_members_value(context):
 @test.test_id("B202")
 @test.checks("Call")
 def tarfile_unsafe_members(context):
-    if all([
+    if all(
+        [
             context.is_module_imported_exact("tarfile"),
-            "extractall" in context.call_function_name]):
+            "extractall" in context.call_function_name,
+        ]
+    ):
         if "members" in context.call_keywords:
             members = get_members_value(context)
             if "Function" in members:
-                return exec_issue(
-                    bandit.LOW,
-                    members)
+                return exec_issue(bandit.LOW, members)
             else:
-                return exec_issue(
-                    bandit.MEDIUM,
-                    members)
+                return exec_issue(bandit.MEDIUM, members)
         return exec_issue(bandit.HIGH)
