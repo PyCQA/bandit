@@ -27,7 +27,7 @@ unless you explicitly need them.
     Severity: High   Confidence: High
     Location: examples/tarfile_extractall.py:8
     More Info:
-    https://bandit.readthedocs.io/en/latest/plugins/b612_tarfile_unsafe_members.html
+    https://bandit.readthedocs.io/en/latest/plugins/b202_tarfile_unsafe_members.html
     7	    tar = tarfile.open(filename)
     8	    tar.extractall(path=tempfile.mkdtemp())
     9	    tar.close()
