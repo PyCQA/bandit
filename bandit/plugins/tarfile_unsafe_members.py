@@ -26,6 +26,7 @@ unless you explicitly need them.
     >> Issue: [B202:tarfile_unsafe_members] tarfile.extractall used without
     any validation. You should check members and discard dangerous ones
     Severity: High   Confidence: High
+    CWE: CWE-22 (https://cwe.mitre.org/data/definitions/22.html)
     Location: examples/tarfile_extractall.py:8
     More Info:
     https://bandit.readthedocs.io/en/latest/plugins/b202_tarfile_unsafe_members.html
@@ -53,6 +54,7 @@ def exec_issue(level, members=""):
         return bandit.Issue(
             severity=bandit.LOW,
             confidence=bandit.LOW,
+            cwe=issue.Cwe.PATH_TRAVERSAL,
             text="Usage of tarfile.extractall(members=function(tarfile)). "
             "Make sure your function properly discards dangerous members "
             "{members}).".format(members=members),
@@ -61,6 +63,7 @@ def exec_issue(level, members=""):
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
+            cwe=issue.Cwe.PATH_TRAVERSAL,
             text="Found tarfile.extractall(members=?) but couldn't "
             "identify the type of members. "
             "Check if the members were properly validated "
@@ -70,6 +73,7 @@ def exec_issue(level, members=""):
         return bandit.Issue(
             severity=bandit.HIGH,
             confidence=bandit.HIGH,
+            cwe=issue.Cwe.PATH_TRAVERSAL,
             text="tarfile.extractall used without any validation. "
             "Please check and discard dangerous members.",
         )
