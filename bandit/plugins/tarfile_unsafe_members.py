@@ -38,7 +38,7 @@ unless you explicitly need them.
  - https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall
  - https://docs.python.org/3/library/tarfile.html#tarfile.TarInfo
 
-.. versionadded:: 1.6.3
+.. versionadded:: 1.7.5
 
 """
 import ast
