@@ -394,7 +394,7 @@ class FunctionalTests(testtools.TestCase):
         self.check_example("popen_wrappers.py", expect)
 
     def test_psycopg2_sql_injection(self):
-        '''Test the `psycopg2` SQL injection example.'''
+        """Test the `psycopg2` SQL injection example."""
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},

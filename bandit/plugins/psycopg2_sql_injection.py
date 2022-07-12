@@ -34,5 +34,5 @@ def psycopg2_sql_injection(context):
                         "Possible SQL injection vector through instantiation "
                         "of psycopg2.sql.SQL composable object on an argument "
                         "other than a string literal."
-                    )
+                    ),
                 )
