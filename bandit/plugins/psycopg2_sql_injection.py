@@ -7,9 +7,9 @@ from bandit.core import test_properties as test
 
 
 @test.checks("Call")
-@test.test_id("B612")
+@test.test_id("B613")
 def psycopg2_sql_injection(context):
-    """**B612: Potential SQL injection on psycopg2 raw SQL composable object **
+    """**B613: Potential SQL injection on psycopg2 raw SQL composable object **
 
     The `psycopg2.sql.SQL` composable object should not be used to represent
     variable identifiers or values that may be controlled by an attacker since
