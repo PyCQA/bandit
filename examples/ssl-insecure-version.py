@@ -20,6 +20,13 @@ herp_derp(ssl_version=ssl.PROTOCOL_TLSv1)
 herp_derp(method=SSL.SSLv3_METHOD)
 herp_derp(method=SSL.TLSv1_METHOD)
 
+ssl.wrap_socket(ssl_version=ssl.PROTOCOL_TLSv1_1)
+SSL.Context(method=SSL.TLSv1_1_METHOD)
+
+herp_derp(ssl_version=ssl.PROTOCOL_TLSv1_1)
+herp_derp(method=SSL.TLSv1_1_METHOD)
+
+
 ssl.wrap_socket()
 
 def open_ssl_socket(version=ssl.PROTOCOL_SSLv2):
@@ -31,6 +38,9 @@ def open_ssl_socket(version=SSL.SSLv2_METHOD):
 def open_ssl_socket(version=SSL.SSLv23_METHOD):
     pass
 
-# this one will pass ok
 def open_ssl_socket(version=SSL.TLSv1_1_METHOD):
+    pass
+
+# this one will pass ok
+def open_ssl_socket(version=SSL.TLSv1_2_METHOD):
     pass

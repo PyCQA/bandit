@@ -1,5 +1,0 @@
----
-features:
-  - |
-    [bug/1746827] The ``more_info`` URL link displayed in the HTML and JSON
-    outputs is now also available in the YAML output.

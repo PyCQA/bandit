@@ -64,3 +64,9 @@ pycryptodomex_rsa.generate(512)
 rsa.generate_private_key(public_exponent=65537,
                          key_size=some_key_size,
                          backend=backends.default_backend())
+
+# Can't reliably know which curve was passed, in some cases like below
+ec.generate_private_key(
+    curve=curves[self.curve]['create'](self.size),
+    backend=backends.default_backend()
+)

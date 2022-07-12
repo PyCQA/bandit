@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 =========================================
 B110: Test for a pass in the except block
@@ -57,6 +55,7 @@ would not generate a warning if the configuration option
 
     >> Issue: Try, Except, Pass detected.
        Severity: Low   Confidence: High
+       CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
        Location: ./examples/try_except_pass.py:4
     3        a = 1
     4    except:
@@ -65,36 +64,43 @@ would not generate a warning if the configuration option
 .. seealso::
 
  - https://security.openstack.org
+ - https://cwe.mitre.org/data/definitions/703.html
 
 .. versionadded:: 0.13.0
 
-"""
+.. versionchanged:: 1.7.3
+    CWE information added
 
+"""
 import ast
 
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 
 
 def gen_config(name):
-    if name == 'try_except_pass':
-        return {'check_typed_exception': False}
+    if name == "try_except_pass":
+        return {"check_typed_exception": False}
 
 
 @test.takes_config
-@test.checks('ExceptHandler')
-@test.test_id('B110')
+@test.checks("ExceptHandler")
+@test.test_id("B110")
 def try_except_pass(context, config):
     node = context.node
     if len(node.body) == 1:
-        if (not config['check_typed_exception'] and
-                node.type is not None and
-                getattr(node.type, 'id', None) != 'Exception'):
+        if (
+            not config["check_typed_exception"]
+            and node.type is not None
+            and getattr(node.type, "id", None) != "Exception"
+        ):
             return
 
         if isinstance(node.body[0], ast.Pass):
             return bandit.Issue(
                 severity=bandit.LOW,
                 confidence=bandit.HIGH,
-                text=("Try, Except, Pass detected.")
+                cwe=issue.Cwe.IMPROPER_CHECK_OF_EXCEPT_COND,
+                text=("Try, Except, Pass detected."),
             )

@@ -1,9 +1,7 @@
-# -*- coding:utf-8 -*-
 #
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
-
 r"""
 ========================================
 B609: Test for use of wildcard injection
@@ -73,6 +71,7 @@ methods are fully qualified and de-aliased prior to checking.
 
     >> Issue: Possible wildcard injection in call: subprocess.Popen
        Severity: High   Confidence: Medium
+       CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
        Location: ./examples/wildcard-injection.py:8
     7    o.popen2('/bin/chmod *')
     8    subp.Popen('/bin/chown *', shell=True)
@@ -80,6 +79,7 @@ methods are fully qualified and de-aliased prior to checking.
 
     >> Issue: subprocess call - check for execution of untrusted input.
        Severity: Low   Confidence: High
+       CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
        Location: ./examples/wildcard-injection.py:11
     10   # Not vulnerable to wildcard injection
     11   subp.Popen('/bin/rsync *')
@@ -90,50 +90,55 @@ methods are fully qualified and de-aliased prior to checking.
 
  - https://security.openstack.org
  - https://en.wikipedia.org/wiki/Wildcard_character
- - http://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
+ - https://www.defensecode.com/public/DefenseCode_Unix_WildCards_Gone_Wild.txt
+ - https://cwe.mitre.org/data/definitions/78.html
 
 .. versionadded:: 0.9.0
 
-"""
+.. versionchanged:: 1.7.3
+    CWE information added
 
+"""
 import bandit
+from bandit.core import issue
 from bandit.core import test_properties as test
 from bandit.plugins import injection_shell  # NOTE(tkelsey): shared config
-
 
 gen_config = injection_shell.gen_config
 
 
-@test.takes_config('shell_injection')
-@test.checks('Call')
-@test.test_id('B609')
+@test.takes_config("shell_injection")
+@test.checks("Call")
+@test.test_id("B609")
 def linux_commands_wildcard_injection(context, config):
-    if not ('shell' in config and 'subprocess' in config):
+    if not ("shell" in config and "subprocess" in config):
         return
 
-    vulnerable_funcs = ['chown', 'chmod', 'tar', 'rsync']
-    if context.call_function_name_qual in config['shell'] or (
-            context.call_function_name_qual in config['subprocess'] and
-            context.check_call_arg_value('shell', 'True')):
+    vulnerable_funcs = ["chown", "chmod", "tar", "rsync"]
+    if context.call_function_name_qual in config["shell"] or (
+        context.call_function_name_qual in config["subprocess"]
+        and context.check_call_arg_value("shell", "True")
+    ):
         if context.call_args_count >= 1:
             call_argument = context.get_call_arg_at_position(0)
-            argument_string = ''
+            argument_string = ""
             if isinstance(call_argument, list):
                 for li in call_argument:
-                    argument_string = argument_string + ' %s' % li
+                    argument_string = argument_string + " %s" % li
             elif isinstance(call_argument, str):
                 argument_string = call_argument
 
-            if argument_string != '':
+            if argument_string != "":
                 for vulnerable_func in vulnerable_funcs:
-                    if(
-                            vulnerable_func in argument_string and
-                            '*' in argument_string
+                    if (
+                        vulnerable_func in argument_string
+                        and "*" in argument_string
                     ):
                         return bandit.Issue(
                             severity=bandit.HIGH,
                             confidence=bandit.MEDIUM,
-                            text="Possible wildcard injection in call: %s" %
-                            context.call_function_name_qual,
-                            lineno=context.get_lineno_for_call_arg('shell'),
+                            cwe=issue.Cwe.IMPROPER_WILDCARD_NEUTRALIZATION,
+                            text="Possible wildcard injection in call: %s"
+                            % context.call_function_name_qual,
+                            lineno=context.get_lineno_for_call_arg("shell"),
                         )
