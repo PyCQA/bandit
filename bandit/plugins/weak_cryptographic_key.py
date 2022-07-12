@@ -131,9 +131,9 @@ def _weak_crypto_key_size_cryptography_io(context, config):
             "SECT163K1": 163,
             "SECT163R2": 163,
         }
-        curve = (
-            context.get_call_arg_value("curve")
-            or context.call_args[arg_position[key_type]]
+        curve = context.get_call_arg_value("curve") or (
+            len(context.call_args) > arg_position[key_type]
+            and context.call_args[arg_position[key_type]]
         )
         key_size = curve_key_sizes[curve] if curve in curve_key_sizes else 224
         return _classify_key_size(config, key_type, key_size)
