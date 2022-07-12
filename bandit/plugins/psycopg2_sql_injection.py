@@ -29,6 +29,7 @@ def psycopg2_sql_injection(context):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.MEDIUM,
+                    cwe=issue.Cwe.SQL_INJECTION,
                     text=(
                         "Possible SQL injection vector through instantiation "
                         "of psycopg2.sql.SQL composable object on an argument "
