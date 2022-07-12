@@ -372,10 +372,10 @@ class FunctionalTests(testtools.TestCase):
     def test_psycopg2_sql_injection(self):
         '''Test the `psycopg2` SQL injection example.'''
         expect = {
-            'SEVERITY': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0},
-            'CONFIDENCE': {'UNDEFINED': 0, 'LOW': 0, 'MEDIUM': 1, 'HIGH': 0}
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
         }
-        self.check_example('psycopg2_sql_injection.py', expect)
+        self.check_example("psycopg2_sql_injection.py", expect)
 
     def test_random_module(self):
         '''Test for the `random` module.'''

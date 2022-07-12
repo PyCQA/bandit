@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-#
 # SPDX-License-Identifier: Apache-2.0
 
 import ast
@@ -8,8 +6,8 @@ import bandit
 from bandit.core import test_properties as test
 
 
-@test.checks('Call')
-@test.test_id('B612')
+@test.checks("Call")
+@test.test_id("B612")
 def psycopg2_sql_injection(context):
     """**B612: Potential SQL injection on psycopg2 raw SQL composable object **
 
@@ -23,10 +21,10 @@ def psycopg2_sql_injection(context):
 
      - https://www.psycopg.org/docs/sql.html
 
-    .. versionadded:: 1.6.2
+    .. versionadded:: 1.7.5
     """
-    if context.is_module_imported_like('psycopg2.sql'):
-        if context.call_function_name == 'SQL':
+    if context.is_module_imported_like("psycopg2.sql"):
+        if context.call_function_name == "SQL":
             argument = context.node.args[0]
             if not isinstance(argument, ast.Str):
                 return bandit.Issue(
