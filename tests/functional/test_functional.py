@@ -348,16 +348,16 @@ class FunctionalTests(testtools.TestCase):
     def test_pickle(self):
         """Test for the `pickle` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 6, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("pickle_deserialize.py", expect)
 
     def test_dill(self):
         """Test for the `dill` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("dill.py", expect)
 
