@@ -70,7 +70,9 @@ class DeepAssignation:
             if isinstance(target, ast.Name):
                 if target.id == self.var_name.id:
                     assigned = node.value
-            elif isinstance(target, ast.Tuple):
+            elif isinstance(target, ast.Tuple) and isinstance(
+                node.value, ast.Tuple
+            ):
                 pos = 0
                 for name in target.elts:
                     if name.id == self.var_name.id:
