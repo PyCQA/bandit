@@ -23,7 +23,6 @@ Python docs succinctly describe why the use of `exec` is risky.
 
 .. seealso::
 
- - https://docs.python.org/2/reference/simple_stmts.html#exec
  - https://docs.python.org/3/library/functions.html#exec
  - https://www.python.org/dev/peps/pep-0551/#background
  - https://www.python.org/dev/peps/pep-0578/#suggested-audit-hook-locations

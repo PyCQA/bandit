@@ -209,6 +209,8 @@ class BanditNodeVisitor:
 
         if hasattr(node, "col_offset"):
             self.context["col_offset"] = node.col_offset
+        if hasattr(node, "end_col_offset"):
+            self.context["end_col_offset"] = node.end_col_offset
 
         self.context["node"] = node
         self.context["linerange"] = b_utils.linerange(node)

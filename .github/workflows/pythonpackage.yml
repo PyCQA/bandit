@@ -10,9 +10,9 @@ jobs:
         python-version: [3.7]
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -31,9 +31,11 @@ jobs:
         python-version: [3.7]
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -49,16 +51,16 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          ["3.7", "37"], ["3.8", "38"], ["3.9", "39"], ["3.10", "310"]
+          ["3.7", "37"], ["3.8", "38"], ["3.9", "39"], ["3.10", "310"], ["3.11.0-a - 3.11", "311"]
         ]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.os }} (${{ matrix.python-version[0] }})
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version[0] }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version[0] }}
     - name: Install dependencies

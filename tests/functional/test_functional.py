@@ -300,8 +300,8 @@ class FunctionalTests(testtools.TestCase):
     def test_os_chmod(self):
         """Test setting file permissions."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 8},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 9},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 8},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 11},
         }
         self.check_example("os-chmod.py", expect)
 
@@ -348,16 +348,16 @@ class FunctionalTests(testtools.TestCase):
     def test_pickle(self):
         """Test for the `pickle` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 6, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("pickle_deserialize.py", expect)
 
     def test_dill(self):
         """Test for the `dill` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("dill.py", expect)
 
@@ -368,6 +368,22 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("shelve_open.py", expect)
+
+    def test_jsonpickle(self):
+        """Test for the `jsonpickle` module."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+        }
+        self.check_example("jsonpickle.py", expect)
+
+    def test_pandas_read_pickle(self):
+        """Test for the `pandas.read_pickle` module."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 1, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+        }
+        self.check_example("pandas_read_pickle.py", expect)
 
     def test_popen_wrappers(self):
         """Test the `popen2` and `commands` modules."""
@@ -438,12 +454,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""
         expect = {
-            "SEVERITY": {"LOW": 1, "MEDIUM": 10, "HIGH": 7},
-            "CONFIDENCE": {"LOW": 0, "MEDIUM": 11, "HIGH": 7},
-        }
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 10, "HIGH": 7},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 11, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 13, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 9},
         }
         self.check_example("ssl-insecure-version.py", expect)
 
@@ -492,8 +504,8 @@ class FunctionalTests(testtools.TestCase):
     def test_yaml(self):
         """Test for `yaml.load`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
         }
         self.check_example("yaml_load.py", expect)
 
@@ -535,8 +547,8 @@ class FunctionalTests(testtools.TestCase):
     def test_django_xss_insecure(self):
         """Test for Django XSS via django.utils.safestring"""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 28, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 28},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 29, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 29},
         }
         self.b_mgr.b_ts = b_test_set.BanditTestSet(
             config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
@@ -828,13 +840,13 @@ class FunctionalTests(testtools.TestCase):
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 10,
+                    "HIGH": 9,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 10,
+                    "HIGH": 9,
                 },
             }
         else:
@@ -842,14 +854,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 11,
+                    "MEDIUM": 10,
                     "HIGH": 0,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 11,
+                    "HIGH": 10,
                 },
             }
         self.check_example("hashlib_new_insecure_functions.py", expect)
@@ -888,3 +900,11 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("snmp.py", expect)
+
+    def test_tarfile_unsafe_members(self):
+        """Test insecure usage of tarfile."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
+        }
+        self.check_example("tarfile_extractall.py", expect)
