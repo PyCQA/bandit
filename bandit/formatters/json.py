@@ -111,14 +111,16 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     if baseline:
         collector = []
         for r in results:
-            d = r.as_dict()
+            d = r.as_dict(max_lines=lines)
             d["more_info"] = docs_utils.get_url(d["test_id"])
             if len(results[r]) > 1:
-                d["candidates"] = [c.as_dict() for c in results[r]]
+                d["candidates"] = [
+                    c.as_dict(max_lines=lines) for c in results[r]
+                ]
             collector.append(d)
 
     else:
-        collector = [r.as_dict() for r in results]
+        collector = [r.as_dict(max_lines=lines) for r in results]
         for elem in collector:
             elem["more_info"] = docs_utils.get_url(elem["test_id"])
 

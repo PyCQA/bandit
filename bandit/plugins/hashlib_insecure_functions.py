@@ -19,6 +19,8 @@ function variations of hashlib.
 
 :Example:
 
+.. code-block:: none
+
     >> Issue: [B324:hashlib] Use of weak MD4, MD5, or SHA1 hash for
        security. Consider usedforsecurity=False
        Severity: High   Confidence: High
@@ -46,6 +48,9 @@ from bandit.core import issue
 from bandit.core import test_properties as test
 
 
+WEAK_HASHES = ("md4", "md5", "sha", "sha1")
+
+
 def _hashlib_func(context):
     if isinstance(context.call_function_name_qual, str):
         qualname_list = context.call_function_name_qual.split(".")
@@ -54,31 +59,26 @@ def _hashlib_func(context):
             func = qualname_list[-1]
             keywords = context.call_keywords
 
-            if func in ("md4", "md5", "sha", "sha1"):
+            if func in WEAK_HASHES:
                 if keywords.get("usedforsecurity", "True") == "True":
                     return bandit.Issue(
                         severity=bandit.HIGH,
                         confidence=bandit.HIGH,
                         cwe=issue.Cwe.BROKEN_CRYPTO,
-                        text="Use of weak MD4, MD5, or SHA1 hash for "
-                        "security. Consider usedforsecurity=False",
+                        text=f"Use of weak {func.upper()} hash for security. "
+                        "Consider usedforsecurity=False",
                         lineno=context.node.lineno,
                     )
             elif func == "new":
                 args = context.call_args
                 name = args[0] if args else keywords.get("name", None)
-                if isinstance(name, str) and name.lower() in (
-                    "md4",
-                    "md5",
-                    "sha",
-                    "sha1",
-                ):
+                if isinstance(name, str) and name.lower() in WEAK_HASHES:
                     if keywords.get("usedforsecurity", "True") == "True":
                         return bandit.Issue(
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,
                             cwe=issue.Cwe.BROKEN_CRYPTO,
-                            text="Use of weak MD4, MD5, or SHA1 hash for "
+                            text=f"Use of weak {name.upper()} hash for "
                             "security. Consider usedforsecurity=False",
                             lineno=context.node.lineno,
                         )
@@ -93,17 +93,12 @@ def _hashlib_new(context):
             args = context.call_args
             keywords = context.call_keywords
             name = args[0] if args else keywords.get("name", None)
-            if isinstance(name, str) and name.lower() in (
-                "md4",
-                "md5",
-                "sha",
-                "sha1",
-            ):
+            if isinstance(name, str) and name.lower() in WEAK_HASHES:
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,
                     cwe=issue.Cwe.BROKEN_CRYPTO,
-                    text="Use of insecure MD4, MD5, or SHA1 hash function.",
+                    text=f"Use of insecure {name.upper()} hash function.",
                     lineno=context.node.lineno,
                 )
 

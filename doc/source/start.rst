@@ -16,7 +16,6 @@ Create a virtual environment (optional)::
 Install Bandit::
 
     pip install bandit
-    pip3 install bandit
 
 Run Bandit::
 
@@ -76,7 +75,7 @@ Version control integration
 Use `pre-commit <https://pre-commit.com/>`_. Once you `have it
 installed <https://pre-commit.com/#install>`_, add this to the
 `.pre-commit-config.yaml` in your repository
-(be sure to update `rev` to point to a real git tag/revision!)::
+(be sure to update `rev` to point to a `real git tag/revision <https://github.com/PyCQA/bandit/releases>`_!)::
 
     repos:
     -   repo: https://github.com/PyCQA/bandit

@@ -76,6 +76,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
         "relpath": lambda issue: os.path.relpath(issue.fname),
         "line": lambda issue: issue.lineno,
         "col": lambda issue: issue.col_offset,
+        "end_col": lambda issue: issue.end_col_offset,
         "test_id": lambda issue: issue.test_id,
         "severity": lambda issue: issue.severity,
         "msg": lambda issue: issue.text,

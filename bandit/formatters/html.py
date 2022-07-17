@@ -266,7 +266,7 @@ pre {
     <b>Test ID:</b> {test_id}<br>
     <b>Severity: </b>{severity}<br>
     <b>Confidence: </b>{confidence}<br>
-    <b>CWE: <a href="{cwe_link}" target="_blank">CWE-{cwe.id}</a><br>
+    <b>CWE: </b><a href="{cwe_link}" target="_blank">CWE-{cwe.id}</a><br>
     <b>File: </b><a href="{path}" target="_blank">{path}</a><br>
     <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>

@@ -25,6 +25,7 @@ class Cwe:
     BROKEN_CRYPTO = 327
     INSUFFICIENT_RANDOM_VALUES = 330
     INSECURE_TEMP_FILE = 377
+    UNCONTROLLED_RESOURCE_CONSUMPTION = 400
     DESERIALIZATION_OF_UNTRUSTED_DATA = 502
     MULTIPLE_BINDS = 605
     IMPROPER_CHECK_OF_EXCEPT_COND = 703
@@ -84,6 +85,7 @@ class Issue:
         lineno=None,
         test_id="",
         col_offset=-1,
+        end_col_offset=0,
     ):
         self.severity = severity
         self.cwe = Cwe(cwe)
@@ -98,12 +100,13 @@ class Issue:
         self.test_id = test_id
         self.lineno = lineno
         self.col_offset = col_offset
+        self.end_col_offset = end_col_offset
         self.linerange = []
 
     def __str__(self):
         return (
             "Issue: '%s' from %s:%s: CWE: %s, Severity: %s Confidence: "
-            "%s at %s:%i"
+            "%s at %s:%i:%i"
         ) % (
             self.text,
             self.test_id,
@@ -113,6 +116,7 @@ class Issue:
             self.confidence,
             self.fname,
             self.lineno,
+            self.col_offset,
         )
 
     def __eq__(self, other):
@@ -192,7 +196,7 @@ class Issue:
             lines.append(tmplt % (line, text))
         return "".join(lines)
 
-    def as_dict(self, with_code=True):
+    def as_dict(self, with_code=True, max_lines=3):
         """Convert the issue to a dict of values for outputting."""
         out = {
             "filename": self.fname,
@@ -205,10 +209,11 @@ class Issue:
             "line_number": self.lineno,
             "line_range": self.linerange,
             "col_offset": self.col_offset,
+            "end_col_offset": self.end_col_offset,
         }
 
         if with_code:
-            out["code"] = self.get_code()
+            out["code"] = self.get_code(max_lines=max_lines)
         return out
 
     def from_dict(self, data, with_code=True):
@@ -223,6 +228,7 @@ class Issue:
         self.lineno = data["line_number"]
         self.linerange = data["line_range"]
         self.col_offset = data.get("col_offset", 0)
+        self.end_col_offset = data.get("end_col_offset", 0)
 
 
 def cwe_from_dict(data):

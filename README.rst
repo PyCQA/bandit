@@ -27,6 +27,10 @@
     :target: https://github.com/PyCQA/bandit/blob/main/LICENSE
     :alt: License
 
+.. image:: https://img.shields.io/discord/825463413634891776.svg
+    :target: https://discord.gg/qYxpadCgkx
+    :alt: Discord
+
 A security linter from PyCQA
 
 * Free software: Apache license
@@ -45,6 +49,9 @@ it generates a report.
 
 Bandit was originally developed within the OpenStack Security Project and
 later rehomed to PyCQA.
+
+.. image:: https://raw.githubusercontent.com/pycqa/bandit/main/bandit-terminal.png
+    :alt: Bandit Example Screen Shot
 
 Show Your Style
 ---------------
