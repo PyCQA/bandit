@@ -1,5 +1,5 @@
 ------------------
-B113: trojansource
+B613: trojansource
 ------------------
 
 .. automodule:: bandit.plugins.trojansource
