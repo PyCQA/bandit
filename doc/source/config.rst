@@ -18,32 +18,36 @@ To use this, put an INI file named `.bandit` in your project's directory.
 Command line arguments must be in `[bandit]` section.
 For example:
 
-::
+.. code-block:: ini
 
-   [bandit]
-   exclude: /test
-
-::
-
-   [bandit]
-   tests = B101,B102,B301
-
+  # FILE: .bandit
+  [bandit]
+  exclude = tests,path/to/file
+  tests = B201,B301
+  skips = B101,B601
 
 Note that Bandit will look for `.bandit` file only if it is invoked with `-r` option.
 If you do not use `-r` or the INI file's name is not `.bandit`, you can specify
-the file's path explicitly with `--ini` option.
+the file's path explicitly with `--ini` option, e.g.
+
+.. code-block:: console
+
+  bandit --ini tox.ini
 
 Exclusions
 ----------
+
 In the event that a line of code triggers a Bandit issue, but that the line
 has been reviewed and the issue is a false positive or acceptable for some
 other reason, the line can be marked with a ``# nosec`` and any results
 associated with it will not be reported.
 
 For example, although this line may cause Bandit to report a potential
-security issue, it will not be reported::
+security issue, it will not be reported:
 
-    self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
+.. code-block:: python
+
+  self.process = subprocess.Popen('/bin/echo', shell=True)  # nosec
 
 Because multiple issues can be reported for the same line, specific tests may
 be provided to suppress those reports. This will cause other issues not
@@ -51,16 +55,20 @@ included to be reported. This can be useful in preventing situations where a
 nosec comment is used, but a separate vulnerability may be added to the line
 later causing the new vulnerability to be ignored.
 
-For example, this will suppress the report of B602 and B607::
+For example, this will suppress the report of B602 and B607:
 
-    self.process = subprocess.Popen('/bin/ls *', shell=True)  #nosec B602, B607
+.. code-block:: python
+
+  self.process = subprocess.Popen('/bin/ls *', shell=True)  # nosec B602, B607
 
 Full test names rather than the test ID may also be used.
 
 For example, this will suppress the report of B101 and continue to report B506
-as an issue.::
+as an issue.
 
-    assert yaml.load("{}") == []  # nosec assert_used
+.. code-block:: python
+
+  assert yaml.load("{}") == []  # nosec assert_used
 
 -----------------
 Scanning Behavior
@@ -69,8 +77,8 @@ Scanning Behavior
 Bandit is designed to be configurable and cover a wide range of needs, it may
 be used as either a local developer utility or as part of a full CI/CD
 pipeline. To provide for these various usage scenarios bandit can be configured
-via a `YAML <http://yaml.org/>`_ file. This file is completely optional and in
-many cases not needed, it may be specified on the command line by using `-c`.
+via a `YAML file`_. This file is completely optional and in many cases not
+needed, it may be specified on the command line by using `-c`.
 
 A bandit configuration file may choose the specific test plugins to run and
 override the default configurations of those tests. An example config might
@@ -103,12 +111,10 @@ several config files and pick from them using `-c`. If you only wish to control
 the specific tests that are to be run (and not their parameters) then using
 `-s` or `-t` on the command line may be more appropriate.
 
-Also you can configure bandit via
-`pyproject.toml <https://www.python.org/dev/peps/pep-0518/>`_ file. In this
-case you would explicitly specify the path to configuration via `-c` too.
-For example:
+Also, you can configure bandit via a `pyproject.toml file`_. In this case you
+would explicitly specify the path to configuration via `-c`, too. For example:
 
-.. code-block:: TOML
+.. code-block:: toml
 
   [tool.bandit]
   tests = ["B201", "B301"]
@@ -155,9 +161,9 @@ For example:
     "subprocess.check_output"
   ]
 
-
 Skipping Tests
 --------------
+
 The bandit config may contain optional lists of test IDs to either include
 (`tests`) or exclude (`skips`). These lists are equivalent to using `-t` and
 `-s` on the command line. If only `tests` is given then bandit will include
@@ -176,19 +182,21 @@ Suppressing Individual Lines
 
 If you have lines in your code triggering vulnerability errors and you are
 certain that this is acceptable, they can be individually silenced by appending
-``# nosec`` to the line::
+``# nosec`` to the line:
+
+.. code-block:: python
 
     # The following hash is not used in any security context. It is only used
     # to generate unique values, collisions are acceptable and "data" is not
     # coming from user-generated input
     the_hash = md5(data).hexdigest()  # nosec
 
-
 In such cases, it is good practice to add a comment explaining *why* a given
 line was excluded from security checks.
 
 Generating a Config
 -------------------
+
 Bandit ships the tool `bandit-config-generator` designed to take the leg work
 out of configuration. This tool can generate a configuration file
 automatically. The generated configuration will include default config blocks
@@ -201,7 +209,8 @@ a complete list of all test IDs for reference when editing).
 
 Configuring Test Plugins
 ------------------------
-Bandit's configuration file is written in `YAML <http://yaml.org/>`_ and options
+
+Bandit's configuration file is written in `YAML`_ and options
 for each plugin test are provided under a section named to match the test
 method. For example, given a test plugin called 'try_except_pass' its
 configuration section might look like the following:
@@ -212,5 +221,9 @@ configuration section might look like the following:
       check_typed_exception: True
 
 The specific content of the configuration block is determined by the plugin
-test itself. See the `plugin test list <plugins/index.html>`_ for complete
-information on configuring each one.
+test itself. See the `plugin test list`_ for complete information on
+configuring each one.
+
+
+.. _YAML: https://yaml.org/
+.. _plugin test list: plugins/index.html
