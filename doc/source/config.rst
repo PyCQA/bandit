@@ -5,14 +5,22 @@ Configuration
 Bandit Settings
 ---------------
 
-Projects may include an INI file named `.bandit` that specifies command line
-arguments that should be supplied for that project. The currently supported
-arguments are:
+Projects may include an INI file named `.bandit`, which specifies
+command line arguments that should be supplied for that project.
+In addition or alternatively, you can use a YAML or TOML file, which
+however needs to be explicitly specified using the `-c` option.
+The currently supported arguments are:
 
- - targets: comma separated list of target dirs/files to run bandit on
- - exclude: comma separated list of excluded paths
- - skips: comma separated list of tests to skip
- - tests: comma separated list of tests to run
+``targets``
+  comma separated list of target dirs/files to run bandit on
+``exclude``
+  comma separated list of excluded paths -- *INI only*
+``exclude_dirs``
+  comma separated list of excluded paths (directories or files) -- *YAML and TOML only*
+``skips``
+  comma separated list of tests to skip
+``tests``
+  comma separated list of tests to run
 
 To use this, put an INI file named `.bandit` in your project's directory.
 Command line arguments must be in `[bandit]` section.
@@ -25,6 +33,34 @@ For example:
   exclude = tests,path/to/file
   tests = B201,B301
   skips = B101,B601
+
+Alternatively, put a YAML or TOML file anywhere, and use the `-c` option.
+For example:
+
+.. code-block:: yaml
+
+  # FILE: bandit.yaml
+  exclude_dirs: ['tests', 'path/to/file']
+  tests: ['B201', 'B301']
+  skips: ['B101', 'B601']
+
+.. code-block:: toml
+
+  # FILE: pyproject.toml
+  [tool.bandit]
+  exclude_dirs = ["tests", "path/to/file"]
+  tests = ["B201", "B301"]
+  skips = ["B101", "B601"]
+
+Then run bandit like this:
+
+.. code-block:: console
+
+  bandit -c bandit.yaml -r .
+
+.. code-block:: console
+
+  bandit -c pyproject.toml -r .
 
 Note that Bandit will look for `.bandit` file only if it is invoked with `-r` option.
 If you do not use `-r` or the INI file's name is not `.bandit`, you can specify
@@ -88,6 +124,8 @@ look like the following:
 
   ### profile may optionally select or skip tests
 
+  exclude_dirs: ['tests', 'path/to/file']
+
   # (optional) list included tests here:
   tests: ['B201', 'B301']
 
@@ -106,6 +144,12 @@ look like the following:
     subprocess: [subprocess.Popen, subprocess.call, subprocess.check_call,
       subprocess.check_output]
 
+Run with:
+
+.. code-block:: console
+
+  bandit -c bandit.yaml -r .
+
 If you require several sets of tests for specific tasks, then you should create
 several config files and pick from them using `-c`. If you only wish to control
 the specific tests that are to be run (and not their parameters) then using
@@ -117,6 +161,7 @@ would explicitly specify the path to configuration via `-c`, too. For example:
 .. code-block:: toml
 
   [tool.bandit]
+  exclude_dirs = ["tests", "path/to/file"]
   tests = ["B201", "B301"]
   skips = ["B101", "B601"]
 
@@ -160,6 +205,15 @@ would explicitly specify the path to configuration via `-c`, too. For example:
     "subprocess.check_call",
     "subprocess.check_output"
   ]
+
+Run with:
+
+.. code-block:: console
+
+  bandit -c pyproject.toml -r .
+
+.. _YAML file: https://yaml.org/
+.. _pyproject.toml file: https://www.python.org/dev/peps/pep-0518/
 
 Skipping Tests
 --------------

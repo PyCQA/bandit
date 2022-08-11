@@ -25,6 +25,12 @@ Install Bandit:
 
     pip install bandit
 
+If you want to include TOML support, install it with the `toml` extras:
+
+.. code-block:: console
+
+    pip install bandit[toml]
+
 Run Bandit:
 
 .. code-block:: console
