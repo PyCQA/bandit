@@ -2,6 +2,7 @@ import random
 import os
 import somelib
 
+bad = random.Random()
 bad = random.random()
 bad = random.randrange()
 bad = random.randint()

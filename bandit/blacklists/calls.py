@@ -189,7 +189,8 @@ purposes.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
-| B311 | random              | - random.random                    | Low       |
+| B311 | random              | - random.Random                    | Low       |
+|      |                     | - random.random                    |           |
 |      |                     | - random.randrange                 |           |
 |      |                     | - random.randint                   |           |
 |      |                     | - random.choice                    |           |
@@ -519,6 +520,7 @@ def gen_blacklist():
             "B311",
             issue.Cwe.INSUFFICIENT_RANDOM_VALUES,
             [
+                "random.Random",
                 "random.random",
                 "random.randrange",
                 "random.randint",

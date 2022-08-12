@@ -396,8 +396,8 @@ class FunctionalTests(testtools.TestCase):
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 7, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 8, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
         }
         self.check_example("random_module.py", expect)
 
