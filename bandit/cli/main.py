@@ -603,7 +603,7 @@ def main():
         _init_logger(log_level=logging.DEBUG, log_format=log_format)
 
     if args.quiet:
-        _init_logger(log_level=logging.WARN)
+        _init_logger(log_level=logging.ERROR)
 
     try:
         profile = _get_profile(b_conf, args.profile, args.config_file)
