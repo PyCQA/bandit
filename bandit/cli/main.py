@@ -322,7 +322,7 @@ def main():
         "--quiet",
         "--silent",
         dest="quiet",
-        action="store_true",
+        action="count",
         help="only show output in the case of an error",
     )
     parser.add_argument(
@@ -602,8 +602,10 @@ def main():
         log_format = b_conf.get_option("log_format")
         _init_logger(log_level=logging.DEBUG, log_format=log_format)
 
-    if args.quiet:
+    if args.quiet > 1:
         _init_logger(log_level=logging.ERROR)
+    elif args.quiet > 0:
+        _init_logger(log_level=logging.WARN)
 
     try:
         profile = _get_profile(b_conf, args.profile, args.config_file)
