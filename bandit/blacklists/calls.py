@@ -9,7 +9,7 @@ Blacklist various Python calls known to be dangerous
 
 This blacklist data checks for a number of Python calls known to have possible
 security implications. The following blacklist tests are run against any
-function calls encoutered in the scanned code base, triggered by encoutering
+function calls encountered in the scanned code base, triggered by encoutering
 ast.Call nodes.
 
 B301: pickle
