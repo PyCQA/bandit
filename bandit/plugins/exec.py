@@ -19,7 +19,7 @@ Python docs succinctly describe why the use of `exec` is risky.
        CWE: CWE-78 (https://cwe.mitre.org/data/definitions/78.html)
        Location: ./examples/exec.py:2
     1 exec("do evil")
-    2 exec "do evil"
+
 
 .. seealso::
 
