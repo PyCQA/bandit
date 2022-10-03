@@ -3,6 +3,7 @@
 # process, which may cause wedges in the gate later.
 GitPython>=1.0.1 # BSD License (3 clause)
 PyYAML>=5.3.1 # MIT
+importlib-metadata<5;python_version<"3.8" # Apache-2.0
 stevedore>=1.20.0 # Apache-2.0
 colorama>=0.3.9;platform_system=="Windows" # BSD License (3 clause)
 rich # MIT
