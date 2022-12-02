@@ -19,6 +19,8 @@ function variations of hashlib.
 
 :Example:
 
+.. code-block:: none
+
     >> Issue: [B324:hashlib] Use of weak MD4, MD5, or SHA1 hash for
        security. Consider usedforsecurity=False
        Severity: High   Confidence: High
@@ -63,8 +65,8 @@ def _hashlib_func(context):
                         severity=bandit.HIGH,
                         confidence=bandit.HIGH,
                         cwe=issue.Cwe.BROKEN_CRYPTO,
-                        text="Use of weak MD4, MD5, or SHA1 hash for "
-                        "security. Consider usedforsecurity=False",
+                        text=f"Use of weak {func.upper()} hash for security. "
+                        "Consider usedforsecurity=False",
                         lineno=context.node.lineno,
                     )
             elif func == "new":
@@ -76,7 +78,7 @@ def _hashlib_func(context):
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,
                             cwe=issue.Cwe.BROKEN_CRYPTO,
-                            text="Use of weak MD4, MD5, or SHA1 hash for "
+                            text=f"Use of weak {name.upper()} hash for "
                             "security. Consider usedforsecurity=False",
                             lineno=context.node.lineno,
                         )
@@ -96,7 +98,7 @@ def _hashlib_new(context):
                     severity=bandit.MEDIUM,
                     confidence=bandit.HIGH,
                     cwe=issue.Cwe.BROKEN_CRYPTO,
-                    text="Use of insecure MD4, MD5, or SHA1 hash function.",
+                    text=f"Use of insecure {name.upper()} hash function.",
                     lineno=context.node.lineno,
                 )
 

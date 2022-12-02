@@ -36,7 +36,7 @@ If so, a MEDIUM issue is reported. For example:
     construction.
        Severity: Medium   Confidence: Low
        CWE: CWE-89 (https://cwe.mitre.org/data/definitions/89.html)
-       Location: ./examples/sql_statements_without_sql_alchemy.py:4
+       Location: ./examples/sql_statements.py:4
     3 query = "DELETE FROM foo WHERE id = '%s'" % identifier
     4 query = "UPDATE foo SET value = 'b' WHERE id = '%s'" % identifier
     5

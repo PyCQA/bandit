@@ -62,6 +62,8 @@ def yaml_load(context):
             func == "load",
             not context.check_call_arg_value("Loader", "SafeLoader"),
             not context.check_call_arg_value("Loader", "CSafeLoader"),
+            not context.get_call_arg_at_position(1) == "SafeLoader",
+            not context.get_call_arg_at_position(1) == "CSafeLoader",
         ]
     ):
         return bandit.Issue(

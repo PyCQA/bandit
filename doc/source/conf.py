@@ -26,7 +26,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Bandit"
-copyright = "2016, Bandit Developers"
+copyright = "2022, Bandit Developers"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True

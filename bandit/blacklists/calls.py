@@ -9,7 +9,7 @@ Blacklist various Python calls known to be dangerous
 
 This blacklist data checks for a number of Python calls known to have possible
 security implications. The following blacklist tests are run against any
-function calls encoutered in the scanned code base, triggered by encoutering
+function calls encountered in the scanned code base, triggered by encoutering
 ast.Call nodes.
 
 B301: pickle
@@ -24,14 +24,15 @@ deserialize untrusted data, possible security issue.
 | B301 | pickle              | - pickle.loads                     | Medium    |
 |      |                     | - pickle.load                      |           |
 |      |                     | - pickle.Unpickler                 |           |
-|      |                     | - cPickle.loads                    |           |
-|      |                     | - cPickle.load                     |           |
-|      |                     | - cPickle.Unpickler                |           |
 |      |                     | - dill.loads                       |           |
 |      |                     | - dill.load                        |           |
 |      |                     | - dill.Unpickler                   |           |
 |      |                     | - shelve.open                      |           |
 |      |                     | - shelve.DbfilenameShelf           |           |
+|      |                     | - jsonpickle.decode                |           |
+|      |                     | - jsonpickle.unpickler.decode      |           |
+|      |                     | - jsonpickle.unpickler.Unpickler   |           |
+|      |                     | - pandas.read_pickle               |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -136,6 +137,8 @@ be reviewed.
 
 B309: httpsconnection
 ---------------------
+
+The check for this call has been removed.
 
 Use of HTTPSConnection on older versions of Python prior to 2.7.9 and 3.4.3 do
 not provide security, see https://wiki.openstack.org/wiki/OSSN/OSSN-0033
@@ -297,6 +300,8 @@ behavior that does not validate certificates or perform hostname checks.
 B325: tempnam
 --------------
 
+The check for this call has been removed.
+
 Use of os.tempnam() and os.tmpnam() is vulnerable to symlink attacks. Consider
 using tmpfile() instead.
 
@@ -340,14 +345,15 @@ def gen_blacklist():
                 "pickle.loads",
                 "pickle.load",
                 "pickle.Unpickler",
-                "cPickle.loads",
-                "cPickle.load",
-                "cPickle.Unpickler",
                 "dill.loads",
                 "dill.load",
                 "dill.Unpickler",
                 "shelve.open",
                 "shelve.DbfilenameShelf",
+                "jsonpickle.decode",
+                "jsonpickle.unpickler.decode",
+                "jsonpickle.unpickler.Unpickler",
+                "pandas.read_pickle",
             ],
             "Pickle and modules that wrap it can be unsafe when used to "
             "deserialize untrusted data, possible security issue.",
@@ -479,21 +485,7 @@ def gen_blacklist():
         )
     )
 
-    sets.append(
-        utils.build_conf_dict(
-            "httpsconnection",
-            "B309",
-            issue.Cwe.CLEARTEXT_TRANSMISSION,
-            [
-                "httplib.HTTPSConnection",
-                "http.client.HTTPSConnection",
-                "six.moves.http_client.HTTPSConnection",
-            ],
-            "Use of HTTPSConnection on older versions of Python prior to 2.7.9"
-            " and 3.4.3 do not provide security, see "
-            "https://wiki.openstack.org/wiki/OSSN/OSSN-0033",
-        )
-    )
+    # skipped B309 as the check for a call to httpsconnection has been removed
 
     sets.append(
         utils.build_conf_dict(
@@ -696,15 +688,7 @@ def gen_blacklist():
 
     # skipped B324 (used in bandit/plugins/hashlib_new_insecure_functions.py)
 
-    sets.append(
-        utils.build_conf_dict(
-            "tempnam",
-            "B325",
-            issue.Cwe.INSECURE_TEMP_FILE,
-            ["os.tempnam", "os.tmpnam"],
-            "Use of os.tempnam() and os.tmpnam() is vulnerable to symlink "
-            "attacks. Consider using tmpfile() instead.",
-        )
-    )
+    # skipped B325 as the check for a call to os.tempnam and os.tmpnam have
+    # been removed
 
     return {"Call": sets}

@@ -91,7 +91,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         sev_level=sev_level, conf_level=conf_level
     )
 
-    collector = [r.as_dict() for r in results]
+    collector = [r.as_dict(max_lines=lines) for r in results]
     for elem in collector:
         elem["more_info"] = docs_utils.get_url(elem["test_id"])
 

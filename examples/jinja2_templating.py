@@ -20,6 +20,9 @@ Environment(loader=templateLoader, autoescape=select_autoescape())
 Environment(loader=templateLoader,
             autoescape=select_autoescape(['html', 'htm', 'xml']))
 
+Environment(loader=templateLoader,
+            autoescape=jinja2.select_autoescape(['html', 'htm', 'xml']))
+
 
 def fake_func():
     return 'foobar'

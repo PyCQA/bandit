@@ -13,6 +13,8 @@ import sys
 import tokenize
 import traceback
 
+from rich import progress
+
 from bandit.core import constants as b_constants
 from bandit.core import extension_loader
 from bandit.core import issue
@@ -25,6 +27,7 @@ from bandit.core import test_set as b_test_set
 LOG = logging.getLogger(__name__)
 NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
 NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z_]+),?)+", re.IGNORECASE)
+PROGRESS_THRESHOLD = 50
 
 
 class BanditManager:
@@ -69,9 +72,6 @@ class BanditManager:
         self.agg_type = agg_type
         self.metrics = metrics.Metrics()
         self.b_ts = b_test_set.BanditTestSet(config, profile)
-
-        # set the increment of after how many files to show progress
-        self.progress = b_constants.progress_increment
         self.scores = []
 
     def get_skipped(self):
@@ -263,19 +263,20 @@ class BanditManager:
 
         :return: -
         """
-        self._show_progress("%s [" % len(self.files_list))
-
         # if we have problems with a file, we'll remove it from the files_list
         # and add it to the skipped list instead
         new_files_list = list(self.files_list)
+        if (
+            len(self.files_list) > PROGRESS_THRESHOLD
+            and LOG.getEffectiveLevel() <= logging.INFO
+        ):
+            files = progress.track(self.files_list)
+        else:
+            files = self.files_list
 
-        for count, fname in enumerate(self.files_list):
+        for count, fname in enumerate(files):
             LOG.debug("working on file : %s", fname)
 
-            if len(self.files_list) > self.progress:
-                # is it time to update the progress indicator?
-                if count % self.progress == 0:
-                    self._show_progress("%s.. " % count, flush=True)
             try:
                 if fname == "-":
                     open_fd = os.fdopen(sys.stdin.fileno(), "rb", 0)
@@ -291,31 +292,11 @@ class BanditManager:
                 self.skipped.append((fname, e.strerror))
                 new_files_list.remove(fname)
 
-        self._show_progress("]\n", flush=True)
-
         # reflect any files which may have been skipped
         self.files_list = new_files_list
 
         # do final aggregation of metrics
         self.metrics.aggregate()
-
-    def _show_progress(self, message, flush=False):
-        """Show progress on stderr
-
-        Write progress message to stderr, if number of files warrants it and
-        log level is high enough.
-
-        :param message: The message to write to stderr
-        :param flush: Whether to flush stderr after writing the message
-        :return:
-        """
-        if (
-            len(self.files_list) > self.progress
-            and LOG.getEffectiveLevel() <= logging.INFO
-        ):
-            sys.stderr.write(message)
-            if flush:
-                sys.stderr.flush()
 
     def _parse_file(self, fname, fdata, new_files_list):
         try:
@@ -340,11 +321,7 @@ class BanditManager:
                 pass
             score = self._execute_ast_visitor(fname, fdata, data, nosec_lines)
             self.scores.append(score)
-            self.metrics.count_issues(
-                [
-                    score,
-                ]
-            )
+            self.metrics.count_issues([score])
         except KeyboardInterrupt:
             sys.exit(2)
         except SyntaxError:
@@ -354,12 +331,13 @@ class BanditManager:
             new_files_list.remove(fname)
         except Exception as e:
             LOG.error(
-                "Exception occurred when executing tests against "
-                '%s. Run "bandit --debug %s" to see the full '
-                "traceback.",
-                fname,
-                fname,
+                "Exception occurred when executing tests against %s.", fname
             )
+            if not LOG.isEnabledFor(logging.DEBUG):
+                LOG.error(
+                    'Run "bandit --debug %s" to see the full traceback.', fname
+                )
+
             self.skipped.append((fname, "exception while scanning file"))
             new_files_list.remove(fname)
             LOG.debug("  Exception string: %s", e)
