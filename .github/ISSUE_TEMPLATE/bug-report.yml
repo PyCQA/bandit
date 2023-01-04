@@ -67,7 +67,8 @@ body:
       label: Python version
       description: Run "bandit --version" if unsure of version number
       options:
-        - 3.10 (Default)
+        - 3.11 (Default)
+        - 3.10
         - 3.9
         - 3.8
         - 3.7
