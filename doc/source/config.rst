@@ -80,8 +80,11 @@ and optional additional dependencies in the `pre-commit`_ configuration:
       rev: '' # Update me!
       hooks:
       - id: bandit
-        args: ["-c", "pyproject.toml"]
-        additional_dependencies: ["bandit[toml]"]
+        args:
+          - '-c'
+          - 'pyproject.toml'
+        additional_dependencies: 
+          - 'bandit[toml]'
 
 Exclusions
 ----------
