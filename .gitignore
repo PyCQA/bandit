@@ -1,3 +1,5 @@
+bandit/version.py
+
 env*
 venv*
 .python-version
