@@ -439,17 +439,39 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {
                 "UNDEFINED": 0,
                 "LOW": 0,
-                "MEDIUM": 14,
+                "MEDIUM": 18,
                 "HIGH": 0,
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
                 "LOW": 8,
-                "MEDIUM": 6,
+                "MEDIUM": 10,
                 "HIGH": 0,
             },
         }
         self.check_example("sql_statements.py", expect)
+
+    def test_multiline_sql_statements(self):
+        """
+        Test for SQL injection through string building using
+        multi-line strings.
+        """
+        example_file = "sql_multiline_statements.py"
+        expect = {
+            "SEVERITY": {
+                "UNDEFINED": 0,
+                "LOW": 0,
+                "MEDIUM": 26,
+                "HIGH": 0,
+            },
+            "CONFIDENCE": {
+                "UNDEFINED": 0,
+                "LOW": 13,
+                "MEDIUM": 13,
+                "HIGH": 0,
+            },
+        }
+        self.check_example(example_file, expect)
 
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""
