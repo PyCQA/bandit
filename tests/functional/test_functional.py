@@ -457,21 +457,42 @@ class FunctionalTests(testtools.TestCase):
         multi-line strings.
         """
         example_file = "sql_multiline_statements.py"
+        confidence_low_tests = 13
+        severity_medium_tests = 26
+        nosec_tests = 7
+        skipped_tests = 8
+        if sys.version_info[:2] <= (3, 7):
+            # In the case of implicit concatenation in python 3.7,
+            # we know only the first line of multi-line string.
+            # Thus, cases like:
+            # query = ("SELECT * "
+            #          "FROM foo "  # nosec
+            #          f"WHERE id = {identifier}")
+            # are not skipped but reported as errors.
+            confidence_low_tests = 17
+            severity_medium_tests = 30
+            nosec_tests = 5
+            skipped_tests = 6
         expect = {
             "SEVERITY": {
                 "UNDEFINED": 0,
                 "LOW": 0,
-                "MEDIUM": 26,
+                "MEDIUM": severity_medium_tests,
                 "HIGH": 0,
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
-                "LOW": 13,
+                "LOW": confidence_low_tests,
                 "MEDIUM": 13,
                 "HIGH": 0,
             },
         }
+        expect_stats = {
+            "nosec": nosec_tests,
+            "skipped_tests": skipped_tests,
+        }
         self.check_example(example_file, expect)
+        self.check_metrics(example_file, expect_stats)
 
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""

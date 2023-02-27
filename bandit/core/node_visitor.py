@@ -200,13 +200,6 @@ class BanditNodeVisitor:
         if hasattr(node, "lineno"):
             self.context["lineno"] = node.lineno
 
-            # explicitly check for empty set to skip all tests for a line
-            nosec_tests = self.nosec_lines.get(node.lineno)
-            if nosec_tests is not None and not len(nosec_tests):
-                LOG.debug("skipped, nosec without test number")
-                self.metrics.note_nosec()
-                return False
-
         if hasattr(node, "col_offset"):
             self.context["col_offset"] = node.col_offset
         if hasattr(node, "end_col_offset"):
