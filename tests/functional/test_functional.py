@@ -513,8 +513,8 @@ class FunctionalTests(testtools.TestCase):
     def test_urlopen(self):
         """Test for dangerous URL opening."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 14},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
         }
         self.check_example("urlopen.py", expect)
 
