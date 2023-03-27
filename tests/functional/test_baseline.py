@@ -290,3 +290,30 @@ class BaselineFunctionalTests(testtools.TestCase):
     self.assertIn("subprocess.check_output(['ls'])", return_value)
     self.assertNotIn(baseline_no_issues_found, return_value)
     self.assertNotIn(baseline_no_skipped_files, return_value)
+
+def test_no_new_candidates(self):
+    """Tests when there are no new candidates
+    Test that bandit returns no issues found, as there are no new
+    candidates found compared with those found from the baseline.
+    """
+    baseline_report_files = {
+        "new_candidates-all.py": "new_candidates-all.py"
+    }
+    target_directory, baseline_code = self._create_baseline(
+        baseline_report_files
+    )
+    # assert the initial baseline found results
+    self.assertEqual(1, baseline_code)
+    baseline_report = os.path.join(
+        target_directory, self.baseline_report_file
+    )
+    return_value, return_code = self._run_bandit_baseline(
+        target_directory, baseline_report
+    )
+    # assert there were no results (no candidates found)
+    self.assertEqual(0, return_code)
+    self.assertIn(new_candidates_all_total_lines, return_value)
+    self.assertIn(new_candidates_skip_nosec_lines, return_value)
+    self.assertIn(baseline_no_skipped_files, return_value)
+    self.assertIn(baseline_no_issues_found, return_value)
+
