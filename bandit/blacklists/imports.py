@@ -152,7 +152,7 @@ xmlrpclib and mitigate remote XML attacks.
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B411 | import_xmlrpclib    | - xmlrpclib                        | high      |
+| B411 | import_xmlrpclib    | - xmlrpc                           | high      |
 +------+---------------------+------------------------------------+-----------+
 
 B412: import_httpoxy
@@ -374,7 +374,7 @@ def gen_blacklist():
             "import_xmlrpclib",
             "B411",
             issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            ["xmlrpclib"],
+            ["xmlrpc"],
             "Using {name} to parse untrusted XML data is known to be "
             "vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() "
             "function to monkey-patch xmlrpclib and mitigate XML "
