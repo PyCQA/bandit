@@ -52,6 +52,8 @@ issue.
     CWE information added
 
 """  # noqa: E501
+import ast
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
@@ -78,3 +80,5 @@ def hardcoded_tmp_directory(context, config):
             cwe=issue.Cwe.INSECURE_TEMP_FILE,
             text="Probable insecure usage of temp file/directory.",
         )
+
+

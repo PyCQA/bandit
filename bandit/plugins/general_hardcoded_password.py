@@ -27,7 +27,8 @@ def _report(value):
 
 @test.checks("Str")
 @test.test_id("B105")
-def hardcoded_password_string(context):
+@bandit.test_id('B123')
+def hardcoded_password_string(context, _file):
     """**B105: Test for use of hard-coded password strings**
 
     The use of hard-coded passwords increases the possibility of password
@@ -90,6 +91,16 @@ def hardcoded_password_string(context):
             ):
                 return _report(node.s)
 
+    elif isinstance(node.value, ast.Str):
+        # check for hardcoded password strings within the typing module
+        if 'typing' in _file.file_path:
+            if 'password' in node.value.s.lower():
+                return bandit.Issue(
+                    severity=bandit.HIGH,
+                    confidence=bandit.MEDIUM,
+                    text=("Possible hardcoded password string: %s" % node.value.s),
+                    lineno=node.lineno,
+                )
     elif isinstance(
         node._bandit_parent, ast.Subscript
     ) and RE_CANDIDATES.search(node.s):
