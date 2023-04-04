@@ -16,18 +16,23 @@ RE_CANDIDATES = re.compile(
 )
 
 
-def _report(value):
-    return bandit.Issue(
-        severity=bandit.LOW,
-        confidence=bandit.MEDIUM,
-        cwe=issue.Cwe.HARD_CODED_PASSWORD,
-        text=("Possible hardcoded password: '%s'" % value),
+def _report(value, node):
+    bandit.report(
+        bandit.Issue(
+            severity=bandit.LOW,
+            confidence=bandit.MEDIUM,
+            cwe=issue.Cwe.HARD_CODED_PASSWORD,
+            text=("Possible hardcoded password: '%s'" % value),
+            lineno=node.lineno,
+            filename=node.col_offset,
+        )
     )
+
 
 
 @test.checks("Str")
 @test.test_id("B105")
-@bandit.test_id('B123')
+#@bandit.test_id('B123')
 def hardcoded_password_string(context, _file):
     """**B105: Test for use of hard-coded password strings**
 
@@ -92,8 +97,10 @@ def hardcoded_password_string(context, _file):
                 return _report(node.s)
 
     elif isinstance(node.value, ast.Str):
-        # check for hardcoded password strings within the typing module
         if 'typing' in _file.file_path:
+            for ancestor in node.ancestors:
+                if isinstance(ancestor, ast.FunctionDef) and ancestor.name == 'reveal_type':
+                    return
             if 'password' in node.value.s.lower():
                 return bandit.Issue(
                     severity=bandit.HIGH,
