@@ -47,7 +47,6 @@ import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 
-
 WEAK_HASHES = ("md4", "md5", "sha", "sha1")
 
 

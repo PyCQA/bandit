@@ -10,7 +10,6 @@ from bandit.core import constants
 from bandit.core import tester as b_tester
 from bandit.core import utils as b_utils
 
-
 LOG = logging.getLogger(__name__)
 
 

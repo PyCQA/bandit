@@ -23,7 +23,6 @@ from bandit.core import metrics
 from bandit.core import node_visitor as b_node_visitor
 from bandit.core import test_set as b_test_set
 
-
 LOG = logging.getLogger(__name__)
 NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
 NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z_]+),?)+", re.IGNORECASE)
@@ -195,8 +194,8 @@ class BanditManager:
 
         except Exception as e:
             raise RuntimeError(
-                "Unable to output report using '%s' formatter: "
-                "%s" % (output_format, str(e))
+                f"Unable to output report using "
+                f"'{output_format}' formatter: {str(e)}"
             )
 
     def discover_files(self, targets, recursive=False, excluded_paths=""):

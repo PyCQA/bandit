@@ -835,18 +835,18 @@ class FunctionalTests(testtools.TestCase):
             "exposes the Werkzeug debugger and allows the execution "
             "of arbitrary code."
         )
-        json = """{{
+        json = f"""{{
           "results": [
             {{
               "code": "...",
-              "filename": "{}/examples/flask_debug.py",
+              "filename": "{os.getcwd()}/examples/flask_debug.py",
               "issue_confidence": "MEDIUM",
               "issue_severity": "HIGH",
               "issue_cwe": {{
                 "id": 94,
                 "link": "https://cwe.mitre.org/data/definitions/94.html"
               }},
-              "issue_text": "{}",
+              "issue_text": "{issue_text}",
               "line_number": 10,
               "col_offset": 0,
               "line_range": [
@@ -857,10 +857,7 @@ class FunctionalTests(testtools.TestCase):
             }}
           ]
         }}
-        """.format(
-            os.getcwd(),
-            issue_text,
-        )
+        """
 
         self.b_mgr.populate_baseline(json)
         self.run_example("flask_debug.py")

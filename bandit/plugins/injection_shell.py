@@ -9,7 +9,6 @@ import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 
-
 # yuck, regex: starts with a windows drive letter (eg C:)
 # or one of our path delimeter characters (/, \, .)
 full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")

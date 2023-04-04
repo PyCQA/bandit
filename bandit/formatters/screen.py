@@ -67,7 +67,7 @@ COLOR = {
 
 
 def header(text, *args):
-    return "{}{}{}".format(COLOR["HEADER"], (text % args), COLOR["DEFAULT"])
+    return f"{COLOR['HEADER']}{text % args}{COLOR['DEFAULT']}"
 
 
 def get_verbose_details(manager):
@@ -81,7 +81,7 @@ def get_verbose_details(manager):
         ]
     )
     bits.append(header("Files excluded (%i):", len(manager.excluded_files)))
-    bits.extend(["\t%s" % fname for fname in manager.excluded_files])
+    bits.extend([f"\t{fname}" for fname in manager.excluded_files])
     return "\n".join([str(bit) for bit in bits])
 
 
@@ -89,7 +89,7 @@ def get_metrics(manager):
     bits = []
     bits.append(header("\nRun metrics:"))
     for (criteria, _) in constants.CRITERIA:
-        bits.append("\tTotal issues (by %s):" % (criteria.lower()))
+        bits.append(f"\tTotal issues (by {criteria.lower()}):")
         for rank in constants.RANKING:
             bits.append(
                 "\t\t%s: %s"

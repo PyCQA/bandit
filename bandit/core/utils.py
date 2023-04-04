@@ -140,8 +140,7 @@ def get_module_qualname_from_path(path):
     (head, tail) = os.path.split(path)
     if head == "" or tail == "":
         raise InvalidModulePath(
-            'Invalid python file path: "%s"'
-            " Missing path or file name" % (path)
+            f'Invalid python file path: "{path}" Missing path or file name'
         )
 
     qname = [os.path.splitext(tail)[0]]
@@ -369,7 +368,7 @@ def check_ast_node(name):
     except AttributeError:  # nosec(tkelsey): catching expected exception
         pass
 
-    raise TypeError("Error: %s is not a valid node type in AST" % name)
+    raise TypeError(f"Error: {name} is not a valid node type in AST")
 
 
 def get_nosec(nosec_lines, context):

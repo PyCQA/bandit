@@ -84,9 +84,9 @@ class BanditTester:
                             LOG.debug("skipped, nosec without test number")
                             self.metrics.note_nosec()
                             continue
-                        elif result.test_id in nosec_tests_to_skip:
+                        if result.test_id in nosec_tests_to_skip:
                             LOG.debug(
-                                "skipped, nosec for test %s" % result.test_id
+                                f"skipped, nosec for test {result.test_id}"
                             )
                             self.metrics.note_skipped_test()
                             continue
@@ -152,7 +152,7 @@ class BanditTester:
     @staticmethod
     def report_error(test, context, error):
         what = "Bandit internal error running: "
-        what += "%s " % test
+        what += f"{test} "
         what += "on file %s at line %i: " % (
             context._context["filename"],
             context._context["lineno"],
