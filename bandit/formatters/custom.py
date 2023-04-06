@@ -33,7 +33,6 @@ import sys
 
 from bandit.core import test_properties
 
-
 LOG = logging.getLogger(__name__)
 
 
@@ -141,10 +140,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
             markers = ["", ":", "!"]
             msg_parsed_template_list.append(
                 ["{"]
-                + [
-                    "%s" % (m + p) if p else ""
-                    for m, p in zip(markers, params)
-                ]
+                + [f"{m + p}" if p else "" for m, p in zip(markers, params)]
                 + ["}"]
             )
 

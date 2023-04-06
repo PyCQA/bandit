@@ -19,7 +19,6 @@ from bandit.core import constants
 from bandit.core import extension_loader
 from bandit.core import utils
 
-
 LOG = logging.getLogger(__name__)
 
 

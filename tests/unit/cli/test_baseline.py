@@ -10,8 +10,7 @@ import fixtures
 import git
 import testtools
 
-import bandit.cli.baseline as baseline
-
+from bandit.cli import baseline
 
 config = """
 include:
@@ -258,7 +257,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         os.chdir(repo_directory)
 
         # create an existing version of output report file
-        existing_report = "{}.{}".format(baseline.report_basename, "txt")
+        existing_report = f"{baseline.report_basename}.txt"
         with open(existing_report, "wt") as fd:
             fd.write(self.temp_file_contents)
 

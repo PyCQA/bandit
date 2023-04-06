@@ -78,11 +78,10 @@ class TestGetOption(testtools.TestCase):
         self.example_subkey = uuid.uuid4().hex
         self.example_subvalue = uuid.uuid4().hex
         sample_yaml = textwrap.dedent(
+            f"""
+            {self.example_key}:
+                {self.example_subkey}: {self.example_subvalue}
             """
-            %s:
-                %s: %s
-            """
-            % (self.example_key, self.example_subkey, self.example_subvalue)
         )
 
         f = self.useFixture(TempFile(sample_yaml))
