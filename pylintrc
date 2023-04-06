@@ -87,7 +87,7 @@ min-similarity-lines=10
 # Ignore comments when computing similarities.
 ignore-comments=yes
 
-#we don't need to do pylint on the examples, too many false positives
+# We don't need to do pylint on the examples, too many false positives
 ignore-paths=examples
 
 # Ignore docstrings when computing similarities.
