@@ -21,7 +21,7 @@ def psycopg2_sql_injection(context):
 
      - https://www.psycopg.org/docs/sql.html
 
-    .. versionadded:: 1.7.5
+    .. versionadded:: 1.7.6
     """
     if context.is_module_imported_like("psycopg2.sql"):
         if context.call_function_name == "SQL":
