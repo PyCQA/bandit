@@ -157,3 +157,11 @@ def test_insecure_with_assign(str_arg=None):
     if not str_arg:
         str_arg = 'could be insecure'
     safestring.mark_safe(str_arg)
+
+def test_insecure_tuple_assign():
+    HTML_CHOICES = (
+        (_('Donate'), 'https://example.org/donate/'),
+        (_('More info'), 'https://example.org/'),
+    )
+    text, url = choice(HTML_CHOICES)
+    safestring.mark_safe('<a href="{0}">{1}</a>'.format(url, text))

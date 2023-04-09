@@ -371,9 +371,8 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {version}\n  python version = {python}".format(
-            version=bandit.__version__, python=python_ver
-        ),
+        version=f"%(prog)s {bandit.__version__}\n"
+        f"  python version = {python_ver}",
     )
 
     parser.set_defaults(debug=False)
@@ -387,7 +386,7 @@ def main():
     blacklist_info = []
     for a in extension_mgr.blacklist.items():
         for b in a[1]:
-            blacklist_info.append("{}\t{}".format(b["id"], b["name"]))
+            blacklist_info.append(f"{b['id']}\t{b['name']}")
 
     plugin_list = "\n\t".join(sorted(set(plugin_info + blacklist_info)))
     dedent_text = textwrap.dedent(

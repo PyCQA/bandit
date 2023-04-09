@@ -196,7 +196,7 @@ class Issue:
             lines.append(tmplt % (line, text))
         return "".join(lines)
 
-    def as_dict(self, with_code=True):
+    def as_dict(self, with_code=True, max_lines=3):
         """Convert the issue to a dict of values for outputting."""
         out = {
             "filename": self.fname,
@@ -213,7 +213,7 @@ class Issue:
         }
 
         if with_code:
-            out["code"] = self.get_code()
+            out["code"] = self.get_code(max_lines=max_lines)
         return out
 
     def from_dict(self, data, with_code=True):

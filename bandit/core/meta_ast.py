@@ -5,7 +5,6 @@
 import collections
 import logging
 
-
 LOG = logging.getLogger(__name__)
 
 
@@ -40,7 +39,7 @@ class BanditMetaAst:
         """
         tmpstr = ""
         for k, v in self.nodes.items():
-            tmpstr += "Node: %s\n" % k
-            tmpstr += "\t%s\n" % str(v)
-        tmpstr += "Length: %s\n" % len(self.nodes)
+            tmpstr += f"Node: {k}\n"
+            tmpstr += f"\t{str(v)}\n"
+        tmpstr += f"Length: {len(self.nodes)}\n"
         return tmpstr

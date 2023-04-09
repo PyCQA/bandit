@@ -348,16 +348,16 @@ class FunctionalTests(testtools.TestCase):
     def test_pickle(self):
         """Test for the `pickle` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 6, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("pickle_deserialize.py", expect)
 
     def test_dill(self):
         """Test for the `dill` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
         self.check_example("dill.py", expect)
 
@@ -447,17 +447,60 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {
                 "UNDEFINED": 0,
                 "LOW": 0,
-                "MEDIUM": 14,
+                "MEDIUM": 18,
                 "HIGH": 0,
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
                 "LOW": 8,
-                "MEDIUM": 6,
+                "MEDIUM": 10,
                 "HIGH": 0,
             },
         }
         self.check_example("sql_statements.py", expect)
+
+    def test_multiline_sql_statements(self):
+        """
+        Test for SQL injection through string building using
+        multi-line strings.
+        """
+        example_file = "sql_multiline_statements.py"
+        confidence_low_tests = 13
+        severity_medium_tests = 26
+        nosec_tests = 7
+        skipped_tests = 8
+        if sys.version_info[:2] <= (3, 7):
+            # In the case of implicit concatenation in python 3.7,
+            # we know only the first line of multi-line string.
+            # Thus, cases like:
+            # query = ("SELECT * "
+            #          "FROM foo "  # nosec
+            #          f"WHERE id = {identifier}")
+            # are not skipped but reported as errors.
+            confidence_low_tests = 17
+            severity_medium_tests = 30
+            nosec_tests = 5
+            skipped_tests = 6
+        expect = {
+            "SEVERITY": {
+                "UNDEFINED": 0,
+                "LOW": 0,
+                "MEDIUM": severity_medium_tests,
+                "HIGH": 0,
+            },
+            "CONFIDENCE": {
+                "UNDEFINED": 0,
+                "LOW": confidence_low_tests,
+                "MEDIUM": 13,
+                "HIGH": 0,
+            },
+        }
+        expect_stats = {
+            "nosec": nosec_tests,
+            "skipped_tests": skipped_tests,
+        }
+        self.check_example(example_file, expect)
+        self.check_metrics(example_file, expect_stats)
 
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""
@@ -478,8 +521,8 @@ class FunctionalTests(testtools.TestCase):
     def test_urlopen(self):
         """Test for dangerous URL opening."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 14},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
         }
         self.check_example("urlopen.py", expect)
 
@@ -555,8 +598,8 @@ class FunctionalTests(testtools.TestCase):
     def test_django_xss_insecure(self):
         """Test for Django XSS via django.utils.safestring"""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 28, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 28},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 29, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 29},
         }
         self.b_mgr.b_ts = b_test_set.BanditTestSet(
             config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
@@ -800,18 +843,18 @@ class FunctionalTests(testtools.TestCase):
             "exposes the Werkzeug debugger and allows the execution "
             "of arbitrary code."
         )
-        json = """{{
+        json = f"""{{
           "results": [
             {{
               "code": "...",
-              "filename": "{}/examples/flask_debug.py",
+              "filename": "{os.getcwd()}/examples/flask_debug.py",
               "issue_confidence": "MEDIUM",
               "issue_severity": "HIGH",
               "issue_cwe": {{
                 "id": 94,
                 "link": "https://cwe.mitre.org/data/definitions/94.html"
               }},
-              "issue_text": "{}",
+              "issue_text": "{issue_text}",
               "line_number": 10,
               "col_offset": 0,
               "line_range": [
@@ -822,10 +865,7 @@ class FunctionalTests(testtools.TestCase):
             }}
           ]
         }}
-        """.format(
-            os.getcwd(),
-            issue_text,
-        )
+        """
 
         self.b_mgr.populate_baseline(json)
         self.run_example("flask_debug.py")
