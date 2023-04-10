@@ -113,14 +113,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 10,
+                    "MEDIUM": 16,
                     "HIGH": 9,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 19,
+                    "HIGH": 25,
                 },
             }
         else:
@@ -128,14 +128,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 16,
+                    "MEDIUM": 22,
                     "HIGH": 4,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 20,
+                    "HIGH": 26,
                 },
             }
         self.check_example("crypto-md5.py", expect)
