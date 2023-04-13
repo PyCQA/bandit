@@ -22,7 +22,7 @@ jobs:
         pip install -r test-requirements.txt
         pip install tox
     - name: Run tox
-      run: tox -e format
+      run: tox run -e format
 
   pep8:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
         pip install -r test-requirements.txt
         pip install tox
     - name: Run tox
-      run: tox -e pep8
+      run: tox run -e pep8
 
   tests:
     strategy:
@@ -70,4 +70,4 @@ jobs:
         pip install -r test-requirements.txt
         pip install tox
     - name: Run tox
-      run: tox -e py${{ matrix.python-version[1] }}
+      run: tox run -e py${{ matrix.python-version[1] }}
