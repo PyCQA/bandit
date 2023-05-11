@@ -265,7 +265,6 @@ class TestConfigCompat(testtools.TestCase):
             "blacklist_imports",
             "blacklist_imports_func",
         ]:
-
             self.config._config = {"profiles": {"test": {"include": [name]}}}
             try:
                 self.config.validate("")

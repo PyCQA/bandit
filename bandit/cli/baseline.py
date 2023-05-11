@@ -76,7 +76,6 @@ def main():
     )
 
     with baseline_setup() as t:
-
         bandit_tmpfile = f"{t}/{baseline_tmp_file}"
 
         steps = [
