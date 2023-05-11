@@ -266,7 +266,13 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual([], self.manager.files_list)
         self.assertEqual(["./x/y.py"], self.manager.excluded_files)
 
-        # Test exclude dir without prefix or suffix
+        # Test exclude top-level dir without prefix or suffix
+        isdir.side_effect = [True, False]
+        self.manager.discover_files(["./x/y/z.py"], True, "x")
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(["./x/y/z.py"], self.manager.excluded_files)
+
+        # Test exclude lower-level dir without prefix or suffix
         isdir.side_effect = [False, False]
         self.manager.discover_files(["./x/y/z.py"], True, "y")
         self.assertEqual([], self.manager.files_list)
