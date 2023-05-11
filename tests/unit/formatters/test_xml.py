@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 import collections
 import tempfile
-from xml.etree import cElementTree as ET
+from xml.etree import ElementTree as ET
 
 import testtools
 
