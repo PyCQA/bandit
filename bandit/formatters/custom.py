@@ -58,7 +58,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
     """
 
     machine_output = {"results": [], "errors": []}
-    for (fname, reason) in manager.get_skipped():
+    for fname, reason in manager.get_skipped():
         machine_output["errors"].append({"filename": fname, "reason": reason})
 
     results = manager.get_issue_list(

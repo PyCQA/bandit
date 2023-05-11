@@ -90,7 +90,7 @@ class FunctionalTests(testtools.TestCase):
                 self.assertEqual(expect[k], m["_totals"][k])
         # test issue counts
         if "issues" in expect:
-            for (criteria, default) in C.CRITERIA:
+            for criteria, default in C.CRITERIA:
                 for rank in C.RANKING:
                     label = f"{criteria}.{rank}"
                     expected = 0

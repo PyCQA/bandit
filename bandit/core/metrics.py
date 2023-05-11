@@ -93,7 +93,7 @@ class Metrics:
         """
         issue_counts = {}
         for score in scores:
-            for (criteria, _) in constants.CRITERIA:
+            for criteria, _ in constants.CRITERIA:
                 for i, rank in enumerate(constants.RANKING):
                     label = f"{criteria}.{rank}"
                     if label not in issue_counts:
