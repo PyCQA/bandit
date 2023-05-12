@@ -30,7 +30,6 @@ PROGRESS_THRESHOLD = 50
 
 
 class BanditManager:
-
     scope = []
 
     def __init__(

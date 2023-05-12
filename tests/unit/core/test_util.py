@@ -314,7 +314,6 @@ class UtilTests(testtools.TestCase):
         self.assertRaises(AttributeError, b_utils.deepgetattr, a.b, "z")
 
     def test_parse_ini_file(self):
-
         tests = [
             {
                 "content": "[bandit]\nexclude=/abc,/def",

@@ -9,7 +9,6 @@ LOG = logging.getLogger(__name__)
 
 
 class BanditMetaAst:
-
     nodes = collections.OrderedDict()
 
     def __init__(self):

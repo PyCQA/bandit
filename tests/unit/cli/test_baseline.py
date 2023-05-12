@@ -71,7 +71,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         git_repo.index.commit("Initial commit")
         os.chdir(repo_directory)
 
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(config)
 
         # create three branches, first has only benign, second adds malicious,
@@ -111,7 +111,7 @@ class BanditBaselineToolTests(testtools.TestCase):
             git_repo.head.reset(working_tree=True)
 
             for f in branch["files"]:
-                with open(f, "wt") as fd:
+                with open(f, "w") as fd:
                     fd.write(contents[f])
 
             git_repo.index.add(branch["files"])
@@ -138,7 +138,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         os.chdir(repo_directory)
 
         additional_content = "additional_file.py"
-        with open(additional_content, "wt") as fd:
+        with open(additional_content, "w") as fd:
             fd.write(self.temp_file_contents)
         git_repo.index.add([additional_content])
         git_repo.index.commit("Additional Content")
@@ -173,7 +173,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         os.chdir(repo_directory)
 
         additional_content = "additional_file.py"
-        with open(additional_content, "wt") as fd:
+        with open(additional_content, "w") as fd:
             fd.write(self.temp_file_contents)
         git_repo.index.add([additional_content])
         git_repo.index.commit("Additional Content")
@@ -215,7 +215,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         os.chdir(repo_directory)
 
         additional_content = "additional_file.py"
-        with open(additional_content, "wt") as fd:
+        with open(additional_content, "w") as fd:
             fd.write(self.temp_file_contents)
         git_repo.index.add([additional_content])
         git_repo.index.commit("Additional Content")
@@ -237,7 +237,7 @@ class BanditBaselineToolTests(testtools.TestCase):
         os.chdir(repo_directory)
 
         # make the git repo 'dirty'
-        with open("dirty_file.py", "wt") as fd:
+        with open("dirty_file.py", "w") as fd:
             fd.write(self.temp_file_contents)
         git_repo.index.add(["dirty_file.py"])
 
@@ -258,7 +258,7 @@ class BanditBaselineToolTests(testtools.TestCase):
 
         # create an existing version of output report file
         existing_report = f"{baseline.report_basename}.txt"
-        with open(existing_report, "wt") as fd:
+        with open(existing_report, "w") as fd:
             fd.write(self.temp_file_contents)
 
         return_value = baseline.initialize()
@@ -292,7 +292,7 @@ class BanditBaselineToolTests(testtools.TestCase):
 
         # create an existing version of temporary output file
         existing_temp_file = baseline.baseline_tmp_file
-        with open(existing_temp_file, "wt") as fd:
+        with open(existing_temp_file, "w") as fd:
             fd.write(self.temp_file_contents)
 
         return_value = baseline.initialize()
