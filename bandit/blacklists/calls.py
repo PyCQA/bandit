@@ -9,7 +9,7 @@ Blacklist various Python calls known to be dangerous
 
 This blacklist data checks for a number of Python calls known to have possible
 security implications. The following blacklist tests are run against any
-function calls encoutered in the scanned code base, triggered by encoutering
+function calls encountered in the scanned code base, triggered by encoutering
 ast.Call nodes.
 
 B301: pickle
@@ -494,16 +494,10 @@ def gen_blacklist():
             "B310",
             issue.Cwe.PATH_TRAVERSAL,
             [
-                "urllib.urlopen",
                 "urllib.request.urlopen",
-                "urllib.urlretrieve",
                 "urllib.request.urlretrieve",
-                "urllib.URLopener",
                 "urllib.request.URLopener",
-                "urllib.FancyURLopener",
                 "urllib.request.FancyURLopener",
-                "urllib2.urlopen",
-                "urllib2.Request",
                 "six.moves.urllib.request.urlopen",
                 "six.moves.urllib.request.urlretrieve",
                 "six.moves.urllib.request.URLopener",

@@ -305,7 +305,7 @@ class ManagerTests(testtools.TestCase):
         # Test that bandit manager exits when there is a keyboard interrupt
         temp_directory = self.useFixture(fixtures.TempDir()).path
         some_file = os.path.join(temp_directory, "some_code_file.py")
-        with open(some_file, "wt") as fd:
+        with open(some_file, "w") as fd:
             fd.write("some_code = x + 1")
         self.manager.files_list = [some_file]
         with mock.patch(

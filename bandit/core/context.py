@@ -34,7 +34,7 @@ class Context:
 
         :return: A string representation of the object
         """
-        return "<Context %s>" % self._context
+        return f"<Context {self._context}>"
 
     @property
     def call_args(self):

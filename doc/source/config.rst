@@ -70,6 +70,19 @@ the file's path explicitly with `--ini` option, e.g.
 
   bandit --ini tox.ini
 
+If Bandit is used via `pre-commit`_ and a config file, you have to specify the config file
+and optional additional dependencies in the `pre-commit`_ configuration:
+
+.. code-block:: yaml
+
+    repos:
+    - repo: https://github.com/PyCQA/bandit
+      rev: '' # Update me!
+      hooks:
+      - id: bandit
+        args: ["-c", "pyproject.toml"]
+        additional_dependencies: ["bandit[toml]"]
+
 Exclusions
 ----------
 
@@ -281,3 +294,4 @@ configuring each one.
 
 .. _YAML: https://yaml.org/
 .. _plugin test list: plugins/index.html
+.. _pre-commit: https://pre-commit.com/
