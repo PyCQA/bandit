@@ -12,6 +12,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
+    "sphinx_copybutton",
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
