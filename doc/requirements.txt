@@ -3,3 +3,4 @@
 # process, which may cause wedges in the gate later.
 sphinx>=4.0.0 # BSD
 sphinx-rtd-theme>=0.3.0
+sphinx-copybutton
