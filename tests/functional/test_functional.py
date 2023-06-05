@@ -90,7 +90,7 @@ class FunctionalTests(testtools.TestCase):
                 self.assertEqual(expect[k], m["_totals"][k])
         # test issue counts
         if "issues" in expect:
-            for (criteria, default) in C.CRITERIA:
+            for criteria, default in C.CRITERIA:
                 for rank in C.RANKING:
                     label = f"{criteria}.{rank}"
                     expected = 0
@@ -113,14 +113,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 10,
+                    "MEDIUM": 16,
                     "HIGH": 9,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 19,
+                    "HIGH": 25,
                 },
             }
         else:
@@ -128,14 +128,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 16,
+                    "MEDIUM": 22,
                     "HIGH": 4,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 20,
+                    "HIGH": 26,
                 },
             }
         self.check_example("crypto-md5.py", expect)
@@ -396,8 +396,8 @@ class FunctionalTests(testtools.TestCase):
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 7, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 8, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
         }
         self.check_example("random_module.py", expect)
 

@@ -677,7 +677,6 @@ def start_process_with_partial_path(context, config):
             or context.call_function_name_qual in config["shell"]
             or context.call_function_name_qual in config["no_shell"]
         ):
-
             node = context.node.args[0]
             # some calls take an arg list, check the first part
             if isinstance(node, ast.List):
