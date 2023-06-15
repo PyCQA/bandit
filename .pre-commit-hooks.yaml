@@ -5,3 +5,4 @@
     language: python
     language_version: python3
     types: [python]
+    require_serial: true
