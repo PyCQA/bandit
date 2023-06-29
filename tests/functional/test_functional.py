@@ -461,18 +461,6 @@ class FunctionalTests(testtools.TestCase):
         severity_medium_tests = 26
         nosec_tests = 7
         skipped_tests = 8
-        if sys.version_info[:2] <= (3, 7):
-            # In the case of implicit concatenation in python 3.7,
-            # we know only the first line of multi-line string.
-            # Thus, cases like:
-            # query = ("SELECT * "
-            #          "FROM foo "  # nosec
-            #          f"WHERE id = {identifier}")
-            # are not skipped but reported as errors.
-            confidence_low_tests = 17
-            severity_medium_tests = 30
-            nosec_tests = 5
-            skipped_tests = 6
         expect = {
             "SEVERITY": {
                 "UNDEFINED": 0,
@@ -790,19 +778,13 @@ class FunctionalTests(testtools.TestCase):
             issues[0].fname.endswith("examples/multiline_statement.py")
         )
         self.assertEqual(1, issues[0].lineno)
-        if sys.version_info >= (3, 8):
-            self.assertEqual(list(range(1, 2)), issues[0].linerange)
-        else:
-            self.assertEqual(list(range(1, 3)), issues[0].linerange)
+        self.assertEqual(list(range(1, 2)), issues[0].linerange)
         self.assertIn("subprocess", issues[0].get_code())
         self.assertEqual(5, issues[1].lineno)
         self.assertEqual(list(range(3, 6 + 1)), issues[1].linerange)
         self.assertIn("shell=True", issues[1].get_code())
         self.assertEqual(11, issues[2].lineno)
-        if sys.version_info >= (3, 8):
-            self.assertEqual(list(range(8, 13 + 1)), issues[2].linerange)
-        else:
-            self.assertEqual(list(range(8, 12 + 1)), issues[2].linerange)
+        self.assertEqual(list(range(8, 13 + 1)), issues[2].linerange)
         self.assertIn("shell=True", issues[2].get_code())
 
     def test_code_line_numbers(self):
