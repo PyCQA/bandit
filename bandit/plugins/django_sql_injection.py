@@ -129,7 +129,12 @@ def django_rawsql_used(context):
     description = "Use of RawSQL potential SQL attack vector."
     if context.is_module_imported_like("django.db.models"):
         if context.call_function_name == "RawSQL":
-            sql = context.node.args[0]
+            if context.node.args:
+                sql = context.node.args[0]
+            else:
+                kwargs = keywords2dict(context.node.keywords)
+                sql = kwargs["sql"]
+
             if not isinstance(sql, ast.Str):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
