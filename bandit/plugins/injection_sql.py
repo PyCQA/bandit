@@ -52,6 +52,9 @@ If so, a MEDIUM issue is reported. For example:
 .. versionchanged:: 1.7.3
     CWE information added
 
+.. versionchanged:: 1.7.6
+    Flag when str.replace is used in the string construction
+
 """  # noqa: E501
 import ast
 import re
@@ -84,7 +87,7 @@ def _evaluate_ast(node):
         statement = out[1]
     elif (
         isinstance(node._bandit_parent, ast.Attribute)
-        and node._bandit_parent.attr == "format"
+        and node._bandit_parent.attr in ("format", "replace")
     ):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
@@ -108,9 +111,9 @@ def _evaluate_ast(node):
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
         names = ["execute", "executemany"]
         name = utils.get_called_name(wrapper)
-        return (name in names, statement)
+        return name in names, statement
     else:
-        return (False, statement)
+        return False, statement
 
 
 @test.checks("Str")
