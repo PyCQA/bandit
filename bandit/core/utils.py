@@ -19,7 +19,7 @@ LOG = logging.getLogger(__name__)
 
 
 def _get_attr_qual_name(node, aliases):
-    """Get a the full name for the attribute node.
+    """Get the full name for the attribute node.
 
     This will resolve a pseudo-qualified name for the attribute
     rooted at node as long as all the deeper nodes are Names or
