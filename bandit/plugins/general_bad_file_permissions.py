@@ -84,21 +84,24 @@ def _stat_is_dangerous(mode):
 def set_bad_file_permissions(context):
     if "chmod" in context.call_function_name:
         if (
-                context.call_function_name_qual.startswith("os.")
-                and context.call_args_count == 2
+            context.call_function_name_qual.startswith("os.")
+            and context.call_args_count == 2
         ):  # os chmod
             filename = context.get_call_arg_at_position(0)
             mode = context.get_call_arg_at_position(1)
-        elif context.call_args_count == 1:  # pathlib chmod
+        elif (
+            context.is_module_imported_like("pathlib")
+            and context.call_args_count == 1  # pathlib chmod
+        ):
             filename = None
             mode = context.get_call_arg_at_position(0)
         else:
             return
 
         if (
-                mode is not None
-                and isinstance(mode, int)
-                and _stat_is_dangerous(mode)
+            mode is not None
+            and isinstance(mode, int)
+            and _stat_is_dangerous(mode)
         ):
             # world writable is an HIGH, group executable is a MEDIUM
             if mode & stat.S_IWOTH:
