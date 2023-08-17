@@ -56,6 +56,8 @@ class Manager:
     def get_plugin_id(self, plugin_name):
         if plugin_name in self.plugins_by_name:
             return self.plugins_by_name[plugin_name].plugin._test_id
+        if plugin_name in self.blacklist_by_name:
+            return self.blacklist_by_name[plugin_name]["id"]
         return None
 
     def load_blacklists(self, blacklist_namespace):
