@@ -53,11 +53,11 @@ class Manager:
         self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
         self.plugins_by_name = {p.name: p for p in self.plugins}
 
-    def get_plugin_id(self, plugin_name):
-        if plugin_name in self.plugins_by_name:
-            return self.plugins_by_name[plugin_name].plugin._test_id
-        if plugin_name in self.blacklist_by_name:
-            return self.blacklist_by_name[plugin_name]["id"]
+    def get_test_id(self, test_name):
+        if test_name in self.plugins_by_name:
+            return self.plugins_by_name[test_name].plugin._test_id
+        if test_name in self.blacklist_by_name:
+            return self.blacklist_by_name[test_name]["id"]
         return None
 
     def load_blacklists(self, blacklist_namespace):

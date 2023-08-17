@@ -460,17 +460,17 @@ def _find_candidate_matches(unmatched_issues, results_list):
 
 
 def _find_test_id_from_nosec_string(extman, match):
-    plugin_id = extman.check_id(match)
-    if plugin_id:
+    test_id = extman.check_id(match)
+    if test_id:
         return match
-    # Finding by short_id didn't work, let's check the plugin name
-    plugin_id = extman.get_plugin_id(match)
-    if not plugin_id:
+    # Finding by short_id didn't work, let's check the test name
+    test_id = extman.get_test_id(match)
+    if not test_id:
         # Name and short id didn't work:
         LOG.warning(
             "Test in comment: %s is not a test name or id, ignoring", match
         )
-    return plugin_id  # We want to return None or the string here regardless
+    return test_id  # We want to return None or the string here regardless
 
 
 def _parse_nosec_comment(comment):
