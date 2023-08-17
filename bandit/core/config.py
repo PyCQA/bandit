@@ -148,8 +148,8 @@ class BanditConfig:
         updated_profiles = {}
         for name, profile in (self.get_option("profiles") or {}).items():
             # NOTE(tkelsey): can't use default of get() because value is
-            # sometimes explicitly 'None', for example when the list is given in
-            # yaml but not populated with any values.
+            # sometimes explicitly 'None', for example when the list is given
+            # in yaml but not populated with any values.
             include = {
                 (extman.get_test_id(i) or i)
                 for i in (profile.get("include") or [])
