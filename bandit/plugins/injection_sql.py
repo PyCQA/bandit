@@ -85,10 +85,9 @@ def _evaluate_ast(node):
         out = utils.concat_string(node, node._bandit_parent)
         wrapper = out[0]._bandit_parent
         statement = out[1]
-    elif (
-        isinstance(node._bandit_parent, ast.Attribute)
-        and node._bandit_parent.attr in ("format", "replace")
-    ):
+    elif isinstance(
+        node._bandit_parent, ast.Attribute
+    ) and node._bandit_parent.attr in ("format", "replace"):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node._bandit_parent._bandit_parent._bandit_parent
