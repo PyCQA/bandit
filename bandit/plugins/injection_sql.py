@@ -111,9 +111,9 @@ def _evaluate_ast(node):
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
         names = ["execute", "executemany"]
         name = utils.get_called_name(wrapper)
-        return name in names, statement
+        return (name in names, statement)
     else:
-        return False, statement
+        return (False, statement)
 
 
 @test.checks("Str")
