@@ -444,8 +444,8 @@ class FunctionalTests(testtools.TestCase):
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
-                "LOW": 9,
-                "MEDIUM": 11,
+                "LOW": 10,
+                "MEDIUM": 10,
                 "HIGH": 0,
             },
         }

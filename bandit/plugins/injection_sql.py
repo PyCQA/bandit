@@ -27,6 +27,13 @@ If so, a MEDIUM issue is reported. For example:
 
  - cursor.execute("SELECT %s FROM derp;" % var)
 
+Use of str.replace in the string construction can also be dangerous.
+For example:
+
+- "SELECT * FROM foo WHERE id = '[VALUE]'".replace("[VALUE]", identifier)
+
+However, such cases are always reported with LOW confidence to compensate
+for false positives, since valid ues of str.replace can be common.
 
 :Example:
 
@@ -80,6 +87,7 @@ def _check_string(data):
 def _evaluate_ast(node):
     wrapper = None
     statement = ""
+    str_replace = False
 
     if isinstance(node._bandit_parent, ast.BinOp):
         out = utils.concat_string(node, node._bandit_parent)
@@ -91,6 +99,8 @@ def _evaluate_ast(node):
         statement = node.s
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node._bandit_parent._bandit_parent._bandit_parent
+        if node._bandit_parent.attr == "replace":
+            str_replace = True
     elif hasattr(ast, "JoinedStr") and isinstance(
         node._bandit_parent, ast.JoinedStr
     ):
@@ -110,19 +120,21 @@ def _evaluate_ast(node):
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
         names = ["execute", "executemany"]
         name = utils.get_called_name(wrapper)
-        return (name in names, statement)
+        return (name in names, statement, str_replace)
     else:
-        return (False, statement)
+        return (False, statement, str_replace)
 
 
 @test.checks("Str")
 @test.test_id("B608")
 def hardcoded_sql_expressions(context):
-    val = _evaluate_ast(context.node)
-    if _check_string(val[1]):
+    execute_call, statement, str_replace = _evaluate_ast(context.node)
+    if _check_string(statement):
         return bandit.Issue(
             severity=bandit.MEDIUM,
-            confidence=bandit.MEDIUM if val[0] else bandit.LOW,
+            confidence=bandit.MEDIUM
+            if execute_call and not str_replace
+            else bandit.LOW,
             cwe=issue.Cwe.SQL_INJECTION,
             text="Possible SQL injection vector through string-based "
             "query construction.",
