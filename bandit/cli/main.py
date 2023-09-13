@@ -455,9 +455,9 @@ def main():
     if ini_options:
         # prefer command line, then ini file
         args.config_file = _log_option_source(
-            parser.get_default("config"),
+            parser.get_default("configfile"),
             args.config_file,
-            ini_options.get("config"),
+            ini_options.get("configfile"),
             "config file",
         )
 
