@@ -49,18 +49,18 @@ off Bandit will return a HIGH severity error.
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+from bandit.core.utils import HTTP_REQUEST_VERBS
+from bandit.core.utils import HTTPX_ATTRS
 
 
 @test.checks("Call")
 @test.test_id("B501")
 def request_with_no_cert_validation(context):
-    HTTP_VERBS = ("get", "options", "head", "post", "put", "patch", "delete")
-    HTTPX_ATTRS = ("request", "stream", "Client", "AsyncClient") + HTTP_VERBS
     qualname = context.call_function_name_qual.split(".")[0]
 
     if (
         qualname == "requests"
-        and context.call_function_name in HTTP_VERBS
+        and context.call_function_name in HTTP_REQUEST_VERBS
         or qualname == "httpx"
         and context.call_function_name in HTTPX_ATTRS
     ):

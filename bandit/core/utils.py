@@ -14,6 +14,21 @@ except ImportError:
 
 LOG = logging.getLogger(__name__)
 
+HTTP_REQUEST_VERBS = (
+    "get",
+    "options",
+    "head",
+    "post",
+    "put",
+    "patch",
+    "delete",
+)
+HTTPX_ATTRS = (
+    "request",
+    "stream",
+    "Client",
+    "AsyncClient",
+) + HTTP_REQUEST_VERBS
 
 """Various helper functions."""
 
