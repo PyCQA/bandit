@@ -543,8 +543,8 @@ class FunctionalTests(testtools.TestCase):
     def test_host_key_verification(self):
         """Test for ignoring host key verification."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
         }
         self.check_example("no_host_key_verification.py", expect)
 
