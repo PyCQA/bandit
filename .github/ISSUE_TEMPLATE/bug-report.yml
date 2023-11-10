@@ -68,7 +68,8 @@ body:
       label: Python version
       description: Run "bandit --version" if unsure of version number
       options:
-        - "3.11 (Default)"
+        - "3.12 (Default)"
+        - "3.11"
         - "3.10"
         - "3.9"
         - "3.8"
