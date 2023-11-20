@@ -72,6 +72,24 @@ using RST::
         :target: https://github.com/PyCQA/bandit
         :alt: Security Status
 
+
+Usage with Trunk Check
+======================
+Trunk_ is an extendable superlinter which can run Bandit automatically on every commit.
+Source for the Trunk Bandit integration is here_
+
+To enable Bandit via Trunk::
+
+     # to get the latest version:
+     trunk check enable bandit
+
+     # to get a specific version:
+     trunk check enable bandit@1.7.3
+
+.. _`Trunk`: https://trunk.io/
+.. _here: https://github.com/trunk-io/plugins/tree/main/linters/bandit
+
+
 References
 ----------
 
