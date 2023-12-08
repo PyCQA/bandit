@@ -12,7 +12,6 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
-    "sphinx_copybutton",
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
@@ -27,7 +26,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "Bandit"
-copyright = "2022, Bandit Developers"
+copyright = "2023, Bandit Developers"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
