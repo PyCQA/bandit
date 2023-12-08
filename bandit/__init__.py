@@ -19,4 +19,7 @@ from bandit.core.constants import *  # noqa
 from bandit.core.issue import *  # noqa
 from bandit.core.test_properties import *  # noqa
 
-__version__ = metadata.version("bandit")
+try:
+    __version__ = metadata.version("bandit")
+except KeyError:
+    __version__ = "0.0.0"
