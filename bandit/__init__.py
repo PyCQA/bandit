@@ -7,7 +7,8 @@ try:
 except ImportError:
     import importlib_metadata as metadata
 
-from bandit.formatters import *  # noqa
+from . import *
+
 from bandit.core import config  # noqa
 from bandit.core import context  # noqa
 from bandit.core import manager  # noqa
@@ -19,6 +20,5 @@ from bandit.core import utils  # noqa
 from bandit.core.constants import *  # noqa
 from bandit.core.issue import *  # noqa
 from bandit.core.test_properties import *  # noqa
-from bandit.plugins import *  # noqa
 
 __version__ = metadata.version("bandit")
