@@ -52,7 +52,9 @@ class BanditConfig:
 
                 try:
                     with f:
-                        self._config = tomllib.load(f).get("tool", {}).get("bandit", {})
+                        self._config = (
+                            tomllib.load(f).get("tool", {}).get("bandit", {})
+                        )
                 except tomllib.TOMLDecodeError as err:
                     LOG.error(err)
                     raise utils.ConfigError("Error parsing file.", config_file)
