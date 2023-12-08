@@ -7,8 +7,6 @@ try:
 except ImportError:
     import importlib_metadata as metadata
 
-from . import *
-
 from bandit.core import config  # noqa
 from bandit.core import context  # noqa
 from bandit.core import manager  # noqa
