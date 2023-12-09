@@ -16,8 +16,4 @@ from bandit.core.constants import *  # noqa
 from bandit.core.issue import *  # noqa
 from bandit.core.test_properties import *  # noqa
 
-try:
-    __version__ = metadata.version("bandit")
-except metadata.PackageNotFoundError:
-    # FIXME: Sphinx has trouble fetching the version during its build.
-    __version__ = "0.0.0"
+__version__ = metadata.version("bandit")
