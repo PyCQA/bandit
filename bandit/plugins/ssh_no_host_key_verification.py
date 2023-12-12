@@ -55,8 +55,13 @@ def ssh_no_host_key_verification(context):
         policy_argument_value = None
         if isinstance(policy_argument, ast.Attribute):
             policy_argument_value = policy_argument.attr
+        elif isinstance(policy_argument, ast.Name):
+            policy_argument_value = policy_argument.id
         elif isinstance(policy_argument, ast.Call):
-            policy_argument_value = policy_argument.func.attr
+            if isinstance(policy_argument.func, ast.Attribute):
+                policy_argument_value = policy_argument.func.attr
+            elif isinstance(policy_argument.func, ast.Name):
+                policy_argument_value = policy_argument.func.id
 
         if policy_argument_value in ["AutoAddPolicy", "WarningPolicy"]:
             return bandit.Issue(
