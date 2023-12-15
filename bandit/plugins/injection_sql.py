@@ -33,7 +33,7 @@ For example:
 - "SELECT * FROM foo WHERE id = '[VALUE]'".replace("[VALUE]", identifier)
 
 However, such cases are always reported with LOW confidence to compensate
-for false positives, since valid ues of str.replace can be common.
+for false positives, since valid uses of str.replace can be common.
 
 :Example:
 
