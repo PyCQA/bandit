@@ -59,7 +59,7 @@ for false positives, since valid ues of str.replace can be common.
 .. versionchanged:: 1.7.3
     CWE information added
 
-.. versionchanged:: 1.7.6
+.. versionchanged:: 1.7.7
     Flag when str.replace is used in the string construction
 
 """  # noqa: E501
