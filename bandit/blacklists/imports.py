@@ -146,8 +146,8 @@ B411: import_xmlrpclib
 ----------------------
 
 XMLRPC is particularly dangerous as it is also concerned with communicating
-data over a network. Use defused.xmlrpc.monkey_patch() function to monkey-patch
-xmlrpclib and mitigate remote XML attacks.
+data over a network. Use defusedxml.xmlrpc.monkey_patch() function to
+monkey-patch xmlrpclib and mitigate remote XML attacks.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
@@ -376,7 +376,7 @@ def gen_blacklist():
             issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xmlrpc"],
             "Using {name} to parse untrusted XML data is known to be "
-            "vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() "
+            "vulnerable to XML attacks. Use defusedxml.xmlrpc.monkey_patch() "
             "function to monkey-patch xmlrpclib and mitigate XML "
             "vulnerabilities.",
             "HIGH",
