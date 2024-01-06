@@ -1,0 +1,54 @@
+name: Build and Publish Bandit Images
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+    strategy:
+      matrix:
+        python-version: ['38', '39', '310', '311', '312']
+        architecture: [amd64, arm64]
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@v3.3.0
+      with:
+        cosign-release: 'v2.2.2'
+
+    - name: Build and push Docker image
+      id: build-and-push
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./docker/Dockerfile-py${{ matrix.python-version }}
+        push: true
+        tags: ghcr.io/${{ github.repository }}/bandit:py${{ matrix.python-version }}-${{ matrix.architecture }}
+        platforms: linux/${{ matrix.architecture }}
+
+    - name: Sign the image
+      env:
+        TAGS: ghcr.io/${{ github.repository }}/bandit:py${{ matrix.python-version }}-${{ matrix.architecture }}
+        DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      run: |
+       echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
