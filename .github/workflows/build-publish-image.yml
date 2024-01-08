@@ -41,7 +41,7 @@ jobs:
         file: ./docker/Dockerfile
         push: true
         tags: ghcr.io/${{ github.repository }}/bandit:latest
-        platforms: linux/amd64, linux/arm64
+        platforms: linux/amd64, linux/arm64, linux/arm/v7, linux/arm/v8
 
     - name: Sign the image
       env:

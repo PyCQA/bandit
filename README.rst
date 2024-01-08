@@ -88,7 +88,7 @@ Container Images
 ----------------
 
 Bandit is available as a container image, built within the bandit repository
-using GitHub Actions. The image is available on gchr.io:
+using GitHub Actions. The image is available on ghcr.io:
 
 ```bash
 docker pull ghcr.io/pycqa/bandit/bandit
@@ -99,6 +99,7 @@ The image is built for the following architectures:
 * amd64
 * arm64
 * armv7
+* armv8
 
 To pull a specific architecture, use the following format:
 
