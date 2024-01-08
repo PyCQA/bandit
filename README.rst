@@ -107,8 +107,6 @@ To pull a specific architecture, use the following format:
 docker pull --platform=<architecture> ghcr.io/pycqa/bandit/bandit:latest 
 ```
 
-Where `<tag>` is the release version of Bandit and `<arch>` is the architecture
-
 Every image is signed with sigstore cosign and it is possible to verify the
 source of origin using the following cosign command:
 
