@@ -91,34 +91,30 @@ Bandit is available as a container image, built within the bandit repository
 using GitHub Actions. The image is available on gchr.io:
 
 ```bash
-docker pull gcr.io/pycqa/bandit/bandit:py312-arm64
+docker pull ghcr.io/pycqa/bandit/bandit
 ```
 
 The image is built for the following architectures:
 
 * amd64
 * arm64
+* armv7
 
-The image is tagged with the Python version and architecture, for example:
+To pull a specific architecture, use the following format:
 
-* py312-amd64
-* py312-arm64
+```bash
+docker pull ghcr.io/pycqa/bandit/bandit:<tag>-<arch>
+```
 
-Python versions supported are:
-
-* 3.8 (py38-amd64)
-* 3.9 (py39-amd64)
-* 3.10 (py310-amd64)
-* 3.11 (py311-amd64)
-* 3.12 (py312-amd64)
+Where `<tag>` is the release version of Bandit and `<arch>` is the architecture
 
 Every image is signed with sigstore cosign and it is possible to verify the
 source of origin using the following cosign command:
 
 ```bash
 cosign verify ghcr.io/pycqa/bandit/bandit:py39-amd64 \
-  --certificate-identity https://github.com/pycqa/bandit/.github/workflows/build-publish-image.yml@refs/tags/1.7.6 \
+  --certificate-identity https://github.com/pycqa/bandit/.github/workflows/build-publish-image.yml@refs/tags/<version> \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com
 ```
 
-Where `1.7.6` is the release version of Bandit.
+Where `<version>` is the release version of Bandit.

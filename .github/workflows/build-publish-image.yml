@@ -3,6 +3,8 @@ name: Build and Publish Bandit Images
 on:
   release:
     types: [created]
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight
 
 jobs:
   build-and-publish:
@@ -10,13 +12,8 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
-    strategy:
-      matrix:
-        python-version: ['38', '39', '310', '311', '312']
-        architecture: [amd64, arm64]
+
     steps:
     - name: Check out the repo
       uses: actions/checkout@v4
@@ -41,14 +38,14 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./docker/Dockerfile-py${{ matrix.python-version }}
+        file: ./docker/Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}/bandit:py${{ matrix.python-version }}-${{ matrix.architecture }}
-        platforms: linux/${{ matrix.architecture }}
+        tags: ghcr.io/${{ github.repository }}/bandit:latest
+        platforms: linux/amd64, linux/arm64
 
     - name: Sign the image
       env:
-        TAGS: ghcr.io/${{ github.repository }}/bandit:py${{ matrix.python-version }}-${{ matrix.architecture }}
+        TAGS: ghcr.io/${{ github.repository }}/bandit:latest
         DIGEST: ${{ steps.build-and-push.outputs.digest }}
       run: |
-       echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
