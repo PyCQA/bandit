@@ -104,7 +104,7 @@ The image is built for the following architectures:
 To pull a specific architecture, use the following format:
 
 ```bash
-docker pull ghcr.io/pycqa/bandit/bandit:latest
+docker pull --platform=<architecture> ghcr.io/pycqa/bandit/bandit:latest 
 ```
 
 Where `<tag>` is the release version of Bandit and `<arch>` is the architecture
