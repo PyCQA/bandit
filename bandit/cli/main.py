@@ -340,7 +340,8 @@ def main():
         help="comma-separated list of paths (glob patterns "
         "supported) to exclude from scan "
         "(note that these are in addition to the excluded "
-        "paths provided in the config file) (default: "
+        "paths provided in the config file and any files "
+        "matching patterns defined in .gitignore) (default: "
         + ",".join(constants.EXCLUDE)
         + ")",
     )
