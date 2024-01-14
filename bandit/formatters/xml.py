@@ -35,7 +35,7 @@ This formatter outputs the issues as XML.
 """
 import logging
 import sys
-from xml.etree import ElementTree as ET
+from xml.etree import ElementTree as ET  # nosec: B405
 
 from bandit.core import docs_utils
 

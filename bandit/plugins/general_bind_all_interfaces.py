@@ -43,7 +43,7 @@ from bandit.core import test_properties as test
 @test.checks("Str")
 @test.test_id("B104")
 def hardcoded_bind_all_interfaces(context):
-    if context.string_val == "0.0.0.0":
+    if context.string_val == "0.0.0.0":  # nosec: B104
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
