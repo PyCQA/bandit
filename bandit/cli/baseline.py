@@ -15,7 +15,7 @@ import contextlib
 import logging
 import os
 import shutil
-import subprocess
+import subprocess  # nosec: B404
 import sys
 import tempfile
 
@@ -101,7 +101,7 @@ def main():
             bandit_command = ["bandit"] + step["args"]
 
             try:
-                output = subprocess.check_output(bandit_command)
+                output = subprocess.check_output(bandit_command)  # nosec: B603
             except subprocess.CalledProcessError as e:
                 output = e.output
                 return_code = e.returncode
