@@ -10,6 +10,7 @@ bad = random.choice()
 bad = random.choices()
 bad = random.uniform()
 bad = random.triangular()
+bad = random.randbytes()
 
 good = os.urandom()
 good = random.SystemRandom()
