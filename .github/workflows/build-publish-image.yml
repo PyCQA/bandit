@@ -16,8 +16,19 @@ jobs:
       id-token: write
 
     steps:
+
+    - name: Get latest release tag
+      if: github.event_name != 'release'
+      id: get-latest-tag
+      run: |
+        TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+        echo "Latest tag is $TAG"
+        echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
+
     - name: Check out the repo
       uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event_name == 'release' && github.ref || env.RELEASE_TAG }}
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
