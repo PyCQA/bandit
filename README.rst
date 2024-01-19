@@ -104,7 +104,7 @@ The image is built for the following architectures:
 To pull a specific architecture, use the following format:
 
 ```bash
-docker pull --platform=<architecture> ghcr.io/pycqa/bandit/bandit:latest 
+docker pull --platform=<architecture> ghcr.io/pycqa/bandit/bandit:latest
 ```
 
 Every image is signed with sigstore cosign and it is possible to verify the
