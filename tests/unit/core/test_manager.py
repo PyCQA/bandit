@@ -289,7 +289,7 @@ class ManagerTests(testtools.TestCase):
         self.manager.discover_files(
             ["a.py", "test_a.py", "test.py"], True, excluded_paths="test_*.py"
         )
-        self.assertEqual(["a.py", "test.py"], self.manager.files_list)
+        self.assertEqual(["./a.py", "./test.py"], self.manager.files_list)
         self.assertEqual(["test_a.py"], self.manager.excluded_files)
 
     @mock.patch("os.path.isdir")
@@ -298,7 +298,7 @@ class ManagerTests(testtools.TestCase):
         with mock.patch.object(manager, "_is_file_included") as m:
             m.return_value = True
             self.manager.discover_files(["thing"], True)
-            self.assertEqual(["thing"], self.manager.files_list)
+            self.assertEqual(["./thing"], self.manager.files_list)
             self.assertEqual([], self.manager.excluded_files)
 
     def test_run_tests_keyboardinterrupt(self):
