@@ -198,6 +198,7 @@ https://docs.python.org/library/secrets.html
 |      |                     | - random.choices                   |           |
 |      |                     | - random.uniform                   |           |
 |      |                     | - random.triangular                |           |
+|      |                     | - random.randbytes                 |           |
 +------+---------------------+------------------------------------+-----------+
 
 B312: telnetlib
@@ -523,6 +524,7 @@ def gen_blacklist():
                 "random.choices",
                 "random.uniform",
                 "random.triangular",
+                "random.randbytes",
             ],
             "Standard pseudo-random generators are not suitable for "
             "security/cryptographic purposes.",

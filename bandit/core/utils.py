@@ -62,7 +62,6 @@ def get_func_name(node):
 
 
 def get_qual_attr(node, aliases):
-    prefix = ""
     if isinstance(node, ast.Attribute):
         try:
             val = deepgetattr(node, "value.id")
@@ -73,7 +72,7 @@ def get_qual_attr(node, aliases):
         except Exception:
             # NOTE(tkelsey): degrade gracefully when we can't get the fully
             # qualified name for an attr, just return its base name.
-            pass
+            prefix = ""
 
         return f"{prefix}.{node.attr}"
     else:
