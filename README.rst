@@ -83,3 +83,37 @@ https://greentreesnakes.readthedocs.org/en/latest/
 Documentation of the various types of AST nodes that Bandit currently covers
 or could be extended to cover:
 https://greentreesnakes.readthedocs.org/en/latest/nodes.html
+
+Container Images
+----------------
+
+Bandit is available as a container image, built within the bandit repository
+using GitHub Actions. The image is available on ghcr.io:
+
+```bash
+docker pull ghcr.io/pycqa/bandit/bandit
+```
+
+The image is built for the following architectures:
+
+* amd64
+* arm64
+* armv7
+* armv8
+
+To pull a specific architecture, use the following format:
+
+```bash
+docker pull --platform=<architecture> ghcr.io/pycqa/bandit/bandit:latest
+```
+
+Every image is signed with sigstore cosign and it is possible to verify the
+source of origin using the following cosign command:
+
+```bash
+cosign verify ghcr.io/pycqa/bandit/bandit:py39-amd64 \
+  --certificate-identity https://github.com/pycqa/bandit/.github/workflows/build-publish-image.yml@refs/tags/<version> \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+Where `<version>` is the release version of Bandit.
