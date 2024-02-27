@@ -42,6 +42,9 @@ unless you explicitly need them.
 
 .. versionadded:: 1.7.5
 
+.. versionchanged:: 1.7.8
+    Added check for filter parameter
+
 """
 import ast
 
