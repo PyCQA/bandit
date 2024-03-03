@@ -15,7 +15,11 @@ def checks(*args):
     def wrapper(func):
         if not hasattr(func, "_checks"):
             func._checks = []
-        func._checks.extend(utils.check_ast_node(a) for a in args)
+        for arg in args:
+            if arg == "File":
+                func._checks.append("File")
+            else:
+                func._checks.append(utils.check_ast_node(arg))
 
         LOG.debug("checks() decorator executed")
         LOG.debug("  func._checks: %s", func._checks)

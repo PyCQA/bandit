@@ -43,7 +43,7 @@ class BanditTester:
         tests = self.testset.get_tests(checktype)
         for test in tests:
             name = test.__name__
-            # execute test with the an instance of the context class
+            # execute test with an instance of the context class
             temp_context = copy.copy(raw_context)
             context = b_context.Context(temp_context)
             try:
@@ -66,7 +66,8 @@ class BanditTester:
                     if result.lineno is None:
                         result.lineno = temp_context["lineno"]
                     result.linerange = temp_context["linerange"]
-                    result.col_offset = temp_context["col_offset"]
+                    if result.col_offset == -1:
+                        result.col_offset = temp_context["col_offset"]
                     result.end_col_offset = temp_context.get(
                         "end_col_offset", 0
                     )
