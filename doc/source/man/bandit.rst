@@ -44,7 +44,7 @@ OPTIONS
                         (-l for LOW, -ll for MEDIUM, -lll for HIGH)
   -i, --confidence      report only issues of a given confidence level or
                         higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
-  -f {csv,custom,html,json,screen,txt,xml,yaml}, --format {csv,custom,html,json,screen,txt,xml,yaml}
+  -f {csv,custom,html,json,sarif,screen,txt,xml,yaml}, --format {csv,custom,html,json,sarif,screen,txt,xml,yaml}
                         specify output format
   --msg-template MSG_TEMPLATE
                         specify output message template (only usable with
