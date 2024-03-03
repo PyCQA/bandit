@@ -13,7 +13,7 @@ with untrusted data can lead to arbitrary code execution, and improper use of
 :Example:
 
 .. code-block:: none
-    
+
         >> Issue: Use of unsafe PyTorch load or save
         Severity: Medium   Confidence: High
         CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
@@ -24,7 +24,7 @@ with untrusted data can lead to arbitrary code execution, and improper use of
         10   print("Model loaded successfully!")
 
 .. seealso::
-    
+
      - https://cwe.mitre.org/data/definitions/94.html
 
 .. versionadded:: 1.7.8
@@ -36,7 +36,9 @@ from bandit.core import test_properties as test
 
 
 @test.checks("Call")
-@test.test_id("B704")  # Ensure the test ID is unique and does not conflict with existing Bandit tests
+@test.test_id(
+    "B704"
+)  # Ensure the test ID is unique and does not conflict with existing Bandit tests
 def pytorch_load_save(context):
     """
     This plugin checks for the use of `torch.load` and `torch.save`. Using `torch.load`
@@ -47,7 +49,7 @@ def pytorch_load_save(context):
     qualname = context.call_function_name_qual
     if not imported and isinstance(qualname, str):
         return
-    
+
     qualname_list = qualname.split(".")
     func = qualname_list[-1]
     if all(

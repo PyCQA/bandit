@@ -322,7 +322,7 @@ For further information:
 
 B704: pytorch_load_save
 
-Use of unsafe PyTorch load. `torch.load` can lead to arbitrary code execution, 
+Use of unsafe PyTorch load. `torch.load` can lead to arbitrary code execution,
 and improper use of `torch.save` might expose sensitive data or lead to data
 corruption.
 
@@ -708,7 +708,6 @@ def gen_blacklist():
             "MEDIUM",
         )
     )
-
 
     # skipped B324 (used in bandit/plugins/hashlib_new_insecure_functions.py)
 
