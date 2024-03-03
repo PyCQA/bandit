@@ -320,6 +320,19 @@ For further information:
 |      |                     | - os.tmpnam                        |           |
 +------+---------------------+------------------------------------+-----------+
 
+B704: pytorch_load_save
+
+Use of unsafe PyTorch load. `torch.load` can lead to arbitrary code execution, 
+and improper use of `torch.save` might expose sensitive data or lead to data
+corruption.
+
++------+---------------------+--------------------------------------+-----------+
+| ID   |  Name               |  Calls                               |  Severity |
++======+=====================+======================================+===========+
+| B704 | pytorch_load_save|       | - torch.load                         | Medium    |
+| B704 | pytorch_load_save|       | - torch.save                         | Medium    |
++------+---------------------+--------------------------------------+-----------+
+
 """
 import sys
 
@@ -684,6 +697,18 @@ def gen_blacklist():
             "certificates or perform hostname checks.",
         )
     )
+
+    sets.append(
+        utils.build_conf_dict(
+            "pytorch_load_save",
+            "B704",
+            issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
+            ["torch.load", "torch.save"],
+            "Use of unsafe PyTorch load or save",
+            "MEDIUM",
+        )
+    )
+
 
     # skipped B324 (used in bandit/plugins/hashlib_new_insecure_functions.py)
 
