@@ -55,7 +55,7 @@ def pytorch_load_save(context):
     if all(
         [
             "torch" in qualname_list,
-            func in ["load"],
+            func in ["load", "save"],
             not context.check_call_arg_value("map_location", "cpu"),
         ]
     ):
