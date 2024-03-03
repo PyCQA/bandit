@@ -112,7 +112,7 @@ source of origin using the following cosign command:
 
 .. code-block:: console
 
-    cosign verify ghcr.io/pycqa/bandit/bandit:py39-amd64 \
+    cosign verify ghcr.io/pycqa/bandit/bandit:latest \
       --certificate-identity https://github.com/pycqa/bandit/.github/workflows/build-publish-image.yml@refs/tags/<version> \
       --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
