@@ -6,11 +6,11 @@ r"""
 B613: Test for unsafe PyTorch load or save
 ==========================================
 
-This plugin checks for the use of `torch.load` and `torch.save`. Using `torch.load`
-with untrusted data can lead to arbitrary code execution, and improper use of
-`torch.save` might expose sensitive data or lead to data corruption. A safe
-alternative is to use `torch.load` with the `safetensors` library from hugingface,
-which provides a safe deserialization mechanism.
+This plugin checks for the use of `torch.load` and `torch.save`. Using
+`torch.load` with untrusted data can lead to arbitrary code execution, and
+improper use of `torch.save` might expose sensitive data or lead to data
+corruption. A safe alternative is to use `torch.load` with the `safetensors`
+library from hugingface, which provides a safe deserialization mechanism.
 
 :Example:
 
@@ -21,7 +21,8 @@ which provides a safe deserialization mechanism.
         CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
         Location: examples/pytorch_load_save.py:8
         7    loaded_model.load_state_dict(torch.load('model_weights.pth'))
-        8    another_model.load_state_dict(torch.load('model_weights.pth', map_location='cpu'))
+        8    another_model.load_state_dict(torch.load('model_weights.pth',
+                map_location='cpu'))
         9
         10   print("Model loaded successfully!")
 
@@ -43,9 +44,10 @@ from bandit.core import test_properties as test
 @test.test_id("B613")
 def pytorch_load_save(context):
     """
-    This plugin checks for the use of `torch.load` and `torch.save`. Using `torch.load`
-    with untrusted data can lead to arbitrary code execution, and improper use of
-    `torch.save` might expose sensitive data or lead to data corruption.
+    This plugin checks for the use of `torch.load` and `torch.save`. Using
+    `torch.load` with untrusted data can lead to arbitrary code execution,
+    and improper use of `torch.save` might expose sensitive data or lead
+    to data corruption.
     """
     imported = context.is_module_imported_exact("torch")
     qualname = context.call_function_name_qual
