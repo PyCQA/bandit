@@ -2,13 +2,15 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 r"""
-=========================================
-B704: Test for unsafe PyTorch load or save
-=========================================
+==========================================
+B613: Test for unsafe PyTorch load or save
+==========================================
 
 This plugin checks for the use of `torch.load` and `torch.save`. Using `torch.load`
 with untrusted data can lead to arbitrary code execution, and improper use of
-`torch.save` might expose sensitive data or lead to data corruption.
+`torch.save` might expose sensitive data or lead to data corruption. A safe
+alternative is to use `torch.load` with the `safetensors` library from hugingface,
+which provides a safe deserialization mechanism.
 
 :Example:
 
@@ -26,6 +28,8 @@ with untrusted data can lead to arbitrary code execution, and improper use of
 .. seealso::
 
      - https://cwe.mitre.org/data/definitions/94.html
+     - https://pytorch.org/docs/stable/generated/torch.load.html#torch.load
+     - https://github.com/huggingface/safetensors
 
 .. versionadded:: 1.7.8
 
@@ -36,9 +40,7 @@ from bandit.core import test_properties as test
 
 
 @test.checks("Call")
-@test.test_id(
-    "B704"
-)  # Ensure the test ID is unique and does not conflict with existing Bandit tests
+@test.test_id("B613")
 def pytorch_load_save(context):
     """
     This plugin checks for the use of `torch.load` and `torch.save`. Using `torch.load`
@@ -63,6 +65,6 @@ def pytorch_load_save(context):
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
             text="Use of unsafe PyTorch load or save",
-            cwe=issue.Cwe.UNTRUSTED_INPUT,
+            cwe=issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
             lineno=context.get_lineno_for_call_arg("load"),
         )
