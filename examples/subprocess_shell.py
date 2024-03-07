@@ -26,6 +26,9 @@ subprocess.check_call('/bin/ls -l', shell=True)
 subprocess.check_output(['/bin/ls', '-l'])
 subprocess.check_output('/bin/ls -l', shell=True)
 
+subprocess.getoutput('/bin/ls -l')
+subprocess.getstatusoutput('/bin/ls -l')
+
 subprocess.run(['/bin/ls', '-l'])
 subprocess.run('/bin/ls -l', shell=True)
 
