@@ -16,4 +16,5 @@ from bandit.core.constants import *  # noqa
 from bandit.core.issue import *  # noqa
 from bandit.core.test_properties import *  # noqa
 
+__author__ = metadata.metadata("bandit")["Author"]
 __version__ = metadata.version("bandit")
