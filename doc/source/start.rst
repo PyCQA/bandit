@@ -135,3 +135,24 @@ Then run ``pre-commit install`` and you're ready to go.
 .. _pre-commit: https://pre-commit.com/
 .. _have it installed: https://pre-commit.com/#install
 .. _`real git tag/revision`: https://github.com/PyCQA/bandit/releases
+
+GitLab CI/CD integration
+------------------
+
+To integrate Bandit with `GitLab continuous integration and delivery (CI/CD)`_,
+use a job like so:
+
+.. code-block:: yaml
+
+    bandit:
+        cache: {}
+        image:
+            name: cytopia/bandit:1-py3.10
+            entrypoint: [""]
+        script:
+            -   bandit --configfile pyproject.toml -r my_package/
+        stage: lint_static
+
+> **NOTE**: Adapt the package name from `my_package` to your package name.
+
+.. _GitLab continuous integration and delivery (CI/CD): https://docs.gitlab.com/ee/ci/
