@@ -15,7 +15,6 @@ from bandit.core import test_set as b_test_set
 
 
 class FunctionalTests(testtools.TestCase):
-
     """Functional tests for bandit test plugins.
 
     This set of tests runs bandit against each example file in turn
