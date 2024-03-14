@@ -74,7 +74,10 @@ or make sure defusedxml.defuse_stdlib() is called.
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
 | B405 | import_xml_etree    | - xml.etree.cElementTree           | low       |
-|      |                     | - xml.etree.ElementTree            |           |
+|      |                     | - xml.etree.ElementTree.XMLParser  |           |
+|      |                     | - xml.etree.ElementTree.fromstring |           |
+|      |                     | - xml.etree.ElementTree.iterparse  |           |
+|      |                     | - xml.etree.ElementTree.parse      |           |
 +------+---------------------+------------------------------------+-----------+
 
 B406: import_xml_sax
@@ -308,7 +311,13 @@ def gen_blacklist():
             "import_xml_etree",
             "B405",
             issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            ["xml.etree.cElementTree", "xml.etree.ElementTree"],
+            [
+                "xml.etree.cElementTree",
+                "xml.etree.ElementTree.XMLParser",
+                "xml.etree.ElementTree.fromstring",
+                "xml.etree.ElementTree.iterparse",
+                "xml.etree.ElementTree.parse",
+            ],
             xml_msg,
             "LOW",
         )
