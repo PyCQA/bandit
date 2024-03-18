@@ -31,7 +31,7 @@ jobs:
         ref: ${{ github.event_name == 'release' && github.ref || env.RELEASE_TAG }}
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@0d103c3126aa41d772a8362f6aa67afac040f80c # v3
+      uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20 # v3
 
     - name: Log in to GitHub Container Registry
       uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3
