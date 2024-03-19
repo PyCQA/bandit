@@ -32,7 +32,7 @@ library from hugingface, which provides a safe deserialization mechanism.
      - https://pytorch.org/docs/stable/generated/torch.load.html#torch.load
      - https://github.com/huggingface/safetensors
 
-.. versionadded:: 1.7.8
+.. versionadded:: 1.7.9
 
 """
 import bandit
