@@ -4,7 +4,8 @@ r"""
 B113: Test for missing requests timeout
 =======================================
 
-This plugin test checks for ``requests`` calls without a timeout specified.
+This plugin test checks for ``requests`` or ``httpx`` calls without a timeout
+specified.
 
 Nearly all production code should use this parameter in nearly all requests,
 Failure to do so can cause your program to hang indefinitely.
@@ -17,7 +18,7 @@ Bandit will return a MEDIUM severity error.
 
 .. code-block:: none
 
-    >> Issue: [B113:request_without_timeout] Requests call without timeout
+    >> Issue: [B113:request_without_timeout] Call to requests without timeout
        Severity: Medium   Confidence: Low
        CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
        More Info: https://bandit.readthedocs.io/en/latest/plugins/b113_request_without_timeout.html
@@ -27,7 +28,7 @@ Bandit will return a MEDIUM severity error.
     4	requests.get('https://gmail.com', timeout=None)
 
     --------------------------------------------------
-    >> Issue: [B113:request_without_timeout] Requests call with timeout set to None
+    >> Issue: [B113:request_without_timeout] Call to requests with timeout set to None
        Severity: Medium   Confidence: Low
        CWE: CWE-400 (https://cwe.mitre.org/data/definitions/400.html)
        More Info: https://bandit.readthedocs.io/en/latest/plugins/b113_request_without_timeout.html
@@ -42,6 +43,9 @@ Bandit will return a MEDIUM severity error.
 
 .. versionadded:: 1.7.5
 
+.. versionchanged:: 1.7.6
+    Added check for httpx module
+
 """  # noqa: E501
 import bandit
 from bandit.core import issue
@@ -51,17 +55,23 @@ from bandit.core import test_properties as test
 @test.checks("Call")
 @test.test_id("B113")
 def request_without_timeout(context):
-    http_verbs = ("get", "options", "head", "post", "put", "patch", "delete")
+    HTTP_VERBS = {"get", "options", "head", "post", "put", "patch", "delete"}
+    HTTPX_ATTRS = {"request", "stream", "Client", "AsyncClient"} | HTTP_VERBS
     qualname = context.call_function_name_qual.split(".")[0]
 
-    if qualname == "requests" and context.call_function_name in http_verbs:
+    if (
+        qualname == "requests"
+        and context.call_function_name in HTTP_VERBS
+        or qualname == "httpx"
+        and context.call_function_name in HTTPX_ATTRS
+    ):
         # check for missing timeout
         if context.check_call_arg_value("timeout") is None:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
                 cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
-                text="Requests call without timeout",
+                text="Call to {qualname} without timeout",
             )
         # check for timeout=None
         if context.check_call_arg_value("timeout", "None"):
@@ -69,5 +79,5 @@ def request_without_timeout(context):
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
                 cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
-                text="Requests call with timeout set to None",
+                text="Call to {qualname} with timeout set to None",
             )
