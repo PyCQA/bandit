@@ -450,16 +450,17 @@ def main():
             args.confidence = 4
         # Other strings will be blocked by argparse
 
-    try:
-        b_conf = b_config.BanditConfig(config_file=args.config_file)
-    except utils.ConfigError as e:
-        LOG.error(e)
-        sys.exit(2)
-
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
         # prefer command line, then ini file
+        args.config_file = _log_option_source(
+            parser.get_default("configfile"),
+            args.config_file,
+            ini_options.get("configfile"),
+            "config file",
+        )
+
         args.excluded_paths = _log_option_source(
             parser.get_default("excluded_paths"),
             args.excluded_paths,
@@ -591,6 +592,12 @@ def main():
             ini_options.get("baseline"),
             "path of a baseline report",
         )
+
+    try:
+        b_conf = b_config.BanditConfig(config_file=args.config_file)
+    except utils.ConfigError as e:
+        LOG.error(e)
+        sys.exit(2)
 
     if not args.targets:
         parser.print_usage()
