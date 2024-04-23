@@ -49,6 +49,8 @@ def gen_config(name):
                 "popen2.Popen4",
                 "commands.getoutput",
                 "commands.getstatusoutput",
+                "subprocess.getoutput",
+                "subprocess.getstatusoutput",
             ],
             # Start a process with a function that is not vulnerable to shell
             # injection.
@@ -447,6 +449,8 @@ def start_process_with_a_shell(context, config):
                 - popen2.Popen4
                 - commands.getoutput
                 - commands.getstatusoutput
+                - subprocess.getoutput
+                - subprocess.getstatusoutput
 
     :Example:
 
