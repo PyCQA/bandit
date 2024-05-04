@@ -128,7 +128,7 @@ The development of Bandit is made possible by the following sponsors:
    :class: borderless
 
    * - .. image:: https://github.githubassets.com/assets/tidelift-8cea37dea8fc.svg
-          :target: https://tidelift.com/
+          :target: https://tidelift.com/lifter/search/pypi/bandit
           :alt: Tidelift
           :width: 88
 
