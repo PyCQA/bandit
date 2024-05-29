@@ -367,6 +367,15 @@ def main():
         default=False,
         help="exit with 0, " "even with results found",
     )
+    parser.add_argument(
+        "-no",
+        "--no-line-numbers",
+        dest="no_line_numbers",
+        action="store",
+        default=False,
+        type=str,
+        help="flag for not showing code line's",
+    )
     python_ver = sys.version.replace("\n", "")
     parser.add_argument(
         "--version",
@@ -449,6 +458,9 @@ def main():
         elif args.confidence_string == "high":
             args.confidence = 4
         # Other strings will be blocked by argparse
+
+    if args.no_line_numbers is not None:
+        os.environ["BANDIT_NO_LINES"] = str(args.no_line_numbers)
 
     try:
         b_conf = b_config.BanditConfig(config_file=args.config_file)
@@ -590,6 +602,13 @@ def main():
             args.baseline,
             ini_options.get("baseline"),
             "path of a baseline report",
+        )
+
+        args.no_line_numbers = _log_option_source(
+            parser.get_default("no_line_numbers"),
+            args.baseline,
+            ini_options.get("no-line-numbers"),
+            "do not print code's lines.",
         )
 
     if not args.targets:
