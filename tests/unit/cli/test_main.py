@@ -46,6 +46,28 @@ bandit_baseline_content = """{
 }
 """
 
+bandit_default_ini = """
+[bandit]
+targets =
+recursive = false
+aggregate = file
+number = 3
+profile =
+tests =
+skips =
+level = 1
+confidence = 1
+format = txt
+msg-template =
+output =
+verbose = false
+debug = false
+quiet = false
+ignore-nosec = false
+exclude =
+baseline =
+"""
+
 
 class BanditCLIMainLoggerTests(testtools.TestCase):
     def setUp(self):
@@ -217,6 +239,16 @@ class BanditCLIMainTests(testtools.TestCase):
                     str(err_mock.call_args[0][0]),
                     "Unknown test found in profile: some_test",
                 )
+
+    @mock.patch("sys.argv", ["bandit", "--ini", ".bandit", "test"])
+    def test_main_handle_default_ini_file(self):
+        # Test that bandit can parse a default .bandit ini file
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(temp_directory)
+        with open(".bandit", "wt") as fd:
+            fd.write(bandit_default_ini)
+        # should run without errors
+        self.assertRaisesRegex(SystemExit, "0", bandit.main)
 
     @mock.patch(
         "sys.argv", ["bandit", "-c", "bandit.yaml", "-t", "badID", "test"]
