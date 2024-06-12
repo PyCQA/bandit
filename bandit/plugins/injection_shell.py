@@ -683,7 +683,7 @@ def start_process_with_partial_path(context, config):
         ):
             node = context.node.args[0]
             # some calls take an arg list, check the first part
-            if isinstance(node, ast.List):
+            if isinstance(node, ast.List) and node.elts:
                 node = node.elts[0]
 
             # make sure the param is a string literal and not a var name
