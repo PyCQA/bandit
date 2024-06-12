@@ -117,3 +117,29 @@ source of origin using the following cosign command:
       --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
 Where `<version>` is the release version of Bandit.
+
+Sponsors
+--------
+
+The development of Bandit is made possible by the following sponsors:
+
+.. list-table::
+   :width: 100%
+   :class: borderless
+
+   * - .. image:: https://github.githubassets.com/assets/tidelift-8cea37dea8fc.svg
+          :target: https://tidelift.com/lifter/search/pypi/bandit
+          :alt: Tidelift
+          :width: 88
+
+     - .. image:: https://avatars.githubusercontent.com/u/110237746?s=200&v=4
+          :target: https://stacklok.com/
+          :alt: Stacklok
+          :width: 88
+
+     - .. image:: https://avatars.githubusercontent.com/u/1396951?s=70&v=4
+          :target: https://sentry.io/
+          :alt: Sentry
+          :width: 88
+
+If you also ❤️ Bandit, please consider sponsoring.

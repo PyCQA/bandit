@@ -15,7 +15,6 @@ from bandit.core import test_set as b_test_set
 
 
 class FunctionalTests(testtools.TestCase):
-
     """Functional tests for bandit test plugins.
 
     This set of tests runs bandit against each example file in turn
@@ -493,8 +492,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         """Test for `subprocess.Popen` with `shell=True`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 23, "MEDIUM": 1, "HIGH": 11},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 34},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 24, "MEDIUM": 1, "HIGH": 11},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 35},
         }
         self.check_example("subprocess_shell.py", expect)
 
