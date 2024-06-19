@@ -6,6 +6,26 @@ import linecache
 
 from bandit.core import constants
 
+branches = {
+    'if "id" in data': False,
+    'if "id" in data else statement': False
+}
+
+def show_coverage():
+    branch_hit = 0
+    total_branches = 0
+
+    for branch, hit in branches.items():
+
+        if hit:
+            branch_hit += 1
+            print(f"Branch '{branch}' was hit")
+        else:
+            print(f"Branch '{branch}' was not hit")
+
+        total_branches += 1
+
+    print(f"Branch coverage is {branch_hit * 100 / total_branches}%\n")
 
 class Cwe:
     NOTSET = 0
@@ -60,8 +80,14 @@ class Cwe:
 
     def from_dict(self, data):
         if "id" in data:
+
+            branches['if "id" in data'] = True
+
             self.id = int(data["id"])
         else:
+
+            branches['if "id" in data else statement'] = True
+
             self.id = Cwe.NOTSET
 
     def __eq__(self, other):
@@ -241,3 +267,12 @@ def issue_from_dict(data):
     i = Issue(severity=data["issue_severity"])
     i.from_dict(data)
     return i
+
+cwe = Cwe()
+show_coverage()
+
+cwe.from_dict({"id": 20})
+show_coverage()
+
+cwe.from_dict({"user_id": 40})
+show_coverage()
