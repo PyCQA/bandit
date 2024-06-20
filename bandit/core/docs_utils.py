@@ -11,26 +11,25 @@ branches = {
     'if info["id"] in ["B304", "B305"]': False,
     'elif info["id"] in ["B313" - "B320"]': False,
     'if info["id"].startswith("B3") else': False,
+    'if info is not None1 else': False,
+    'if info is not None2 else': False
 }
 
-def show_coverage():
-    branch_hit = 0
-    total_branches = 0
+# def show_coverage():
 
-    for branch, hit in branches.items():
+#     branch_hit = 0
+#     total_branches = 0
 
-        # if branch != "if info is not None1": # temp
-        #     break                            # temp
+#     for branch, hit in branches.items():
+#         if hit:
+#             branch_hit += 1
+#             print(f"Branch '{branch}' was hit")
+#         else:
+#             print(f"Branch '{branch}' was not hit")
 
-        if hit:
-            branch_hit += 1
-            print(f"Branch '{branch}' was hit")
-        else:
-            print(f"Branch '{branch}' was not hit")
+#         total_branches += 1
 
-        total_branches += 1
-
-    print(f"Branch coverage is {branch_hit * 100 / total_branches}%\n")
+#     print(f"Branch coverage is {branch_hit * 100 / total_branches}%\n")
 
 def get_url(bid):
     # where our docs are hosted
@@ -47,6 +46,9 @@ def get_url(bid):
         branches["if info is not None1"] = True
 
         return f"{base_url}plugins/{bid.lower()}_{info.plugin.__name__}.html"
+    
+    else:    
+        branches["if info is not None1 else"] = True
 
     info = extension_loader.MANAGER.blacklist_by_id.get(bid)
 
@@ -99,27 +101,32 @@ def get_url(bid):
             )
 
         return base_url + ext.lower()
+    
+    else:    
+        branches["if info is not None2 else"] = True
 
     return base_url  # no idea, give the docs main page
 
-show_coverage() # Nothing
+# --- Test Cases --- #
 
-get_url("x")
-show_coverage() # Invalid ID
+# show_coverage() # Nothing
 
-get_url("B301") 
-show_coverage()
+# print(get_url("x"))
+# show_coverage() # Invalid ID
 
-get_url("B304") # In range B304-B305
-show_coverage()
+# get_url("B301") 
+# show_coverage()
 
-get_url("B3x") # B3, but invalid second 2 digits
+# get_url("B304") # In range B304-B305
+# show_coverage()
 
-get_url("B313") # In range B313-B320
-show_coverage()
+# # get_url("B3x") # B3, but invalid second 2 digits
 
-get_url("B402") # Starts with B, but 1st number is not 3
-show_coverage()
+# get_url("B313") # In range B313-B320
+# show_coverage()
 
-get_url("B101") 
-show_coverage()
+# get_url("B402") # Starts with B, but 1st number is not 3
+# show_coverage()
+
+# get_url("B101") 
+# show_coverage()

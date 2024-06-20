@@ -271,8 +271,14 @@ def issue_from_dict(data):
 cwe = Cwe()
 show_coverage()
 
+print(cwe.id)
+
 cwe.from_dict({"id": 20})
 show_coverage()
 
+print(cwe.id)
+
 cwe.from_dict({"user_id": 40})
 show_coverage()
+
+print(cwe.id)

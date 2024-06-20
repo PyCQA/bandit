@@ -117,6 +117,19 @@ class IssueTests(testtools.TestCase):
         # line number doesn't match but should pass because we don't test that
         self.assertEqual(issue_a, issue_h)
 
+    def test_valid_id(self):
+        cwe = issue.Cwe()
+        cwe.from_dict({"id": 20})
+
+        self.assertEqual(20, cwe.id)
+
+    def test_invalid_id(self):
+        cwe = issue.Cwe()
+        cwe.id = 999
+        cwe.from_dict({"user_id": 40})
+
+        self.assertEqual(None, cwe.id)
+
     @mock.patch("linecache.getline")
     def test_get_code(self, getline):
         getline.return_value = b"\x08\x30"

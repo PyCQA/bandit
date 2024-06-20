@@ -28,3 +28,21 @@ class DocsUtilTests(testtools.TestCase):
             "blacklists/blacklist_imports.html" "#b413-import-pycrypto"
         )
         self.assertEqual(expected_url, get_url("B413"))
+
+    def test_invalid_id(self):
+        expected_url = self.BASE_URL
+        self.assertEqual(expected_url, get_url("x"))
+
+    def test_startswith_B3(self):
+        expected_url = self.BASE_URL + ("blacklists/blacklist_calls.html" "#b301-pickle")
+        self.assertEqual(expected_url, get_url("B301"))
+
+    def test_in_range_B313_B320(self):
+        expected_url = self.BASE_URL + (
+            "blacklists/blacklist_calls.html" "#b313-b320-xml-bad-celementtree"
+        )
+        self.assertEqual(expected_url, get_url("B313"))
+
+    def test_startswithB_first_digit_not_3(self):
+        expected_url = self.BASE_URL + ("blacklists/blacklist_imports.html" "#b402-import-ftplib")
+        self.assertEqual(expected_url, get_url("B402"))
