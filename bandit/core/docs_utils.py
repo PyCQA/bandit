@@ -5,14 +5,14 @@
 import bandit
 
 branches = {
-    "if info is not None1": False,
-    "if info is not None2": False,
-    'if info["id"].startswith("B3")': False,
-    'if info["id"] in ["B304", "B305"]': False,
-    'elif info["id"] in ["B313" - "B320"]': False,
-    'if info["id"].startswith("B3") else': False,
-    'if info is not None1 else': False,
-    'if info is not None2 else': False
+    "branch-1": False,
+    "branch-2": False,
+    'branch-3': False,
+    'branch-4': False,
+    'branch-5': False,
+    'branch-6': False,
+    'branch-7': False,
+    'branch-8': False
 }
 
 # def show_coverage():
@@ -43,12 +43,12 @@ def get_url(bid):
     info = extension_loader.MANAGER.plugins_by_id.get(bid)
     if info is not None:
 
-        branches["if info is not None1"] = True
+        branches["branch-1"] = True
 
         return f"{base_url}plugins/{bid.lower()}_{info.plugin.__name__}.html"
     
     else:    
-        branches["if info is not None1 else"] = True
+        branches["branch-7"] = True
 
     info = extension_loader.MANAGER.blacklist_by_id.get(bid)
 
@@ -56,19 +56,19 @@ def get_url(bid):
 
     if info is not None:
 
-        branches["if info is not None2"] = True
+        branches["branch-2"] = True
 
         template = "blacklists/blacklist_{kind}.html#{id}-{name}"
         info["name"] = info["name"].replace("_", "-")
 
         if info["id"].startswith("B3"):  # B3XX
 
-            branches['if info["id"].startswith("B3")'] = True
+            branches['branch-3'] = True
 
             # Some of the links are combined, so we have exception cases
             if info["id"] in ["B304", "B305"]:
 
-                branches['if info["id"] in ["B304", "B305"]'] = True
+                branches['branch-4'] = True
 
                 info = info.copy()
                 info["id"] = "b304-b305"
@@ -85,7 +85,7 @@ def get_url(bid):
                 "B320",
             ]:
                 
-                branches['elif info["id"] in ["B313" - "B320"]'] = True
+                branches['branch-5'] = True
 
                 info = info.copy()
                 info["id"] = "b313-b320"
@@ -94,7 +94,7 @@ def get_url(bid):
             )
         else:
 
-            branches['if info["id"].startswith("B3") else'] = True
+            branches['branch-6'] = True
 
             ext = template.format(
                 kind="imports", id=info["id"], name=info["name"]
@@ -103,7 +103,7 @@ def get_url(bid):
         return base_url + ext.lower()
     
     else:    
-        branches["if info is not None2 else"] = True
+        branches["branch-8"] = True
 
     return base_url  # no idea, give the docs main page
 
