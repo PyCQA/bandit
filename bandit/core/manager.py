@@ -28,6 +28,29 @@ NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
 NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z\d_]+),?)+", re.IGNORECASE)
 PROGRESS_THRESHOLD = 50
 
+branches_run_tests = {
+    '2-condition if': False,
+    "2-condition if's else": False,
+    "for count, fname in enumerate(files)": False,
+    "try statement": False,
+    'fname == "-"': False,
+}
+
+def show_coverage():
+    branch_hit = 0
+    total_branches = 0
+
+    for branch, hit in branches.items():
+
+        if hit:
+            branch_hit += 1
+            print(f"Branch '{branch}' was hit")
+        else:
+            print(f"Branch '{branch}' was not hit")
+
+        total_branches += 1
+
+    print(f"Branch coverage is {branch_hit * 100 / total_branches}%\n")
 
 class BanditManager:
     scope = []
@@ -270,15 +293,21 @@ class BanditManager:
             len(self.files_list) > PROGRESS_THRESHOLD
             and LOG.getEffectiveLevel() <= logging.INFO
         ):
+            branches_run_tests["2-condition if"] = True
             files = progress.track(self.files_list)
+
         else:
+            branches_run_tests["2-condition if's else"] = True
             files = self.files_list
 
         for count, fname in enumerate(files):
+            branches_run_tests["for count, fname in enumerate(files)"] = True
             LOG.debug("working on file : %s", fname)
 
             try:
+                branches_run_tests["try statement"] = True
                 if fname == "-":
+                    branches_run_tests['fname == "-"'] = True
                     open_fd = os.fdopen(sys.stdin.fileno(), "rb", 0)
                     fdata = io.BytesIO(open_fd.read())
                     new_files_list = [
