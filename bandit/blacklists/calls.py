@@ -9,7 +9,7 @@ Blacklist various Python calls known to be dangerous
 
 This blacklist data checks for a number of Python calls known to have possible
 security implications. The following blacklist tests are run against any
-function calls encoutered in the scanned code base, triggered by encoutering
+function calls encountered in the scanned code base, triggered by encountering
 ast.Call nodes.
 
 B301: pickle
@@ -184,18 +184,21 @@ B311: random
 ------------
 
 Standard pseudo-random generators are not suitable for security/cryptographic
-purposes.
+purposes. Consider using the secrets module instead:
+https://docs.python.org/library/secrets.html
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Calls                             |  Severity |
 +======+=====================+====================================+===========+
-| B311 | random              | - random.random                    | Low       |
+| B311 | random              | - random.Random                    | Low       |
+|      |                     | - random.random                    |           |
 |      |                     | - random.randrange                 |           |
 |      |                     | - random.randint                   |           |
 |      |                     | - random.choice                    |           |
 |      |                     | - random.choices                   |           |
 |      |                     | - random.uniform                   |           |
 |      |                     | - random.triangular                |           |
+|      |                     | - random.randbytes                 |           |
 +------+---------------------+------------------------------------+-----------+
 
 B312: telnetlib
@@ -493,16 +496,10 @@ def gen_blacklist():
             "B310",
             issue.Cwe.PATH_TRAVERSAL,
             [
-                "urllib.urlopen",
                 "urllib.request.urlopen",
-                "urllib.urlretrieve",
                 "urllib.request.urlretrieve",
-                "urllib.URLopener",
                 "urllib.request.URLopener",
-                "urllib.FancyURLopener",
                 "urllib.request.FancyURLopener",
-                "urllib2.urlopen",
-                "urllib2.Request",
                 "six.moves.urllib.request.urlopen",
                 "six.moves.urllib.request.urlretrieve",
                 "six.moves.urllib.request.URLopener",
@@ -519,6 +516,7 @@ def gen_blacklist():
             "B311",
             issue.Cwe.INSUFFICIENT_RANDOM_VALUES,
             [
+                "random.Random",
                 "random.random",
                 "random.randrange",
                 "random.randint",
@@ -526,6 +524,7 @@ def gen_blacklist():
                 "random.choices",
                 "random.uniform",
                 "random.triangular",
+                "random.randbytes",
             ],
             "Standard pseudo-random generators are not suitable for "
             "security/cryptographic purposes.",

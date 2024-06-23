@@ -46,7 +46,7 @@ LOG = logging.getLogger(__name__)
 
 def get_verbose_details(manager):
     bits = []
-    bits.append("Files in scope (%i):" % len(manager.files_list))
+    bits.append(f"Files in scope ({len(manager.files_list)}):")
     tpl = "\t%s (score: {SEVERITY: %i, CONFIDENCE: %i})"
     bits.extend(
         [
@@ -54,16 +54,16 @@ def get_verbose_details(manager):
             for (item, score) in zip(manager.files_list, manager.scores)
         ]
     )
-    bits.append("Files excluded (%i):" % len(manager.excluded_files))
-    bits.extend(["\t%s" % fname for fname in manager.excluded_files])
+    bits.append(f"Files excluded ({len(manager.excluded_files)}):")
+    bits.extend([f"\t{fname}" for fname in manager.excluded_files])
     return "\n".join([bit for bit in bits])
 
 
 def get_metrics(manager):
     bits = []
     bits.append("\nRun metrics:")
-    for (criteria, _) in constants.CRITERIA:
-        bits.append("\tTotal issues (by %s):" % (criteria.lower()))
+    for criteria, _ in constants.CRITERIA:
+        bits.append(f"\tTotal issues (by {criteria.lower()}):")
         for rank in constants.RANKING:
             bits.append(
                 "\t\t%s: %s"
@@ -81,8 +81,7 @@ def _output_issue_str(
     # returns a list of lines that should be added to the existing lines list
     bits = []
     bits.append(
-        "%s>> Issue: [%s:%s] %s"
-        % (indent, issue.test_id, issue.test, issue.text)
+        f"{indent}>> Issue: [{issue.test_id}:{issue.test}] {issue.text}"
     )
 
     bits.append(
@@ -162,7 +161,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     bits = []
 
     if not manager.quiet or manager.results_count(sev_level, conf_level):
-        bits.append("Run started:%s" % datetime.datetime.utcnow())
+        bits.append(f"Run started:{datetime.datetime.utcnow()}")
 
         if manager.verbose:
             bits.append(get_verbose_details(manager))
@@ -187,7 +186,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 
         skipped = manager.get_skipped()
         bits.append(get_metrics(manager))
-        bits.append("Files skipped (%i):" % len(skipped))
+        bits.append(f"Files skipped ({len(skipped)}):")
         bits.extend(["\t%s (%s)" % skip for skip in skipped])
         result = "\n".join([bit for bit in bits]) + "\n"
 

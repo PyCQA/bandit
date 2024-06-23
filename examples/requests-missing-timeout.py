@@ -1,4 +1,5 @@
 import requests
+import not_requests
 
 requests.get('https://gmail.com')
 requests.get('https://gmail.com', timeout=None)
@@ -21,3 +22,6 @@ requests.options('https://gmail.com', timeout=5)
 requests.head('https://gmail.com')
 requests.head('https://gmail.com', timeout=None)
 requests.head('https://gmail.com', timeout=5)
+
+# Okay
+not_requests.get('https://gmail.com')

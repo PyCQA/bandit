@@ -1,0 +1,67 @@
+name: Build and Publish Bandit Images
+
+on:
+  release:
+    types: [created]
+  schedule:
+    - cron: '0 0 * * 0' # Every Sunday at midnight
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+
+    - name: Get latest release tag
+      if: github.event_name != 'release'
+      id: get-latest-tag
+      run: |
+        TAG=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+        echo "Latest tag is $TAG"
+        echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
+
+    - name: Check out the repo
+      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      with:
+        ref: ${{ github.event_name == 'release' && github.ref || env.RELEASE_TAG }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb # v3
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # v3.5.0
+      with:
+        cosign-release: 'v2.2.2'
+
+    - name: Downcase github.repository value
+      run: |
+        echo "IMAGE_NAME=`echo ${{github.repository}} | tr '[:upper:]' '[:lower:]'`" >>${GITHUB_ENV}
+
+    - name: Build and push Docker image
+      id: build-and-push
+      uses: docker/build-push-action@c382f710d39a5bb4e430307530a720f50c2d3318 # v6
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        push: true
+        tags: ghcr.io/${{ env.IMAGE_NAME }}/bandit:latest
+        platforms: linux/amd64, linux/arm64, linux/arm/v7, linux/arm/v8
+
+    - name: Sign the image
+      env:
+        TAGS: ghcr.io/${{ env.IMAGE_NAME }}/bandit:latest
+        DIGEST: ${{ steps.build-and-push.outputs.digest }}
+      run: |
+        echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}

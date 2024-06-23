@@ -15,7 +15,6 @@ from bandit.core import test_set as b_test_set
 
 
 class FunctionalTests(testtools.TestCase):
-
     """Functional tests for bandit test plugins.
 
     This set of tests runs bandit against each example file in turn
@@ -90,7 +89,7 @@ class FunctionalTests(testtools.TestCase):
                 self.assertEqual(expect[k], m["_totals"][k])
         # test issue counts
         if "issues" in expect:
-            for (criteria, default) in C.CRITERIA:
+            for criteria, default in C.CRITERIA:
                 for rank in C.RANKING:
                     label = f"{criteria}.{rank}"
                     expected = 0
@@ -113,14 +112,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 10,
+                    "MEDIUM": 16,
                     "HIGH": 9,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 19,
+                    "HIGH": 25,
                 },
             }
         else:
@@ -128,14 +127,14 @@ class FunctionalTests(testtools.TestCase):
                 "SEVERITY": {
                     "UNDEFINED": 0,
                     "LOW": 0,
-                    "MEDIUM": 16,
+                    "MEDIUM": 22,
                     "HIGH": 4,
                 },
                 "CONFIDENCE": {
                     "UNDEFINED": 0,
                     "LOW": 0,
                     "MEDIUM": 0,
-                    "HIGH": 20,
+                    "HIGH": 26,
                 },
             }
         self.check_example("crypto-md5.py", expect)
@@ -396,8 +395,8 @@ class FunctionalTests(testtools.TestCase):
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 7, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 7},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 9, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
         }
         self.check_example("random_module.py", expect)
 
@@ -439,17 +438,48 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {
                 "UNDEFINED": 0,
                 "LOW": 0,
-                "MEDIUM": 14,
+                "MEDIUM": 20,
                 "HIGH": 0,
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
-                "LOW": 8,
-                "MEDIUM": 6,
+                "LOW": 10,
+                "MEDIUM": 10,
                 "HIGH": 0,
             },
         }
         self.check_example("sql_statements.py", expect)
+
+    def test_multiline_sql_statements(self):
+        """
+        Test for SQL injection through string building using
+        multi-line strings.
+        """
+        example_file = "sql_multiline_statements.py"
+        confidence_low_tests = 13
+        severity_medium_tests = 26
+        nosec_tests = 7
+        skipped_tests = 8
+        expect = {
+            "SEVERITY": {
+                "UNDEFINED": 0,
+                "LOW": 0,
+                "MEDIUM": severity_medium_tests,
+                "HIGH": 0,
+            },
+            "CONFIDENCE": {
+                "UNDEFINED": 0,
+                "LOW": confidence_low_tests,
+                "MEDIUM": 13,
+                "HIGH": 0,
+            },
+        }
+        expect_stats = {
+            "nosec": nosec_tests,
+            "skipped_tests": skipped_tests,
+        }
+        self.check_example(example_file, expect)
+        self.check_metrics(example_file, expect_stats)
 
     def test_ssl_insecure_version(self):
         """Test for insecure SSL protocol versions."""
@@ -462,16 +492,16 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         """Test for `subprocess.Popen` with `shell=True`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 21, "MEDIUM": 1, "HIGH": 11},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 32},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 24, "MEDIUM": 1, "HIGH": 11},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 35},
         }
         self.check_example("subprocess_shell.py", expect)
 
     def test_urlopen(self):
         """Test for dangerous URL opening."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 14},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
         }
         self.check_example("urlopen.py", expect)
 
@@ -496,8 +526,8 @@ class FunctionalTests(testtools.TestCase):
         """Test insecure raw functions on Django."""
 
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 6, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 6, "HIGH": 0},
         }
         self.check_example("django_sql_injection_raw.py", expect)
 
@@ -512,8 +542,8 @@ class FunctionalTests(testtools.TestCase):
     def test_host_key_verification(self):
         """Test for ignoring host key verification."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
         }
         self.check_example("no_host_key_verification.py", expect)
 
@@ -747,19 +777,13 @@ class FunctionalTests(testtools.TestCase):
             issues[0].fname.endswith("examples/multiline_statement.py")
         )
         self.assertEqual(1, issues[0].lineno)
-        if sys.version_info >= (3, 8):
-            self.assertEqual(list(range(1, 2)), issues[0].linerange)
-        else:
-            self.assertEqual(list(range(1, 3)), issues[0].linerange)
+        self.assertEqual(list(range(1, 2)), issues[0].linerange)
         self.assertIn("subprocess", issues[0].get_code())
         self.assertEqual(5, issues[1].lineno)
         self.assertEqual(list(range(3, 6 + 1)), issues[1].linerange)
         self.assertIn("shell=True", issues[1].get_code())
         self.assertEqual(11, issues[2].lineno)
-        if sys.version_info >= (3, 8):
-            self.assertEqual(list(range(8, 13 + 1)), issues[2].linerange)
-        else:
-            self.assertEqual(list(range(8, 12 + 1)), issues[2].linerange)
+        self.assertEqual(list(range(8, 13 + 1)), issues[2].linerange)
         self.assertIn("shell=True", issues[2].get_code())
 
     def test_code_line_numbers(self):
@@ -792,18 +816,18 @@ class FunctionalTests(testtools.TestCase):
             "exposes the Werkzeug debugger and allows the execution "
             "of arbitrary code."
         )
-        json = """{{
+        json = f"""{{
           "results": [
             {{
               "code": "...",
-              "filename": "{}/examples/flask_debug.py",
+              "filename": "{os.getcwd()}/examples/flask_debug.py",
               "issue_confidence": "MEDIUM",
               "issue_severity": "HIGH",
               "issue_cwe": {{
                 "id": 94,
                 "link": "https://cwe.mitre.org/data/definitions/94.html"
               }},
-              "issue_text": "{}",
+              "issue_text": "{issue_text}",
               "line_number": 10,
               "col_offset": 0,
               "line_range": [
@@ -814,10 +838,7 @@ class FunctionalTests(testtools.TestCase):
             }}
           ]
         }}
-        """.format(
-            os.getcwd(),
-            issue_text,
-        )
+        """
 
         self.b_mgr.populate_baseline(json)
         self.run_example("flask_debug.py")
@@ -904,8 +925,8 @@ class FunctionalTests(testtools.TestCase):
     def test_tarfile_unsafe_members(self):
         """Test insecure usage of tarfile."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 2},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 2},
         }
         self.check_example("tarfile_extractall.py", expect)
 

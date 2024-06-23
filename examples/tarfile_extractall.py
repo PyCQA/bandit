@@ -15,6 +15,18 @@ def managed_members_archive_handler(filename):
     tar.close()
 
 
+def filter_data_archive_handler(filename):
+    tar = tarfile.open(filename)
+    tar.extractall(path=tempfile.mkdtemp(), filter="data")
+    tar.close()
+
+
+def filter_fully_trusted_archive_handler(filename):
+    tar = tarfile.open(filename)
+    tar.extractall(path=tempfile.mkdtemp(), filter="fully_trusted")
+    tar.close()
+
+
 def list_members_archive_handler(filename):
     tar = tarfile.open(filename)
     tar.extractall(path=tempfile.mkdtemp(), members=[])
@@ -45,3 +57,5 @@ if __name__ == "__main__":
         filename = sys.argv[1]
         unsafe_archive_handler(filename)
         managed_members_archive_handler(filename)
+        filter_data_archive_handler(filename)
+        filter_fully_trusted_archive_handler(filename)

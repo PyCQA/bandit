@@ -40,14 +40,9 @@ class ScreenFormatterTests(testtools.TestCase):
                     _issue.severity.capitalize(),
                     _issue.confidence.capitalize(),
                 ),
-                "{}   CWE: {}".format(
-                    _indent_val,
-                    _issue.cwe,
-                ),
-                "{}   More Info: {}".format(
-                    _indent_val,
-                    docs_utils.get_url(_issue.test_id),
-                ),
+                f"{_indent_val}   CWE: {_issue.cwe}",
+                f"{_indent_val}   More Info: "
+                f"{docs_utils.get_url(_issue.test_id)}",
                 "{}   Location: {}:{}:{}{}".format(
                     _indent_val,
                     _issue.fname,

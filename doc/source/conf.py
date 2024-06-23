@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
+from datetime import datetime
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
 # -- General configuration ----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -12,6 +13,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
+    "sphinx_copybutton",
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
@@ -22,11 +24,11 @@ extensions = [
 source_suffix = ".rst"
 
 # The root toctree document.
-master_doc = "index"
+root_doc = "index"
 
 # General information about the project.
 project = "Bandit"
-copyright = "2022, Bandit Developers"
+copyright = f"{datetime.now():%Y}, Bandit Developers"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True
@@ -65,7 +67,7 @@ html_theme = "sphinx_rtd_theme"
 html_theme_options = {}
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "%sdoc" % project
+htmlhelp_basename = f"{project}doc"
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass
@@ -73,8 +75,8 @@ htmlhelp_basename = "%sdoc" % project
 latex_documents = [
     (
         "index",
-        "%s.tex" % project,
-        "%s Documentation" % project,
+        f"{project}.tex",
+        f"{project} Documentation",
         "PyCQA",
         "manual",
     ),

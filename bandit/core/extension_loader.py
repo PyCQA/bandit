@@ -42,7 +42,7 @@ class Manager:
             if not hasattr(plugin.plugin, "_test_id"):
                 # logger not setup yet, so using print
                 print(
-                    "WARNING: Test '%s' has no ID, skipping." % plugin.name,
+                    f"WARNING: Test '{plugin.name}' has no ID, skipping.",
                     file=sys.stderr,
                 )
                 return False
@@ -53,9 +53,11 @@ class Manager:
         self.plugins_by_id = {p.plugin._test_id: p for p in self.plugins}
         self.plugins_by_name = {p.name: p for p in self.plugins}
 
-    def get_plugin_id(self, plugin_name):
-        if plugin_name in self.plugins_by_name:
-            return self.plugins_by_name[plugin_name].plugin._test_id
+    def get_test_id(self, test_name):
+        if test_name in self.plugins_by_name:
+            return self.plugins_by_name[test_name].plugin._test_id
+        if test_name in self.blacklist_by_name:
+            return self.blacklist_by_name[test_name]["id"]
         return None
 
     def load_blacklists(self, blacklist_namespace):
@@ -82,16 +84,16 @@ class Manager:
         """Validate that everything in the configured profiles looks good."""
         for inc in profile["include"]:
             if not self.check_id(inc):
-                raise ValueError("Unknown test found in profile: %s" % inc)
+                raise ValueError(f"Unknown test found in profile: {inc}")
 
         for exc in profile["exclude"]:
             if not self.check_id(exc):
-                raise ValueError("Unknown test found in profile: %s" % exc)
+                raise ValueError(f"Unknown test found in profile: {exc}")
 
         union = set(profile["include"]) & set(profile["exclude"])
         if len(union) > 0:
             raise ValueError(
-                "Non-exclusive include/exclude test sets: %s" % union
+                f"Non-exclusive include/exclude test sets: {union}"
             )
 
     def check_id(self, test):

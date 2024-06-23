@@ -1,5 +1,3 @@
-# Copyright (c) 2015 VMware, Inc.
-#
 # SPDX-License-Identifier: Apache-2.0
 import collections
 import json
@@ -14,10 +12,10 @@ from bandit.core import constants
 from bandit.core import issue
 from bandit.core import manager
 from bandit.core import metrics
-from bandit.formatters import json as b_json
+from bandit.formatters import sarif
 
 
-class JsonFormatterTests(testtools.TestCase):
+class SarifFormatterTests(testtools.TestCase):
     def setUp(self):
         super().setUp()
         conf = config.BanditConfig()
@@ -27,13 +25,19 @@ class JsonFormatterTests(testtools.TestCase):
             "filename": self.tmp_fname,
             "lineno": 4,
             "linerange": [4],
+            "code": (
+                "import socket\n\n"
+                "s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n"
+                "s.bind(('0.0.0.0', 31137))"
+            ),
         }
         self.check_name = "hardcoded_bind_all_interfaces"
         self.issue = issue.Issue(
-            bandit.MEDIUM,
-            issue.Cwe.MULTIPLE_BINDS,
-            bandit.MEDIUM,
-            "Possible binding to all interfaces.",
+            severity=bandit.MEDIUM,
+            cwe=issue.Cwe.MULTIPLE_BINDS,
+            confidence=bandit.MEDIUM,
+            text="Possible binding to all interfaces.",
+            test_id="B104",
         )
 
         self.candidates = [
@@ -58,6 +62,7 @@ class JsonFormatterTests(testtools.TestCase):
         self.issue.fname = self.context["filename"]
         self.issue.lineno = self.context["lineno"]
         self.issue.linerange = self.context["linerange"]
+        self.issue.code = self.context["code"]
         self.issue.test = self.check_name
 
         self.manager.results.append(self.issue)
@@ -85,7 +90,7 @@ class JsonFormatterTests(testtools.TestCase):
         )
 
         with open(self.tmp_fname, "w") as tmp_file:
-            b_json.report(
+            sarif.report(
                 self.manager,
                 tmp_file,
                 self.issue.severity,
@@ -94,22 +99,41 @@ class JsonFormatterTests(testtools.TestCase):
 
         with open(self.tmp_fname) as f:
             data = json.loads(f.read())
-            self.assertIsNotNone(data["generated_at"])
-            self.assertEqual(self.tmp_fname, data["results"][0]["filename"])
-            self.assertEqual(
-                self.issue.severity, data["results"][0]["issue_severity"]
+            run = data["runs"][0]
+            self.assertEqual(sarif.SCHEMA_URI, data["$schema"])
+            self.assertEqual(sarif.SCHEMA_VER, data["version"])
+            driver = run["tool"]["driver"]
+            self.assertEqual("Bandit", driver["name"])
+            self.assertEqual(bandit.__author__, driver["organization"])
+            self.assertEqual(bandit.__version__, driver["semanticVersion"])
+            self.assertEqual("B104", driver["rules"][0]["id"])
+            self.assertEqual(self.check_name, driver["rules"][0]["name"])
+            self.assertIn("security", driver["rules"][0]["properties"]["tags"])
+            self.assertIn(
+                "external/cwe/cwe-605",
+                driver["rules"][0]["properties"]["tags"],
             )
             self.assertEqual(
-                self.issue.confidence, data["results"][0]["issue_confidence"]
+                "medium", driver["rules"][0]["properties"]["precision"]
             )
-            self.assertEqual(self.issue.text, data["results"][0]["issue_text"])
+            invocation = run["invocations"][0]
+            self.assertTrue(invocation["executionSuccessful"])
+            self.assertIsNotNone(invocation["endTimeUtc"])
+            result = run["results"][0]
+            # If the level is "warning" like in this case, SARIF will remove
+            # from output, as "warning" is the default value.
+            self.assertIsNone(result.get("level"))
+            self.assertEqual(self.issue.text, result["message"]["text"])
+            physicalLocation = result["locations"][0]["physicalLocation"]
             self.assertEqual(
-                self.context["lineno"], data["results"][0]["line_number"]
+                self.context["linerange"][0],
+                physicalLocation["region"]["startLine"],
             )
             self.assertEqual(
-                self.context["linerange"], data["results"][0]["line_range"]
+                self.context["linerange"][0],
+                physicalLocation["region"]["endLine"],
             )
-            self.assertEqual(self.check_name, data["results"][0]["test_name"])
-            self.assertIn("candidates", data["results"][0])
-            self.assertIn("more_info", data["results"][0])
-            self.assertIsNotNone(data["results"][0]["more_info"])
+            self.assertIn(
+                self.tmp_fname,
+                physicalLocation["artifactLocation"]["uri"],
+            )

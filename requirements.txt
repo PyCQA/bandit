@@ -1,7 +1,6 @@
 # The order of packages is significant, because pip processes them in the order
 # of appearance. Changing the order has an impact on the overall integration
 # process, which may cause wedges in the gate later.
-GitPython>=1.0.1 # BSD License (3 clause)
 PyYAML>=5.3.1 # MIT
 stevedore>=1.20.0 # Apache-2.0
 colorama>=0.3.9;platform_system=="Windows" # BSD License (3 clause)
