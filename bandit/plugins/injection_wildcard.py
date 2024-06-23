@@ -124,7 +124,7 @@ def linux_commands_wildcard_injection(context, config):
             argument_string = ""
             if isinstance(call_argument, list):
                 for li in call_argument:
-                    argument_string = argument_string + f" {li}"
+                    argument_string += f" {li}"
             elif isinstance(call_argument, str):
                 argument_string = call_argument
 
