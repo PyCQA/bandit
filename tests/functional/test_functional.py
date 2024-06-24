@@ -246,8 +246,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ftp_usage(self):
         """Test for `import ftplib` and FTP.* calls."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("ftplib.py", expect)
 
