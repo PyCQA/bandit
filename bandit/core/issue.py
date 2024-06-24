@@ -30,6 +30,7 @@ class Cwe:
     MULTIPLE_BINDS = 605
     IMPROPER_CHECK_OF_EXCEPT_COND = 703
     INCORRECT_PERMISSION_ASSIGNMENT = 732
+    INAPPROPRIATE_ENCODING_FOR_OUTPUT_CONTEXT = 838
 
     MITRE_URL_PATTERN = "https://cwe.mitre.org/data/definitions/%s.html"
 
@@ -84,7 +85,7 @@ class Issue:
         ident=None,
         lineno=None,
         test_id="",
-        col_offset=0,
+        col_offset=-1,
         end_col_offset=0,
     ):
         self.severity = severity
