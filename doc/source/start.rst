@@ -31,6 +31,20 @@ If you want to include TOML support, install it with the `toml` extras:
 
     pip install bandit[toml]
 
+If you want to use the bandit-baseline CLI, install it with the `baseline`
+extras:
+
+.. code-block:: console
+
+    pip install bandit[baseline]
+
+If you want to include SARIF output formatter support, install it with the
+`sarif` extras:
+
+.. code-block:: console
+
+    pip install bandit[sarif]
+
 Run Bandit:
 
 .. code-block:: console

@@ -12,7 +12,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -33,7 +33,7 @@ jobs:
       with:
         fetch-depth: 2
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -47,7 +47,12 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          ["3.8", "38"], ["3.9", "39"], ["3.10", "310"], ["3.11", "311"]
+          ["3.8", "38"],
+          ["3.9", "39"],
+          ["3.10", "310"],
+          ["3.11", "311"],
+          ["3.12", "312"],
+          ["3.13.0-a - 3.13", "313"],
         ]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
@@ -56,7 +61,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version[0] }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version[0] }}
     - name: Install dependencies

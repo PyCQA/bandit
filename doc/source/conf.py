@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: Apache-2.0
+from datetime import datetime
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath(os.path.join("..", "..")))
 # -- General configuration ----------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -23,11 +24,11 @@ extensions = [
 source_suffix = ".rst"
 
 # The root toctree document.
-master_doc = "index"
+root_doc = "index"
 
 # General information about the project.
 project = "Bandit"
-copyright = "2022, Bandit Developers"
+copyright = f"{datetime.now():%Y}, Bandit Developers"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True

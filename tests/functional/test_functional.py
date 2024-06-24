@@ -15,7 +15,6 @@ from bandit.core import test_set as b_test_set
 
 
 class FunctionalTests(testtools.TestCase):
-
     """Functional tests for bandit test plugins.
 
     This set of tests runs bandit against each example file in turn
@@ -247,8 +246,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ftp_usage(self):
         """Test for `import ftplib` and FTP.* calls."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("ftplib.py", expect)
 
@@ -396,8 +395,8 @@ class FunctionalTests(testtools.TestCase):
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 8, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 9, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
         }
         self.check_example("random_module.py", expect)
 
@@ -439,12 +438,12 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {
                 "UNDEFINED": 0,
                 "LOW": 0,
-                "MEDIUM": 18,
+                "MEDIUM": 20,
                 "HIGH": 0,
             },
             "CONFIDENCE": {
                 "UNDEFINED": 0,
-                "LOW": 8,
+                "LOW": 10,
                 "MEDIUM": 10,
                 "HIGH": 0,
             },
@@ -493,8 +492,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         """Test for `subprocess.Popen` with `shell=True`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 21, "MEDIUM": 1, "HIGH": 11},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 32},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 24, "MEDIUM": 1, "HIGH": 11},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 35},
         }
         self.check_example("subprocess_shell.py", expect)
 
@@ -543,8 +542,8 @@ class FunctionalTests(testtools.TestCase):
     def test_host_key_verification(self):
         """Test for ignoring host key verification."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
         }
         self.check_example("no_host_key_verification.py", expect)
 
@@ -926,7 +925,21 @@ class FunctionalTests(testtools.TestCase):
     def test_tarfile_unsafe_members(self):
         """Test insecure usage of tarfile."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 1},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 2},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 2},
         }
         self.check_example("tarfile_extractall.py", expect)
+
+    def test_trojansource(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+        }
+        self.check_example("trojansource.py", expect)
+
+    def test_trojansource_latin1(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
+        }
+        self.check_example("trojansource_latin1.py", expect)

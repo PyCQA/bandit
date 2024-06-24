@@ -3,7 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import ast
-import fnmatch
 
 from bandit.core import issue
 
@@ -55,7 +54,7 @@ def blacklist(context, config):
                     name = context.call_keywords["name"]
         for check in blacklists[node_type]:
             for qn in check["qualnames"]:
-                if name is not None and fnmatch.fnmatch(name, qn):
+                if name is not None and name == qn:
                     return report_issue(check, name)
 
     if node_type.startswith("Import"):

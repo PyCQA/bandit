@@ -193,7 +193,7 @@ class Context:
         elif isinstance(literal, ast.Tuple):
             return_tuple = tuple()
             for ti in literal.elts:
-                return_tuple = return_tuple + (self._get_literal_value(ti),)
+                return_tuple += (self._get_literal_value(ti),)
             literal_value = return_tuple
 
         elif isinstance(literal, ast.Set):
