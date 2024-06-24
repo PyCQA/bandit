@@ -929,3 +929,11 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 2},
         }
         self.check_example("tarfile_extractall.py", expect)
+
+    def test_pytorch_load_save(self):
+        """Test insecure usage of torch.load and torch.save."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 3},
+        }
+        self.check_example("pytorch_load_save.py", expect)
