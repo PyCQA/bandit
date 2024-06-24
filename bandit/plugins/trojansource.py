@@ -27,7 +27,7 @@ to reorder source code characters in a way that changes its logic.
  .. [1] https://trojansource.codes/
  .. [2] https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-42574
 
-.. versionadded:: 1.7.5
+.. versionadded:: 1.7.10
 
 """  # noqa: E501
 from tokenize import detect_encoding
