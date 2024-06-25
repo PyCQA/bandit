@@ -71,7 +71,7 @@ def request_without_timeout(context):
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
                 cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
-                text="Call to {qualname} without timeout",
+                text=f"Call to {qualname} without timeout",
             )
         # check for timeout=None
         if context.check_call_arg_value("timeout", "None"):
