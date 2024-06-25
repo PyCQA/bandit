@@ -1,5 +1,5 @@
----------------
-B506: yaml_load
----------------
+---------
+yaml_load
+---------
 
 .. automodule:: bandit.plugins.yaml_load

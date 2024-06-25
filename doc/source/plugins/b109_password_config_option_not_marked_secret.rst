@@ -1,6 +1,6 @@
-----------------------------------------------
-B109: password_config_option_not_marked_secret
-----------------------------------------------
+----------------------------------------
+password_config_option_not_marked_secret
+----------------------------------------
 
 This plugin has been removed.
 

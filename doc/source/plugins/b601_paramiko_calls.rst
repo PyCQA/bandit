@@ -1,5 +1,5 @@
---------------------
-B601: paramiko_calls
---------------------
+--------------
+paramiko_calls
+--------------
 
 .. automodule:: bandit.plugins.injection_paramiko

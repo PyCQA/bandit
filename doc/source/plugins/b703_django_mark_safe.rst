@@ -1,6 +1,6 @@
-----------------------
-B703: django_mark_safe
-----------------------
+----------------
+django_mark_safe
+----------------
 
 .. currentmodule:: bandit.plugins.django_xss
 
