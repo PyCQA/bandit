@@ -43,7 +43,7 @@ Bandit will return a MEDIUM severity error.
 
 .. versionadded:: 1.7.5
 
-.. versionchanged:: 1.7.6
+.. versionchanged:: 1.7.10
     Added check for httpx module
 
 """  # noqa: E501
