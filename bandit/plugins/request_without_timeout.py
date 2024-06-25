@@ -79,5 +79,5 @@ def request_without_timeout(context):
                 severity=bandit.MEDIUM,
                 confidence=bandit.LOW,
                 cwe=issue.Cwe.UNCONTROLLED_RESOURCE_CONSUMPTION,
-                text="Call to {qualname} with timeout set to None",
+                text=f"Call to {qualname} with timeout set to None",
             )
