@@ -269,6 +269,8 @@ def issue_from_dict(data):
     i.from_dict(data)
     return i
 
+# -- from_dict() -- #
+
 cwe = Cwe()
 show_coverage(branches_from_dict)
 
@@ -277,3 +279,5 @@ show_coverage(branches_from_dict)
 
 cwe.from_dict({"user_id": 40})
 show_coverage(branches_from_dict)
+
+# -- get_code() -- #
