@@ -3,8 +3,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import linecache
-import bandit
 
+import bandit
 from bandit.core import constants
 
 # branches_from_dict = {
@@ -33,6 +33,7 @@ from bandit.core import constants
 #         total_branches += 1
 
 #     print(f"Branch coverage is {branch_hit * 100 / total_branches}%\n")
+
 
 class Cwe:
     NOTSET = 0
@@ -218,7 +219,6 @@ class Issue:
 
         tmplt = "%i\t%s" if tabbed else "%i %s"
 
-        
         for line in range(lmin, lmax):
             if self.fname == "<stdin>":
                 text = self.fdata.readline()
@@ -278,6 +278,7 @@ def issue_from_dict(data):
     i = Issue(severity=data["issue_severity"])
     i.from_dict(data)
     return i
+
 
 # # -- from_dict() -- #
 

@@ -148,7 +148,7 @@ def _get_issue_instance(
     cwe=issue.Cwe.MULTIPLE_BINDS,
     confidence=bandit.MEDIUM,
 ):
-    file = open("tests/unit/core/test_issue_data.txt", "r")
+    file = open("tests/unit/core/test_issue_data.txt")
 
     new_issue = issue.Issue(severity, cwe, confidence, "Test issue")
     new_issue.fname = "<stdin>"
@@ -161,6 +161,7 @@ def _get_issue_instance(
     new_issue.linerange = [1, 2]
 
     return new_issue
+
 
 def test_get_code():
     new_issue = _get_issue_instance()

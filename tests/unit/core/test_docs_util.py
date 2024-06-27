@@ -34,7 +34,9 @@ class DocsUtilTests(testtools.TestCase):
         self.assertEqual(expected_url, get_url("x"))
 
     def test_startswith_B3(self):
-        expected_url = self.BASE_URL + ("blacklists/blacklist_calls.html" "#b301-pickle")
+        expected_url = self.BASE_URL + (
+            "blacklists/blacklist_calls.html" "#b301-pickle"
+        )
         self.assertEqual(expected_url, get_url("B301"))
 
     def test_in_range_B313_B320(self):
@@ -44,5 +46,7 @@ class DocsUtilTests(testtools.TestCase):
         self.assertEqual(expected_url, get_url("B313"))
 
     def test_startswithB_first_digit_not_3(self):
-        expected_url = self.BASE_URL + ("blacklists/blacklist_imports.html" "#b402-import-ftplib")
+        expected_url = self.BASE_URL + (
+            "blacklists/blacklist_imports.html" "#b402-import-ftplib"
+        )
         self.assertEqual(expected_url, get_url("B402"))
