@@ -6,12 +6,13 @@ import linecache
 
 from bandit.core import constants
 
-branches = {
+branches_from_dict = {
     'branch-10': False,
     'branch-11': False
 }
 
-# def show_coverage():
+# def show_coverage(input_branches):
+#     branches = input_branches
 #     branch_hit = 0
 #     total_branches = 0
 
@@ -81,12 +82,12 @@ class Cwe:
     def from_dict(self, data):
         if "id" in data:
 
-            branches['branch-10'] = True
+            branches_from_dict['branch-10'] = True
 
             self.id = int(data["id"])
         else:
 
-            branches['branch-11'] = True
+            branches_from_dict['branch-11'] = True
 
             self.id = Cwe.NOTSET
 
@@ -269,10 +270,10 @@ def issue_from_dict(data):
     return i
 
 # cwe = Cwe()
-# show_coverage()
+# show_coverage(branches_from_dict)
 
 # cwe.from_dict({"id": 20})
-# show_coverage()
+# show_coverage(branches_from_dict)
 
 # cwe.from_dict({"user_id": 40})
-# show_coverage()
+# show_coverage(branches_from_dict)
