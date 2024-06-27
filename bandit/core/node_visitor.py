@@ -19,7 +19,6 @@ class BanditNodeVisitor:
     ):
         self.debug = debug
         self.nosec_lines = nosec_lines
-        self.seen = 0
         self.scores = {
             "SEVERITY": [0] * len(constants.RANKING),
             "CONFIDENCE": [0] * len(constants.RANKING),
@@ -209,7 +208,6 @@ class BanditNodeVisitor:
         self.context["filename"] = self.fname
         self.context["file_data"] = self.fdata
 
-        self.seen += 1
         LOG.debug(
             "entering: %s %s [%s]", hex(id(node)), type(node), self.depth
         )
