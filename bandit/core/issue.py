@@ -6,27 +6,6 @@ import linecache
 
 from bandit.core import constants
 
-branches_from_dict = {
-    'branch-10': False,
-    'branch-11': False
-}
-
-# def show_coverage(input_branches):
-#     branches = input_branches
-#     branch_hit = 0
-#     total_branches = 0
-
-#     for branch, hit in branches.items():
-
-#         if hit:
-#             branch_hit += 1
-#             print(f"Branch '{branch}' was hit")
-#         else:
-#             print(f"Branch '{branch}' was not hit")
-
-#         total_branches += 1
-
-#     print(f"Branch coverage is {branch_hit * 100 / total_branches}%\n")
 
 class Cwe:
     NOTSET = 0
@@ -51,6 +30,7 @@ class Cwe:
     MULTIPLE_BINDS = 605
     IMPROPER_CHECK_OF_EXCEPT_COND = 703
     INCORRECT_PERMISSION_ASSIGNMENT = 732
+    INAPPROPRIATE_ENCODING_FOR_OUTPUT_CONTEXT = 838
 
     MITRE_URL_PATTERN = "https://cwe.mitre.org/data/definitions/%s.html"
 
@@ -81,14 +61,8 @@ class Cwe:
 
     def from_dict(self, data):
         if "id" in data:
-
-            branches_from_dict['branch-10'] = True
-
             self.id = int(data["id"])
         else:
-
-            branches_from_dict['branch-11'] = True
-
             self.id = Cwe.NOTSET
 
     def __eq__(self, other):
@@ -111,7 +85,7 @@ class Issue:
         ident=None,
         lineno=None,
         test_id="",
-        col_offset=0,
+        col_offset=-1,
         end_col_offset=0,
     ):
         self.severity = severity
@@ -268,12 +242,3 @@ def issue_from_dict(data):
     i = Issue(severity=data["issue_severity"])
     i.from_dict(data)
     return i
-
-# cwe = Cwe()
-# show_coverage(branches_from_dict)
-
-# cwe.from_dict({"id": 20})
-# show_coverage(branches_from_dict)
-
-# cwe.from_dict({"user_id": 40})
-# show_coverage(branches_from_dict)
