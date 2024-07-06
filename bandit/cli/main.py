@@ -615,8 +615,8 @@ def main():
         profile = _get_profile(b_conf, args.profile, args.config_file)
         _log_info(args, profile)
 
-        profile["include"].update(args.tests.split(",") if args.tests else [])
-        profile["exclude"].update(args.skips.split(",") if args.skips else [])
+        profile["include"].update(args.tests if args.tests else [])
+        profile["exclude"].update(args.skips if args.skips else [])
         extension_mgr.validate_profile(profile)
 
     except (utils.ProfileNotFound, ValueError) as e:
