@@ -296,11 +296,19 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("init-py-test/subdirectory-okay.py", expect)
 
+    def test_pathlib_chmod(self):
+        """Test setting file permissions."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+        }
+        self.check_example("pathlib-chmod.py", expect)
+
     def test_os_chmod(self):
         """Test setting file permissions."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 8},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 11},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 10},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 13},
         }
         self.check_example("os-chmod.py", expect)
 
