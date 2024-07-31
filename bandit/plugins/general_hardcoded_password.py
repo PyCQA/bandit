@@ -176,7 +176,9 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        if isinstance(kw.value, ast.Str) and RE_CANDIDATES.search(kw.arg):
+        if isinstance(kw.value, ast.Str) \
+                and kw.value.value != '' \
+                and RE_CANDIDATES.search(kw.arg):
             return _report(kw.value.s)
 
 
@@ -242,5 +244,7 @@ def hardcoded_password_default(context):
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, (ast.Name, ast.arg)):
-            if isinstance(val, ast.Str) and RE_CANDIDATES.search(key.arg):
+            if isinstance(val, ast.Str) \
+                    and val.value != '' \
+                    and RE_CANDIDATES.search(key.arg):
                 return _report(val.s)
