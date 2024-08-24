@@ -246,8 +246,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ftp_usage(self):
         """Test for `import ftplib` and FTP.* calls."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("ftplib.py", expect)
 
@@ -411,8 +411,8 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_without_timeout(self):
         """Test for the `requests` library missing timeouts."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 14, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 14, "MEDIUM": 0, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 36, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 36, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("requests-missing-timeout.py", expect)
 
@@ -492,8 +492,8 @@ class FunctionalTests(testtools.TestCase):
     def test_subprocess_shell(self):
         """Test for `subprocess.Popen` with `shell=True`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 23, "MEDIUM": 1, "HIGH": 11},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 34},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 24, "MEDIUM": 1, "HIGH": 11},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 0, "HIGH": 35},
         }
         self.check_example("subprocess_shell.py", expect)
 
@@ -937,3 +937,18 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 3},
         }
         self.check_example("pytorch_load_save.py", expect)
+
+    def test_trojansource(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+        }
+        self.check_example("trojansource.py", expect)
+
+    def test_trojansource_latin1(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
+        }
+        self.check_example("trojansource_latin1.py", expect)
+

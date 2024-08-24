@@ -537,7 +537,7 @@ def gen_blacklist():
             "telnetlib",
             "B312",
             issue.Cwe.CLEARTEXT_TRANSMISSION,
-            ["telnetlib.*"],
+            ["telnetlib.Telnet"],
             "Telnet-related functions are being called. Telnet is considered "
             "insecure. Use SSH or some other encrypted protocol.",
             "HIGH",
@@ -662,7 +662,7 @@ def gen_blacklist():
             "ftplib",
             "B321",
             issue.Cwe.CLEARTEXT_TRANSMISSION,
-            ["ftplib.*"],
+            ["ftplib.FTP"],
             "FTP-related functions are being called. FTP is considered "
             "insecure. Use SSH/SFTP/SCP or some other encrypted protocol.",
             "HIGH",
