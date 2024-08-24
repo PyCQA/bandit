@@ -951,4 +951,3 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("trojansource_latin1.py", expect)
-
