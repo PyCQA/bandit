@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 r"""
 ==========================================
-B613: Test for unsafe PyTorch load or save
+B614: Test for unsafe PyTorch load or save
 ==========================================
 
 This plugin checks for the use of `torch.load` and `torch.save`. Using
