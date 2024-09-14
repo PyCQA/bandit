@@ -41,7 +41,7 @@ from bandit.core import test_properties as test
 
 
 @test.checks("Call")
-@test.test_id("B613")
+@test.test_id("B614")
 def pytorch_load_save(context):
     """
     This plugin checks for the use of `torch.load` and `torch.save`. Using
