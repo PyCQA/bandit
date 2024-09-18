@@ -1,12 +1,12 @@
------------------
+==============
 GitHub-Actions
------------------
+==============
 
 Here is a minimal complete example workflow to create a Code Scanning action using Bandit by using GitHub Actions from PyCQA's `bandit-action <https://github.com/PyCQA/bandit-action>`.
 
------------------
+==============
 Example YAML code for GitHub Actions Pipeline
------------------
+==============
 
 .. code-block:: yaml
 
@@ -28,9 +28,9 @@ Example YAML code for GitHub Actions Pipeline
         - name: Perform Bandit Analysis
           uses: PyCQA/bandit-action@v1
 
------------------
+==============
 Inputs
------------------
+==============
 
 .. list-table::
    :widths: 30 50 10 20
