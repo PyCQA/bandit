@@ -411,8 +411,8 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_without_timeout(self):
         """Test for the `requests` library missing timeouts."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 36, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 36, "MEDIUM": 0, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 25, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 25, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("requests-missing-timeout.py", expect)
 
@@ -929,6 +929,14 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 2},
         }
         self.check_example("tarfile_extractall.py", expect)
+
+    def test_pytorch_load_save(self):
+        """Test insecure usage of torch.load and torch.save."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+        }
+        self.check_example("pytorch_load_save.py", expect)
 
     def test_trojansource(self):
         expect = {
