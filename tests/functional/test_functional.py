@@ -3,7 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import os
-import sys
 
 import testtools
 
@@ -107,36 +106,10 @@ class FunctionalTests(testtools.TestCase):
 
     def test_crypto_md5(self):
         """Test the `hashlib.md5` example."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 16,
-                    "HIGH": 9,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 25,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 22,
-                    "HIGH": 4,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 26,
-                },
-            }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 16, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 25},
+        }
         self.check_example("crypto-md5.py", expect)
 
     def test_ciphers(self):
@@ -197,26 +170,10 @@ class FunctionalTests(testtools.TestCase):
 
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 1, "HIGH": 4},
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 5, "HIGH": 0},
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 1, "HIGH": 4},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+        }
         self.check_example("imports-aliases.py", expect)
 
     def test_imports_from(self):
@@ -855,36 +812,10 @@ class FunctionalTests(testtools.TestCase):
 
     def test_hashlib_new_insecure_functions(self):
         """Test insecure hash functions created by `hashlib.new`."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 10,
-                    "HIGH": 0,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 10,
-                },
-            }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+        }
         self.check_example("hashlib_new_insecure_functions.py", expect)
 
     def test_blacklist_pycrypto(self):
