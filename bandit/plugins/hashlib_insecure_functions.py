@@ -48,6 +48,7 @@ hash variants.
     Added check for the crypt module weak hashes
 
 """  # noqa: E501
+import ast
 import sys
 
 import bandit
@@ -56,6 +57,18 @@ from bandit.core import test_properties as test
 
 WEAK_HASHES = ("md4", "md5", "sha", "sha1")
 WEAK_CRYPT_HASHES = ("METHOD_CRYPT", "METHOD_MD5", "METHOD_BLOWFISH")
+
+
+def transform(node):
+    found = False
+    for keyword in node.keywords:
+        if keyword.arg == "usedforsecurity":
+            keyword.value.value = False
+            found = True
+    if not found:
+        keyword = ast.keyword("usedforsecurity", ast.Constant(False))
+        node.keywords.append(keyword)
+    return node
 
 
 def _hashlib_func(context, func):
@@ -70,6 +83,7 @@ def _hashlib_func(context, func):
                 text=f"Use of weak {func.upper()} hash for security. "
                 "Consider usedforsecurity=False",
                 lineno=context.node.lineno,
+                fix=context.unparse(context.node),
             )
     elif func == "new":
         args = context.call_args
@@ -83,6 +97,7 @@ def _hashlib_func(context, func):
                     text=f"Use of weak {name.upper()} hash for "
                     "security. Consider usedforsecurity=False",
                     lineno=context.node.lineno,
+                    fix=context.unparse(context.node),
                 )
 
 
@@ -91,6 +106,8 @@ def _hashlib_new(context, func):
         args = context.call_args
         keywords = context.call_keywords
         name = args[0] if args else keywords.get("name", None)
+        if len(context.node.args):
+            context.node.args[0].value = "sha224"
         if isinstance(name, str) and name.lower() in WEAK_HASHES:
             return bandit.Issue(
                 severity=bandit.MEDIUM,
@@ -98,6 +115,7 @@ def _hashlib_new(context, func):
                 cwe=issue.Cwe.BROKEN_CRYPTO,
                 text=f"Use of insecure {name.upper()} hash function.",
                 lineno=context.node.lineno,
+                fix=context.unparse(context.node),
             )
 
 
