@@ -48,8 +48,6 @@ hash variants.
     Added check for the crypt module weak hashes
 
 """  # noqa: E501
-import sys
-
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
@@ -86,21 +84,6 @@ def _hashlib_func(context, func):
                 )
 
 
-def _hashlib_new(context, func):
-    if func == "new":
-        args = context.call_args
-        keywords = context.call_keywords
-        name = args[0] if args else keywords.get("name", None)
-        if isinstance(name, str) and name.lower() in WEAK_HASHES:
-            return bandit.Issue(
-                severity=bandit.MEDIUM,
-                confidence=bandit.HIGH,
-                cwe=issue.Cwe.BROKEN_CRYPTO,
-                text=f"Use of insecure {name.upper()} hash function.",
-                lineno=context.node.lineno,
-            )
-
-
 def _crypt_crypt(context, func):
     args = context.call_args
     keywords = context.call_keywords
@@ -135,10 +118,7 @@ def hashlib(context):
         func = qualname_list[-1]
 
         if "hashlib" in qualname_list:
-            if sys.version_info >= (3, 9):
-                return _hashlib_func(context, func)
-            else:
-                return _hashlib_new(context, func)
+            return _hashlib_func(context, func)
 
         elif "crypt" in qualname_list and func in ("crypt", "mksalt"):
             return _crypt_crypt(context, func)
