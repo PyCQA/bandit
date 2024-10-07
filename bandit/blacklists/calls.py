@@ -96,6 +96,12 @@ as AES.
 |      |                     |   .ciphers.algorithms.Blowfish     |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
 |      |                     |   .ciphers.algorithms.IDEA         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.CAST5        |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.SEED         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.TripleDES    |           |
 +------+---------------------+------------------------------------+-----------+
 | B305 | cipher_modes        | - cryptography.hazmat.primitives   | Medium    |
 |      |                     |   .ciphers.modes.ECB               |           |
@@ -438,7 +444,10 @@ def gen_blacklist():
                 "Cryptodome.Cipher.XOR.new",
                 "cryptography.hazmat.primitives.ciphers.algorithms.ARC4",
                 "cryptography.hazmat.primitives.ciphers.algorithms.Blowfish",
+                "cryptography.hazmat.primitives.ciphers.algorithms.CAST5",
                 "cryptography.hazmat.primitives.ciphers.algorithms.IDEA",
+                "cryptography.hazmat.primitives.ciphers.algorithms.SEED",
+                "cryptography.hazmat.primitives.ciphers.algorithms.TripleDES",
             ],
             "Use of insecure cipher {name}. Replace with a known secure"
             " cipher such as AES.",
