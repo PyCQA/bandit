@@ -71,6 +71,18 @@ cipher = Cipher(algorithms.Blowfish(key), mode=None, backend=default_backend())
 encryptor = cipher.encryptor()
 ct = encryptor.update(b"a secret message")
 
+cipher = Cipher(algorithms.CAST5(key), mode=None, backend=default_backend())
+encryptor = cipher.encryptor()
+ct = encryptor.update(b"a secret message")
+
 cipher = Cipher(algorithms.IDEA(key), mode=None, backend=default_backend())
+encryptor = cipher.encryptor()
+ct = encryptor.update(b"a secret message")
+
+cipher = Cipher(algorithms.SEED(key), mode=None, backend=default_backend())
+encryptor = cipher.encryptor()
+ct = encryptor.update(b"a secret message")
+
+cipher = Cipher(algorithms.TripleDES(key), mode=None, backend=default_backend())
 encryptor = cipher.encryptor()
 ct = encryptor.update(b"a secret message")

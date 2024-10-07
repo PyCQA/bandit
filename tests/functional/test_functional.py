@@ -115,8 +115,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ciphers(self):
         """Test the `Crypto.Cipher` example."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 21},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 22},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 24},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 25},
         }
         self.check_example("ciphers.py", expect)
 
