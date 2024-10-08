@@ -274,14 +274,18 @@ def main():
         )
         else "txt"
     )
+    # Instead of specifying a default here, we check if the
+    # argument list is empty and then attach the default
+    # Python Issue 16399
     parser.add_argument(
         "-f",
         "--format",
         dest="output_format",
-        action="store",
-        default=output_format,
-        help="specify output format",
+        action="append",
         choices=sorted(extension_mgr.formatter_names),
+        help="specify output format, can be specified "
+        "multiple times to output multiple "
+        "formats",
     )
     parser.add_argument(
         "--msg-template",
@@ -292,15 +296,19 @@ def main():
         " see CUSTOM FORMAT section"
         " for list of available values",
     )
+    # Instead of specifying a default here, we check if the
+    # argument list is empty and then attach the default
+    # Python Issue 16399
     parser.add_argument(
         "-o",
         "--output",
         dest="output_file",
-        action="store",
-        nargs="?",
-        type=argparse.FileType("w", encoding="utf-8"),
-        default=sys.stdout,
-        help="write report to filename",
+        action="append",
+        type=argparse.FileType("w"),
+        help="write report to filename, should be used the same number of "
+        "times as -f argument. If only 1 format is specified "
+        "and no output is specified, then STDOUT will be used "
+        "as the default output.",
     )
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument(
@@ -423,8 +431,46 @@ def main():
 
     # setup work - parse arguments, and initialize BanditManager
     args = parser.parse_args()
+
+    # Assign our default, if no argument was specified
+    if args.output_format is None or len(args.output_format) == 0:
+        args.output_format = [output_format]
+
+    # Assign our default, if no argument was specified
+    if args.output_file is None or len(args.output_file) == 0:
+        args.output_file = [sys.stdout]
+
+    # Before we error check, check if screen was specified and if
+    # there was no stdout specified
+    if any(f == "screen" for f in args.output_format) and all(
+        o != sys.stdout for o in args.output_file
+    ):
+        # Lets specify stdout for the screen format
+        # We'll remove all instances of screen, and insert it back in
+        # Screen should only be specified once, so we don't care if
+        # we remove duplicates
+        args.output_format = list(
+            filter(lambda f: f != "screen", args.output_format)
+        )
+
+        # Now append both screen and stdout to the end
+        args.output_format.append("screen")
+        args.output_file.append(sys.stdout)
+
+    # Ensure we have the same number of formats and outputs. If we don't
+    # then error
+    if len(args.output_format) != len(args.output_file):
+        LOG.warning(
+            "You must specify an output for each format. "
+            "formats: "
+            + str(args.output_format)
+            + " outputs: "
+            + str(args.output_file)
+        )
+        sys.exit(2)
+
     # Check if `--msg-template` is not present without custom formatter
-    if args.output_format != "custom" and args.msg_template is not None:
+    if "custom" not in args.output_format and args.msg_template is not None:
         parser.error("--msg-template can only be used with --format=custom")
 
     # Check if confidence or severity level have been specified with strings
@@ -642,14 +688,14 @@ def main():
             LOG.warning("Could not open baseline report: %s", args.baseline)
             sys.exit(2)
 
-        if args.output_format not in baseline_formatters:
+        if any(x not in baseline_formatters for x in args.output_format):
             LOG.warning(
                 "Baseline must be used with one of the following "
                 "formats: " + str(baseline_formatters)
             )
             sys.exit(2)
 
-    if args.output_format != "json":
+    if "json" not in args.output_format:
         if args.config_file:
             LOG.info("using config: %s", args.config_file)
 
@@ -675,14 +721,22 @@ def main():
     # trigger output of results by Bandit Manager
     sev_level = constants.RANKING[args.severity - 1]
     conf_level = constants.RANKING[args.confidence - 1]
-    b_mgr.output_results(
-        args.context_lines,
-        sev_level,
-        conf_level,
-        args.output_file,
-        args.output_format,
-        args.msg_template,
-    )
+
+    # The following will always be true:
+    # len(args.output_format) == len(args.output_file)
+    # Loop through each format and output, and report the result
+    for i in range(len(args.output_format)):
+        out_format = args.output_format[i]
+        out_file = args.output_file[i]
+
+        b_mgr.output_results(
+            args.context_lines,
+            sev_level,
+            conf_level,
+            out_file,
+            out_format,
+            args.msg_template if out_format == "custom" else None,
+        )
 
     if (
         b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
