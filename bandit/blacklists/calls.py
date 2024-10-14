@@ -96,6 +96,12 @@ as AES.
 |      |                     |   .ciphers.algorithms.Blowfish     |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
 |      |                     |   .ciphers.algorithms.IDEA         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.CAST5        |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.SEED         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.TripleDES    |           |
 +------+---------------------+------------------------------------+-----------+
 | B305 | cipher_modes        | - cryptography.hazmat.primitives   | Medium    |
 |      |                     |   .ciphers.modes.ECB               |           |
@@ -321,8 +327,6 @@ For further information:
 +------+---------------------+------------------------------------+-----------+
 
 """
-import sys
-
 from bandit.blacklists import utils
 from bandit.core import issue
 
@@ -373,52 +377,26 @@ def gen_blacklist():
         )
     )
 
-    if sys.version_info >= (3, 9):
-        sets.append(
-            utils.build_conf_dict(
-                "md5",
-                "B303",
-                issue.Cwe.BROKEN_CRYPTO,
-                [
-                    "Crypto.Hash.MD2.new",
-                    "Crypto.Hash.MD4.new",
-                    "Crypto.Hash.MD5.new",
-                    "Crypto.Hash.SHA.new",
-                    "Cryptodome.Hash.MD2.new",
-                    "Cryptodome.Hash.MD4.new",
-                    "Cryptodome.Hash.MD5.new",
-                    "Cryptodome.Hash.SHA.new",
-                    "cryptography.hazmat.primitives.hashes.MD5",
-                    "cryptography.hazmat.primitives.hashes.SHA1",
-                ],
-                "Use of insecure MD2, MD4, MD5, or SHA1 hash function.",
-            )
+    sets.append(
+        utils.build_conf_dict(
+            "md5",
+            "B303",
+            issue.Cwe.BROKEN_CRYPTO,
+            [
+                "Crypto.Hash.MD2.new",
+                "Crypto.Hash.MD4.new",
+                "Crypto.Hash.MD5.new",
+                "Crypto.Hash.SHA.new",
+                "Cryptodome.Hash.MD2.new",
+                "Cryptodome.Hash.MD4.new",
+                "Cryptodome.Hash.MD5.new",
+                "Cryptodome.Hash.SHA.new",
+                "cryptography.hazmat.primitives.hashes.MD5",
+                "cryptography.hazmat.primitives.hashes.SHA1",
+            ],
+            "Use of insecure MD2, MD4, MD5, or SHA1 hash function.",
         )
-    else:
-        sets.append(
-            utils.build_conf_dict(
-                "md5",
-                "B303",
-                issue.Cwe.BROKEN_CRYPTO,
-                [
-                    "hashlib.md4",
-                    "hashlib.md5",
-                    "hashlib.sha",
-                    "hashlib.sha1",
-                    "Crypto.Hash.MD2.new",
-                    "Crypto.Hash.MD4.new",
-                    "Crypto.Hash.MD5.new",
-                    "Crypto.Hash.SHA.new",
-                    "Cryptodome.Hash.MD2.new",
-                    "Cryptodome.Hash.MD4.new",
-                    "Cryptodome.Hash.MD5.new",
-                    "Cryptodome.Hash.SHA.new",
-                    "cryptography.hazmat.primitives.hashes.MD5",
-                    "cryptography.hazmat.primitives.hashes.SHA1",
-                ],
-                "Use of insecure MD2, MD4, MD5, or SHA1 hash function.",
-            )
-        )
+    )
 
     sets.append(
         utils.build_conf_dict(
@@ -438,7 +416,10 @@ def gen_blacklist():
                 "Cryptodome.Cipher.XOR.new",
                 "cryptography.hazmat.primitives.ciphers.algorithms.ARC4",
                 "cryptography.hazmat.primitives.ciphers.algorithms.Blowfish",
+                "cryptography.hazmat.primitives.ciphers.algorithms.CAST5",
                 "cryptography.hazmat.primitives.ciphers.algorithms.IDEA",
+                "cryptography.hazmat.primitives.ciphers.algorithms.SEED",
+                "cryptography.hazmat.primitives.ciphers.algorithms.TripleDES",
             ],
             "Use of insecure cipher {name}. Replace with a known secure"
             " cipher such as AES.",
