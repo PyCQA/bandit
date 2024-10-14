@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: Apache-2.0
 import ast
 import linecache
-import sys
 
 from bandit.core import utils
 
