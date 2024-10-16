@@ -6,17 +6,18 @@ Installation
 
 Bandit is distributed on PyPI. The best way to install it is with pip.
 
-Create a virtual environment (optional):
+Create a virtual environment and activate it using `virtualenv` (optional):
 
 .. code-block:: console
 
     virtualenv bandit-env
-    python3 -m venv bandit-env
-
-And activate it:
+    source bandit-env/bin/activate
+    
+Alternatively, use `venv` instead of `virtualenv` (optional):
 
 .. code-block:: console
 
+    python3 -m venv bandit-env
     source bandit-env/bin/activate
 
 Install Bandit:
