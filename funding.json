@@ -1,0 +1,65 @@
+{
+    "version": "v1.0.0",
+    "entity": {
+        "type": "individual",
+        "role": "maintainer",
+        "name": "Eric Brown",
+        "email": "eric_wade_brown@yahoo.com",
+        "phone": "",
+        "description": "I’m passionate about developing tools that empower engineers to produce secure, hardened code, reducing vulnerabilities and strengthening software integrity. With a focus on security automation, I aim to make secure coding practices more accessible and integrated into development workflows.",
+        "webpageUrl": {
+            "url": "https://github.com"
+        }
+    },
+    "projects": [{
+        "guid": "bandit",
+        "name": "Bandit",
+        "description": " Bandit is a tool designed to find common security issues in Python code.",
+        "webpageUrl": {
+            "url": "https://github.com/PyCQA/bandit"
+        },
+        "repositoryUrl": {
+            "url": "https://github.com/PyCQA/bandit"
+        },
+        "licenses": ["spdx:Apache-2.0"],
+        "tags": ["python", "static-code-analysis", "security", "security-tools"]
+    }],
+    "funding": {
+        "channels": [
+            {
+                "guid": "github",
+                "type": "payment-provider",
+                "address": "https://github.com/sponsors/ericwb",
+                "description": "Pay with your credit card through this gateway and setup recurring subscriptions."
+            },
+            {
+                "guid": "psf",
+                "type": "payment-provider",
+                "address": "https://psfmember.org/civicrm/contribute/transact/?reset=1&id=42",
+                "description": "Pay with your credit card through this gateway and setup recurring subscriptions."
+            }
+        ],
+        "plans": [
+            {
+                "guid": "developer-time",
+                "status": "active",
+                "name": "Developer compensation",
+                "description": "This will cover the cost of one developer working part-time on the projects.",
+                "amount": 1000,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": ["github", "psf"]
+            },
+            {
+                "guid": "angel-plan",
+                "status": "active",
+                "name": "Goodwill plan",
+                "description": "Pay anything you wish to show your goodwill for the project.",
+                "amount": 0,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": ["psf"]
+            }
+        ]
+    }
+}
