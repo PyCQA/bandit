@@ -137,9 +137,4 @@ The development of Bandit is made possible by the following sponsors:
           :alt: Stacklok
           :width: 88
 
-     - .. image:: https://avatars.githubusercontent.com/u/1396951?s=70&v=4
-          :target: https://sentry.io/
-          :alt: Sentry
-          :width: 88
-
 If you also ❤️ Bandit, please consider sponsoring.
