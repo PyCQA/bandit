@@ -115,8 +115,8 @@ class FunctionalTests(testtools.TestCase):
     def test_ciphers(self):
         """Test the `Crypto.Cipher` example."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 21},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 22},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 24},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 25},
         }
         self.check_example("ciphers.py", expect)
 
@@ -368,8 +368,8 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_without_timeout(self):
         """Test for the `requests` library missing timeouts."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 36, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 36, "MEDIUM": 0, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 25, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 25, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("requests-missing-timeout.py", expect)
 
