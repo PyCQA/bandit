@@ -222,7 +222,11 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
             "\tTotal lines skipped (#nosec): %i"
             % (manager.metrics.data["_totals"]["nosec"])
         )
-
+        bits.append(
+            "\tTotal potential issues skipped due to specifically being "
+            "disabled (e.g., #nosec BXXX): %i"
+            % (manager.metrics.data["_totals"]["skipped_tests"])
+        )
         bits.append(get_metrics(manager))
         skipped = manager.get_skipped()
         bits.append(header("Files skipped (%i):", len(skipped)))
