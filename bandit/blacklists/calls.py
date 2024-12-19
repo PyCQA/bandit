@@ -256,13 +256,6 @@ to XML attacks. Methods should be replaced with their defusedxml equivalents.
 | B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
 |      |                     | - xml.dom.pulldom.parseString      |           |
 +------+---------------------+------------------------------------+-----------+
-| B320 | xml_bad_etree       | - lxml.etree.parse                 | Medium    |
-|      |                     | - lxml.etree.fromstring            |           |
-|      |                     | - lxml.etree.RestrictedElement     |           |
-|      |                     | - lxml.etree.GlobalParserTLS       |           |
-|      |                     | - lxml.etree.getDefaultParser      |           |
-|      |                     | - lxml.etree.check_docinfo         |           |
-+------+---------------------+------------------------------------+-----------+
 
 B321: ftplib
 ------------
@@ -612,27 +605,6 @@ def gen_blacklist():
             issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.dom.pulldom.parse", "xml.dom.pulldom.parseString"],
             xml_msg,
-        )
-    )
-
-    sets.append(
-        utils.build_conf_dict(
-            "xml_bad_etree",
-            "B320",
-            issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            [
-                "lxml.etree.parse",
-                "lxml.etree.fromstring",
-                "lxml.etree.RestrictedElement",
-                "lxml.etree.GlobalParserTLS",
-                "lxml.etree.getDefaultParser",
-                "lxml.etree.check_docinfo",
-            ],
-            (
-                "Using {name} to parse untrusted XML data is known to be "
-                "vulnerable to XML attacks. Replace {name} with its "
-                "defusedxml equivalent function."
-            ),
         )
     )
 

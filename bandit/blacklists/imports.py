@@ -130,18 +130,6 @@ or make sure defusedxml.defuse_stdlib() is called.
 | B409 | import_xml_pulldom  | - xml.dom.pulldom                  | low       |
 +------+---------------------+------------------------------------+-----------+
 
-B410: import_lxml
------------------
-
-Using various methods to parse untrusted XML data is known to be vulnerable to
-XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
-
-+------+---------------------+------------------------------------+-----------+
-| ID   |  Name               |  Imports                           |  Severity |
-+======+=====================+====================================+===========+
-| B410 | import_lxml         | - lxml                             | low       |
-+------+---------------------+------------------------------------+-----------+
-
 B411: import_xmlrpclib
 ----------------------
 
@@ -297,11 +285,6 @@ def gen_blacklist():
         "defusedxml package, or make sure defusedxml.defuse_stdlib() "
         "is called."
     )
-    lxml_msg = (
-        "Using {name} to parse untrusted XML data is known to be "
-        "vulnerable to XML attacks. Replace {name} with the "
-        "equivalent defusedxml package."
-    )
 
     sets.append(
         utils.build_conf_dict(
@@ -354,17 +337,6 @@ def gen_blacklist():
             issue.Cwe.IMPROPER_INPUT_VALIDATION,
             ["xml.dom.pulldom"],
             xml_msg,
-            "LOW",
-        )
-    )
-
-    sets.append(
-        utils.build_conf_dict(
-            "import_lxml",
-            "B410",
-            issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            ["lxml"],
-            lxml_msg,
             "LOW",
         )
     )
