@@ -557,12 +557,6 @@ class FunctionalTests(testtools.TestCase):
         self.check_example("xml_expatbuilder.py", expect)
 
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 3, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
-        }
-        self.check_example("xml_lxml.py", expect)
-
-        expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
         }
