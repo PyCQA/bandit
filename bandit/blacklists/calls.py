@@ -219,7 +219,7 @@ SSH or some other encrypted protocol.
 | B312 | telnetlib           | - telnetlib.\*                     | High      |
 +------+---------------------+------------------------------------+-----------+
 
-B313 - B320: XML
+B313 - B319: XML
 ----------------
 
 Most of this is based off of Christian Heimes' work on defusedxml:
@@ -255,6 +255,22 @@ to XML attacks. Methods should be replaced with their defusedxml equivalents.
 +------+---------------------+------------------------------------+-----------+
 | B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
 |      |                     | - xml.dom.pulldom.parseString      |           |
++------+---------------------+------------------------------------+-----------+
+
+B320: xml_bad_etree
+-------------------
+
+The check for this call has been removed.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
+| B320 | xml_bad_etree       | - lxml.etree.parse                 | Medium    |
+|      |                     | - lxml.etree.fromstring            |           |
+|      |                     | - lxml.etree.RestrictedElement     |           |
+|      |                     | - lxml.etree.GlobalParserTLS       |           |
+|      |                     | - lxml.etree.getDefaultParser      |           |
+|      |                     | - lxml.etree.check_docinfo         |           |
 +------+---------------------+------------------------------------+-----------+
 
 B321: ftplib
@@ -607,6 +623,8 @@ def gen_blacklist():
             xml_msg,
         )
     )
+
+    # skipped B320 as the check for a call to lxml.etree has been removed
 
     # end of XML tests
 

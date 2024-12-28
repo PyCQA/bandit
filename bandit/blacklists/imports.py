@@ -130,6 +130,20 @@ or make sure defusedxml.defuse_stdlib() is called.
 | B409 | import_xml_pulldom  | - xml.dom.pulldom                  | low       |
 +------+---------------------+------------------------------------+-----------+
 
+B410: import_lxml
+-----------------
+This import blacklist has been removed. The information here has been
+left for historical purposes.
+
+Using various methods to parse untrusted XML data is known to be vulnerable to
+XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Imports                           |  Severity |
++======+=====================+====================================+===========+
+| B410 | import_lxml         | - lxml                             | low       |
++------+---------------------+------------------------------------+-----------+
+
 B411: import_xmlrpclib
 ----------------------
 
@@ -340,6 +354,8 @@ def gen_blacklist():
             "LOW",
         )
     )
+
+    # skipped B410 as the check for import_lxml has been removed
 
     sets.append(
         utils.build_conf_dict(
