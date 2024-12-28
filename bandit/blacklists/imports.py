@@ -132,6 +132,7 @@ or make sure defusedxml.defuse_stdlib() is called.
 
 B410: import_lxml
 -----------------
+
 This import blacklist has been removed. The information here has been
 left for historical purposes.
 
