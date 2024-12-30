@@ -273,12 +273,12 @@ def linerange(node):
 def concat_string(node, stop=None):
     """Builds a string from a ast.BinOp chain.
 
-    This will build a string from a series of ast.Str nodes wrapped in
+    This will build a string from a series of ast.Constant nodes wrapped in
     ast.BinOp nodes. Something like "a" + "b" + "c" or "a %s" % val etc.
     The provided node can be any participant in the BinOp chain.
 
-    :param node: (ast.Str or ast.BinOp) The node to process
-    :param stop: (ast.Str or ast.BinOp) Optional base node to stop at
+    :param node: (ast.Constant or ast.BinOp) The node to process
+    :param stop: (ast.Constant or ast.BinOp) Optional base node to stop at
     :returns: (Tuple) the root node of the expression, the string value
     """
 
@@ -300,7 +300,10 @@ def concat_string(node, stop=None):
         node = node._bandit_parent
     if isinstance(node, ast.BinOp):
         _get(node, bits, stop)
-    return (node, " ".join([x.s for x in bits if isinstance(x, ast.Str)]))
+    return (
+        node,
+        " ".join([x.value for x in bits if isinstance(x, ast.Constant)]),
+    )
 
 
 def get_called_name(node):
@@ -361,6 +364,17 @@ def parse_ini_file(f_loc):
 def check_ast_node(name):
     "Check if the given name is that of a valid AST node."
     try:
+        # These ast Node types don't exist in Python 3.14, but plugins may
+        # still check on them.
+        if sys.version_info >= (3, 14) and name in (
+            "Num",
+            "Str",
+            "Ellipsis",
+            "NameConstant",
+            "Bytes",
+        ):
+            return name
+
         node = getattr(ast, name)
         if issubclass(node, ast.AST):
             return name
