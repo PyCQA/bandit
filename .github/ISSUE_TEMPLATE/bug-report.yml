@@ -44,7 +44,8 @@ body:
       label: Bandit version
       description: Run "bandit --version" if unsure of version number
       options:
-        - 1.7.10 (Default)
+        - 1.8.0 (Default)
+        - 1.7.10
         - 1.7.9
         - 1.7.8
         - 1.7.7
