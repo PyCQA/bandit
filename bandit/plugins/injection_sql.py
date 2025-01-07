@@ -96,7 +96,7 @@ def _evaluate_ast(node):
     elif isinstance(
         node._bandit_parent, ast.Attribute
     ) and node._bandit_parent.attr in ("format", "replace"):
-        statement = node.s
+        statement = node.value
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node._bandit_parent._bandit_parent._bandit_parent
         if node._bandit_parent.attr == "replace":
@@ -107,14 +107,14 @@ def _evaluate_ast(node):
         substrings = [
             child
             for child in node._bandit_parent.values
-            if isinstance(child, ast.Str)
+            if isinstance(child, ast.Constant)
         ]
         # JoinedStr consists of list of Constant and FormattedValue
         # instances. Let's perform one test for the whole string
         # and abandon all parts except the first one to raise one
         # failed test instead of many for the same SQL statement.
         if substrings and node == substrings[0]:
-            statement = "".join([str(child.s) for child in substrings])
+            statement = "".join([str(child.value) for child in substrings])
             wrapper = node._bandit_parent._bandit_parent
 
     if isinstance(wrapper, ast.Call):  # wrapped in "execute" call?
