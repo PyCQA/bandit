@@ -83,45 +83,45 @@ def hardcoded_password_string(context):
         # looks for "candidate='some_string'"
         for targ in node._bandit_parent.targets:
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
-                return _report(node.s)
+                return _report(node.value)
             elif isinstance(targ, ast.Attribute) and RE_CANDIDATES.search(
                 targ.attr
             ):
-                return _report(node.s)
+                return _report(node.value)
 
     elif isinstance(
         node._bandit_parent, ast.Subscript
-    ) and RE_CANDIDATES.search(node.s):
+    ) and RE_CANDIDATES.search(node.value):
         # Py39+: looks for "dict[candidate]='some_string'"
         # subscript -> index -> string
         assign = node._bandit_parent._bandit_parent
         if isinstance(assign, ast.Assign) and isinstance(
-            assign.value, ast.Str
+            assign.value, ast.Constant
         ):
-            return _report(assign.value.s)
+            return _report(assign.value.value)
 
     elif isinstance(node._bandit_parent, ast.Index) and RE_CANDIDATES.search(
-        node.s
+        node.value
     ):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node._bandit_parent._bandit_parent._bandit_parent
         if isinstance(assign, ast.Assign) and isinstance(
-            assign.value, ast.Str
+            assign.value, ast.Constant
         ):
-            return _report(assign.value.s)
+            return _report(assign.value.value)
 
     elif isinstance(node._bandit_parent, ast.Compare):
         # looks for "candidate == 'some_string'"
         comp = node._bandit_parent
         if isinstance(comp.left, ast.Name):
             if RE_CANDIDATES.search(comp.left.id):
-                if isinstance(comp.comparators[0], ast.Str):
-                    return _report(comp.comparators[0].s)
+                if isinstance(comp.comparators[0], ast.Constant):
+                    return _report(comp.comparators[0].value)
         elif isinstance(comp.left, ast.Attribute):
             if RE_CANDIDATES.search(comp.left.attr):
-                if isinstance(comp.comparators[0], ast.Str):
-                    return _report(comp.comparators[0].s)
+                if isinstance(comp.comparators[0], ast.Constant):
+                    return _report(comp.comparators[0].value)
 
 
 @test.checks("Call")
@@ -176,8 +176,8 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        if isinstance(kw.value, ast.Str) and RE_CANDIDATES.search(kw.arg):
-            return _report(kw.value.s)
+        if isinstance(kw.value, ast.Constant) and RE_CANDIDATES.search(kw.arg):
+            return _report(kw.value.value)
 
 
 @test.checks("FunctionDef")
@@ -242,5 +242,5 @@ def hardcoded_password_default(context):
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, (ast.Name, ast.arg)):
-            if isinstance(val, ast.Str) and RE_CANDIDATES.search(key.arg):
-                return _report(val.s)
+            if isinstance(val, ast.Constant) and RE_CANDIDATES.search(key.arg):
+                return _report(val.value)
