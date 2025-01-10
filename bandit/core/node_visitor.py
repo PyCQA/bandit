@@ -168,7 +168,7 @@ class BanditNodeVisitor:
         :param node: The node that is being inspected
         :return: -
         """
-        self.context["str"] = node.s
+        self.context["str"] = node.value
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Str"))
@@ -181,7 +181,7 @@ class BanditNodeVisitor:
         :param node: The node that is being inspected
         :return: -
         """
-        self.context["bytes"] = node.s
+        self.context["bytes"] = node.value
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Bytes"))
