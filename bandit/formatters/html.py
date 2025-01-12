@@ -154,7 +154,6 @@ from bandit.core import docs_utils
 from bandit.core import test_properties
 from bandit.formatters import utils
 
-
 LOG = logging.getLogger(__name__)
 
 

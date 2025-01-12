@@ -6,15 +6,22 @@
 # C0325: Parens are required on print in py3x
 # F0401: Imports are check by other linters
 # W0511: TODOs in code comments are fine.
-# W0142: *args and **kwargs are fine.
 # W0622: Redefining id is fine.
 
 # TODO(browne): fix these in the future
 # C0103: invalid-name
+# C0114: Missing module docstring
+# C0115: Missing class docstring
+# C0116: Missing function or method docstring
 # C0201: consider-iterating-dictionary
-# C1801: len-as-condition
+# C0206: Consider iterating with .items()
+# C0209: Foramtting a regular string which could be an f-string
+# C0413: wrong-import-position
+# C0415: Import outside toplevel
+# C1802: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty
+# E0611: No name in module
 # E1101: no-member
-# E1111: assignment-from-no-return
+# R0801: Similar lines in 2 files
 # R0902: too-many-instance-attributes
 # R0912: too-many-branches
 # R0913: too-many-arguments
@@ -23,18 +30,26 @@
 # R1702: too-many-nested-blocks
 # R1705: no-else-return
 # R1710: inconsistent-return-statements
-# W0110: deprecated-lambda
-# W0141: bad-builtin
+# R1714: Consider merging these comparisons with 'in'
+# R1721: Unnecessary use of a comprehension
+# R1732: Consider using 'with' for resource-allocating operations
+# R1734: Consider using [] instead of list()
+# R1735: use-dict-literal
+# W0105: String statement has no effect
 # W0201: attribute-defined-outside-init
 # W0212: protected-access
-# W0401: wildcard-import
+# W0246: Useless parent or super() delegation
 # W0603: global-statement
+# W0612: Unused variable
 # W0613: unused-argument
 # W0621: redefined-outer-name
-# W0703: broad-except
+# W0707: Consider explicitly re-raising
+# W0718: Catching too general exception Exception
 # W1201: logging-not-lazy
-# W1505: deprecated-method
-disable=C0111,C0201,C0301,C0325,C1801,F0401,W0511,W0142,W0622,C0103,E1101,E1111,R0902,R0912,R0913,R0914,R0915,R1702,R1705,R1710,W0110,W0141,W0201,W0401,W0603,W0212,W0613,W0621,W0703,W1201,W1505
+# W1203: Use lazy % or % formatting in logging functions
+# W1404: Implicit string concatenation found in call
+# W1514: Using open without explicitly specifying an encoding
+disable=C0103,C0114,C0115,C0116,C0201,C0206,C0209,C0301,C0413,C0415,C1802,F0401,W0511,W0622,E0611,E1101,R0801,R0902,R0912,R0913,R0914,R0915,R1702,R1705,R1710,R1714,R1721,R1732,R1734,R1735,W0105,W0201,W0212,W0246,W0603,W0612,W0613,W0621,W0707,W0718,W1201,W1203,W1404,W1514
 
 [Basic]
 # Variable names can be 1 to 31 characters long, with lowercase and underscores
@@ -71,6 +86,9 @@ min-similarity-lines=10
 
 # Ignore comments when computing similarities.
 ignore-comments=yes
+
+# We don't need to do pylint on the examples, too many false positives
+ignore-paths=examples
 
 # Ignore docstrings when computing similarities.
 ignore-docstrings=yes

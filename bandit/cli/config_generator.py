@@ -158,11 +158,11 @@ def main():
 
                 for skip in skips:
                     if not extension_loader.MANAGER.check_id(skip):
-                        raise RuntimeError("unknown ID in skips: %s" % skip)
+                        raise RuntimeError(f"unknown ID in skips: {skip}")
 
                 for test in tests:
                     if not extension_loader.MANAGER.check_id(test):
-                        raise RuntimeError("unknown ID in tests: %s" % test)
+                        raise RuntimeError(f"unknown ID in tests: {test}")
 
                 tpl = "# {0} : {1}"
                 test_list = [

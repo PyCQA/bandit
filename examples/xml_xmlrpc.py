@@ -1,4 +1,4 @@
-import xmlrpclib
+import xmlrpc
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 
 def is_even(n):

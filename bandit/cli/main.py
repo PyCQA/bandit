@@ -371,9 +371,8 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {version}\n  python version = {python}".format(
-            version=bandit.__version__, python=python_ver
-        ),
+        version=f"%(prog)s {bandit.__version__}\n"
+        f"  python version = {python_ver}",
     )
 
     parser.set_defaults(debug=False)
@@ -387,7 +386,7 @@ def main():
     blacklist_info = []
     for a in extension_mgr.blacklist.items():
         for b in a[1]:
-            blacklist_info.append("{}\t{}".format(b["id"], b["name"]))
+            blacklist_info.append(f"{b['id']}\t{b['name']}")
 
     plugin_list = "\n\t".join(sorted(set(plugin_info + blacklist_info)))
     dedent_text = textwrap.dedent(
@@ -451,16 +450,17 @@ def main():
             args.confidence = 4
         # Other strings will be blocked by argparse
 
-    try:
-        b_conf = b_config.BanditConfig(config_file=args.config_file)
-    except utils.ConfigError as e:
-        LOG.error(e)
-        sys.exit(2)
-
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
         # prefer command line, then ini file
+        args.config_file = _log_option_source(
+            parser.get_default("configfile"),
+            args.config_file,
+            ini_options.get("configfile"),
+            "config file",
+        )
+
         args.excluded_paths = _log_option_source(
             parser.get_default("excluded_paths"),
             args.excluded_paths,
@@ -592,6 +592,12 @@ def main():
             ini_options.get("baseline"),
             "path of a baseline report",
         )
+
+    try:
+        b_conf = b_config.BanditConfig(config_file=args.config_file)
+    except utils.ConfigError as e:
+        LOG.error(e)
+        sys.exit(2)
 
     if not args.targets:
         parser.print_usage()

@@ -132,39 +132,36 @@ class ContextTests(testtools.TestCase):
     def test__get_literal_value(self):
         new_context = context.Context()
 
-        value = ast.Num(42)
-        expected = value.n
+        value = ast.Constant(42)
+        expected = value.value
         self.assertEqual(expected, new_context._get_literal_value(value))
 
-        value = ast.Str("spam")
-        expected = value.s
+        value = ast.Constant("spam")
+        expected = value.value
         self.assertEqual(expected, new_context._get_literal_value(value))
 
-        value = ast.List([ast.Str("spam"), ast.Num(42)], ast.Load())
-        expected = [ast.Str("spam").s, ast.Num(42).n]
+        value = ast.List([ast.Constant("spam"), ast.Constant(42)], ast.Load())
+        expected = [ast.Constant("spam").value, ast.Constant(42).value]
         self.assertListEqual(expected, new_context._get_literal_value(value))
 
-        value = ast.Tuple([ast.Str("spam"), ast.Num(42)], ast.Load())
-        expected = (ast.Str("spam").s, ast.Num(42).n)
+        value = ast.Tuple([ast.Constant("spam"), ast.Constant(42)], ast.Load())
+        expected = (ast.Constant("spam").value, ast.Constant(42).value)
         self.assertTupleEqual(expected, new_context._get_literal_value(value))
 
-        value = ast.Set([ast.Str("spam"), ast.Num(42)])
-        expected = {ast.Str("spam").s, ast.Num(42).n}
+        value = ast.Set([ast.Constant("spam"), ast.Constant(42)])
+        expected = {ast.Constant("spam").value, ast.Constant(42).value}
         self.assertSetEqual(expected, new_context._get_literal_value(value))
 
         value = ast.Dict(["spam", "eggs"], [42, "foo"])
         expected = dict(spam=42, eggs="foo")
         self.assertDictEqual(expected, new_context._get_literal_value(value))
 
-        value = ast.Ellipsis()
-        self.assertIsNone(new_context._get_literal_value(value))
-
         value = ast.Name("spam", ast.Load())
         expected = value.id
         self.assertEqual(expected, new_context._get_literal_value(value))
 
-        value = ast.Bytes(b"spam")
-        expected = value.s
+        value = ast.Constant(b"spam")
+        expected = value.value
         self.assertEqual(expected, new_context._get_literal_value(value))
 
         self.assertIsNone(new_context._get_literal_value(None))
@@ -207,7 +204,7 @@ class ContextTests(testtools.TestCase):
     def test_get_call_arg_at_position(self):
         expected_arg = "spam"
         ref_call = mock.Mock()
-        ref_call.args = [ast.Str(expected_arg)]
+        ref_call.args = [ast.Constant(expected_arg)]
         ref_context = dict(call=ref_call)
         new_context = context.Context(context_object=ref_context)
         self.assertEqual(expected_arg, new_context.get_call_arg_at_position(0))

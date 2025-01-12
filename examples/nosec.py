@@ -1,3 +1,6 @@
+import subprocess  # nosec: import_subprocess
+from cryptography.hazmat.primitives import hashes
+hashes.SHA1()  # nosec: md5
 subprocess.Popen('/bin/ls *', shell=True) #nosec (on the line)
 subprocess.Popen('/bin/ls *', #nosec (at the start of function call)
                  shell=True)

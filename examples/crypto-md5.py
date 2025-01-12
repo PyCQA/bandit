@@ -8,6 +8,7 @@ from Cryptodome.Hash import MD4 as pycryptodomex_md4
 from Cryptodome.Hash import MD5 as pycryptodomex_md5
 from Cryptodome.Hash import SHA as pycryptodomex_sha
 import hashlib
+import crypt
 
 hashlib.md5(1)
 hashlib.md5(1).hexdigest()
@@ -32,3 +33,17 @@ pycryptodomex_sha.new()
 
 hashes.MD5()
 hashes.SHA1()
+
+crypt.crypt("asdfasdfasdfasdf", salt=crypt.METHOD_CRYPT)
+crypt.crypt("asdfasdfasdfasdf", salt=crypt.METHOD_MD5)
+crypt.crypt("asdfasdfasdfasdf", salt=crypt.METHOD_BLOWFISH)
+crypt.crypt("asdfasdfasdfasdf")
+crypt.crypt("asdfasdfasdfasdf", salt=crypt.METHOD_SHA256)
+crypt.crypt("asdfasdfasdfasdf", salt=crypt.METHOD_SHA512)
+
+crypt.mksalt(crypt.METHOD_CRYPT)
+crypt.mksalt(crypt.METHOD_MD5)
+crypt.mksalt(crypt.METHOD_BLOWFISH)
+crypt.mksalt()
+crypt.mksalt(crypt.METHOD_SHA256)
+crypt.mksalt(crypt.METHOD_SHA512)

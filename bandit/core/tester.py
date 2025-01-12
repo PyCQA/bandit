@@ -43,7 +43,7 @@ class BanditTester:
         tests = self.testset.get_tests(checktype)
         for test in tests:
             name = test.__name__
-            # execute test with the an instance of the context class
+            # execute test with an instance of the context class
             temp_context = copy.copy(raw_context)
             context = b_context.Context(temp_context)
             try:
@@ -66,7 +66,8 @@ class BanditTester:
                     if result.lineno is None:
                         result.lineno = temp_context["lineno"]
                     result.linerange = temp_context["linerange"]
-                    result.col_offset = temp_context["col_offset"]
+                    if result.col_offset == -1:
+                        result.col_offset = temp_context["col_offset"]
                     result.end_col_offset = temp_context.get(
                         "end_col_offset", 0
                     )
@@ -76,14 +77,17 @@ class BanditTester:
 
                     # don't skip the test if there was no nosec comment
                     if nosec_tests_to_skip is not None:
-                        # if the set is empty or the test id is in the set of
-                        # tests to skip, log and increment the skip by test
-                        # count
-                        if not nosec_tests_to_skip or (
-                            result.test_id in nosec_tests_to_skip
-                        ):
+                        # If the set is empty then it means that nosec was
+                        # used without test number -> update nosecs counter.
+                        # If the test id is in the set of tests to skip,
+                        # log and increment the skip by test count.
+                        if not nosec_tests_to_skip:
+                            LOG.debug("skipped, nosec without test number")
+                            self.metrics.note_nosec()
+                            continue
+                        if result.test_id in nosec_tests_to_skip:
                             LOG.debug(
-                                "skipped, nosec for test %s" % result.test_id
+                                f"skipped, nosec for test {result.test_id}"
                             )
                             self.metrics.note_skipped_test()
                             continue
@@ -129,7 +133,7 @@ class BanditTester:
             if test_result
             else None
         )
-        context_tests = self.nosec_lines.get(context["lineno"], None)
+        context_tests = utils.get_nosec(self.nosec_lines, context)
 
         # if both are none there were no comments
         # this is explicitly different from being empty.
@@ -149,7 +153,7 @@ class BanditTester:
     @staticmethod
     def report_error(test, context, error):
         what = "Bandit internal error running: "
-        what += "%s " % test
+        what += f"{test} "
         what += "on file %s at line %i: " % (
             context._context["filename"],
             context._context["lineno"],

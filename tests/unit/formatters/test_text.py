@@ -37,9 +37,8 @@ class TextFormatterTests(testtools.TestCase):
                     _issue.confidence.capitalize(),
                 ),
                 f"{_indent_val}   CWE: {_issue.cwe}",
-                "{}   More Info: {}".format(
-                    _indent_val, docs_utils.get_url(_issue.test_id)
-                ),
+                f"{_indent_val}   More Info: "
+                f"{docs_utils.get_url(_issue.test_id)}",
                 "{}   Location: {}:{}:{}".format(
                     _indent_val, _issue.fname, _issue.lineno, _issue.col_offset
                 ),
@@ -148,7 +147,7 @@ class TextFormatterTests(testtools.TestCase):
                 "binding.py (score: ",
                 "CONFIDENCE: 1",
                 "SEVERITY: 1",
-                "CWE: %s" % str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS)),
+                f"CWE: {str(issue.Cwe(issue.Cwe.MULTIPLE_BINDS))}",
                 "Files excluded (1):",
                 "def.py",
                 "Undefined: 1",

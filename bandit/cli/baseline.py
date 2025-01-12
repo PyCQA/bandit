@@ -15,11 +15,14 @@ import contextlib
 import logging
 import os
 import shutil
-import subprocess
+import subprocess  # nosec: B404
 import sys
 import tempfile
 
-import git
+try:
+    import git
+except ImportError:
+    git = None
 
 bandit_args = sys.argv[1:]
 baseline_tmp_file = "_bandit_baseline_run.json_"
@@ -76,7 +79,6 @@ def main():
     )
 
     with baseline_setup() as t:
-
         bandit_tmpfile = f"{t}/{baseline_tmp_file}"
 
         steps = [
@@ -102,7 +104,7 @@ def main():
             bandit_command = ["bandit"] + step["args"]
 
             try:
-                output = subprocess.check_output(bandit_command)
+                output = subprocess.check_output(bandit_command)  # nosec: B603
             except subprocess.CalledProcessError as e:
                 output = e.output
                 return_code = e.returncode
@@ -199,6 +201,11 @@ def initialize():
     report_fname = f"{report_basename}.{output_format}"
 
     # #################### Check Requirements #################################
+    if git is None:
+        LOG.error("Git not available, reinstall with baseline extra")
+        valid = False
+        return (None, None, None)
+
     try:
         repo = git.Repo(os.getcwd())
 

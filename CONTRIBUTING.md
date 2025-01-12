@@ -63,10 +63,10 @@ You can test any changes with tox:
 
 ```shell script
 pip install tox
-tox -e pep8
-tox -e py37
-tox -e docs
-tox -e cover
+tox run -e pep8
+tox run -e py37
+tox run -e docs
+tox run -e cover
 ```
 If everything is done, proceed with [opening a new pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request)
 

@@ -23,15 +23,13 @@ from bandit.core import metrics
 from bandit.core import node_visitor as b_node_visitor
 from bandit.core import test_set as b_test_set
 
-
 LOG = logging.getLogger(__name__)
 NOSEC_COMMENT = re.compile(r"#\s*nosec:?\s*(?P<tests>[^#]+)?#?")
-NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z_]+),?)+", re.IGNORECASE)
+NOSEC_COMMENT_TESTS = re.compile(r"(?:(B\d+|[a-z\d_]+),?)+", re.IGNORECASE)
 PROGRESS_THRESHOLD = 50
 
 
 class BanditManager:
-
     scope = []
 
     def __init__(
@@ -195,8 +193,8 @@ class BanditManager:
 
         except Exception as e:
             raise RuntimeError(
-                "Unable to output report using '%s' formatter: "
-                "%s" % (output_format, str(e))
+                f"Unable to output report using "
+                f"'{output_format}' formatter: {str(e)}"
             )
 
     def discover_files(self, targets, recursive=False, excluded_paths=""):
@@ -251,6 +249,8 @@ class BanditManager:
                     excluded_path_globs,
                     enforce_glob=False,
                 ):
+                    if fname != "-":
+                        fname = os.path.join(".", fname)
                     files_list.add(fname)
                 else:
                     excluded_files.add(fname)
@@ -462,17 +462,17 @@ def _find_candidate_matches(unmatched_issues, results_list):
 
 
 def _find_test_id_from_nosec_string(extman, match):
-    plugin_id = extman.check_id(match)
-    if plugin_id:
+    test_id = extman.check_id(match)
+    if test_id:
         return match
-    # Finding by short_id didn't work, let's check the plugin name
-    plugin_id = extman.get_plugin_id(match)
-    if not plugin_id:
+    # Finding by short_id didn't work, let's check the test name
+    test_id = extman.get_test_id(match)
+    if not test_id:
         # Name and short id didn't work:
         LOG.warning(
             "Test in comment: %s is not a test name or id, ignoring", match
         )
-    return plugin_id  # We want to return None or the string here regardless
+    return test_id  # We want to return None or the string here regardless
 
 
 def _parse_nosec_comment(comment):

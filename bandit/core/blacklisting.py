@@ -3,7 +3,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import ast
-import fnmatch
 
 from bandit.core import issue
 
@@ -36,8 +35,8 @@ def blacklist(context, config):
         func = context.node.func
         if isinstance(func, ast.Name) and func.id == "__import__":
             if len(context.node.args):
-                if isinstance(context.node.args[0], ast.Str):
-                    name = context.node.args[0].s
+                if isinstance(context.node.args[0], ast.Constant):
+                    name = context.node.args[0].value
                 else:
                     # TODO(??): import through a variable, need symbol tab
                     name = "UNKNOWN"
@@ -55,7 +54,7 @@ def blacklist(context, config):
                     name = context.call_keywords["name"]
         for check in blacklists[node_type]:
             for qn in check["qualnames"]:
-                if name is not None and fnmatch.fnmatch(name, qn):
+                if name is not None and name == qn:
                     return report_issue(check, name)
 
     if node_type.startswith("Import"):
