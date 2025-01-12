@@ -12,7 +12,6 @@ Create a virtual environment and activate it using `virtualenv` (optional):
 
     virtualenv bandit-env
     source bandit-env/bin/activate
-    
 Alternatively, use `venv` instead of `virtualenv` (optional):
 
 .. code-block:: console
