@@ -96,7 +96,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
                 break
             to = analyser.is_assigned(node)
             if to:
-                if isinstance(to, ast.Constant):
+                if isinstance(to, ast.Str):
                     secure = True
                 elif isinstance(to, ast.Name):
                     secure = evaluate_var(to, parent, to.lineno, ignore_nodes)
@@ -105,7 +105,7 @@ def evaluate_var(xss_var, parent, until, ignore_nodes=None):
                 elif isinstance(to, (list, tuple)):
                     num_secure = 0
                     for some_to in to:
-                        if isinstance(some_to, ast.Constant):
+                        if isinstance(some_to, ast.Str):
                             num_secure += 1
                         elif isinstance(some_to, ast.Name):
                             if evaluate_var(
@@ -131,10 +131,7 @@ def evaluate_call(call, parent, ignore_nodes=None):
     secure = False
     evaluate = False
     if isinstance(call, ast.Call) and isinstance(call.func, ast.Attribute):
-        if (
-            isinstance(call.func.value, ast.Constant)
-            and call.func.attr == "format"
-        ):
+        if isinstance(call.func.value, ast.Str) and call.func.attr == "format":
             evaluate = True
             if call.keywords:
                 evaluate = False  # TODO(??) get support for this
@@ -143,7 +140,7 @@ def evaluate_call(call, parent, ignore_nodes=None):
         args = list(call.args)
         num_secure = 0
         for arg in args:
-            if isinstance(arg, ast.Constant):
+            if isinstance(arg, ast.Str):
                 num_secure += 1
             elif isinstance(arg, ast.Name):
                 if evaluate_var(arg, parent, call.lineno, ignore_nodes):
@@ -170,7 +167,7 @@ def evaluate_call(call, parent, ignore_nodes=None):
 def transform2call(var):
     if isinstance(var, ast.BinOp):
         is_mod = isinstance(var.op, ast.Mod)
-        is_left_str = isinstance(var.left, ast.Constant)
+        is_left_str = isinstance(var.left, ast.Str)
         if is_mod and is_left_str:
             new_call = ast.Call()
             new_call.args = []
@@ -215,7 +212,7 @@ def check_risk(node):
         secure = evaluate_call(xss_var, parent)
     elif isinstance(xss_var, ast.BinOp):
         is_mod = isinstance(xss_var.op, ast.Mod)
-        is_left_str = isinstance(xss_var.left, ast.Constant)
+        is_left_str = isinstance(xss_var.left, ast.Str)
         if is_mod and is_left_str:
             parent = node._bandit_parent
             while not isinstance(parent, (ast.Module, ast.FunctionDef)):
@@ -275,5 +272,5 @@ def django_mark_safe(context):
         ]
         if context.call_function_name in affected_functions:
             xss = context.node.args[0]
-            if not isinstance(xss, ast.Constant):
+            if not isinstance(xss, ast.Str):
                 return check_risk(context.node)
