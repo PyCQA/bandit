@@ -28,7 +28,7 @@ Use ``Markup.escape`` to escape unsafe HTML.
 
  - https://flask.palletsprojects.com/en/2.0.x/api/#flask.Markup
 
-.. versionadded:: 1.7.5
+.. versionadded:: 1.8.3
 
 """
 import bandit
