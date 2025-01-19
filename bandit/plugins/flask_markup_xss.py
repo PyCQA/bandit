@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 r"""
-====================================================
+==================================
 B704: Test for use of flask.Markup
-====================================================
+==================================
 
 ``Markup`` accepts a string or an object that is converted
 to text, and wraps it to mark it safe without escaping. Calling
