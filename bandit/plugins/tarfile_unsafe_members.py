@@ -42,6 +42,9 @@ unless you explicitly need them.
 
 .. versionadded:: 1.7.5
 
+.. versionchanged:: 1.7.8
+    Added check for filter parameter
+
 """
 import ast
 
@@ -91,6 +94,13 @@ def get_members_value(context):
                 return {"Other": value}
 
 
+def is_filter_data(context):
+    for keyword in context.node.keywords:
+        if keyword.arg == "filter":
+            arg = keyword.value
+            return isinstance(arg, ast.Str) and arg.s == "data"
+
+
 @test.test_id("B202")
 @test.checks("Call")
 def tarfile_unsafe_members(context):
@@ -100,6 +110,8 @@ def tarfile_unsafe_members(context):
             "extractall" in context.call_function_name,
         ]
     ):
+        if "filter" in context.call_keywords and is_filter_data(context):
+            return None
         if "members" in context.call_keywords:
             members = get_members_value(context)
             if "Function" in members:

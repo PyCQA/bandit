@@ -26,7 +26,6 @@ candidate_example_six = "xml.sax.make_parser() # nosec"
 
 
 class BaselineFunctionalTests(testtools.TestCase):
-
     """Functional tests for Bandit baseline.
 
     This set of tests is used to verify that the baseline comparison handles
