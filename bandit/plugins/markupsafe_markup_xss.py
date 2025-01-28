@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 r"""
-==================================
+============================================
 B704: Potential XSS on markupsafe.Markup use
-==================================
+============================================
 
 ``markupsafe.Markup`` does not perform any escaping, so passing dynamic
 content, like f-strings, variables or interpolated strings will potentially
@@ -16,7 +16,7 @@ which will perform escaping, or use ``markupsafe.escape``.
 
 **Config Options:**
 
-This plugin allows to specify additional callable that should be treated
+This plugin allows you to specify additional callable that should be treated
 like ``markupsafe.Markup``. By default we recognize ``flask.Markup`` as
 an alias, but there are other subclasses or similar classes in the wild
 that you may wish to treat the same.
@@ -63,6 +63,7 @@ These two options can be set in a shared configuration section
 
  - https://pypi.org/project/MarkupSafe/
  - https://markupsafe.palletsprojects.com/en/stable/escaping/#markupsafe.Markup
+ - https://cwe.mitre.org/data/definitions/79.html
 
 .. versionadded:: 1.8.3
 
