@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import os
+from contextlib import contextmanager
 
 import testtools
 
@@ -32,6 +33,18 @@ class FunctionalTests(testtools.TestCase):
         self.b_mgr = b_manager.BanditManager(b_conf, "file")
         self.b_mgr.b_conf._settings["plugins_dir"] = path
         self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf)
+
+    @contextmanager
+    def with_test_set(self, ts):
+        """A helper context manager to change the test set without
+        side-effects for any follow-up tests.
+        """
+        orig_ts = self.b_mgr.b_ts
+        self.b_mgr.b_ts = ts
+        try:
+            yield
+        finally:
+            self.b_mgr.b_ts = orig_ts
 
     def run_example(self, example_script, ignore_nosec=False):
         """A helper method to run the specified test
@@ -526,10 +539,12 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
         }
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
-        )
-        self.check_example("mark_safe_secure.py", expect)
+        with self.with_test_set(
+            b_test_set.BanditTestSet(
+                config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
+            )
+        ):
+            self.check_example("mark_safe_secure.py", expect)
 
     def test_django_xss_insecure(self):
         """Test for Django XSS via django.utils.safestring"""
@@ -537,10 +552,12 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 29, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 29},
         }
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
-        )
-        self.check_example("mark_safe_insecure.py", expect)
+        with self.with_test_set(
+            b_test_set.BanditTestSet(
+                config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
+            )
+        ):
+            self.check_example("mark_safe_insecure.py", expect)
 
     def test_xml(self):
         """Test xml vulnerabilities."""
@@ -876,3 +893,36 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("trojansource_latin1.py", expect)
+
+    def test_markupsafe_markup_xss(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+        }
+        self.check_example("markupsafe_markup_xss.py", expect)
+
+    def test_markupsafe_markup_xss_extend_markup_names(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+        }
+        b_conf = b_config.BanditConfig()
+        b_conf.config["markupsafe_xss"] = {
+            "extend_markup_names": ["webhelpers.html.literal"]
+        }
+        with self.with_test_set(b_test_set.BanditTestSet(config=b_conf)):
+            self.check_example(
+                "markupsafe_markup_xss_extend_markup_names.py", expect
+            )
+
+    def test_markupsafe_markup_xss_allowed_calls(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+        }
+        b_conf = b_config.BanditConfig()
+        b_conf.config["markupsafe_xss"] = {"allowed_calls": ["bleach.clean"]}
+        with self.with_test_set(b_test_set.BanditTestSet(config=b_conf)):
+            self.check_example(
+                "markupsafe_markup_xss_allowed_calls.py", expect
+            )
