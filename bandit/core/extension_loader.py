@@ -1,10 +1,13 @@
 #
 # SPDX-License-Identifier: Apache-2.0
+import logging
 import sys
 
 from stevedore import extension
 
 from bandit.core import utils
+
+LOG = logging.getLogger(__name__)
 
 
 class Manager:
@@ -84,11 +87,11 @@ class Manager:
         """Validate that everything in the configured profiles looks good."""
         for inc in profile["include"]:
             if not self.check_id(inc):
-                raise ValueError(f"Unknown test found in profile: {inc}")
+                LOG.warning(f"Unknown test found in profile: {inc}")
 
         for exc in profile["exclude"]:
             if not self.check_id(exc):
-                raise ValueError(f"Unknown test found in profile: {exc}")
+                LOG.warning(f"Unknown test found in profile: {exc}")
 
         union = set(profile["include"]) & set(profile["exclude"])
         if len(union) > 0:
