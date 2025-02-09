@@ -10,8 +10,9 @@ This plugin checks for the use of `torch.load` and `torch.save`. Using
 `torch.load` with untrusted data can lead to arbitrary code execution, and
 improper use of `torch.save` might expose sensitive data or lead to data
 corruption. A safe alternative is to use `torch.load` with the `safetensors`
-library from hugingface, which provides a safe deserialization mechanism.
-
+library from hugingface, which provides a safe deserialization mechanism. Or
+use the `weights_only` argument for `torch.load` to load only the model weights
+and avoid deserializing the entire model state.
 :Example:
 
 .. code-block:: none
@@ -59,10 +60,14 @@ def pytorch_load_save(context):
     if all(
         [
             "torch" in qualname_list,
-            func in ["load", "save"],
-            not context.check_call_arg_value("map_location", "cpu"),
+            func == "load",
         ]
     ):
+        # For torch.load, check if weights_only=True is specified
+        weights_only = context.get_call_arg_value("weights_only")
+        if weights_only == "True" or weights_only is True:
+            return
+
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
