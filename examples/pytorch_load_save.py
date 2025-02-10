@@ -24,5 +24,3 @@ cpu_model.load_state_dict(torch.load('model_weights.pth', map_location='cpu'))
 # Example of loading with both map_location and weights_only=True (should NOT trigger B614)
 safe_cpu_model = models.resnet18()
 safe_cpu_model.load_state_dict(torch.load('model_weights.pth', map_location='cpu', weights_only=True))
-
-

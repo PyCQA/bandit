@@ -13,8 +13,10 @@ corruption. A safe alternative is to use `torch.load` with the `safetensors`
 library from huggingface, which provides a safe deserialization mechanism. A
 second option is to use the `weights_only` argument for `torch.load` where
 only tensor data is extracted, and no arbitrary Python objects (like custom
-layers, optimizers or hooks) are deserialized. With `weights_only=True`, PyTorch
-enforces a strict type check, ensuring that only torch.Tensor objects are loaded.
+layers, optimizers) are deserialized. With `weights_only=True`, PyTorch
+enforces a strict type check, ensuring that only torch.Tensor objects are
+loaded.
+
 :Example:
 
 .. code-block:: none
