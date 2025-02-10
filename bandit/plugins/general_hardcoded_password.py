@@ -245,7 +245,10 @@ def hardcoded_password_default(context):
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, (ast.Name, ast.arg)):
             # Skip if the default value is None
-            if val is None or (isinstance(val, (ast.Constant, ast.NameConstant)) and val.value is None):
+            if val is None or (
+                isinstance(val, (ast.Constant, ast.NameConstant))
+                and val.value is None
+            ):
                 continue
             if isinstance(val, ast.Str) and RE_CANDIDATES.search(key.arg):
                 return _report(val.s)
