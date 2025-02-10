@@ -10,9 +10,11 @@ This plugin checks for the use of `torch.load` and `torch.save`. Using
 `torch.load` with untrusted data can lead to arbitrary code execution, and
 improper use of `torch.save` might expose sensitive data or lead to data
 corruption. A safe alternative is to use `torch.load` with the `safetensors`
-library from hugingface, which provides a safe deserialization mechanism. Or
-use the `weights_only` argument for `torch.load` to load only the model weights
-and avoid deserializing the entire model state.
+library from huggingface, which provides a safe deserialization mechanism. A
+second option is to use the `weights_only` argument for `torch.load` where
+only tensor data is extracted, and no arbitrary Python objects (like custom
+layers, optimizers or hooks) are deserialized. With `weights_only=True`, PyTorch
+enforces a strict type check, ensuring that only torch.Tensor objects are loaded.
 :Example:
 
 .. code-block:: none
