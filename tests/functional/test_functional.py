@@ -872,13 +872,13 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("tarfile_extractall.py", expect)
 
-    def test_pytorch_load_save(self):
-        """Test insecure usage of torch.load and torch.save."""
+    def test_pytorch_load(self):
+        """Test insecure usage of torch.load."""
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
-        self.check_example("pytorch_load_save.py", expect)
+        self.check_example("pytorch_load.py", expect)
 
     def test_trojansource(self):
         expect = {

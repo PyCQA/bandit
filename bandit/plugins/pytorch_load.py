@@ -3,25 +3,25 @@
 # SPDX-License-Identifier: Apache-2.0
 r"""
 ==========================================
-B614: Test for unsafe PyTorch load or save
+B614: Test for unsafe PyTorch load
 ==========================================
 
-This plugin checks for the use of `torch.load` and `torch.save`. Using
-`torch.load` with untrusted data can lead to arbitrary code execution, and
-improper use of `torch.save` might expose sensitive data or lead to data
-corruption. A safe alternative is to use `torch.load` with the `safetensors`
-library from huggingface, which provides a safe deserialization mechanism. A
-second option is to use the `weights_only` argument for `torch.load` where
-only tensor data is extracted, and no arbitrary Python objects (like custom
-layers, optimizers) are deserialized. With `weights_only=True`, PyTorch
-enforces a strict type check, ensuring that only torch.Tensor objects are
-loaded.
+This plugin checks for unsafe use of `torch.load`. Using `torch.load` with
+untrusted data can lead to arbitrary code execution. There are two safe
+alternatives:
+1. Use `torch.load` with `weights_only=True` where only tensor data is
+   extracted, and no arbitrary Python objects are deserialized
+2. Use the `safetensors` library from huggingface, which provides a safe
+   deserialization mechanism
+
+With `weights_only=True`, PyTorch enforces a strict type check, ensuring
+that only torch.Tensor objects are loaded.
 
 :Example:
 
 .. code-block:: none
 
-        >> Issue: Use of unsafe PyTorch load or save
+        >> Issue: Use of unsafe PyTorch load
         Severity: Medium   Confidence: High
         CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
         Location: examples/pytorch_load_save.py:8
@@ -47,12 +47,11 @@ from bandit.core import test_properties as test
 
 @test.checks("Call")
 @test.test_id("B614")
-def pytorch_load_save(context):
+def pytorch_load(context):
     """
-    This plugin checks for the use of `torch.load` and `torch.save`. Using
-    `torch.load` with untrusted data can lead to arbitrary code execution,
-    and improper use of `torch.save` might expose sensitive data or lead
-    to data corruption.
+    This plugin checks for unsafe use of `torch.load`. Using `torch.load`
+    with untrusted data can lead to arbitrary code execution. The safe
+    alternative is to use `weights_only=True` or the safetensors library.
     """
     imported = context.is_module_imported_exact("torch")
     qualname = context.call_function_name_qual
@@ -71,11 +70,11 @@ def pytorch_load_save(context):
         weights_only = context.get_call_arg_value("weights_only")
         if weights_only == "True" or weights_only is True:
             return
-
+        
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
-            text="Use of unsafe PyTorch load or save",
+            text="Use of unsafe PyTorch load",
             cwe=issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
             lineno=context.get_lineno_for_call_arg("load"),
         )
