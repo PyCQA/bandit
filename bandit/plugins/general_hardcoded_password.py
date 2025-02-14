@@ -201,7 +201,9 @@ def hardcoded_password_default(context):
     - "token"
     - "secrete"
 
-    Note: this can be noisy and may generate false positives.
+    Note: this can be noisy and may generate false positives.  We do not
+    report on None values which can be legitimately used as a default value,
+    when initializing a function or class.
 
     **Config Options:**
 
@@ -242,5 +244,11 @@ def hardcoded_password_default(context):
     # go through all (param, value)s and look for candidates
     for key, val in zip(context.node.args.args, defs):
         if isinstance(key, (ast.Name, ast.arg)):
+            # Skip if the default value is None
+            if val is None or (
+                isinstance(val, (ast.Constant, ast.NameConstant))
+                and val.value is None
+            ):
+                continue
             if isinstance(val, ast.Str) and RE_CANDIDATES.search(key.arg):
                 return _report(val.s)
