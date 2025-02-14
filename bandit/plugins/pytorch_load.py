@@ -70,7 +70,7 @@ def pytorch_load(context):
         weights_only = context.get_call_arg_value("weights_only")
         if weights_only == "True" or weights_only is True:
             return
-        
+
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
