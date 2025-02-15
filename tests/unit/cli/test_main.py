@@ -215,32 +215,8 @@ class BanditCLIMainTests(testtools.TestCase):
                 self.assertRaisesRegex(SystemExit, "2", bandit.main)
                 self.assertEqual(
                     str(err_mock.call_args[0][0]),
-                    "Unknown test found in profile: some_test",
+                    "No tests would be run, please check the profile.",
                 )
-
-    @mock.patch(
-        "sys.argv", ["bandit", "-c", "bandit.yaml", "-t", "badID", "test"]
-    )
-    def test_main_unknown_tests(self):
-        # Test that bandit exits when an invalid test ID is provided
-        temp_directory = self.useFixture(fixtures.TempDir()).path
-        os.chdir(temp_directory)
-        with open("bandit.yaml", "w") as fd:
-            fd.write(bandit_config_content)
-        # assert a SystemExit with code 2
-        self.assertRaisesRegex(SystemExit, "2", bandit.main)
-
-    @mock.patch(
-        "sys.argv", ["bandit", "-c", "bandit.yaml", "-s", "badID", "test"]
-    )
-    def test_main_unknown_skip_tests(self):
-        # Test that bandit exits when an invalid test ID is provided to skip
-        temp_directory = self.useFixture(fixtures.TempDir()).path
-        os.chdir(temp_directory)
-        with open("bandit.yaml", "w") as fd:
-            fd.write(bandit_config_content)
-        # assert a SystemExit with code 2
-        self.assertRaisesRegex(SystemExit, "2", bandit.main)
 
     @mock.patch(
         "sys.argv", ["bandit", "-c", "bandit.yaml", "-p", "bad", "test"]

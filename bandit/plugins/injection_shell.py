@@ -49,6 +49,8 @@ def gen_config(name):
                 "popen2.Popen4",
                 "commands.getoutput",
                 "commands.getstatusoutput",
+                "subprocess.getoutput",
+                "subprocess.getstatusoutput",
             ],
             # Start a process with a function that is not vulnerable to shell
             # injection.
@@ -447,6 +449,8 @@ def start_process_with_a_shell(context, config):
                 - popen2.Popen4
                 - commands.getoutput
                 - commands.getstatusoutput
+                - subprocess.getoutput
+                - subprocess.getstatusoutput
 
     :Example:
 
@@ -679,7 +683,7 @@ def start_process_with_partial_path(context, config):
         ):
             node = context.node.args[0]
             # some calls take an arg list, check the first part
-            if isinstance(node, ast.List):
+            if isinstance(node, ast.List) and node.elts:
                 node = node.elts[0]
 
             # make sure the param is a string literal and not a var name

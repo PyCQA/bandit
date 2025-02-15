@@ -3,7 +3,7 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.8"
+    python: "3.9"
 
 sphinx:
   configuration: doc/source/conf.py
@@ -14,3 +14,5 @@ python:
     - requirements: doc/requirements.txt
     - method: pip
       path: .
+      extra_requirements:
+        - sarif

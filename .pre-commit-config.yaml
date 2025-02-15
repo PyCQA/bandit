@@ -1,24 +1,24 @@
 exclude: ^(examples|tools|doc)
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v5.0.0
   hooks:
   - id: check-yaml
   - id: debug-statements
   - id: end-of-file-fixer
   - id: trailing-whitespace
-- repo: https://github.com/asottile/reorder_python_imports
-  rev: v3.9.0
+- repo: https://github.com/asottile/reorder-python-imports
+  rev: v3.14.0
   hooks:
   - id: reorder-python-imports
     args: [--application-directories, '.:src', --py38-plus]
 - repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 23.10.1
+  rev: 25.1.0
   hooks:
   - id: black
     args: [--line-length=79, --target-version=py38]
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.2
+  rev: v3.19.1
   hooks:
   - id: pyupgrade
     args: [--py38-plus]

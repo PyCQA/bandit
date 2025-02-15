@@ -1,4 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
+from datetime import datetime
 import os
 import sys
 
@@ -27,7 +28,7 @@ root_doc = "index"
 
 # General information about the project.
 project = "Bandit"
-copyright = "2023, Bandit Developers"
+copyright = f"{datetime.now():%Y}, Bandit Developers"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 add_function_parentheses = True

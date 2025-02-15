@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8]
+        python-version: [3.9]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -47,11 +47,11 @@ jobs:
     strategy:
       matrix:
         python-version: [
-          ["3.8", "38"],
           ["3.9", "39"],
           ["3.10", "310"],
           ["3.11", "311"],
           ["3.12", "312"],
+          ["3.13", "313"],
         ]
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}

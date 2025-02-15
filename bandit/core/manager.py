@@ -250,6 +250,8 @@ class BanditManager:
                     excluded_path_globs,
                     enforce_glob=False,
                 ):
+                    if fname != "-":
+                        fname = os.path.join(".", fname)
                     files_list.add(fname)
                 else:
                     excluded_files.add(fname)

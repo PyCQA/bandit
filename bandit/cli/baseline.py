@@ -19,7 +19,10 @@ import subprocess  # nosec: B404
 import sys
 import tempfile
 
-import git
+try:
+    import git
+except ImportError:
+    git = None
 
 bandit_args = sys.argv[1:]
 baseline_tmp_file = "_bandit_baseline_run.json_"
@@ -198,6 +201,11 @@ def initialize():
     report_fname = f"{report_basename}.{output_format}"
 
     # #################### Check Requirements #################################
+    if git is None:
+        LOG.error("Git not available, reinstall with baseline extra")
+        valid = False
+        return (None, None, None)
+
     try:
         repo = git.Repo(os.getcwd())
 

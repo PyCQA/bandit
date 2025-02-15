@@ -19,7 +19,6 @@ class BanditNodeVisitor:
     ):
         self.debug = debug
         self.nosec_lines = nosec_lines
-        self.seen = 0
         self.scores = {
             "SEVERITY": [0] * len(constants.RANKING),
             "CONFIDENCE": [0] * len(constants.RANKING),
@@ -209,7 +208,6 @@ class BanditNodeVisitor:
         self.context["filename"] = self.fname
         self.context["file_data"] = self.fdata
 
-        self.seen += 1
         LOG.debug(
             "entering: %s %s [%s]", hex(id(node)), type(node), self.depth
         )
@@ -286,4 +284,14 @@ class BanditNodeVisitor:
         """
         f_ast = ast.parse(data)
         self.generic_visit(f_ast)
+        # Run tests that do not require access to the AST,
+        # but only to the whole file source:
+        self.context = {
+            "file_data": self.fdata,
+            "filename": self.fname,
+            "lineno": 0,
+            "linerange": [0, 1],
+            "col_offset": 0,
+        }
+        self.update_scores(self.tester.run_tests(self.context, "File"))
         return self.scores
