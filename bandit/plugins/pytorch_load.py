@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 r"""
-==========================================
+==================================
 B614: Test for unsafe PyTorch load
-==========================================
+==================================
 
 This plugin checks for unsafe use of `torch.load`. Using `torch.load` with
 untrusted data can lead to arbitrary code execution. There are two safe
