@@ -520,7 +520,7 @@ def gen_blacklist():
                 "random.randbytes",
                 "random.sample",
                 "random.randrange",
-                "random.getrandbits"
+                "random.getrandbits",
             ],
             "Standard pseudo-random generators are not suitable for "
             "security/cryptographic purposes.",
