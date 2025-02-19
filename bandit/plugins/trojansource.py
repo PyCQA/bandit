@@ -38,16 +38,16 @@ from bandit.core import test_properties as test
 
 
 BIDI_CHARACTERS = (
-    "\u202A",
-    "\u202B",
-    "\u202C",
-    "\u202D",
-    "\u202E",
+    "\u202a",
+    "\u202b",
+    "\u202c",
+    "\u202d",
+    "\u202e",
     "\u2066",
     "\u2067",
     "\u2068",
     "\u2069",
-    "\u200F",
+    "\u200f",
 )
 
 

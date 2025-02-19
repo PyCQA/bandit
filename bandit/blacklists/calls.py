@@ -205,6 +205,9 @@ https://docs.python.org/library/secrets.html
 |      |                     | - random.uniform                   |           |
 |      |                     | - random.triangular                |           |
 |      |                     | - random.randbytes                 |           |
+|      |                     | - random.randrange                 |           |
+|      |                     | - random.sample                    |           |
+|      |                     | - random.getrandbits               |           |
 +------+---------------------+------------------------------------+-----------+
 
 B312: telnetlib
@@ -219,7 +222,7 @@ SSH or some other encrypted protocol.
 | B312 | telnetlib           | - telnetlib.\*                     | High      |
 +------+---------------------+------------------------------------+-----------+
 
-B313 - B320: XML
+B313 - B319: XML
 ----------------
 
 Most of this is based off of Christian Heimes' work on defusedxml:
@@ -256,6 +259,15 @@ to XML attacks. Methods should be replaced with their defusedxml equivalents.
 | B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
 |      |                     | - xml.dom.pulldom.parseString      |           |
 +------+---------------------+------------------------------------+-----------+
+
+B320: xml_bad_etree
+-------------------
+
+The check for this call has been removed.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
 | B320 | xml_bad_etree       | - lxml.etree.parse                 | Medium    |
 |      |                     | - lxml.etree.fromstring            |           |
 |      |                     | - lxml.etree.RestrictedElement     |           |
@@ -506,6 +518,9 @@ def gen_blacklist():
                 "random.uniform",
                 "random.triangular",
                 "random.randbytes",
+                "random.sample",
+                "random.randrange",
+                "random.getrandbits",
             ],
             "Standard pseudo-random generators are not suitable for "
             "security/cryptographic purposes.",
@@ -615,26 +630,7 @@ def gen_blacklist():
         )
     )
 
-    sets.append(
-        utils.build_conf_dict(
-            "xml_bad_etree",
-            "B320",
-            issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            [
-                "lxml.etree.parse",
-                "lxml.etree.fromstring",
-                "lxml.etree.RestrictedElement",
-                "lxml.etree.GlobalParserTLS",
-                "lxml.etree.getDefaultParser",
-                "lxml.etree.check_docinfo",
-            ],
-            (
-                "Using {name} to parse untrusted XML data is known to be "
-                "vulnerable to XML attacks. Replace {name} with its "
-                "defusedxml equivalent function."
-            ),
-        )
-    )
+    # skipped B320 as the check for a call to lxml.etree has been removed
 
     # end of XML tests
 
