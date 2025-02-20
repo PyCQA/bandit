@@ -96,6 +96,12 @@ as AES.
 |      |                     |   .ciphers.algorithms.Blowfish     |           |
 |      |                     | - cryptography.hazmat.primitives   |           |
 |      |                     |   .ciphers.algorithms.IDEA         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.CAST5        |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.SEED         |           |
+|      |                     | - cryptography.hazmat.primitives   |           |
+|      |                     |   .ciphers.algorithms.TripleDES    |           |
 +------+---------------------+------------------------------------+-----------+
 | B305 | cipher_modes        | - cryptography.hazmat.primitives   | Medium    |
 |      |                     |   .ciphers.modes.ECB               |           |
@@ -199,6 +205,9 @@ https://docs.python.org/library/secrets.html
 |      |                     | - random.uniform                   |           |
 |      |                     | - random.triangular                |           |
 |      |                     | - random.randbytes                 |           |
+|      |                     | - random.randrange                 |           |
+|      |                     | - random.sample                    |           |
+|      |                     | - random.getrandbits               |           |
 +------+---------------------+------------------------------------+-----------+
 
 B312: telnetlib
@@ -213,7 +222,7 @@ SSH or some other encrypted protocol.
 | B312 | telnetlib           | - telnetlib.\*                     | High      |
 +------+---------------------+------------------------------------+-----------+
 
-B313 - B320: XML
+B313 - B319: XML
 ----------------
 
 Most of this is based off of Christian Heimes' work on defusedxml:
@@ -250,6 +259,15 @@ to XML attacks. Methods should be replaced with their defusedxml equivalents.
 | B319 | xml_bad_pulldom     | - xml.dom.pulldom.parse            | Medium    |
 |      |                     | - xml.dom.pulldom.parseString      |           |
 +------+---------------------+------------------------------------+-----------+
+
+B320: xml_bad_etree
+-------------------
+
+The check for this call has been removed.
+
++------+---------------------+------------------------------------+-----------+
+| ID   |  Name               |  Calls                             |  Severity |
++======+=====================+====================================+===========+
 | B320 | xml_bad_etree       | - lxml.etree.parse                 | Medium    |
 |      |                     | - lxml.etree.fromstring            |           |
 |      |                     | - lxml.etree.RestrictedElement     |           |
@@ -321,8 +339,6 @@ For further information:
 +------+---------------------+------------------------------------+-----------+
 
 """
-import sys
-
 from bandit.blacklists import utils
 from bandit.core import issue
 
@@ -373,52 +389,26 @@ def gen_blacklist():
         )
     )
 
-    if sys.version_info >= (3, 9):
-        sets.append(
-            utils.build_conf_dict(
-                "md5",
-                "B303",
-                issue.Cwe.BROKEN_CRYPTO,
-                [
-                    "Crypto.Hash.MD2.new",
-                    "Crypto.Hash.MD4.new",
-                    "Crypto.Hash.MD5.new",
-                    "Crypto.Hash.SHA.new",
-                    "Cryptodome.Hash.MD2.new",
-                    "Cryptodome.Hash.MD4.new",
-                    "Cryptodome.Hash.MD5.new",
-                    "Cryptodome.Hash.SHA.new",
-                    "cryptography.hazmat.primitives.hashes.MD5",
-                    "cryptography.hazmat.primitives.hashes.SHA1",
-                ],
-                "Use of insecure MD2, MD4, MD5, or SHA1 hash function.",
-            )
+    sets.append(
+        utils.build_conf_dict(
+            "md5",
+            "B303",
+            issue.Cwe.BROKEN_CRYPTO,
+            [
+                "Crypto.Hash.MD2.new",
+                "Crypto.Hash.MD4.new",
+                "Crypto.Hash.MD5.new",
+                "Crypto.Hash.SHA.new",
+                "Cryptodome.Hash.MD2.new",
+                "Cryptodome.Hash.MD4.new",
+                "Cryptodome.Hash.MD5.new",
+                "Cryptodome.Hash.SHA.new",
+                "cryptography.hazmat.primitives.hashes.MD5",
+                "cryptography.hazmat.primitives.hashes.SHA1",
+            ],
+            "Use of insecure MD2, MD4, MD5, or SHA1 hash function.",
         )
-    else:
-        sets.append(
-            utils.build_conf_dict(
-                "md5",
-                "B303",
-                issue.Cwe.BROKEN_CRYPTO,
-                [
-                    "hashlib.md4",
-                    "hashlib.md5",
-                    "hashlib.sha",
-                    "hashlib.sha1",
-                    "Crypto.Hash.MD2.new",
-                    "Crypto.Hash.MD4.new",
-                    "Crypto.Hash.MD5.new",
-                    "Crypto.Hash.SHA.new",
-                    "Cryptodome.Hash.MD2.new",
-                    "Cryptodome.Hash.MD4.new",
-                    "Cryptodome.Hash.MD5.new",
-                    "Cryptodome.Hash.SHA.new",
-                    "cryptography.hazmat.primitives.hashes.MD5",
-                    "cryptography.hazmat.primitives.hashes.SHA1",
-                ],
-                "Use of insecure MD2, MD4, MD5, or SHA1 hash function.",
-            )
-        )
+    )
 
     sets.append(
         utils.build_conf_dict(
@@ -438,7 +428,10 @@ def gen_blacklist():
                 "Cryptodome.Cipher.XOR.new",
                 "cryptography.hazmat.primitives.ciphers.algorithms.ARC4",
                 "cryptography.hazmat.primitives.ciphers.algorithms.Blowfish",
+                "cryptography.hazmat.primitives.ciphers.algorithms.CAST5",
                 "cryptography.hazmat.primitives.ciphers.algorithms.IDEA",
+                "cryptography.hazmat.primitives.ciphers.algorithms.SEED",
+                "cryptography.hazmat.primitives.ciphers.algorithms.TripleDES",
             ],
             "Use of insecure cipher {name}. Replace with a known secure"
             " cipher such as AES.",
@@ -525,6 +518,9 @@ def gen_blacklist():
                 "random.uniform",
                 "random.triangular",
                 "random.randbytes",
+                "random.sample",
+                "random.randrange",
+                "random.getrandbits",
             ],
             "Standard pseudo-random generators are not suitable for "
             "security/cryptographic purposes.",
@@ -634,26 +630,7 @@ def gen_blacklist():
         )
     )
 
-    sets.append(
-        utils.build_conf_dict(
-            "xml_bad_etree",
-            "B320",
-            issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            [
-                "lxml.etree.parse",
-                "lxml.etree.fromstring",
-                "lxml.etree.RestrictedElement",
-                "lxml.etree.GlobalParserTLS",
-                "lxml.etree.getDefaultParser",
-                "lxml.etree.check_docinfo",
-            ],
-            (
-                "Using {name} to parse untrusted XML data is known to be "
-                "vulnerable to XML attacks. Replace {name} with its "
-                "defusedxml equivalent function."
-            ),
-        )
-    )
+    # skipped B320 as the check for a call to lxml.etree has been removed
 
     # end of XML tests
 

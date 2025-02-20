@@ -318,3 +318,7 @@ class Context:
     @property
     def file_data(self):
         return self._context.get("file_data")
+
+    @property
+    def import_aliases(self):
+        return self._context.get("import_aliases")

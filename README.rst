@@ -127,7 +127,12 @@ The development of Bandit is made possible by the following sponsors:
    :width: 100%
    :class: borderless
 
-   * - .. image:: https://github.githubassets.com/assets/tidelift-8cea37dea8fc.svg
+   * - .. image:: https://avatars.githubusercontent.com/u/34240465?s=200&v=4
+          :target: https://opensource.mercedes-benz.com/
+          :alt: Mercedes-Benz
+          :width: 88
+
+     - .. image:: https://github.githubassets.com/assets/tidelift-8cea37dea8fc.svg
           :target: https://tidelift.com/lifter/search/pypi/bandit
           :alt: Tidelift
           :width: 88
@@ -135,11 +140,6 @@ The development of Bandit is made possible by the following sponsors:
      - .. image:: https://avatars.githubusercontent.com/u/110237746?s=200&v=4
           :target: https://stacklok.com/
           :alt: Stacklok
-          :width: 88
-
-     - .. image:: https://avatars.githubusercontent.com/u/1396951?s=70&v=4
-          :target: https://sentry.io/
-          :alt: Sentry
           :width: 88
 
 If you also ❤️ Bandit, please consider sponsoring.

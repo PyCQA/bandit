@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import os
-import sys
+from contextlib import contextmanager
 
 import testtools
 
@@ -33,6 +33,18 @@ class FunctionalTests(testtools.TestCase):
         self.b_mgr = b_manager.BanditManager(b_conf, "file")
         self.b_mgr.b_conf._settings["plugins_dir"] = path
         self.b_mgr.b_ts = b_test_set.BanditTestSet(config=b_conf)
+
+    @contextmanager
+    def with_test_set(self, ts):
+        """A helper context manager to change the test set without
+        side-effects for any follow-up tests.
+        """
+        orig_ts = self.b_mgr.b_ts
+        self.b_mgr.b_ts = ts
+        try:
+            yield
+        finally:
+            self.b_mgr.b_ts = orig_ts
 
     def run_example(self, example_script, ignore_nosec=False):
         """A helper method to run the specified test
@@ -107,43 +119,17 @@ class FunctionalTests(testtools.TestCase):
 
     def test_crypto_md5(self):
         """Test the `hashlib.md5` example."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 16,
-                    "HIGH": 9,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 25,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 22,
-                    "HIGH": 4,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 26,
-                },
-            }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 16, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 25},
+        }
         self.check_example("crypto-md5.py", expect)
 
     def test_ciphers(self):
         """Test the `Crypto.Cipher` example."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 21},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 22},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 24},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 25},
         }
         self.check_example("ciphers.py", expect)
 
@@ -197,26 +183,10 @@ class FunctionalTests(testtools.TestCase):
 
     def test_imports_aliases(self):
         """Test the `import X as Y` syntax."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 1, "HIGH": 4},
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 5, "HIGH": 0},
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 4, "MEDIUM": 1, "HIGH": 4},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+        }
         self.check_example("imports-aliases.py", expect)
 
     def test_imports_from(self):
@@ -395,8 +365,8 @@ class FunctionalTests(testtools.TestCase):
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 9, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 12, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 12},
         }
         self.check_example("random_module.py", expect)
 
@@ -411,8 +381,8 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_without_timeout(self):
         """Test for the `requests` library missing timeouts."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 36, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 36, "MEDIUM": 0, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 25, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 25, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("requests-missing-timeout.py", expect)
 
@@ -569,10 +539,12 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
         }
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
-        )
-        self.check_example("mark_safe_secure.py", expect)
+        with self.with_test_set(
+            b_test_set.BanditTestSet(
+                config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
+            )
+        ):
+            self.check_example("mark_safe_secure.py", expect)
 
     def test_django_xss_insecure(self):
         """Test for Django XSS via django.utils.safestring"""
@@ -580,10 +552,12 @@ class FunctionalTests(testtools.TestCase):
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 29, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 29},
         }
-        self.b_mgr.b_ts = b_test_set.BanditTestSet(
-            config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
-        )
-        self.check_example("mark_safe_insecure.py", expect)
+        with self.with_test_set(
+            b_test_set.BanditTestSet(
+                config=self.b_mgr.b_conf, profile={"exclude": ["B308"]}
+            )
+        ):
+            self.check_example("mark_safe_insecure.py", expect)
 
     def test_xml(self):
         """Test xml vulnerabilities."""
@@ -598,12 +572,6 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         self.check_example("xml_expatbuilder.py", expect)
-
-        expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 3, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
-        }
-        self.check_example("xml_lxml.py", expect)
 
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 2, "MEDIUM": 2, "HIGH": 0},
@@ -855,36 +823,10 @@ class FunctionalTests(testtools.TestCase):
 
     def test_hashlib_new_insecure_functions(self):
         """Test insecure hash functions created by `hashlib.new`."""
-        if sys.version_info >= (3, 9):
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 9,
-                },
-            }
-        else:
-            expect = {
-                "SEVERITY": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 10,
-                    "HIGH": 0,
-                },
-                "CONFIDENCE": {
-                    "UNDEFINED": 0,
-                    "LOW": 0,
-                    "MEDIUM": 0,
-                    "HIGH": 10,
-                },
-            }
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+        }
         self.check_example("hashlib_new_insecure_functions.py", expect)
 
     def test_blacklist_pycrypto(self):
@@ -930,6 +872,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("tarfile_extractall.py", expect)
 
+    def test_pytorch_load(self):
+        """Test insecure usage of torch.load."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+        }
+        self.check_example("pytorch_load.py", expect)
+
     def test_trojansource(self):
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
@@ -943,3 +893,36 @@ class FunctionalTests(testtools.TestCase):
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("trojansource_latin1.py", expect)
+
+    def test_markupsafe_markup_xss(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+        }
+        self.check_example("markupsafe_markup_xss.py", expect)
+
+    def test_markupsafe_markup_xss_extend_markup_names(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+        }
+        b_conf = b_config.BanditConfig()
+        b_conf.config["markupsafe_xss"] = {
+            "extend_markup_names": ["webhelpers.html.literal"]
+        }
+        with self.with_test_set(b_test_set.BanditTestSet(config=b_conf)):
+            self.check_example(
+                "markupsafe_markup_xss_extend_markup_names.py", expect
+            )
+
+    def test_markupsafe_markup_xss_allowed_calls(self):
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+        }
+        b_conf = b_config.BanditConfig()
+        b_conf.config["markupsafe_xss"] = {"allowed_calls": ["bleach.clean"]}
+        with self.with_test_set(b_test_set.BanditTestSet(config=b_conf)):
+            self.check_example(
+                "markupsafe_markup_xss_allowed_calls.py", expect
+            )
