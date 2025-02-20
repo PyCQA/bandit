@@ -365,8 +365,8 @@ class FunctionalTests(testtools.TestCase):
     def test_random_module(self):
         """Test for the `random` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 9, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 9},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 12, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 12},
         }
         self.check_example("random_module.py", expect)
 
@@ -872,13 +872,13 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("tarfile_extractall.py", expect)
 
-    def test_pytorch_load_save(self):
-        """Test insecure usage of torch.load and torch.save."""
+    def test_pytorch_load(self):
+        """Test insecure usage of torch.load."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
-        self.check_example("pytorch_load_save.py", expect)
+        self.check_example("pytorch_load.py", expect)
 
     def test_trojansource(self):
         expect = {
