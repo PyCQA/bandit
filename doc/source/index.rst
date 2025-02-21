@@ -17,6 +17,7 @@ Using and Extending Bandit
    blacklists/index
    formatters/index
    faq
+   ci-cd/index
 
 Contributing
 ============
