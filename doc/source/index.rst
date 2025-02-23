@@ -16,8 +16,8 @@ Using and Extending Bandit
    plugins/index
    blacklists/index
    formatters/index
-   faq
    ci-cd/index
+   faq
 
 Contributing
 ============

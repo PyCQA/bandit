@@ -1,7 +1,11 @@
 GitHub Actions Workflow for Bandit
 ==================================
 
-This document provides a minimal complete example workflow for setting up a Code Scanning action using Bandit through GitHub Actions. It leverages PyCQA's `bandit-action <https://github.com/PyCQA/bandit-action>`_ for seamless integration.
+This document provides a minimal complete example workflow for 
+setting up a Code Scanning action using Bandit through GitHub 
+Actions. It leverages PyCQA's `bandit-action  
+<https://github.com/PyCQA/bandit-action>`_ for seamless 
+integration.  
 
 Example YAML Code for GitHub Actions Pipeline
 ---------------------------------------------
@@ -31,7 +35,8 @@ Below is an example configuration for the GitHub Actions pipeline:
 Inputs
 ======
 
-Below is a list of available inputs for the `bandit-action` and their descriptions:
+Below is a list of available inputs for the `bandit-action` and 
+their descriptions:  
 
 .. list-table::
    :header-rows: 1
