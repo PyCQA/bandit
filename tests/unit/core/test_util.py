@@ -263,7 +263,7 @@ class UtilTests(testtools.TestCase):
     def test_linerange(self):
         with open("./examples/jinja2_templating.py") as test_file:
             tree = ast.parse(test_file.read())
-        # Check linerange returns corrent number of lines
+        # Check linerange returns current number of lines
         line = tree.body[8]
         lrange = b_utils.linerange(line)
 
