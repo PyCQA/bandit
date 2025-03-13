@@ -31,7 +31,7 @@ class UtilTests(testtools.TestCase):
 
         Create temporary directory and then create fake .py files
         within directory structure.  We setup test cases for
-        a typical module, a path misssing a middle __init__.py,
+        a typical module, a path missing a middle __init__.py,
         no __init__.py anywhere in path, symlinking .py files.
         """
 

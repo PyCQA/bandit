@@ -38,7 +38,7 @@ class YamlFormatterTests(testtools.TestCase):
 
         self.candidates = [
             issue.Issue(bandit.LOW, 123, bandit.LOW, "Candidate A", lineno=1),
-            issue.Issue(bandit.HIGH, 123, bandit.HIGH, "Candiate B", lineno=2),
+            issue.Issue(bandit.HIGH, 123, bandit.HIGH, "Candidate B", lineno=2),
         ]
 
         self.manager.out_file = self.tmp_fname
