@@ -65,7 +65,8 @@ class BanditTester:
 
                     if result.lineno is None:
                         result.lineno = temp_context["lineno"]
-                    result.linerange = temp_context["linerange"]
+                    if result.linerange == []:
+                        result.linerange = temp_context["linerange"]
                     if result.col_offset == -1:
                         result.col_offset = temp_context["col_offset"]
                     result.end_col_offset = temp_context.get(
