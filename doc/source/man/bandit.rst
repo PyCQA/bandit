@@ -42,8 +42,18 @@ OPTIONS
                         comma-separated list of test IDs to skip
   -l, --level           report only issues of a given severity level or higher
                         (-l for LOW, -ll for MEDIUM, -lll for HIGH)
+  -l, --severity-level=LEVEL
+                        report only issues of a given severity level or higher.
+                        "all" and "low" are likely to produce the same results, but it
+                        is possible for rules to be undefined which will not be listed in "low".
+                        (allowed values of LEVEL are all, high, medium, low)
   -i, --confidence      report only issues of a given confidence level or
                         higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
+  -l, --confidence-level=LEVEL
+                        report only issues of a given confidence level or higher.
+                        "all" and "low" are likely to produce the same results, but it
+                        is possible for rules to be undefined which will not be listed in "low".
+                        (allowed values of LEVEL are all, high, medium, low)
   -f {csv,custom,html,json,sarif,screen,txt,xml,yaml}, --format {csv,custom,html,json,sarif,screen,txt,xml,yaml}
                         specify output format
   --msg-template MSG_TEMPLATE
