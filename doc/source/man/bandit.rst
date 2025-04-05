@@ -144,7 +144,7 @@ Example usage across a code tree::
 Example usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues::
 
-    bandit examples/*.py -n 3 -lll
+    bandit examples/*.py -n 3 --severity-level=high
 
 Bandit can be run with profiles.  To run Bandit against the examples directory
 using only the plugins listed in the ShellInjection profile::
