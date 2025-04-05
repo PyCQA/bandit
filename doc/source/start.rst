@@ -78,7 +78,7 @@ context and only reporting on the high-severity issues:
 
 .. code-block:: console
 
-    bandit examples/*.py -n 3 -lll
+    bandit examples/*.py -n 3 --severity-level=high
 
 Bandit can be run with profiles. To run Bandit against the examples directory
 using only the plugins listed in the ``ShellInjection`` profile:
