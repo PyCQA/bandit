@@ -73,12 +73,16 @@ Example usage across a code tree:
 
     bandit -r ~/your_repos/project
 
-Example usage across the ``examples/`` directory, showing three lines of
+Two examples of usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues:
 
 .. code-block:: console
 
     bandit examples/*.py -n 3 --severity-level=high
+
+.. code-block:: console
+
+    bandit examples/*.py -n 3 -lll
 
 Bandit can be run with profiles. To run Bandit against the examples directory
 using only the plugins listed in the ``ShellInjection`` profile:
