@@ -24,8 +24,8 @@ to reorder source code characters in a way that changes its logic.
 
 .. seealso::
 
- .. https://trojansource.codes/
- .. https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-42574
+ - https://trojansource.codes/
+ - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-42574
 
 .. versionadded:: 1.7.10
 
