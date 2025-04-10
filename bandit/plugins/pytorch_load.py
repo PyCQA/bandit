@@ -9,6 +9,7 @@ B614: Test for unsafe PyTorch load
 This plugin checks for unsafe use of `torch.load`. Using `torch.load` with
 untrusted data can lead to arbitrary code execution. There are two safe
 alternatives:
+
 1. Use `torch.load` with `weights_only=True` where only tensor data is
    extracted, and no arbitrary Python objects are deserialized
 2. Use the `safetensors` library from huggingface, which provides a safe
