@@ -18,6 +18,7 @@ Using and Extending Bandit
    blacklists/index
    formatters/index
    faq
+   playground
 
 Contributing
 ============
