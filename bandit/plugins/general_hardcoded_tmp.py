@@ -14,7 +14,6 @@ starting with (configurable) commonly used temporary paths, for example:
  - /tmp
  - /var/tmp
  - /dev/shm
- - etc
 
 **Config Options:**
 
