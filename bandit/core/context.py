@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 import ast
+import linecache
 
 from bandit.core import utils
 
@@ -310,6 +311,48 @@ class Context:
                 if module in imp:
                     return True
         return False
+
+    def get_outer_text(self):
+        """Get the text to the left and right of the node in context.
+
+        Gets the text to the left and text to the right of the node in
+        context. This function depends on knowing the line range, col_offset,
+        and end_col_offset.
+
+        :return: outer text as tuple
+        """
+        lineno = self._context.get("linerange")[0]
+        end_lineno = self._context.get("linerange")[-1]
+        col_offset = self._context.get("col_offset")
+        end_col_offset = self._context.get("end_col_offset")
+
+        if self._context.get("filename") == "<stdin>":
+            self._context.get("file_data").seek(0)
+            for line_num in range(1, lineno):
+                self._context.get("file_data").readline()
+            line = self._context.get("file_data").readline()
+            end_line = line
+            if end_lineno > lineno:
+                for line_num in range(1, end_lineno):
+                    self._context.get("file_data").readline()
+                end_line = self._context.get("file_data").readline()
+        else:
+            line = linecache.getline(self._context.get("filename"), lineno)
+            end_line = linecache.getline(
+                self._context.get("filename"), end_lineno
+            )
+
+        return (line[:col_offset], end_line[end_col_offset:])
+
+    def unparse(self, transformer):
+        """Unparse an ast node using given transformer
+
+        :param transformer: NodeTransformer that fixes the ast
+        :return: node as statement string
+        """
+        fixed_node = ast.fix_missing_locations(transformer)
+        outer_text = self.get_outer_text()
+        return outer_text[0] + ast.unparse(fixed_node) + outer_text[1]
 
     @property
     def filename(self):
