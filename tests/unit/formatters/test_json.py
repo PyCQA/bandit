@@ -48,7 +48,7 @@ class JsonFormatterTests(testtools.TestCase):
                 bandit.HIGH,
                 issue.Cwe.MULTIPLE_BINDS,
                 bandit.HIGH,
-                "Candiate B",
+                "Candidate B",
                 lineno=2,
             ),
         ]
