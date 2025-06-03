@@ -347,7 +347,10 @@ def parse_ini_file(f_loc):
     config = configparser.ConfigParser()
     try:
         config.read(f_loc)
-        return {k: v for k, v in config.items("bandit")}
+        d = {k: v for k, v in config.items("bandit")}
+        for k in ("skips", "tests"):
+            d[k] = d[k].split(",") if k in d else []
+        return d
 
     except (configparser.Error, KeyError, TypeError):
         LOG.warning(
