@@ -31,7 +31,7 @@ class UtilTests(testtools.TestCase):
 
         Create temporary directory and then create fake .py files
         within directory structure.  We setup test cases for
-        a typical module, a path misssing a middle __init__.py,
+        a typical module, a path missing a middle __init__.py,
         no __init__.py anywhere in path, symlinking .py files.
         """
 
@@ -263,7 +263,7 @@ class UtilTests(testtools.TestCase):
     def test_linerange(self):
         with open("./examples/jinja2_templating.py") as test_file:
             tree = ast.parse(test_file.read())
-        # Check linerange returns corrent number of lines
+        # Check linerange returns current number of lines
         line = tree.body[8]
         lrange = b_utils.linerange(line)
 
