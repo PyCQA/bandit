@@ -56,7 +56,7 @@ git clone https://github.com/<your username>/bandit.git
 
 Create you own branch to start writing code:
 ```shell script
-git checkout -b mybranch
+git switch -c mybranch
 <create local changes>
 git add <changed files>
 git commit -S
