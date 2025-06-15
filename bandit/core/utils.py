@@ -6,6 +6,7 @@ import ast
 import logging
 import os.path
 import sys
+from argparse import ArgumentError
 
 try:
     import configparser
@@ -356,6 +357,102 @@ def parse_ini_file(f_loc):
         )
 
     return None
+
+
+def value_option(key, value):
+    if not value:
+        return []
+    return [f"--{key}", value]
+
+
+def multi_option(key, value):
+    if not value.isdigit():
+        LOG.warning(f"INI config '{key}' is not a number: using default")
+        value = 0
+    return [f"--{key}"] * (int(value) - 1)
+
+
+def flag_option(key, value):
+    try:
+        opt = {"false": False, "true": True}[value.lower()]
+    except KeyError:
+        LOG.warning(f"INI config '{key}' not 'True/False': using default")
+        opt = False
+    return [f"--{key}"] if opt else []
+
+
+INI_KEY_TO_ARGS = {
+    "targets": lambda k, v: v.split(","),
+    "recursive": flag_option,
+    "aggregate": value_option,
+    "number": value_option,
+    "profile": value_option,
+    "tests": value_option,
+    "skips": lambda k, v: value_option("skip", v),
+    "level": multi_option,
+    "confidence": multi_option,
+    "format": value_option,
+    "msg-template": value_option,
+    "output": value_option,
+    "verbose": flag_option,
+    "debug": flag_option,
+    "quiet": flag_option,
+    "ignore-nosec": flag_option,
+    "exclude": value_option,
+    "baseline": value_option,
+}
+INI_KEY_RENAME = {
+    "aggregate": "agg_type",
+    "number": "context_lines",
+    "level": "severity",
+    "format": "output_format",
+    "msg-template": "msg_template",
+    "output": "output_file",
+    "ignore-nosec": "ignore_nosec",
+    "exclude": "excluded_paths",
+}
+ARGPARSE_KEY_RENAME = {v: k for k, v in INI_KEY_RENAME.items()}
+
+
+def validate_ini_options(ini_config, parser):
+    """Validate the ini config dict by reusing the argparse ArgumentParser"""
+    if ini_config is None:
+        return None
+
+    invalid_keys = set(ini_config) - set(INI_KEY_TO_ARGS)
+    # gracefully continue
+    for key in invalid_keys:
+        LOG.warning(
+            "INI config file contains invalid key %s in section [bandit]",
+            repr(key),
+        )
+        ini_config.pop(key)
+
+    ini_args = []
+    for key, value in ini_config.items():
+        key_args = INI_KEY_TO_ARGS[key](key, value)
+        ini_args.extend(key_args)
+
+    # nicer output on 3.9
+    if sys.version_info >= (3, 9):
+        parser.exit_on_error = False
+
+    try:
+        args = parser.parse_args(ini_args)
+    except SystemExit:
+        # python < 3.9 will have to catch SystemExit here.
+        LOG.error("INI config: parsing failed")
+        raise
+    except ArgumentError as err:
+        action, msg = err.args
+        ini_name = ARGPARSE_KEY_RENAME.get(action.dest, action.dest)
+        LOG.error(f"INI config '{ini_name}': {msg}")
+        sys.exit(2)
+
+    for key in ini_config:
+        ini_config[key] = getattr(args, INI_KEY_RENAME.get(key, key))
+
+    return ini_config
 
 
 def check_ast_node(name):
