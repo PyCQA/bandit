@@ -371,8 +371,8 @@ def check_ast_node(name):
 
 
 def get_nosec(nosec_lines, context):
-    for lineno in context["linerange"]:
-        nosec = nosec_lines.get(lineno, None)
+    for lineno in [context["lineno"], *context["linerange"]]:
+        nosec = nosec_lines.get(lineno)
         if nosec is not None:
             return nosec
     return None
