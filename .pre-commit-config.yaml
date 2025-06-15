@@ -8,7 +8,7 @@ repos:
   - id: end-of-file-fixer
   - id: trailing-whitespace
 - repo: https://github.com/asottile/reorder-python-imports
-  rev: v3.14.0
+  rev: v3.15.0
   hooks:
   - id: reorder-python-imports
     args: [--application-directories, '.:src', --py38-plus]
@@ -18,7 +18,7 @@ repos:
   - id: black
     args: [--line-length=79, --target-version=py38]
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.19.1
+  rev: v3.20.0
   hooks:
   - id: pyupgrade
     args: [--py38-plus]

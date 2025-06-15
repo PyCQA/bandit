@@ -24,8 +24,8 @@ to reorder source code characters in a way that changes its logic.
 
 .. seealso::
 
- .. [1] https://trojansource.codes/
- .. [2] https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-42574
+ - https://trojansource.codes/
+ - https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-42574
 
 .. versionadded:: 1.7.10
 
@@ -67,7 +67,7 @@ def trojansource(context):
                     "A Python source file contains bidirectional"
                     " control characters (%r)." % char
                 )
-                return bandit.Issue(
+                b_issue = bandit.Issue(
                     severity=bandit.HIGH,
                     confidence=bandit.MEDIUM,
                     cwe=issue.Cwe.INAPPROPRIATE_ENCODING_FOR_OUTPUT_CONTEXT,
@@ -75,3 +75,5 @@ def trojansource(context):
                     lineno=lineno,
                     col_offset=col_offset,
                 )
+                b_issue.linerange = [lineno]
+                return b_issue

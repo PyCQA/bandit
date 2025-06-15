@@ -12,6 +12,7 @@ Create a virtual environment and activate it using `virtualenv` (optional):
 
     virtualenv bandit-env
     source bandit-env/bin/activate
+
 Alternatively, use `venv` instead of `virtualenv` (optional):
 
 .. code-block:: console
@@ -73,8 +74,12 @@ Example usage across a code tree:
 
     bandit -r ~/your_repos/project
 
-Example usage across the ``examples/`` directory, showing three lines of
+Two examples of usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues:
+
+.. code-block:: console
+
+    bandit examples/*.py -n 3 --severity-level=high
 
 .. code-block:: console
 
