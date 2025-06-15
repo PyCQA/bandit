@@ -65,6 +65,8 @@ def request_with_no_cert_validation(context):
         and context.call_function_name in HTTPX_ATTRS
     ):
         if context.check_call_arg_value("verify", "False"):
+            context.node.keywords[0].value.value = True
+
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
@@ -72,4 +74,5 @@ def request_with_no_cert_validation(context):
                 text=f"Call to {qualname} with verify=False disabling SSL "
                 "certificate checks, security issue.",
                 lineno=context.get_lineno_for_call_arg("verify"),
+                fix=context.unparse(context.node),
             )
