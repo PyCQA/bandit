@@ -19,7 +19,7 @@ jobs:
         python-version: 3.9
 
     - name: Install dependencies
-      run: pip install wheel
+      run: pip install tox wheel
 
     - name: Build man page if not present
       run: |
