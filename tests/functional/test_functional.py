@@ -928,7 +928,6 @@ class FunctionalTests(testtools.TestCase):
             )
 
     def test_huggingface_unsafe_download(self):
-        """Test for unsafe Hugging Face Hub downloads without revision pinning."""
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 5, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 5},
