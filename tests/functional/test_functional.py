@@ -926,3 +926,11 @@ class FunctionalTests(testtools.TestCase):
             self.check_example(
                 "markupsafe_markup_xss_allowed_calls.py", expect
             )
+
+    def test_huggingface_unsafe_download(self):
+        """Test for unsafe Hugging Face Hub downloads without revision pinning."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 5, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 5},
+        }
+        self.check_example("huggingface_unsafe_download.py", expect)
