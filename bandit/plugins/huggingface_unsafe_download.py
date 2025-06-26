@@ -28,8 +28,14 @@ Common unsafe patterns:
 - ``AutoTokenizer.from_pretrained("org/model-name", revision="main")``
 - ``AutoTokenizer.from_pretrained("org/model-name", revision="v3.3.0")``
 - ``hf_hub_download(repo_id="org/model_name", filename="file_name")``
-- ``hf_hub_download(repo_id="org/model_name", filename="file_name", revision="main")``
-- ``hf_hub_download(repo_id="org/model_name", filename="file_name", revision="v2.0.0")``
+- ``hf_hub_download(repo_id="org/model_name", 
+        filename="file_name", 
+        revision="main"
+        )``
+- ``hf_hub_download(repo_id="org/model_name",
+        filename="file_name",
+        revision="v2.0.0"
+    )``
 - ``snapshot_download(repo_id="org/model_name")``
 - ``snapshot_download(repo_id="org/model_name", revision="main")``
 - ``snapshot_download(repo_id="org/model_name", revision="refs/pr/1")``
