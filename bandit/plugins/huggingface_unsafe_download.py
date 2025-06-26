@@ -18,10 +18,22 @@ The secure approach is to:
 1. Pin to specific revisions/commits when downloading models, files or datasets
 
 Common unsafe patterns:
-- ``AutoModel.from_pretrained("model-name")`` without revision
-- ``load_dataset("dataset-name")`` without revision
-- ``hf_hub_download()`` without revision parameter
-- ``snapshot_download()`` without revision parameter
+- ``AutoModel.from_pretrained("org/model-name")``
+- ``AutoModel.from_pretrained("org/model-name", revision="main")``
+- ``AutoModel.from_pretrained("org/model-name", revision="v1.0.0")``
+- ``load_dataset("org/dataset-name")`` without revision
+- ``load_dataset("org/dataset-name", revision="main")``
+- ``load_dataset("org/dataset-name", revision="v1.0")``
+- ``AutoTokenizer.from_pretrained("org/model-name")``
+- ``AutoTokenizer.from_pretrained("org/model-name", revision="main")``
+- ``AutoTokenizer.from_pretrained("org/model-name", revision="v3.3.0")``
+- ``hf_hub_download(repo_id="org/model_name", filename="file_name")``
+- ``hf_hub_download(repo_id="org/model_name", filename="file_name", revision="main")``
+- ``hf_hub_download(repo_id="org/model_name", filename="file_name", revision="v2.0.0")``
+- ``snapshot_download(repo_id="org/model_name")``
+- ``snapshot_download(repo_id="org/model_name", revision="main")``
+- ``snapshot_download(repo_id="org/model_name", revision="refs/pr/1")``
+
 
 :Example:
 
@@ -39,7 +51,6 @@ Common unsafe patterns:
 
      - https://cwe.mitre.org/data/definitions/494.html
      - https://huggingface.co/docs/huggingface_hub/en/guides/download#from-specific-version
-     - https://huggingface.co/docs/huggingface_hub/guides/download
 
 .. versionadded:: 1.9.0
 
@@ -99,7 +110,7 @@ def huggingface_unsafe_download(context):
     # Check for revision parameter (the key security control)
     revision_value = context.get_call_arg_value("revision")
     commit_id_value = context.get_call_arg_value("commit_id")
-    
+
     # Check if a revision or commit_id is specified
     revision_to_check = revision_value or commit_id_value
 
