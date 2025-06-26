@@ -64,7 +64,7 @@ from bandit.core import test_properties as test
 @test.test_id("B615")
 def huggingface_unsafe_download(context):
     """
-    This plugin checks for unsafe artifact download from Hugging Face Hub 
+    This plugin checks for unsafe artifact download from Hugging Face Hub
     without immutable/reproducible revision pinning.
     """
     # Check if any HuggingFace-related modules are imported
@@ -119,11 +119,11 @@ def huggingface_unsafe_download(context):
         # Commit hashes: 40 chars (full SHA) or 7+ chars (short SHA)
         if isinstance(revision_to_check, str):
             # Remove quotes if present
-            revision_str = str(revision_to_check).strip('"\'')
+            revision_str = str(revision_to_check).strip("\"'")
 
             # Check if it looks like a commit hash (hexadecimal string)
             # Must be at least 7 characters and all hexadecimal
-            hex_chars = '0123456789abcdefABCDEF'
+            hex_chars = "0123456789abcdefABCDEF"
             is_hex = all(c in hex_chars for c in revision_str)
             if len(revision_str) >= 7 and is_hex:
                 # This looks like a commit hash, which is secure
