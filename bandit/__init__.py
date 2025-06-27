@@ -20,5 +20,5 @@ __author__ = metadata.metadata("bandit")["Author"]
 __version__ = metadata.version("bandit")
 # __version__ = metadata.version(__package__)
 # running bandit inside pre-commit we do not get a version here, workaround:
-if __version__ == '0.0.0':
-    __version__ = 'latest'
+if __version__ == "0.0.0":
+    __version__ = "latest"
