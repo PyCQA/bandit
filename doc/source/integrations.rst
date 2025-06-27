@@ -53,6 +53,8 @@ Packages
      - `bandit <https://packages.ubuntu.com/search?keywords=bandit&searchon=names&section=all>`_
    * - Homebrew
      - `bandit <https://formulae.brew.sh/formula/bandit>`_
+   * - FreeBSD
+     - `py-bandit <https://www.freshports.org/devel/py-bandit/>`_
 
 
 🙌 Contributions Welcome
