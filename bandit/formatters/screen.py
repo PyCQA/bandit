@@ -32,11 +32,10 @@ This formatter outputs the issues as color coded text to screen.
     New field `CWE` added to output
 
 .. versionchanged:: 1.8.5
-    Automatic colours configuration with optional override via 
+    Automatic colours configuration with optional override via
     "BANDIT_LIGHT_BG" environment variable.
 
 """
-
 import datetime
 import logging
 import os
@@ -96,7 +95,12 @@ def term_detect_bg() -> bool | None:
         except Exception:
             pass
     if os.environ.get("BANDIT_LIGHT_BG", "").lower() in (
-        "light", "bright", "white", "1", "true", "yes"
+        "light",
+        "bright",
+        "white",
+        "1",
+        "true",
+        "yes",
     ):
         return True
 
@@ -136,20 +140,28 @@ def term_get_osc() -> bool | None:
             char = sys.stdin.read(1)
             response += char
             # Break on ESC\, BEL or sufficient data
-            if response.endswith('\x1b\\') or response.endswith('\x07') or len(response) > 50:
+            if (
+                response.endswith("\x1b\\")
+                or response.endswith("\x07")
+                or len(response) > 50
+            ):
                 break
             # Bail out if ESC isn't followed by ]
-            if len(response) >= 2 and response.startswith('\x1b') and not response.startswith('\x1b]'):
+            if (
+                len(response) >= 2
+                and response.startswith("\x1b")
+                and not response.startswith("\x1b]")
+            ):
                 return None
 
-        if response.startswith('\x1b]11;rgb:'):
+        if response.startswith("\x1b]11;rgb:"):
             try:
                 rgb_start = response.find("rgb:")
-                rgb_part = response[rgb_start + 4:]
+                rgb_part = response[rgb_start + 4 :]
                 # Find terminator
-                for term in ['\x1b\\', '\x07']:
+                for term in ["\x1b\\", "\x07"]:
                     if term in rgb_part:
-                        rgb_part = rgb_part[:rgb_part.find(term)]
+                        rgb_part = rgb_part[: rgb_part.find(term)]
                         break
 
                 r, g, b = rgb_part.split("/")[:3]
@@ -199,17 +211,17 @@ def term_serve_colourscheme() -> dict[str, str]:
         return {
             "DEFAULT": "\033[0m",
             "HEADER": "\033[1;34m",  # Dark blue
-            "LOW": "\033[1;32m",     # Dark green
+            "LOW": "\033[1;32m",  # Dark green
             "MEDIUM": "\033[1;35m",  # Dark magenta
-            "HIGH": "\033[1;31m",    # Dark red
+            "HIGH": "\033[1;31m",  # Dark red
         }
     else:
         return {
             "DEFAULT": "\033[0m",
             "HEADER": "\033[1;96m",  # Bright cyan
-            "LOW": "\033[1;92m",     # Bright green
+            "LOW": "\033[1;92m",  # Bright green
             "MEDIUM": "\033[1;93m",  # Bright yellow
-            "HIGH": "\033[1;91m",    # Bright red
+            "HIGH": "\033[1;91m",  # Bright red
         }
 
 
