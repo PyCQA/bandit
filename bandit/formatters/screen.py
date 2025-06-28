@@ -157,7 +157,7 @@ def term_get_osc() -> bool | None:
         if response.startswith("\x1b]11;rgb:"):
             try:
                 rgb_start = response.find("rgb:")
-                rgb_part = response[rgb_start + 4:]
+                rgb_part = response[rgb_start + 4 :]
                 # Find terminator
                 for term in ["\x1b\\", "\x07"]:
                     if term in rgb_part:
