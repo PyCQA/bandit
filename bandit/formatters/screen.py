@@ -31,7 +31,7 @@ This formatter outputs the issues as color coded text to screen.
 .. versionchanged:: 1.7.3
     New field `CWE` added to output
 
-.. versionchanged:: 1.8.5
+.. versionchanged:: 1.8.6
     Automatic colours configuration with optional override via
     "BANDIT_LIGHT_BG" environment variable.
 
@@ -45,6 +45,7 @@ import termios
 import time
 import tty
 
+from typing import Union, Dict  # Tests use Python 3.7 (!) and 3.9
 from bandit.core import constants
 from bandit.core import docs_utils
 from bandit.core import test_properties
@@ -67,7 +68,7 @@ if IS_WIN_PLATFORM:
 LOG = logging.getLogger(__name__)
 
 
-def term_detect_bg() -> bool | None:
+def term_detect_bg() -> Union[bool, None]:
     """Detects if terminal is using dark BG.
 
     Returns:
@@ -107,7 +108,7 @@ def term_detect_bg() -> bool | None:
     return None
 
 
-def term_get_osc() -> bool | None:
+def term_get_osc() -> Union[bool, None]:
     """Query terminal BG colour using OSC11.
 
     Returns:
