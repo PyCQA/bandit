@@ -44,8 +44,9 @@ import sys
 import termios
 import time
 import tty
+from typing import Dict
+from typing import Union
 
-from typing import Union, Dict  # Tests use Python 3.7 (!) and 3.9
 from bandit.core import constants
 from bandit.core import docs_utils
 from bandit.core import test_properties
