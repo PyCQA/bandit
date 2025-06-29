@@ -204,7 +204,7 @@ class BanditManager:
         :param recursive: True/False - whether to add all files from dirs
         :return:
         """
-        # We'll mantain a list of files which are added, and ones which have
+        # We'll maintain a list of files which are added, and ones which have
         # been explicitly excluded
         files_list = set()
         excluded_files = set()
