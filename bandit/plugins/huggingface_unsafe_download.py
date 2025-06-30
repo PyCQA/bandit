@@ -56,7 +56,7 @@ Common unsafe patterns:
 .. seealso::
 
      - https://cwe.mitre.org/data/definitions/494.html
-     - https://huggingface.co/docs/huggingface_hub/en/guides/download#from-specific-version
+     - https://huggingface.co/docs/huggingface_hub/en/guides/download
 
 .. versionadded:: 1.9.0
 
