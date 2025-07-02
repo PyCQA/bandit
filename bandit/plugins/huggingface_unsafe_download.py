@@ -1,5 +1,3 @@
-# Copyright (c) 2024 PyCQA
-#
 # SPDX-License-Identifier: Apache-2.0
 r"""
 ================================================
@@ -58,9 +56,11 @@ Common unsafe patterns:
      - https://cwe.mitre.org/data/definitions/494.html
      - https://huggingface.co/docs/huggingface_hub/en/guides/download
 
-.. versionadded:: 1.9.0
+.. versionadded:: 1.8.6
 
 """
+import string
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
@@ -129,8 +129,7 @@ def huggingface_unsafe_download(context):
 
             # Check if it looks like a commit hash (hexadecimal string)
             # Must be at least 7 characters and all hexadecimal
-            hex_chars = "0123456789abcdefABCDEF"
-            is_hex = all(c in hex_chars for c in revision_str)
+            is_hex = all(c in string.hexdigits for c in revision_str)
             if len(revision_str) >= 7 and is_hex:
                 # This looks like a commit hash, which is secure
                 return
@@ -149,6 +148,6 @@ def huggingface_unsafe_download(context):
             f"Unsafe Hugging Face Hub download without revision pinning "
             f"in {func_name}()"
         ),
-        cwe=issue.Cwe.IMPROPER_INPUT_VALIDATION,
+        cwe=issue.Cwe.DOWNLOAD_OF_CODE_WITHOUT_INTEGRITY_CHECK,
         lineno=context.get_lineno_for_call_arg(func_name),
     )
