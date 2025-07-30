@@ -137,7 +137,7 @@ class ContextTests(testtools.TestCase):
         self.assertEqual(expected, new_context._get_literal_value(value))
 
         value = ast.Str("spam")
-        expected = value.s
+        expected = value.value
         self.assertEqual(expected, new_context._get_literal_value(value))
 
         value = ast.List([ast.Str("spam"), ast.Num(42)], ast.Load())
@@ -164,7 +164,7 @@ class ContextTests(testtools.TestCase):
         self.assertEqual(expected, new_context._get_literal_value(value))
 
         value = ast.Bytes(b"spam")
-        expected = value.s
+        expected = value.value
         self.assertEqual(expected, new_context._get_literal_value(value))
 
         self.assertIsNone(new_context._get_literal_value(None))

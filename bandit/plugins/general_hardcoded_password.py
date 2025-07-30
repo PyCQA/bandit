@@ -101,7 +101,7 @@ def hardcoded_password_string(context):
             return _report(assign.value.s)
 
     elif isinstance(node._bandit_parent, ast.Index) and RE_CANDIDATES.search(
-        node.s
+        node.value
     ):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string

@@ -96,7 +96,7 @@ def _evaluate_ast(node):
     elif isinstance(
         node._bandit_parent, ast.Attribute
     ) and node._bandit_parent.attr in ("format", "replace"):
-        statement = node.s
+        statement = node.value
         # Hierarchy for "".format() is Wrapper -> Call -> Attribute -> Str
         wrapper = node._bandit_parent._bandit_parent._bandit_parent
         if node._bandit_parent.attr == "replace":
