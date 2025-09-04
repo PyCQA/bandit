@@ -125,11 +125,11 @@ This formatter outputs the issues in SARIF formatted JSON.
 .. versionadded:: 1.7.8
 
 """  # noqa: E501
+import datetime
 import logging
 import pathlib
 import sys
 import urllib.parse as urlparse
-from datetime import datetime
 
 import sarif_om as om
 from jschema_to_python.to_json import to_json
@@ -168,7 +168,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
                 ),
                 invocations=[
                     om.Invocation(
-                        end_time_utc=datetime.utcnow().strftime(TS_FORMAT),
+                        end_time_utc=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).strftime(TS_FORMAT),
                         execution_successful=True,
                     )
                 ],
