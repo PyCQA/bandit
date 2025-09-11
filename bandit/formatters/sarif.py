@@ -34,7 +34,7 @@ TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
-    """Prints issues in SARIF format
+    """Prints issues in SARIF format.
 
     :param manager: the bandit manager object
     :param fileobj: The output file object, which may be sys.stdout
@@ -149,7 +149,9 @@ def add_results(issues, run):
 
 
 def create_result(issue, rules, rule_indices):
-    """Convert a Bandit Issue into a SARIF Result and ensure its rule is in the rules dict."""
+    """Convert a Bandit Issue into a SARIF Result and ensure its rule
+    is in the rules dict.
+    """
     issue_dict = issue.as_dict()
 
     # Ensure rule exists / get index
@@ -177,11 +179,13 @@ def create_result(issue, rules, rule_indices):
     # Map severity -> SARIF level
     level = level_from_severity(issue_dict["issue_severity"])
 
-    # Properties on the result: echo precision/tags + original path for Windows test
+    # Properties on the result: echo precision/tags +
+    # original path for Windows test
     result_props = {
         "issue_confidence": issue_dict["issue_confidence"],
         "issue_severity": issue_dict["issue_severity"],
-        # Ensure raw path appears in serialized SARIF (used by tests on Windows)
+        # Ensure raw path appears in serialized SARIF
+        # (used by tests on Windows)
         "original_path": filename_raw,
     }
 
@@ -325,7 +329,8 @@ def create_or_find_rule(issue_dict, rules, rule_indices):
     # Precision based on confidence
     precision = _precision_from_confidence(issue_dict.get("issue_confidence"))
 
-    # Tags: always include "security"; include CWE tag only if present and non-zero
+    # Tags: always include "security"; include CWE tag only if present
+    # and non-zero
     tags = ["security"]
     cwe_id = (issue_dict.get("issue_cwe") or {}).get("id")
     if cwe_id:
@@ -358,13 +363,15 @@ def create_or_find_rule(issue_dict, rules, rule_indices):
 
 
 def _make_partial_fingerprint(
-    filename: str, test_id: str, code_line: str
+    filename: str,
+    test_id: str,
+    code_line: str,
 ) -> str:
     """
     Deterministic fingerprint per (file, rule, representative line).
     Helps SARIF consumers dedupe findings across refactors.
     """
-    data = f"{filename}|{test_id}|{code_line}".encode()
+    data = f"{filename}|{test_id}|{code_line}".encode("utf-8", errors="ignore")
     return hashlib.sha256(data).hexdigest()[:64]
 
 
@@ -372,7 +379,7 @@ def to_uri(file_path):
     pure_path = pathlib.PurePath(file_path)
     if pure_path.is_absolute():
         # On absolute paths, return the raw OS path string so tests that
-        # assert the presence of 'C:\...'(Windows) or '/tmp/...' (POSIX)
+        # assert the presence of 'C:\\...'(Windows) or '/tmp/...' (POSIX)
         # inside artifactLocation.uri will succeed.
         return str(pure_path)
     else:
