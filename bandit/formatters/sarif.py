@@ -259,7 +259,9 @@ def add_region_and_context_region(
         end_line=line_range[1] if len(line_range) > 1 else line_range[0],
         # SARIF columns are 1-based; guard against None
         start_column=(col_offset + 1) if col_offset is not None else None,
-        end_column=(end_col_offset + 1) if end_col_offset is not None else None,
+        end_column=(
+            (end_col_offset + 1) if end_col_offset is not None else None
+        ),
         snippet=snippet,
     )
 
@@ -299,7 +301,9 @@ def parse_code(code):
 
         # if a code line is empty after the line number, keep it as empty
         snippet_line = (
-            number_and_snippet_line[1] if len(number_and_snippet_line) > 1 else ""
+            number_and_snippet_line[1]
+            if len(number_and_snippet_line) > 1
+            else ""
         ) + "\n"
         snippet_lines.append(snippet_line)
 
@@ -353,12 +357,14 @@ def create_or_find_rule(issue_dict, rules, rule_indices):
     return rule, index
 
 
-def _make_partial_fingerprint(filename: str, test_id: str, code_line: str) -> str:
+def _make_partial_fingerprint(
+    filename: str, test_id: str, code_line: str
+) -> str:
     """
     Deterministic fingerprint per (file, rule, representative line).
     Helps SARIF consumers dedupe findings across refactors.
     """
-    data = f"{filename}|{test_id}|{code_line}".encode("utf-8", errors="ignore")
+    data = f"{filename}|{test_id}|{code_line}".encode()
     return hashlib.sha256(data).hexdigest()[:64]
 
 
