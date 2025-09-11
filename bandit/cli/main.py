@@ -452,6 +452,7 @@ def main():
 
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
+    ini_options = utils.validate_ini_options(ini_options, parser)
     if ini_options:
         # prefer command line, then ini file
         args.config_file = _log_option_source(
@@ -482,14 +483,10 @@ def main():
             "selected tests",
         )
 
-        ini_targets = ini_options.get("targets")
-        if ini_targets:
-            ini_targets = ini_targets.split(",")
-
         args.targets = _log_option_source(
             parser.get_default("targets"),
             args.targets,
-            ini_targets,
+            ini_options.get("targets"),
             "selected targets",
         )
 
@@ -512,7 +509,7 @@ def main():
         args.context_lines = _log_option_source(
             parser.get_default("context_lines"),
             args.context_lines,
-            int(ini_options.get("number") or 0) or None,
+            ini_options.get("number"),
             "max code lines output for issue",
         )
 
