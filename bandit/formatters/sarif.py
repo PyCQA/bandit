@@ -371,7 +371,7 @@ def _make_partial_fingerprint(
     Deterministic fingerprint per (file, rule, representative line).
     Helps SARIF consumers dedupe findings across refactors.
     """
-    data = f"{filename}|{test_id}|{code_line}".encode("utf-8", errors="ignore")
+    data = f"{filename}|{test_id}|{code_line}".encode()
     return hashlib.sha256(data).hexdigest()[:64]
 
 
