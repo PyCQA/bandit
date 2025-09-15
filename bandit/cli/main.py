@@ -10,19 +10,22 @@ import sys
 import textwrap
 
 from mininterface import run
-from mininterface.tag.flag import Dir, File
-from mininterface._lib.dataclass_creation import (
-    MISSING_NONPROP,
-    create_with_missing,
-)  # NOTE as we use custom ini config file parsing, without leaning on mininterface .yaml configs, we use an internal function to fetch defaults
-from tyro.conf import DisallowNone, arg, Positional, FlagCreatePairsOff
+from mininterface._lib.dataclass_creation import create_with_missing
+from mininterface._lib.dataclass_creation import MISSING_NONPROP
+from mininterface.tag.flag import Dir
+from mininterface.tag.flag import File
+from tyro.conf import arg
+from tyro.conf import DisallowNone
+from tyro.conf import FlagCreatePairsOff
+from tyro.conf import Positional
 
 import bandit
+from .get_env import get_env
+from .get_env import Level
 from bandit.core import config as b_config
 from bandit.core import constants
 from bandit.core import manager as b_manager
 from bandit.core import utils
-from .get_env import Level, get_env
 
 BASE_CONFIG = "bandit.yaml"
 LOG = logging.getLogger()
@@ -142,7 +145,11 @@ def _log_info(args, profile):
 def main():
     """Bandit CLI."""
     # bring our logging stuff up as early as possible
-    debug = logging.DEBUG if "-d" in sys.argv or "--debug" in sys.argv else logging.INFO
+    debug = (
+        logging.DEBUG
+        if "-d" in sys.argv or "--debug" in sys.argv
+        else logging.INFO
+    )
     _init_logger(debug)
     extension_mgr = _init_extensions()
 
@@ -155,7 +162,9 @@ def main():
     ]
 
     # now do normal startup
-    plugin_info = [f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()]
+    plugin_info = [
+        f"{a[0]}\t{a[1].name}" for a in extension_mgr.plugins_by_id.items()
+    ]
     blacklist_info = []
     for a in extension_mgr.blacklist.items():
         for b in a[1]:
@@ -204,11 +213,15 @@ def main():
     )
     args = m.env
 
-    args.excluded_paths = ",".join(args.excluded_paths)  # NOTE for backwards compatibility where this was a str
+    args.excluded_paths = ",".join(
+        args.excluded_paths
+    )  # NOTE for backwards compatibility where this was a str
 
     # Check if `--msg-template` is not present without custom formatter
     if args.format != "custom" and args.msg_template is not None:
-        raise ValueError("--msg-template can only be used with --format=custom")
+        raise ValueError(
+            "--msg-template can only be used with --format=custom"
+        )
 
     # Check if confidence or severity level have been specified with strings
     if lev := args.severity_level:
@@ -230,7 +243,7 @@ def main():
             return _log_option_source(
                 getattr(defaults, var),
                 getattr(args, var),
-                ini_options.get(var.replace("_","-")),
+                ini_options.get(var.replace("_", "-")),
                 desc or var,
             )
 
@@ -243,7 +256,7 @@ def main():
             ",".join(defaults.excluded_paths),
             args.excluded_paths,
             ini_options.get("exclude"),
-            "excluded paths"
+            "excluded paths",
         )
         args.skips = _log("skips", "skipped tests")
         args.tests = _log("tests", "selected tests")
@@ -271,7 +284,9 @@ def main():
         args.verbose = _log("verbose", "output extra information")
         args.debug = _log("debug", "debug mode")
         args.quiet = _log("quiet", "silent mode")
-        args.ignore_nosec = _log("ignore_nosec", "do not skip lines with # nosec")
+        args.ignore_nosec = _log(
+            "ignore_nosec", "do not skip lines with # nosec"
+        )
         args.baseline = _log("baseline", "path of a baseline report")
 
     try:
