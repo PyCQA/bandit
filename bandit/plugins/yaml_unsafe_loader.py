@@ -3,9 +3,9 @@
 B901: Detect usage of yaml.full_load, yaml.unsafe_load, or yaml.load with unsafe Loader.
 Small Bandit plugin to explicitly flag full_load/unsafe_load and non-safe Loader usage.
 """
-
 import bandit
 from bandit.core import test_properties as test
+
 
 # Register as a Call-check with a test id so Bandit will run it
 @test.test_id("B901")
@@ -25,7 +25,7 @@ def yaml_unsafe_loader(context):
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
             text="Use of yaml.full_load()/yaml.unsafe_load() detected. Prefer yaml.safe_load() "
-                 "when parsing untrusted YAML."
+            "when parsing untrusted YAML.",
         )
 
     # yaml.load(...) with Loader=... where loader isn't safe
@@ -51,7 +51,7 @@ def yaml_unsafe_loader(context):
                             severity=bandit.MEDIUM,
                             confidence=bandit.MEDIUM,
                             text=f"yaml.load() used with Loader={loader_name!r} - this can be unsafe "
-                                 "for untrusted input. Consider yaml.safe_load()."
+                            "for untrusted input. Consider yaml.safe_load().",
                         )
 
     # no issue found
