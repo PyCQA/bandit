@@ -10,8 +10,8 @@ This plugin will look for usage of ``tarfile.extractall()``
 
 Severity are set as follows:
 
-* ``tarfile.extractalll(members=function(tarfile))`` - LOW
-* ``tarfile.extractalll(members=?)`` - member is not a function - MEDIUM
+* ``tarfile.extractall(members=function(tarfile))`` - LOW
+* ``tarfile.extractall(members=?)`` - member is not a function - MEDIUM
 * ``tarfile.extractall()`` - members from the archive is trusted - HIGH
 
 Use ``tarfile.extractall(members=function_name)`` and define a function
