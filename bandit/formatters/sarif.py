@@ -12,8 +12,16 @@ SARIF formatter
 
 This formatter outputs the issues in SARIF formatted JSON.
 
+Example:
+    >>> from bandit.formatters import sarif
+    >>> # manager is a BanditManager, tmp is a writable file-like
+    >>> sarif.report(manager, tmp, 'LOW', 'LOW')  # doctest: +SKIP
+    # Writes a SARIF log with one run and Bandit driver metadata.
+
 .. versionadded:: 1.7.8
-"""  # noqa: E501
+"""
+
+# noqa: E501
 import datetime
 import hashlib
 import logging
@@ -130,12 +138,13 @@ def add_results(issues, run):
         result = create_result(iss, rules, rule_indices)
         run.results.append(result)
         # Track raw path for run-level properties
-        try:
-            original_paths.add(iss.fname)  # Issue carries 'fname'
-        except Exception:
+        if hasattr(iss, "fname"):
+            original_paths.add(getattr(iss, "fname"))
+        else:
             try:
                 original_paths.add(iss.as_dict().get("filename", ""))
-            except Exception:
+            except (AttributeError, TypeError, KeyError):
+                # Best-effort only
                 pass
 
     if rules:
@@ -176,9 +185,10 @@ def create_result(issue, rules, rule_indices):
         issue_dict["code"],
     )
 
-    # Map severity -> SARIF level
+    # Map severity -> SARIF level; omit default "warning" per SARIF (and tests)
     level = level_from_severity(issue_dict["issue_severity"])
-
+    sarif_level = None if level == "warning" else level
+    
     # Properties on the result: echo precision/tags +
     # original path for Windows test
     result_props = {
@@ -206,7 +216,7 @@ def create_result(issue, rules, rule_indices):
         rule_id=rule.id,
         rule_index=rule_index,
         message=om.Message(text=issue_dict["issue_text"]),
-        level=level,
+        level=sarif_level,
         locations=[om.Location(physical_location=physical_location)],
         properties=result_props,
         partial_fingerprints={"primaryLocationLineHash": primary_fp},
