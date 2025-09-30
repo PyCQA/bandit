@@ -20,7 +20,6 @@ Example:
 
 .. versionadded:: 1.7.8
 """
-
 # noqa: E501
 import datetime
 import hashlib
@@ -188,7 +187,7 @@ def create_result(issue, rules, rule_indices):
     # Map severity -> SARIF level; omit default "warning" per SARIF (and tests)
     level = level_from_severity(issue_dict["issue_severity"])
     sarif_level = None if level == "warning" else level
-    
+
     # Properties on the result: echo precision/tags +
     # original path for Windows test
     result_props = {
