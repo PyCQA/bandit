@@ -12,11 +12,77 @@ SARIF formatter
 
 This formatter outputs the issues in SARIF formatted JSON.
 
-Example:
+:Example:
     >>> from bandit.formatters import sarif
-    >>> # manager is a BanditManager, tmp is a writable file-like
+    >>> # manager is a BanditManager, tmp is a writable file-like object
     >>> sarif.report(manager, tmp, 'LOW', 'LOW')  # doctest: +SKIP
-    # Writes a SARIF log with one run and Bandit driver metadata.
+
+Example JSON output (truncated):
+    {
+      "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+      "version": "2.1.0",
+      "runs": [
+        {
+          "tool": {
+            "driver": {
+              "name": "Bandit",
+              "organization": "PyCQA",
+              "semanticVersion": "X.Y.Z",
+              "version": "X.Y.Z",
+              "rules": [
+                {
+                  "id": "B104",
+                  "name": "hardcoded_bind_all_interfaces",
+                  "defaultConfiguration": { "level": "error" },
+                  "properties": {
+                    "tags": ["security", "external/cwe/cwe-605"],
+                    "precision": "medium",
+                    "cwe": "CWE-605"
+                  }
+                }
+              ]
+            }
+          },
+          "results": [
+            {
+              "ruleId": "B104",
+              "message": { "text": "Possible binding to all interfaces." },
+              "locations": [
+                {
+                  "physicalLocation": {
+                    "artifactLocation": { "uri": "binding.py" },
+                    "region": { "startLine": 4, "endLine": 4 }
+                  }
+                }
+              ],
+              "properties": {
+                "issue_confidence": "MEDIUM",
+                "issue_severity": "MEDIUM",
+                "original_path": "binding.py",
+                "tags": ["bandit", "B104", "CWE-605"]
+              },
+              "partialFingerprints": {
+                "primaryLocationLineHash": "…sha256-hex…"
+              }
+            }
+          ],
+          "invocations": [
+            {
+              "executionSuccessful": true,
+              "endTimeUtc": "2024-01-01T00:00:00Z"
+            }
+          ],
+          "properties": {
+            "metrics": { "...": "…" },
+            "original_paths": ["binding.py"]
+          }
+        }
+      ]
+    }
+
+.. note::
+   SARIF omits the ``level`` field for results when it equals the default
+   (``"warning"``). The example above uses a non-default level for clarity.
 
 .. versionadded:: 1.7.8
 """
