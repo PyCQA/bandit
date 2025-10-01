@@ -153,8 +153,8 @@ def main():
 
         try:
             with open(args.output_file, "w") as f:
-                skips = args.skips.split(",") if args.skips else []
-                tests = args.tests.split(",") if args.tests else []
+                skips = args.skips if args.skips else []
+                tests = args.tests if args.tests else []
 
                 for skip in skips:
                     if not extension_loader.MANAGER.check_id(skip):
