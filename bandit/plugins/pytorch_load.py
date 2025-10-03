@@ -68,6 +68,11 @@ def pytorch_load(context):
         ]
     ):
         # For torch.load, check if weights_only=True is specified
+        # torch.jit.load is safe - it only loads TorchScript format
+        # and has no weights_only parameter
+        if "jit" in qualname_list:
+            return
+
         weights_only = context.get_call_arg_value("weights_only")
         if weights_only == "True" or weights_only is True:
             return
