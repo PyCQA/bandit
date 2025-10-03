@@ -133,9 +133,21 @@ class XmlFormatterTests(testtools.TestCase):
             self.assertIsNotNone(testsuite)
 
             # Check all required JUnit attributes exist
-            required_attrs = ["name", "tests", "errors", "failures", "skipped", "time", "timestamp"]
+            required_attrs = [
+                "name",
+                "tests",
+                "errors",
+                "failures",
+                "skipped",
+                "time",
+                "timestamp",
+            ]
             for attr in required_attrs:
-                self.assertIn(attr, testsuite.attrib, f"Missing required attribute: {attr}")
+                self.assertIn(
+                    attr,
+                    testsuite.attrib,
+                    f"Missing required attribute: {attr}",
+                )
 
             # Check testcase attributes
             testcase = testsuite.find("testcase")
@@ -143,7 +155,11 @@ class XmlFormatterTests(testtools.TestCase):
 
             testcase_attrs = ["classname", "name", "file", "line", "time"]
             for attr in testcase_attrs:
-                self.assertIn(attr, testcase.attrib, f"Missing testcase attribute: {attr}")
+                self.assertIn(
+                    attr,
+                    testcase.attrib,
+                    f"Missing testcase attribute: {attr}",
+                )
 
     def test_properties_machine_readable(self):
         """Test that properties provide machine-readable metadata"""
@@ -247,7 +263,9 @@ class XmlFormatterTests(testtools.TestCase):
 
             # Names should be unique
             names = [tc.get("name") for tc in testcases]
-            self.assertEqual(len(names), len(set(names)), "Testcase names are not unique")
+            self.assertEqual(
+                len(names), len(set(names)), "Testcase names are not unique"
+            )
 
             # First should be B104-hardcoded_bind_all_interfaces
             # Second should be B104-hardcoded_bind_all_interfaces-1

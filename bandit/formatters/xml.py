@@ -87,14 +87,14 @@ def _get_module_name(filepath):
 
 def _get_cwe_id(cwe_obj):
     """Extract CWE ID number from CWE object."""
-    if hasattr(cwe_obj, 'id') and cwe_obj.id != 0:
+    if hasattr(cwe_obj, "id") and cwe_obj.id != 0:
         return str(cwe_obj.id)
     return ""
 
 
 def _get_cwe_url(cwe_obj):
     """Extract CWE URL from CWE object."""
-    if hasattr(cwe_obj, 'link'):
+    if hasattr(cwe_obj, "link"):
         return cwe_obj.link()
     return ""
 
@@ -141,6 +141,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     testsuite_props = ET.SubElement(testsuite, "properties")
     try:
         import bandit as bandit_module
+
         bandit_version = bandit_module.__version__
     except (ImportError, AttributeError):
         bandit_version = "unknown"
@@ -149,7 +150,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         testsuite_props,
         "property",
         name="bandit_version",
-        value=bandit_version
+        value=bandit_version,
     )
 
     # Track testcase names to ensure uniqueness
@@ -160,7 +161,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         module_name = _get_module_name(issue.fname)
 
         # Create unique testcase name: test_id-test_name
-        base_name = f"{issue.test_id}-{issue.test}" if issue.test else issue.test_id
+        base_name = (
+            f"{issue.test_id}-{issue.test}" if issue.test else issue.test_id
+        )
 
         # Ensure uniqueness by adding counter if needed
         if base_name in testcase_counter:
@@ -185,13 +188,21 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         properties = ET.SubElement(testcase, "properties")
 
         # Add all issue metadata as properties
-        ET.SubElement(properties, "property", name="test_id", value=issue.test_id)
+        ET.SubElement(
+            properties, "property", name="test_id", value=issue.test_id
+        )
 
         if issue.test:
-            ET.SubElement(properties, "property", name="test_name", value=issue.test)
+            ET.SubElement(
+                properties, "property", name="test_name", value=issue.test
+            )
 
-        ET.SubElement(properties, "property", name="severity", value=issue.severity)
-        ET.SubElement(properties, "property", name="confidence", value=issue.confidence)
+        ET.SubElement(
+            properties, "property", name="severity", value=issue.severity
+        )
+        ET.SubElement(
+            properties, "property", name="confidence", value=issue.confidence
+        )
 
         # Add CWE information if available
         cwe_id = _get_cwe_id(issue.cwe)
@@ -200,12 +211,16 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 
         cwe_url = _get_cwe_url(issue.cwe)
         if cwe_url:
-            ET.SubElement(properties, "property", name="cwe_url", value=cwe_url)
+            ET.SubElement(
+                properties, "property", name="cwe_url", value=cwe_url
+            )
 
         # Add Bandit documentation URL
         more_info = docs_utils.get_url(issue.test_id)
         if more_info:
-            ET.SubElement(properties, "property", name="more_info", value=more_info)
+            ET.SubElement(
+                properties, "property", name="more_info", value=more_info
+            )
 
         # Create structured failure text
         failure_text_parts = [
@@ -217,10 +232,12 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         if str(issue.cwe):
             failure_text_parts.append(f"CWE: {issue.cwe}")
 
-        failure_text_parts.extend([
-            f"Description: {issue.text}",
-            f"Location: {issue.fname}:{issue.lineno}"
-        ])
+        failure_text_parts.extend(
+            [
+                f"Description: {issue.text}",
+                f"Location: {issue.fname}:{issue.lineno}",
+            ]
+        )
 
         if more_info:
             failure_text_parts.append(f"More info: {more_info}")
