@@ -35,6 +35,12 @@ For example:
 However, such cases are always reported with LOW confidence to compensate
 for false positives, since valid uses of str.replace can be common.
 
+Note: Queries that use parameterized placeholders (e.g., :param, ?, $1) for
+values are considered safe even if table/column names are dynamically constructed,
+since SQL does not allow parameterizing identifiers. For example:
+
+ - f"DELETE FROM {table} WHERE id = :id" with {'id': value} is safe
+
 :Example:
 
 .. code-block:: none
@@ -79,9 +85,32 @@ SIMPLE_SQL_RE = re.compile(
     re.IGNORECASE | re.DOTALL,
 )
 
+# Regex to detect parameterized SQL query placeholders
+# Matches: :param_name, ?, $1, $2, etc.
+PARAMETERIZED_SQL_RE = re.compile(
+    r"(?:"
+    r":\w+|"  # Named parameters (:param_name) - SQLite, Oracle
+    r"\?|"  # Question mark placeholders (?) - SQLite, MySQL
+    r"\$\d+"  # Numbered parameters ($1, $2) - PostgreSQL
+    r")",
+    re.IGNORECASE,
+)
+
 
 def _check_string(data):
     return SIMPLE_SQL_RE.search(data) is not None
+
+
+def _is_parameterized_sql(statement):
+    """
+    Check if a SQL statement contains parameterized query placeholders.
+
+    Parameterized queries use placeholders like :name, ?, or $1 to safely
+    pass user input to the database, preventing SQL injection.
+
+    Returns True if parameterization is detected, False otherwise.
+    """
+    return PARAMETERIZED_SQL_RE.search(statement) is not None
 
 
 def _evaluate_ast(node):
@@ -130,6 +159,12 @@ def _evaluate_ast(node):
 def hardcoded_sql_expressions(context):
     execute_call, statement, str_replace = _evaluate_ast(context.node)
     if _check_string(statement):
+        # Check if the SQL statement uses parameterized queries
+        # If it does, it's safe even with dynamic table/column names
+        if _is_parameterized_sql(statement):
+            # Query uses parameterized placeholders, no warning needed
+            return None
+
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=(
