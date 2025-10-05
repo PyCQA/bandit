@@ -10,83 +10,76 @@ r"""
 SARIF formatter
 ===============
 
-This formatter outputs the issues in SARIF formatted JSON.
+This formatter outputs issues in SARIF formatted JSON.
 
-:Example:
-    >>> from bandit.formatters import sarif
-    >>> # manager is a BanditManager, tmp is a writable file-like object
-    >>> sarif.report(manager, tmp, 'LOW', 'LOW')  # doctest: +SKIP
+Example usage:
 
-Example JSON output (truncated):
-    {
-      "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
-      "version": "2.1.0",
-      "runs": [
-        {
-          "tool": {
-            "driver": {
-              "name": "Bandit",
-              "organization": "PyCQA",
-              "semanticVersion": "X.Y.Z",
-              "version": "X.Y.Z",
-              "rules": [
-                {
-                  "id": "B104",
-                  "name": "hardcoded_bind_all_interfaces",
-                  "defaultConfiguration": { "level": "error" },
-                  "properties": {
-                    "tags": ["security", "external/cwe/cwe-605"],
-                    "precision": "medium",
-                    "cwe": "CWE-605"
-                  }
-                }
-              ]
-            }
-          },
-          "results": [
-            {
-              "ruleId": "B104",
-              "message": { "text": "Possible binding to all interfaces." },
-              "locations": [
-                {
-                  "physicalLocation": {
-                    "artifactLocation": { "uri": "binding.py" },
-                    "region": { "startLine": 4, "endLine": 4 }
-                  }
-                }
-              ],
-              "properties": {
-                "issue_confidence": "MEDIUM",
-                "issue_severity": "MEDIUM",
-                "original_path": "binding.py",
-                "tags": ["bandit", "B104", "CWE-605"]
-              },
-              "partialFingerprints": {
-                "primaryLocationLineHash": "…sha256-hex…"
-              }
-            }
-          ],
-          "invocations": [
-            {
-              "executionSuccessful": true,
-              "endTimeUtc": "2024-01-01T00:00:00Z"
-            }
-          ],
-          "properties": {
-            "metrics": { "...": "…" },
-            "original_paths": ["binding.py"]
-          }
-        }
-      ]
-    }
+.. code-block:: pycon
+
+   >>> from bandit.formatters import sarif
+   >>> sarif.report(manager, tmp, 'LOW', 'LOW')
+
+Example SARIF output (truncated):
+
+.. code-block:: json
+
+   {
+     "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+     "version": "2.1.0",
+     "runs": [
+       {
+         "tool": {
+           "driver": {
+             "name": "Bandit",
+             "organization": "PyCQA",
+             "semanticVersion": "X.Y.Z",
+             "version": "X.Y.Z",
+             "rules": [
+               {
+                 "id": "B104",
+                 "name": "hardcoded_bind_all_interfaces",
+                 "defaultConfiguration": { "level": "error" },
+                 "properties": {
+                   "tags": ["security", "external/cwe/cwe-605"],
+                   "precision": "medium",
+                   "cwe": "CWE-605"
+                 }
+               }
+             ]
+           }
+         },
+         "results": [
+           {
+             "ruleId": "B104",
+             "message": { "text": "Possible binding to all interfaces." },
+             "locations": [
+               {
+                 "physicalLocation": {
+                   "artifactLocation": { "uri": "binding.py" },
+                   "region": { "startLine": 4, "endLine": 4 }
+                 }
+               }
+             ],
+             "properties": {
+               "issue_confidence": "MEDIUM",
+               "issue_severity": "MEDIUM",
+               "original_path": "binding.py",
+               "tags": ["bandit", "B104", "CWE-605"]
+             },
+             "partialFingerprints": {
+               "primaryLocationLineHash": "…sha256-hex…"
+             }
+           }
+         ]
+       }
+     ]
+   }
 
 .. note::
-   SARIF omits the ``level`` field for results when it equals the default
-   (``"warning"``). The example above uses a non-default level for clarity.
+   SARIF omits the ``level`` field when it equals the default (``"warning"``).
 
 .. versionadded:: 1.7.8
 """
-# noqa: E501
 import datetime
 import hashlib
 import logging
@@ -199,18 +192,12 @@ def add_results(issues, run):
     rule_indices = {}
     original_paths = set()
 
-    for iss in issues:
-        result = create_result(iss, rules, rule_indices)
+    for issue in issues:
+        result = create_result(issue, rules, rule_indices)
         run.results.append(result)
-        # Track raw path for run-level properties
-        if hasattr(iss, "fname"):
-            original_paths.add(getattr(iss, "fname"))
-        else:
-            try:
-                original_paths.add(iss.as_dict().get("filename", ""))
-            except (AttributeError, TypeError, KeyError):
-                # Best-effort only
-                pass
+        # Track raw path for run-level properties (best-effort)
+        if hasattr(issue, "fname") and getattr(issue, "fname"):
+            original_paths.add(getattr(issue, "fname"))
 
     if rules:
         run.tool.driver.rules = list(rules.values())
@@ -228,20 +215,14 @@ def create_result(issue, rules, rule_indices):
     """
     issue_dict = issue.as_dict()
 
-    # Ensure rule exists / get index
     rule, rule_index = create_or_find_rule(issue_dict, rules, rule_indices)
 
     filename_raw = issue_dict["filename"]
     filename_uri = to_uri(filename_raw)
     physical_location = om.PhysicalLocation(
-        artifact_location=om.ArtifactLocation(
-            uri=filename_uri,
-            # (We keep description off here to avoid duplicating; the raw path
-            # is exposed below in properties.original_path and at run level.)
-        )
+        artifact_location=om.ArtifactLocation(uri=filename_uri)
     )
 
-    # Add region + context (snippet)
     snippet_line_text, _ = add_region_and_context_region(
         physical_location,
         issue_dict["line_range"],
@@ -250,28 +231,21 @@ def create_result(issue, rules, rule_indices):
         issue_dict["code"],
     )
 
-    # Map severity -> SARIF level; omit default "warning" per SARIF (and tests)
     level = level_from_severity(issue_dict["issue_severity"])
     sarif_level = None if level == "warning" else level
 
-    # Properties on the result: echo precision/tags +
-    # original path for Windows test
     result_props = {
         "issue_confidence": issue_dict["issue_confidence"],
         "issue_severity": issue_dict["issue_severity"],
-        # Ensure raw path appears in serialized SARIF
-        # (used by tests on Windows)
         "original_path": filename_raw,
     }
 
-    # Add a light-weight tags array on results too
     tags = ["bandit", issue_dict.get("test_id", "")]
-    cwe_id = (issue_dict.get("issue_cwe") or {}).get("id")
+    cwe_id = issue_dict.get("issue_cwe", {}).get("id")
     if cwe_id:
         tags.append(f"CWE-{cwe_id}")
     result_props["tags"] = [t for t in tags if t]
 
-    # Partial fingerprint (stable dedupe signal)
     code_for_fp = snippet_line_text or ""
     primary_fp = _make_partial_fingerprint(
         issue_dict["filename"], issue_dict["test_id"], code_for_fp
@@ -300,20 +274,16 @@ def level_from_severity(severity):
 
 
 def _precision_from_confidence(confidence: str) -> str:
-    # Bandit uses HIGH/MEDIUM/LOW strings for confidence
     c = (confidence or "").upper()
-    if c in ("HIGH", "MEDIUM", "LOW"):
-        return c.lower()
-    return "medium"
+    return {"HIGH": "high", "MEDIUM": "medium", "LOW": "low"}.get(
+        c, "medium"
+    )
 
 
 def add_region_and_context_region(
     physical_location, line_range, col_offset, end_col_offset, code
 ):
-    """
-    Populates physical_location.region (and context_region if code provided).
-    Returns (snippet_line_text, context_snippet_text) for downstream use.
-    """
+    """Populate location regions and return snippet/context text."""
     snippet_line_text = ""
     context_snippet_text = None
 
@@ -332,11 +302,9 @@ def add_region_and_context_region(
         snippet_lines = None
         snippet = None
 
-    # Region for the exact finding span
     physical_location.region = om.Region(
         start_line=line_range[0],
         end_line=line_range[1] if len(line_range) > 1 else line_range[0],
-        # SARIF columns are 1-based; guard against None
         start_column=(col_offset + 1) if col_offset is not None else None,
         end_column=(
             (end_col_offset + 1) if end_col_offset is not None else None
@@ -344,7 +312,6 @@ def add_region_and_context_region(
         snippet=snippet,
     )
 
-    # Wider context for viewer UX
     if code and first_line_number is not None and snippet_lines is not None:
         full_text = "".join(snippet_lines)
         context_snippet_text = full_text
@@ -401,17 +368,13 @@ def create_or_find_rule(issue_dict, rules, rule_indices):
     test_name = issue_dict.get("test_name") or rule_id
     help_uri = docs_utils.get_url(rule_id)
 
-    # Precision based on confidence
     precision = _precision_from_confidence(issue_dict.get("issue_confidence"))
 
-    # Tags: always include "security"; include CWE tag only if present
-    # and non-zero
     tags = ["security"]
-    cwe_id = (issue_dict.get("issue_cwe") or {}).get("id")
+    cwe_id = issue_dict.get("issue_cwe", {}).get("id")
     if cwe_id:
         tags.append(f"external/cwe/cwe-{cwe_id}")
 
-    # Default level derived from current issue severity (best-effort)
     default_level = level_from_severity(issue_dict.get("issue_severity"))
 
     rule = om.ReportingDescriptor(
