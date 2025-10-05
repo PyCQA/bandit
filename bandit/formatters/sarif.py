@@ -275,9 +275,7 @@ def level_from_severity(severity):
 
 def _precision_from_confidence(confidence: str) -> str:
     c = (confidence or "").upper()
-    return {"HIGH": "high", "MEDIUM": "medium", "LOW": "low"}.get(
-        c, "medium"
-    )
+    return {"HIGH": "high", "MEDIUM": "medium", "LOW": "low"}.get(c, "medium")
 
 
 def add_region_and_context_region(
