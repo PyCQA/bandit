@@ -12,7 +12,7 @@ SARIF formatter
 
 This formatter outputs issues in SARIF formatted JSON.
 
-Example usage:
+Example:
 
 .. code-block:: pycon
 
