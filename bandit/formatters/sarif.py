@@ -196,8 +196,8 @@ def add_results(issues, run):
         result = create_result(issue, rules, rule_indices)
         run.results.append(result)
         # Track raw path for run-level properties (best-effort)
-        if hasattr(issue, "fname") and getattr(issue, "fname"):
-            original_paths.add(getattr(issue, "fname"))
+        if (fname := getattr(issue, "fname", None)):
+            original_paths.add(fname)
 
     if rules:
         run.tool.driver.rules = list(rules.values())
