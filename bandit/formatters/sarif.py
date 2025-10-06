@@ -17,6 +17,7 @@ Example:
 .. code-block:: pycon
 
    >>> from bandit.formatters import sarif
+   >>> # manager is a BanditManager, tmp is a writable file-like object
    >>> sarif.report(manager, tmp, 'LOW', 'LOW')
 
 Example SARIF output (truncated):
