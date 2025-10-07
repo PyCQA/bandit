@@ -391,7 +391,9 @@ def create_or_find_rule(issue_dict, rules, rule_indices):
     test_name = issue_dict.get("test_name") or rule_id
     help_uri = docs_utils.get_url(rule_id)
 
-    precision = _precision_from_confidence(issue_dict.get("issue_confidence", ""))
+    precision = _precision_from_confidence(
+        issue_dict.get("issue_confidence", "")
+    )
 
     tags = ["security"]
     cwe_id = issue_dict.get("issue_cwe", {}).get("id")
