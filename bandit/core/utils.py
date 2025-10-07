@@ -371,8 +371,24 @@ def check_ast_node(name):
 
 
 def get_nosec(nosec_lines, context):
-    for lineno in context["linerange"]:
+    """
+    Check if any line in the node's linerange is marked with `# nosec`.
+    Handles f-strings, multi-line statements, and specific rule IDs like B607, B602.
+
+    Returns:
+        - List of rule IDs to ignore if found, or True if general `# nosec` without IDs.
+        - None if no nosec present.
+    """
+    for lineno in context.get("linerange", []):
         nosec = nosec_lines.get(lineno, None)
         if nosec is not None:
-            return nosec
+            # Normalize: remove 'nosec', lowercase, split by space or comma
+            comment = nosec.lower().replace("nosec", "").replace(":", " ").replace(",", " ").strip()
+            if comment:
+                # Return list of rule IDs (BXXX)
+                return [x.upper() for x in comment.split() if x]
+            else:
+                # General # nosec without rule ID
+                return True
     return None
+
