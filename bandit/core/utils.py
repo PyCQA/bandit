@@ -383,7 +383,13 @@ def get_nosec(nosec_lines, context):
         nosec = nosec_lines.get(lineno, None)
         if nosec is not None:
             # Normalize: remove 'nosec', lowercase, split by space or comma
-            comment = nosec.lower().replace("nosec", "").replace(":", " ").replace(",", " ").strip()
+            comment = (
+                nosec.lower()
+                .replace("nosec", "")
+                .replace(":", " ")
+                .replace(",", " ")
+                .strip()
+            )
             if comment:
                 # Return list of rule IDs (BXXX)
                 return [x.upper() for x in comment.split() if x]
@@ -391,4 +397,3 @@ def get_nosec(nosec_lines, context):
                 # General # nosec without rule ID
                 return True
     return None
-
