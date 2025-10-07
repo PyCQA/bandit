@@ -28,53 +28,63 @@ Example SARIF output (truncated):
      "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
      "version": "2.1.0",
      "runs": [
-       {
-         "tool": {
-           "driver": {
-             "name": "Bandit",
-             "organization": "PyCQA",
-             "semanticVersion": "X.Y.Z",
-             "version": "X.Y.Z",
-             "rules": [
-               {
-                 "id": "B104",
-                 "name": "hardcoded_bind_all_interfaces",
-                 "defaultConfiguration": { "level": "error" },
-                 "properties": {
-                   "tags": ["security", "external/cwe/cwe-605"],
-                   "precision": "medium",
-                   "cwe": "CWE-605"
-                 }
-               }
-             ]
-           }
-         },
-         "results": [
-           {
-             "ruleId": "B104",
-             "message": { "text": "Possible binding to all interfaces." },
-             "locations": [
-               {
-                 "physicalLocation": {
-                   "artifactLocation": { "uri": "binding.py" },
-                   "region": { "startLine": 4, "endLine": 4 }
-                 }
-               }
-             ],
-             "properties": {
-               "issue_confidence": "MEDIUM",
-               "issue_severity": "MEDIUM",
-               "original_path": "binding.py",
-               "tags": ["bandit", "B104", "CWE-605"]
-             },
-             "partialFingerprints": {
-               "primaryLocationLineHash": "…sha256-hex…"
-             }
-           }
-         ]
-       }
-     ]
-   }
+        {
+          "tool": {
+            "driver": {
+              "name": "Bandit",
+              "organization": "PyCQA",
+              "semanticVersion": "X.Y.Z",
+              "version": "X.Y.Z",
+              "rules": [
+                {
+                  "id": "B104",
+                  "name": "hardcoded_bind_all_interfaces",
+                  "defaultConfiguration": { "level": "error" },
+                  "properties": {
+                    "tags": ["security", "external/cwe/cwe-605"],
+                    "precision": "medium",
+                    "cwe": "CWE-605"
+                  }
+                }
+              ]
+            }
+          },
+          "results": [
+            {
+              "ruleId": "B104",
+              "message": { "text": "Possible binding to all interfaces." },
+              "locations": [
+                {
+                  "physicalLocation": {
+                    "artifactLocation": { "uri": "binding.py" },
+                    "region": { "startLine": 4, "endLine": 4 }
+                  }
+                }
+              ],
+              "properties": {
+                "issue_confidence": "MEDIUM",
+                "issue_severity": "MEDIUM",
+                "original_path": "binding.py",
+                "tags": ["bandit", "B104", "CWE-605"]
+              },
+              "partialFingerprints": {
+                "primaryLocationLineHash": "…sha256-hex…"
+              }
+            }
+          ],
+          "invocations": [
+            {
+              "executionSuccessful": true,
+              "endTimeUtc": "2024-01-01T00:00:00Z"
+            }
+          ],
+          "properties": {
+            "metrics": { "...": "…" },
+            "original_paths": ["binding.py"]
+          }
+        }
+      ]
+    }
 
 .. note::
    SARIF omits the ``level`` field when it equals the default (``"warning"``).
@@ -199,6 +209,14 @@ def add_results(issues, run):
         # Track raw path for run-level properties (best-effort)
         if fname := getattr(issue, "fname", None):
             original_paths.add(fname)
+        else:
+            # Fallback to serialized filename if available
+            try:
+                fname2 = issue.as_dict().get("filename")
+            except AttributeError:
+                fname2 = None
+            if fname2:
+                original_paths.add(fname2)
 
     if rules:
         run.tool.driver.rules = list(rules.values())
@@ -282,7 +300,13 @@ def _precision_from_confidence(confidence: str) -> str:
 def add_region_and_context_region(
     physical_location, line_range, col_offset, end_col_offset, code
 ):
-    """Populate location regions and return snippet/context text."""
+    """
+    Populate location regions and optionally a context region snippet.
+
+    Returns a tuple: ``(snippet_line_text, context_snippet_text)`` where
+    - ``snippet_line_text`` is the representative single line of code (or "").
+    - ``context_snippet_text`` is the full multi-line snippet text (or ``None``).
+    """
     snippet_line_text = ""
     context_snippet_text = None
 
@@ -367,7 +391,7 @@ def create_or_find_rule(issue_dict, rules, rule_indices):
     test_name = issue_dict.get("test_name") or rule_id
     help_uri = docs_utils.get_url(rule_id)
 
-    precision = _precision_from_confidence(issue_dict.get("issue_confidence"))
+    precision = _precision_from_confidence(issue_dict.get("issue_confidence", ""))
 
     tags = ["security"]
     cwe_id = issue_dict.get("issue_cwe", {}).get("id")
