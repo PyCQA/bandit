@@ -224,6 +224,7 @@ def add_results(issues, run):
         props["original_paths"] = sorted([p for p in original_paths if p])
         run.properties = props
 
+
 def create_result(issue, rules, rule_indices):
     """Convert a Bandit Issue into a SARIF Result and ensure its rule
     is in the rules dict.
