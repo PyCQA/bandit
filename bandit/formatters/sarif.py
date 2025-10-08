@@ -211,12 +211,9 @@ def add_results(issues, run):
             original_paths.add(fname)
         else:
             # Fallback to serialized filename if available
-            try:
-                fname2 = issue.as_dict().get("filename")
-            except AttributeError:
-                fname2 = None
-            if fname2:
-                original_paths.add(fname2)
+            fname = issue.as_dict().get("filename")
+            if fname:
+                original_paths.add(fname)
 
     if rules:
         run.tool.driver.rules = list(rules.values())
@@ -226,7 +223,6 @@ def add_results(issues, run):
         props = run.properties or {}
         props["original_paths"] = sorted([p for p in original_paths if p])
         run.properties = props
-
 
 def create_result(issue, rules, rule_indices):
     """Convert a Bandit Issue into a SARIF Result and ensure its rule
