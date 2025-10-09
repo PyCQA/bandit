@@ -96,8 +96,8 @@ import hashlib
 import logging
 import pathlib
 import sys
-import urllib.parse as urlparse
 import typing as t
+import urllib.parse as urlparse
 
 import sarif_om as om
 from jschema_to_python.to_json import to_json
