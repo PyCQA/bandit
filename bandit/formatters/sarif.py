@@ -97,6 +97,7 @@ import logging
 import pathlib
 import sys
 import urllib.parse as urlparse
+from typing import Final, FrozenSet
 
 import sarif_om as om
 from jschema_to_python.to_json import to_json
@@ -108,7 +109,7 @@ LOG = logging.getLogger(__name__)
 SCHEMA_URI = "https://json.schemastore.org/sarif-2.1.0.json"
 SCHEMA_VER = "2.1.0"
 TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-
+CONFIDENCE_VALUES: Final[FrozenSet[str]] = frozenset({"high", "medium", "low"})
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """Prints issues in SARIF format.
@@ -226,8 +227,8 @@ def add_results(issues, run):
 
 
 def create_result(issue, rules, rule_indices):
-    """Convert a Bandit Issue into a SARIF Result and ensure its rule
-    is in the rules dict.
+    """Convert a Bandit issue into a SARIF Result 
+    and register its rule if missing.
     """
     issue_dict = issue.as_dict()
 
@@ -290,8 +291,8 @@ def level_from_severity(severity):
 
 
 def _precision_from_confidence(confidence: str) -> str:
-    c = (confidence or "").upper()
-    return {"HIGH": "high", "MEDIUM": "medium", "LOW": "low"}.get(c, "medium")
+    c = confidence.lower()
+    return c if c in CONFIDENCE_VALUES else "medium"
 
 
 def add_region_and_context_region(
