@@ -109,7 +109,9 @@ LOG = logging.getLogger(__name__)
 SCHEMA_URI = "https://json.schemastore.org/sarif-2.1.0.json"
 SCHEMA_VER = "2.1.0"
 TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-CONFIDENCE_VALUES: t.Final[t.FrozenSet[str]] = frozenset({"high", "medium", "low"})
+CONFIDENCE_VALUES: t.Final[t.FrozenSet[str]] = frozenset(
+    {"high", "medium", "low"}
+)
 
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
