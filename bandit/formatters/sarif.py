@@ -97,8 +97,7 @@ import logging
 import pathlib
 import sys
 import urllib.parse as urlparse
-from typing import Final
-from typing import FrozenSet
+import typing as t
 
 import sarif_om as om
 from jschema_to_python.to_json import to_json
