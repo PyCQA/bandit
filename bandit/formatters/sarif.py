@@ -97,7 +97,8 @@ import logging
 import pathlib
 import sys
 import urllib.parse as urlparse
-from typing import Final, FrozenSet
+from typing import Final
+from typing import FrozenSet
 
 import sarif_om as om
 from jschema_to_python.to_json import to_json
@@ -110,6 +111,7 @@ SCHEMA_URI = "https://json.schemastore.org/sarif-2.1.0.json"
 SCHEMA_VER = "2.1.0"
 TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 CONFIDENCE_VALUES: Final[FrozenSet[str]] = frozenset({"high", "medium", "low"})
+
 
 def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """Prints issues in SARIF format.
@@ -227,7 +229,7 @@ def add_results(issues, run):
 
 
 def create_result(issue, rules, rule_indices):
-    """Convert a Bandit issue into a SARIF Result 
+    """Convert a Bandit issue into a SARIF Result
     and register its rule if missing.
     """
     issue_dict = issue.as_dict()
