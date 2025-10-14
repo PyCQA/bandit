@@ -300,7 +300,7 @@ def concat_string(node, stop=None):
         node = node._bandit_parent
     if isinstance(node, ast.BinOp):
         _get(node, bits, stop)
-    return (node, " ".join([x.s for x in bits if isinstance(x, ast.Str)]))
+    return (node, " ".join([x.value for x in bits if isinstance(x, ast.Str)]))
 
 
 def get_called_name(node):
