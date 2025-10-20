@@ -15,7 +15,7 @@
 # C0116: Missing function or method docstring
 # C0201: consider-iterating-dictionary
 # C0206: Consider iterating with .items()
-# C0209: Foramtting a regular string which could be an f-string
+# C0209: Formatting a regular string which could be an f-string
 # C0413: wrong-import-position
 # C0415: Import outside toplevel
 # C1802: Do not use `len(SEQUENCE)` without comparison to determine if a sequence is empty

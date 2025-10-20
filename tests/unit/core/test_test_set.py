@@ -139,7 +139,7 @@ class BanditTestSetTests(testtools.TestCase):
         profile = {"exclude": ["B401", "B302"]}
         ts = test_set.BanditTestSet(self.config, profile)
 
-        # if there is no blacklist data for a node type then we wont add a
+        # if there is no blacklist data for a node type then we won't add a
         # blacklist test to it, as this would be pointless.
         self.assertEqual(0, len(ts.get_tests("Import")))
         self.assertEqual(0, len(ts.get_tests("ImportFrom")))
