@@ -113,15 +113,17 @@ class ManagerTests(testtools.TestCase):
         self.assertFalse(e)
         self.assertTrue(f)
 
-    @mock.patch("os.walk")
-    def test_get_files_from_dir(self, os_walk):
-        os_walk.return_value = [
+    def test_get_files_from_dir(self):
+        ignore_walk = mock.Mock()
+        ignore_walk.walk.return_value = [
             ("/", ("a"), ()),
             ("/a", (), ("a.py", "b.py", "c.ww")),
         ]
 
         inc, exc = manager._get_files_from_dir(
-            files_dir="", included_globs=["*.py"], excluded_path_strings=None
+            ignore_mgr=ignore_walk,
+            included_globs=["*.py"],
+            excluded_path_strings=None,
         )
 
         self.assertEqual({"/a/c.ww"}, exc)
