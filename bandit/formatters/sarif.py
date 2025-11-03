@@ -12,14 +12,6 @@ SARIF formatter
 
 This formatter outputs issues in SARIF formatted JSON.
 
-Example:
-
-.. code-block:: pycon
-
-   >>> from bandit.formatters import sarif
-   >>> # manager is a BanditManager, tmp is a writable file-like object
-   >>> sarif.report(manager, tmp, 'LOW', 'LOW')
-
 Example SARIF output (truncated):
 
 .. code-block:: json
@@ -33,12 +25,13 @@ Example SARIF output (truncated):
             "driver": {
               "name": "Bandit",
               "organization": "PyCQA",
-              "semanticVersion": "1.8.6",
-              "version": "1.8.6"
+             "semanticVersion": "1.8.6",
+             "version": "1.8.6",
               "rules": [
                 {
                   "id": "B104",
                   "name": "hardcoded_bind_all_interfaces",
+                  "helpUri": "https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html",
                   "defaultConfiguration": { "level": "error" },
                   "properties": {
                     "tags": [
@@ -99,7 +92,7 @@ import hashlib
 import logging
 import pathlib
 import sys
-import typing as t
+import typing
 import urllib.parse as urlparse
 
 import sarif_om as om
@@ -112,7 +105,7 @@ LOG = logging.getLogger(__name__)
 SCHEMA_URI = "https://json.schemastore.org/sarif-2.1.0.json"
 SCHEMA_VER = "2.1.0"
 TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-CONFIDENCE_VALUES: t.Final[t.FrozenSet[str]] = frozenset(
+CONFIDENCE_VALUES: typing.Final[typing.FrozenSet[str]] = frozenset(
     {"high", "medium", "low"}
 )
 
@@ -267,7 +260,7 @@ def create_result(issue, rules, rule_indices):
     cwe_id = issue_dict.get("issue_cwe", {}).get("id")
     if cwe_id:
         tags.append(f"CWE-{cwe_id}")
-    result_props["tags"] = [t for t in tags if t]
+    result_props["tags"] = [tag for tag in tags if tag]
 
     code_for_fp = snippet_line_text or ""
     primary_fp = _make_partial_fingerprint(
