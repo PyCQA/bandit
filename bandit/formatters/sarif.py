@@ -41,7 +41,10 @@ Example SARIF output (truncated):
                   "name": "hardcoded_bind_all_interfaces",
                   "defaultConfiguration": { "level": "error" },
                   "properties": {
-                    "tags": ["security", "external/cwe/cwe-605"],
+                    "tags": [
+                      "security",
+                      "external/cwe/cwe-605"
+                    ],
                     "precision": "medium",
                     "cwe": "CWE-605"
                   }
