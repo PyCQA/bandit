@@ -33,8 +33,8 @@ Example SARIF output (truncated):
             "driver": {
               "name": "Bandit",
               "organization": "PyCQA",
-              "semanticVersion": "X.Y.Z",
-              "version": "X.Y.Z",
+              "semanticVersion": "1.8.6",
+              "version": "1.8.6"
               "rules": [
                 {
                   "id": "B104",
