@@ -12,6 +12,10 @@ SARIF formatter
 
 This formatter outputs issues in SARIF formatted JSON.
 
+Example:
+
+.. code-block:: pycon
+
 Example SARIF output (truncated):
 
 .. code-block:: json
@@ -26,12 +30,12 @@ Example SARIF output (truncated):
               "name": "Bandit",
               "organization": "PyCQA",
               "semanticVersion": "1.8.6",
-              "version": "1.8.6",
+              "version": "1.8.6"
               "rules": [
                 {
                   "id": "B104",
                   "name": "hardcoded_bind_all_interfaces",
-                  "helpUri": "https://bandit.readthedocs.io/en/1.7.8/plugins/b104_hardcoded_bind_all_interfaces.html",
+                  "helpUri": "https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html",
                   "defaultConfiguration": { "level": "error" },
                   "properties": {
                     "tags": [
