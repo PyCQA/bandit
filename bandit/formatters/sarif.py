@@ -25,13 +25,13 @@ Example SARIF output (truncated):
             "driver": {
               "name": "Bandit",
               "organization": "PyCQA",
-             "semanticVersion": "1.8.6",
-             "version": "1.8.6",
+              "semanticVersion": "1.8.6",
+              "version": "1.8.6",
               "rules": [
                 {
                   "id": "B104",
                   "name": "hardcoded_bind_all_interfaces",
-                  "helpUri": "https://bandit.readthedocs.io/en/1.8.6/plugins/b104_hardcoded_bind_all_interfaces.html",
+                  "helpUri": "https://bandit.readthedocs.io/en/1.7.8/plugins/b104_hardcoded_bind_all_interfaces.html",
                   "defaultConfiguration": { "level": "error" },
                   "properties": {
                     "tags": [
@@ -260,7 +260,7 @@ def create_result(issue, rules, rule_indices):
     cwe_id = issue_dict.get("issue_cwe", {}).get("id")
     if cwe_id:
         tags.append(f"CWE-{cwe_id}")
-    result_props["tags"] = [tag for tag in tags if tag]
+    result_props["tags"] = [t for t in tags if t]
 
     code_for_fp = snippet_line_text or ""
     primary_fp = _make_partial_fingerprint(
