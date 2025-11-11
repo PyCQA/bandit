@@ -120,11 +120,15 @@ def hardcoded_password_string(context):
         comp = node._bandit_parent
         if isinstance(comp.left, ast.Name):
             if RE_CANDIDATES.search(comp.left.id):
-                if isinstance(comp.comparators[0], ast.Constant):
+                if isinstance(
+                    comp.comparators[0], ast.Constant
+                ) and isinstance(comp.comparators[0].value, str):
                     return _report(comp.comparators[0].value)
         elif isinstance(comp.left, ast.Attribute):
             if RE_CANDIDATES.search(comp.left.attr):
-                if isinstance(comp.comparators[0], ast.Constant):
+                if isinstance(
+                    comp.comparators[0], ast.Constant
+                ) and isinstance(comp.comparators[0].value, str):
                     return _report(comp.comparators[0].value)
 
 
@@ -257,5 +261,9 @@ def hardcoded_password_default(context):
                 isinstance(val, ast.Constant) and val.value is None
             ):
                 continue
-            if isinstance(val, ast.Constant) and RE_CANDIDATES.search(key.arg):
+            if (
+                isinstance(val, ast.Constant)
+                and isinstance(val.value, str)
+                and RE_CANDIDATES.search(key.arg)
+            ):
                 return _report(val.value)
