@@ -3,7 +3,7 @@ version: 2
 build:
   os: ubuntu-lts-latest
   tools:
-    python: "3.9"
+    python: "3.10"
 
 sphinx:
   configuration: doc/source/conf.py
