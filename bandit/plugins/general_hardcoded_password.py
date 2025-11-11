@@ -176,6 +176,7 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
+        print(f"{kw = }")
         if isinstance(kw.value, ast.Constant) and RE_CANDIDATES.search(kw.arg):
             return _report(kw.value.value)
 
