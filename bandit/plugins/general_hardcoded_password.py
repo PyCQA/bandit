@@ -95,8 +95,10 @@ def hardcoded_password_string(context):
         # Py39+: looks for "dict[candidate]='some_string'"
         # subscript -> index -> string
         assign = node._bandit_parent._bandit_parent
-        if isinstance(assign, ast.Assign) and isinstance(
-            assign.value, ast.Constant
+        if (
+            isinstance(assign, ast.Assign)
+            and isinstance(assign.value, ast.Constant)
+            and isinstance(assign.value.value, str)
         ):
             return _report(assign.value.value)
 
@@ -106,8 +108,10 @@ def hardcoded_password_string(context):
         # looks for "dict[candidate]='some_string'"
         # assign -> subscript -> index -> string
         assign = node._bandit_parent._bandit_parent._bandit_parent
-        if isinstance(assign, ast.Assign) and isinstance(
-            assign.value, ast.Constant
+        if (
+            isinstance(assign, ast.Assign)
+            and isinstance(assign.value, ast.Constant)
+            and isinstance(assign.value.value, str)
         ):
             return _report(assign.value.value)
 
@@ -176,8 +180,11 @@ def hardcoded_password_funcarg(context):
     """
     # looks for "function(candidate='some_string')"
     for kw in context.node.keywords:
-        print(f"{kw = }")
-        if isinstance(kw.value, ast.Constant) and RE_CANDIDATES.search(kw.arg):
+        if (
+            isinstance(kw.value, ast.Constant)
+            and isinstance(kw.value.value, str)
+            and RE_CANDIDATES.search(kw.arg)
+        ):
             return _report(kw.value.value)
 
 
