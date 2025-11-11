@@ -15,7 +15,9 @@ full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")
 
 
 def _evaluate_shell_call(context):
-    no_formatting = isinstance(context.node.args[0], ast.Str)
+    no_formatting = isinstance(
+        context.node.args[0], ast.Constant
+    ) and isinstance(context.node.args[0].value, str)
 
     if no_formatting:
         return bandit.LOW
@@ -83,15 +85,19 @@ def has_shell(context):
         for key in keywords:
             if key.arg == "shell":
                 val = key.value
-                if isinstance(val, ast.Num):
-                    result = bool(val.n)
+                if isinstance(val, ast.Constant) and (
+                    isinstance(val.value, int)
+                    or isinstance(val.value, float)
+                    or isinstance(val.value, complex)
+                ):
+                    result = bool(val.value)
                 elif isinstance(val, ast.List):
                     result = bool(val.elts)
                 elif isinstance(val, ast.Dict):
                     result = bool(val.keys)
                 elif isinstance(val, ast.Name) and val.id in ["False", "None"]:
                     result = False
-                elif isinstance(val, ast.NameConstant):
+                elif isinstance(val, ast.Constant):
                     result = val.value
                 else:
                     result = True
@@ -687,7 +693,11 @@ def start_process_with_partial_path(context, config):
                 node = node.elts[0]
 
             # make sure the param is a string literal and not a var name
-            if isinstance(node, ast.Str) and not full_path_match.match(node.s):
+            if (
+                isinstance(node, ast.Constant)
+                and isinstance(node.value, str)
+                and not full_path_match.match(node.value)
+            ):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,

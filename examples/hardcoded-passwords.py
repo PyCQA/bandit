@@ -78,3 +78,12 @@ def __init__(self, auth_scheme, auth_token=None, auth_username=None, auth_passwo
     self.auth_password = auth_password
     self.auth_link = auth_link
     self.kwargs = kwargs
+
+# Possible hardcoded password: None
+# Severity: High   Confidence: High
+from oslo_config import cfg
+cfg.StrOpt(
+    'metadata_proxy_shared_secret',
+    default='',
+    secret=True,
+)
