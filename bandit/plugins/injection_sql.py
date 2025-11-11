@@ -107,7 +107,7 @@ def _evaluate_ast(node):
         substrings = [
             child
             for child in node._bandit_parent.values
-            if isinstance(child, ast.Constant)
+            if isinstance(child, ast.Constant) and isinstance(child.value, str)
         ]
         # JoinedStr consists of list of Constant and FormattedValue
         # instances. Let's perform one test for the whole string
