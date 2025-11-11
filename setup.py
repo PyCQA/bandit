@@ -13,7 +13,7 @@ if os.path.isfile(man_path):
 
 
 setuptools.setup(
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     setup_requires=["pbr>=2.0.0"],
     pbr=True,
     data_files=data_files,

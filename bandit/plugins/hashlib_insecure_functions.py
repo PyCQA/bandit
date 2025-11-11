@@ -11,10 +11,7 @@ the ability to construct a new hashing object using the named algorithm. This
 can be used to create insecure hash functions like MD4 and MD5 if they are
 passed as algorithm names to this function.
 
-For Python versions prior to 3.9, this check is similar to B303 blacklist
-except that this checks for insecure hash functions created using
-``hashlib.new`` function. For Python version 3.9 and later, this check
-does additional checking for usage of keyword usedforsecurity on all
+This check does additional checking for usage of keyword usedforsecurity on all
 function variations of hashlib.
 
 Similar to ``hashlib``, this plugin also checks for usage of one of the
