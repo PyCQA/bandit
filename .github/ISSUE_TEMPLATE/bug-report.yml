@@ -44,7 +44,12 @@ body:
       label: Bandit version
       description: Run "bandit --version" if unsure of version number
       options:
-        - 1.8.3 (Default)
+        - 1.9.1 (Default)
+        - 1.9.0
+        - 1.8.6
+        - 1.8.5
+        - 1.8.4
+        - 1.8.3
         - 1.8.2
         - 1.8.1
         - 1.8.0
@@ -53,12 +58,6 @@ body:
         - 1.7.8
         - 1.7.7
         - 1.7.6
-        - 1.7.5
-        - 1.7.4
-        - 1.7.3
-        - 1.7.2
-        - 1.7.1
-        - 1.7.0
     validations:
       required: true
 
@@ -68,7 +67,8 @@ body:
       label: Python version
       description: Run "bandit --version" if unsure of version number
       options:
-        - "3.13 (Default)"
+        - "3.14 (Default)"
+        - "3.13"
         - "3.12"
         - "3.11"
         - "3.10"
