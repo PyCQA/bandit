@@ -76,6 +76,9 @@ def parse_args():
         description=help_description,
         formatter_class=argparse.RawTextHelpFormatter,
     )
+    if sys.version_info >= (3, 14):
+        parser.suggest_on_error = True
+        parser.color = False
 
     parser.add_argument(
         "--show-defaults",
