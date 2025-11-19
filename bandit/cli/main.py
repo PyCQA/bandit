@@ -155,6 +155,10 @@ def main():
         description="Bandit - a Python source code security analyzer",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    if sys.version_info >= (3, 14):
+        parser.suggest_on_error = True
+        parser.color = False
+
     parser.add_argument(
         "targets",
         metavar="targets",

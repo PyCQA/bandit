@@ -168,6 +168,9 @@ def initialize():
         epilog="Additional Bandit arguments such as severity filtering (-ll) "
         "can be added and will be passed to Bandit.",
     )
+    if sys.version_info >= (3, 14):
+        parser.suggest_on_error = True
+        parser.color = False
 
     parser.add_argument(
         "targets",
