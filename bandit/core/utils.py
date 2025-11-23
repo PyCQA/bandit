@@ -302,7 +302,13 @@ def concat_string(node, stop=None):
         _get(node, bits, stop)
     return (
         node,
-        " ".join([x.value for x in bits if isinstance(x, ast.Constant)]),
+        " ".join(
+            [
+                x.value
+                for x in bits
+                if isinstance(x, ast.Constant) and isinstance(x.value, str)
+            ]
+        ),
     )
 
 
