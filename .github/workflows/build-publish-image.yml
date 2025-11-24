@@ -26,7 +26,7 @@ jobs:
         echo "RELEASE_TAG=$TAG" >> $GITHUB_ENV
 
     - name: Check out the repo
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v4
+      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6
       with:
         ref: ${{ github.event_name == 'release' && github.ref || env.RELEASE_TAG }}
 
