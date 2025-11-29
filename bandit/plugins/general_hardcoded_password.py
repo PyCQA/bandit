@@ -89,6 +89,18 @@ def hardcoded_password_string(context):
             ):
                 return _report(node.value)
 
+    elif (
+        isinstance(node._bandit_parent, ast.Dict) and
+        node in node._bandit_parent.keys and
+        RE_CANDIDATES.search(node.value)
+    ):
+        # looks for "{'candidate': 'some_string'}"
+        dict_node = node._bandit_parent
+        pos = dict_node.keys.index(node)
+        value_node = dict_node.values[pos]
+        if isinstance(value_node, ast.Constant):
+            return _report(value_node.value)
+
     elif isinstance(
         node._bandit_parent, ast.Subscript
     ) and RE_CANDIDATES.search(node.value):
