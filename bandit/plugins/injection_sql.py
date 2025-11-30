@@ -74,7 +74,7 @@ from bandit.core import utils
 SIMPLE_SQL_RE = re.compile(
     r"(select\s.*from\s|"
     r"delete\s+from\s|"
-    r"insert\s+into\s.*values\s|"
+    r"insert\s+into\s.*values[\s(]|"
     r"update\s.*set\s)",
     re.IGNORECASE | re.DOTALL,
 )
