@@ -226,36 +226,64 @@ log({"server": server, "password": password, "user": user})
 
 
 #-----------------------------------------------------------------------------
-# COMMPARISONS
+# COMPARISONS
 #-----------------------------------------------------------------------------
 
-def someFunction2(password):
-    # Possible hardcoded password: 'root'
-    # Severity: Low   Confidence: Medium
-    if password == "root":
-        print("OK, logged in")
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+password == "this_string"
+
+# not!
+a == "password"
 
 
-def noMatch(password):
-    # Possible hardcoded password: ''
-    # Severity: Low   Confidence: Medium
-    if password == '':
-        print("No password!")
+# not!
+password.b == "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a.password == "this_string"
+
+# not!
+a.b == "password"
 
 
-def NoMatch2(password):
-    # Possible hardcoded password: 'ajklawejrkl42348swfgkg'
-    # Severity: Low   Confidence: Medium
-    if password == "ajklawejrkl42348swfgkg":
-        print("Nice password!")
+# not!
+password["b"] == "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a["password"] == "this_string"  # TODO: false negative!
+
+# not!
+a["b"] == "password"
 
 
-def noMatchObject():
-    obj = SomeClass()
-    # Possible hardcoded password: 'this cool password'
-    # Severity: Low   Confidence: Medium
-    if obj.password == "this cool password":
-        print(obj.password)
+# not!
+password[b] == "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a[password] == "this_string"  # TODO: false negative!
+
+# not!
+a[b] == "password"
+
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+password != "this_string"
+
+# not!
+a != "password"
+
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+"this_string" == password  # TODO: false negative!
+
+# not!
+"password" == b
 
 
 #-----------------------------------------------------------------------------
