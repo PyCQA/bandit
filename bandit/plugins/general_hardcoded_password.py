@@ -81,75 +81,89 @@ def hardcoded_password_string(context):
     node = context.node
 
     if isinstance(node._bandit_parent, ast.Assign):
-        # looks for "candidate='some_string'"
+        # multiple targets? "a = b.d = c[e] = ..."
         for targ in node._bandit_parent.targets:
-            if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
-                return _report(node.value)
-            elif isinstance(targ, ast.Attribute) and RE_CANDIDATES.search(
-                targ.attr
+            if (
+                isinstance(targ, ast.Name)
+                and RE_CANDIDATES.search(targ.id)
             ):
+                # looks for "candidate='this_string'"
                 return _report(node.value)
+            elif (
+                isinstance(targ, ast.Attribute)
+                and RE_CANDIDATES.search(targ.attr)
+            ):
+                # looks for "o.candidate='this_string'"
+                return _report(node.value)
+            elif isinstance(targ, ast.Subscript):
+                if (
+                    isinstance(targ.slice, ast.Constant)
+                    and isinstance(targ.slice.value, str)
+                    and RE_CANDIDATES.search(targ.slice.value)
+                ):
+                    # looks for "d['candidate'] = 'this_string'"
+                    return _report(node.value)
+                elif (
+                    isinstance(targ.slice, ast.Name)
+                    and RE_CANDIDATES.search(targ.slice.id)
+                ):
+                    # looks for "d[candidate] = 'this_string'"
+                    return _report(node.value)
 
     elif isinstance(node._bandit_parent, ast.AnnAssign):
+        # skip if current node is an annotation string
+        # e.g. password: 'this_string' = 'other_string'
+        if node._bandit_parent.annotation == node:
+            return None
+
         target_node = node._bandit_parent.target
-        if isinstance(target_node, ast.Name):
-            # looks for "candidate: str = 'some_string'"
-            if RE_CANDIDATES.search(target_node.id):
+
+        if (
+            isinstance(target_node, ast.Name)
+            and RE_CANDIDATES.search(target_node.id)
+        ):
                 return _report(node.value)
-        elif isinstance(target_node, ast.Attribute):
-            # looks for "o.candidate: str = 'some_str'"
-            if RE_CANDIDATES.search(target_node.attr):
-                return _report(node.value)
+        elif (
+            isinstance(target_node, ast.Attribute)
+            and RE_CANDIDATES.search(target_node.attr)
+        ):
+            # looks for "o.candidate: str = 'this_str'"
+            return _report(node.value)
         elif isinstance(target_node, ast.Subscript):
             if (
                 isinstance(target_node.slice, ast.Constant)
                 and isinstance(target_node.slice.value, str)
+                and RE_CANDIDATES.search(target_node.slice.value)
             ):
-                # looks for "d["candidate"]: str = 'some_str'"
-                if RE_CANDIDATES.search(target_node.slice.value):
-                    return _report(node.value)
-            elif isinstance(target_node.slice, ast.Name):
+                # looks for "d["candidate"]: str = 'this_str'"
+                return _report(node.value)
+            elif (
+                isinstance(target_node.slice, ast.Name)
+                and RE_CANDIDATES.search(target_node.slice.id)
+            ):
                 # looks for "d[candidate]: str = 'some_str'"
-                if RE_CANDIDATES.search(target_node.slice.id):
-                    return _report(node.value)
+                return _report(node.value)
 
-    elif (
-        isinstance(node._bandit_parent, ast.Dict)
-        and node in node._bandit_parent.keys
-        and RE_CANDIDATES.search(node.value)
-    ):
-        # looks for "{'candidate': 'some_string'}"
+    elif isinstance(node._bandit_parent, ast.Dict):
+        # skip if current node is a dictionary key
+        if node in node._bandit_parent.keys:
+            return None
+
         dict_node = node._bandit_parent
-        pos = dict_node.keys.index(node)
-        value_node = dict_node.values[pos]
-        if isinstance(value_node, ast.Constant):
-            return _report(value_node.value)
-
-    elif isinstance(
-        node._bandit_parent, ast.Subscript
-    ) and RE_CANDIDATES.search(node.value):
-        # Py39+: looks for "dict[candidate]='some_string'"
-        # subscript -> index -> string
-        assign = node._bandit_parent._bandit_parent
+        pos = dict_node.values.index(node)
+        key_node = dict_node.keys[pos]
         if (
-            isinstance(assign, ast.Assign)
-            and isinstance(assign.value, ast.Constant)
-            and isinstance(assign.value.value, str)
+            isinstance(key_node, ast.Constant)
+            and RE_CANDIDATES.search(key_node.value)
         ):
-            return _report(assign.value.value)
-
-    elif isinstance(node._bandit_parent, ast.Index) and RE_CANDIDATES.search(
-        node.value
-    ):
-        # looks for "dict[candidate]='some_string'"
-        # assign -> subscript -> index -> string
-        assign = node._bandit_parent._bandit_parent._bandit_parent
-        if (
-            isinstance(assign, ast.Assign)
-            and isinstance(assign.value, ast.Constant)
-            and isinstance(assign.value.value, str)
+            # looks for "{'candidate': 'some_string'}"
+            return _report(node.value)
+        elif (
+            isinstance(key_node, ast.Name)
+            and RE_CANDIDATES.search(key_node.id)
         ):
-            return _report(assign.value.value)
+            # looks for "{candidate: 'some_string'}"
+            return _report(node.value)
 
     elif isinstance(node._bandit_parent, ast.Compare):
         # looks for "candidate == 'some_string'"
