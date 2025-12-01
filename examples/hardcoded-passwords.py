@@ -2,40 +2,79 @@
 # ASSIGNMENTS
 #-----------------------------------------------------------------------------
 
-# Possible hardcoded password: 'class_password'
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+password = "this_string"
+
+# not!
+a = "password"
+
+
+# not!
+password.a = "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a.password = "this_string"
+
+# not!
+a.b = "password"
+
+# not!
+password['b'] = "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a['password'] = "this_string"
+
+# not!
+a['b'] = "password"
+
+
+# not!
+password[b] = "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a[password] = "this_string"
+
+# not!
+a[b] = "password"
+
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+password = b.c = d['e'] = f[g] = "this_string"
+
+# not!
+a = password.c = d['e'] = f[g] = "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a = b.password = d['e'] = f[g] = "this_string"
+
+# not!
+a = b.c = password['e'] = f[g] = "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a = b.c = d['password'] = f[g] = "this_string"
+
+# not!
+a = b.c = d['e'] = password[g] = "this_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+a = b.c = d['e'] = f[password] = "this_string"
+
+# not!
+a = b.c = d['e'] = f[g] = "password"
+
+
+# Possible hardcoded password: 'this_string'
 # Severity: Low   Confidence: Medium
 class SomeClass:
-    password = "class_password"
-
-
-# Possible hardcoded password: 'blerg'
-# Severity: Low   Confidence: Medium
-password = "blerg"
-
-
-# Possible hardcoded password: 'blerg'
-# Severity: Low   Confidence: Medium
-password["password"] = "blerg"
-
-
-# Possible hardcoded password: 'secret'
-# Severity: Low   Confidence: Medium
-EMAIL_PASSWORD = "secret"
-
-
-# Possible hardcoded password: 'emails_secret'
-# Severity: Low   Confidence: Medium
-email_pwd = 'emails_secret'
-
-
-# Possible hardcoded password: 'd6s$f9g!j8mg7hw?n&2'
-# Severity: Low   Confidence: Medium
-my_secret_password_for_email = 'd6s$f9g!j8mg7hw?n&2'
-
-
-# Possible hardcoded password: '1234'
-# Severity: Low   Confidence: Medium
-passphrase='1234'
+    password = "this_string"
 
 
 #-----------------------------------------------------------------------------
