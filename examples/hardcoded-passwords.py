@@ -286,6 +286,94 @@ a != "password"
 "password" == b
 
 
+# not!
+password == b == c
+
+# not!
+a == password == c
+
+# not!
+a == b == password
+
+# Possible hardcoded password: 'third_string'
+# Severity: Low   Confidence: Medium
+password == b == "third_string"  # TODO: false negative!
+
+# Possible hardcoded password: 'third_string'
+# Severity: Low   Confidence: Medium
+a == password == "third_string"  # TODO: false negative!
+
+# not!
+a == b == "password"
+
+# Possible hardcoded password: 'other_string'
+# Severity: Low   Confidence: Medium
+password == "other_string" == c
+
+# not!
+a == "password" == c
+
+# Possible hardcoded password: 'other_string'
+# Severity: Low   Confidence: Medium
+a == "other_string" == password  # TODO: false negative!
+
+# Possible hardcoded password: 'other_string'
+# Severity: Low   Confidence: Medium
+# Possible hardcoded password: 'third_string'
+# Severity: Low   Confidence: Medium
+password == "other_string" == "third_string"  # TODO: wrong password!
+
+# not!
+a == "password" == "third_string"
+
+# not!
+a == "other_string" == "password"
+
+# not!
+"password" == b == c
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+"this_string" == password == c  # TODO: false negative!
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+"this_string" == b == password  # TODO: false negative!
+
+# not!
+"password" == b == "third_string"
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+# Possible hardcoded password: 'third_string'
+# Severity: Low   Confidence: Medium
+"this_string" == password == "third_string"  # TODO: false negative!
+
+# not!
+"this_string" == b == "password"
+
+# not!
+"password" == "other_string" == c
+
+# not!
+"this_string" == "password" == c
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+# Possible hardcoded password: 'other_string'
+# Severity: Low   Confidence: Medium
+"this_string" == "other_string" == password  # TODO: false negative!
+
+# not!
+"password" == "other_string" == "third_string"
+
+# not!
+"this_string" == "password" == "third_string"
+
+# not!
+"this_string" == "other_string" == "password"
+
+
 #-----------------------------------------------------------------------------
 # FUNCTION CALLS
 #-----------------------------------------------------------------------------

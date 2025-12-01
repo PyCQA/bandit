@@ -168,8 +168,8 @@ class FunctionalTests(testtools.TestCase):
     def test_hardcoded_passwords(self):
         """Test for hard-coded passwords."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 29, "MEDIUM": 0, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 29, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 43, "MEDIUM": 0, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 43, "HIGH": 0},
         }
         self.check_example("hardcoded-passwords.py", expect)
 
