@@ -79,6 +79,7 @@ def hardcoded_password_string(context):
 
     """
     node = context.node
+
     if isinstance(node._bandit_parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node._bandit_parent.targets:
@@ -88,6 +89,29 @@ def hardcoded_password_string(context):
                 targ.attr
             ):
                 return _report(node.value)
+
+    elif isinstance(node._bandit_parent, ast.AnnAssign):
+        target_node = node._bandit_parent.target
+        if isinstance(target_node, ast.Name):
+            # looks for "candidate: str = 'some_string'"
+            if RE_CANDIDATES.search(target_node.id):
+                return _report(node.value)
+        elif isinstance(target_node, ast.Attribute):
+            # looks for "o.candidate: str = 'some_str'"
+            if RE_CANDIDATES.search(target_node.attr):
+                return _report(node.value)
+        elif isinstance(target_node, ast.Subscript):
+            if (
+                isinstance(target_node.slice, ast.Constant)
+                and isinstance(target_node.slice.value, str)
+            ):
+                # looks for "d["candidate"]: str = 'some_str'"
+                if RE_CANDIDATES.search(target_node.slice.value):
+                    return _report(node.value)
+            elif isinstance(target_node.slice, ast.Name):
+                # looks for "d[candidate]: str = 'some_str'"
+                if RE_CANDIDATES.search(target_node.slice.id):
+                    return _report(node.value)
 
     elif (
         isinstance(node._bandit_parent, ast.Dict)

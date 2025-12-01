@@ -103,3 +103,21 @@ info = {"password": "12345"}
 
 # ... but not:
 info = {"password": password}
+
+# Possible hardcoded password: 'password'
+# Severity: Low   Confidence: Medium
+# https://github.com/PyCQA/bandit/issues/642
+class MyConfig:
+    my_password: str = 'password'
+
+# Possible hardcoded password: 'admin123'
+# Severity: Low   Confidence: Medium
+config.password: str = "admin123"
+
+# Possible hardcoded password: 'admin123'
+# Severity: Low   Confidence: Medium
+d["password"]: str = "admin123"
+
+# Possible hardcoded password: 'admin123'
+# Severity: Low   Confidence: Medium
+d[password]: str = 'admin123'
