@@ -194,24 +194,35 @@ class MyConfig:
 # DICTIONARIES
 #-----------------------------------------------------------------------------
 
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+{"password": "this_string"}
+
+# not!
+{"a": "password"}
+
+
+# Possible hardcoded password: 'this_string'
+# Severity: Low   Confidence: Medium
+{password: "this_string"}
+
+# not!
+{a: "password"}
+
+
 # Possible hardcoded password: 'pass'
 # Severity: Low   Confidence: Medium
 # https://github.com/PyCQA/bandit/issues/313
 log({"server": server, "password": 'pass', "user": user})
 
-
-# ... but not:
+# not!
 log({"server": server, "password": password, "user": user})
 
 
 # Possible hardcoded password: '12345'
 # Severity: Low   Confidence: Medium
 # https://github.com/PyCQA/bandit/issues/1267
-info = {"password": "12345"}
-
-
-# ... but not:
-info = {"password": password}
+{"password": "12345"}
 
 
 #-----------------------------------------------------------------------------
