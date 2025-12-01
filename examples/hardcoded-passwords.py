@@ -183,13 +183,6 @@ a[b]: str = "password"
 a[b]: "str" = "password"
 
 
-# Possible hardcoded password: 'password'
-# Severity: Low   Confidence: Medium
-# https://github.com/PyCQA/bandit/issues/642
-class MyConfig:
-    my_password: str = 'password'
-
-
 #-----------------------------------------------------------------------------
 # DICTIONARIES
 #-----------------------------------------------------------------------------
@@ -208,21 +201,6 @@ class MyConfig:
 
 # not!
 {a: "password"}
-
-
-# Possible hardcoded password: 'pass'
-# Severity: Low   Confidence: Medium
-# https://github.com/PyCQA/bandit/issues/313
-log({"server": server, "password": 'pass', "user": user})
-
-# not!
-log({"server": server, "password": password, "user": user})
-
-
-# Possible hardcoded password: '12345'
-# Severity: Low   Confidence: Medium
-# https://github.com/PyCQA/bandit/issues/1267
-{"password": "12345"}
 
 
 #-----------------------------------------------------------------------------
@@ -401,6 +379,84 @@ def doLogin(password="blerg"):
 
 def NoMatch3(a, b):
     pass
+
+
+#-----------------------------------------------------------------------------
+# REPORTED ISSUES
+#-----------------------------------------------------------------------------
+
+# https://github.com/PyCQA/bandit/issues/313
+
+# Possible hardcoded password: 'pass'
+# Severity: Low   Confidence: Medium
+log({"server": server, "password": 'pass', "user": user})
+
+# not!
+log({"server": server, "password": password, "user": user})
+
+# Possible hardcoded password: 'pass'
+# Severity: Low   Confidence: Medium
+log(password='pass')
+
+
+# https://github.com/PyCQA/bandit/issues/386
+
+# Possible hardcoded password: 'secret'
+# Severity: Low   Confidence: Medium
+EMAIL_PASSWORD = "secret"
+
+# Possible hardcoded password: 'emails_secret'
+# Severity: Low   Confidence: Medium
+email_pwd = 'emails_secret'
+
+
+# https://github.com/PyCQA/bandit/issues/551
+
+# Possible hardcoded password: 'aaaaaaa'
+# Severity: Low   Confidence: Medium
+app.config['SECRET_KEY'] = 'aaaaaaa'
+
+
+# https://github.com/PyCQA/bandit/issues/605
+
+# Possible hardcoded password: 'root'
+# Severity: Low   Confidence: Medium
+def fooBar(password):
+    if password == "root":
+        print("OK, logged in")
+
+
+# https://github.com/PyCQA/bandit/issues/639
+
+# Possible hardcoded password: '1238aoufhz8xyf3jr;'
+# Severity: Low   Confidence: Medium
+password = "1238aoufhz8xyf3jr;"
+
+
+# https://github.com/PyCQA/bandit/issues/642
+
+# Possible hardcoded password: 'password'
+# Severity: Low   Confidence: Medium
+class MyConfig:
+    my_password: str = 'password'
+
+
+# https://github.com/PyCQA/bandit/issues/759
+
+# Possible hardcoded password: '12123123'
+# Severity: Low   Confidence: Medium
+password = "12123123"
+
+# Possible hardcoded password: '12123123'
+# Severity: Low   Confidence: Medium
+self.password = "12123123"
+
+
+# https://github.com/PyCQA/bandit/issues/1267
+
+# Possible hardcoded password: '12345'
+# Severity: Low   Confidence: Medium
+{"password": "12345"}
 
 
 #-----------------------------------------------------------------------------
