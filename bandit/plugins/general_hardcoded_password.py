@@ -169,19 +169,35 @@ def hardcoded_password_string(context):
 
     elif isinstance(node._bandit_parent, ast.Compare):
         # looks for "candidate == 'some_string'"
-        comp = node._bandit_parent
-        if isinstance(comp.left, ast.Name):
-            if RE_CANDIDATES.search(comp.left.id):
-                if isinstance(
-                    comp.comparators[0], ast.Constant
-                ) and isinstance(comp.comparators[0].value, str):
-                    return _report(comp.comparators[0].value)
-        elif isinstance(comp.left, ast.Attribute):
-            if RE_CANDIDATES.search(comp.left.attr):
-                if isinstance(
-                    comp.comparators[0], ast.Constant
-                ) and isinstance(comp.comparators[0].value, str):
-                    return _report(comp.comparators[0].value)
+        comp_node = node._bandit_parent
+        operand_nodes = [comp_node.left] + comp_node.comparators
+        for operand_node in operand_nodes:
+            if (
+                isinstance(operand_node, ast.Name)
+                and RE_CANDIDATES.search(operand_node.id)
+            ):
+                # looks for "password == 'this_string'"
+                return _report(node.value)
+            elif (
+                isinstance(operand_node, ast.Attribute)
+                and RE_CANDIDATES.search(operand_node.attr)
+            ):
+                # looks for "o.password == 'this_string'"
+                return _report(node.value)
+            elif isinstance(operand_node, ast.Subscript):
+                if (
+                    isinstance(operand_node.slice, ast.Constant)
+                    and isinstance(operand_node.slice.value, str)
+                    and RE_CANDIDATES.search(operand_node.slice.value)
+                ):
+                    # looks for "d["candidate"] == 'this_str'"
+                    return _report(node.value)
+                elif (
+                    isinstance(operand_node.slice, ast.Name)
+                    and RE_CANDIDATES.search(operand_node.slice.id)
+                ):
+                    # looks for "d[candidate] == 'some_str'"
+                    return _report(node.value)
 
 
 @test.checks("Call")

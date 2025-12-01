@@ -253,7 +253,7 @@ password["b"] == "this_string"
 
 # Possible hardcoded password: 'this_string'
 # Severity: Low   Confidence: Medium
-a["password"] == "this_string"  # TODO: false negative!
+a["password"] == "this_string"
 
 # not!
 a["b"] == "password"
@@ -264,7 +264,7 @@ password[b] == "this_string"
 
 # Possible hardcoded password: 'this_string'
 # Severity: Low   Confidence: Medium
-a[password] == "this_string"  # TODO: false negative!
+a[password] == "this_string"
 
 # not!
 a[b] == "password"
@@ -280,7 +280,7 @@ a != "password"
 
 # Possible hardcoded password: 'this_string'
 # Severity: Low   Confidence: Medium
-"this_string" == password  # TODO: false negative!
+"this_string" == password
 
 # not!
 "password" == b
@@ -297,11 +297,11 @@ a == b == password
 
 # Possible hardcoded password: 'third_string'
 # Severity: Low   Confidence: Medium
-password == b == "third_string"  # TODO: false negative!
+password == b == "third_string"
 
 # Possible hardcoded password: 'third_string'
 # Severity: Low   Confidence: Medium
-a == password == "third_string"  # TODO: false negative!
+a == password == "third_string"
 
 # not!
 a == b == "password"
@@ -315,13 +315,13 @@ a == "password" == c
 
 # Possible hardcoded password: 'other_string'
 # Severity: Low   Confidence: Medium
-a == "other_string" == password  # TODO: false negative!
+a == "other_string" == password
 
 # Possible hardcoded password: 'other_string'
 # Severity: Low   Confidence: Medium
 # Possible hardcoded password: 'third_string'
 # Severity: Low   Confidence: Medium
-password == "other_string" == "third_string"  # TODO: wrong password!
+password == "other_string" == "third_string"
 
 # not!
 a == "password" == "third_string"
@@ -334,11 +334,11 @@ a == "other_string" == "password"
 
 # Possible hardcoded password: 'this_string'
 # Severity: Low   Confidence: Medium
-"this_string" == password == c  # TODO: false negative!
+"this_string" == password == c
 
 # Possible hardcoded password: 'this_string'
 # Severity: Low   Confidence: Medium
-"this_string" == b == password  # TODO: false negative!
+"this_string" == b == password
 
 # not!
 "password" == b == "third_string"
@@ -347,7 +347,7 @@ a == "other_string" == "password"
 # Severity: Low   Confidence: Medium
 # Possible hardcoded password: 'third_string'
 # Severity: Low   Confidence: Medium
-"this_string" == password == "third_string"  # TODO: false negative!
+"this_string" == password == "third_string"
 
 # not!
 "this_string" == b == "password"
@@ -362,7 +362,7 @@ a == "other_string" == "password"
 # Severity: Low   Confidence: Medium
 # Possible hardcoded password: 'other_string'
 # Severity: Low   Confidence: Medium
-"this_string" == "other_string" == password  # TODO: false negative!
+"this_string" == "other_string" == password
 
 # not!
 "password" == "other_string" == "third_string"
