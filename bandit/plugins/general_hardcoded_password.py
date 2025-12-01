@@ -83,15 +83,11 @@ def hardcoded_password_string(context):
     if isinstance(node._bandit_parent, ast.Assign):
         # multiple targets? "a = b.d = c[e] = ..."
         for targ in node._bandit_parent.targets:
-            if (
-                isinstance(targ, ast.Name)
-                and RE_CANDIDATES.search(targ.id)
-            ):
+            if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
                 # looks for "candidate='this_string'"
                 return _report(node.value)
-            elif (
-                isinstance(targ, ast.Attribute)
-                and RE_CANDIDATES.search(targ.attr)
+            elif isinstance(targ, ast.Attribute) and RE_CANDIDATES.search(
+                targ.attr
             ):
                 # looks for "o.candidate='this_string'"
                 return _report(node.value)
@@ -103,9 +99,8 @@ def hardcoded_password_string(context):
                 ):
                     # looks for "d['candidate'] = 'this_string'"
                     return _report(node.value)
-                elif (
-                    isinstance(targ.slice, ast.Name)
-                    and RE_CANDIDATES.search(targ.slice.id)
+                elif isinstance(targ.slice, ast.Name) and RE_CANDIDATES.search(
+                    targ.slice.id
                 ):
                     # looks for "d[candidate] = 'this_string'"
                     return _report(node.value)
@@ -118,15 +113,13 @@ def hardcoded_password_string(context):
 
         target_node = node._bandit_parent.target
 
-        if (
-            isinstance(target_node, ast.Name)
-            and RE_CANDIDATES.search(target_node.id)
+        if isinstance(target_node, ast.Name) and RE_CANDIDATES.search(
+            target_node.id
         ):
             # looks for "candidate: str = 'this_str'"
             return _report(node.value)
-        elif (
-            isinstance(target_node, ast.Attribute)
-            and RE_CANDIDATES.search(target_node.attr)
+        elif isinstance(target_node, ast.Attribute) and RE_CANDIDATES.search(
+            target_node.attr
         ):
             # looks for "o.candidate: str = 'this_str'"
             return _report(node.value)
@@ -138,10 +131,9 @@ def hardcoded_password_string(context):
             ):
                 # looks for "d['candidate']: str = 'this_str'"
                 return _report(node.value)
-            elif (
-                isinstance(target_node.slice, ast.Name)
-                and RE_CANDIDATES.search(target_node.slice.id)
-            ):
+            elif isinstance(
+                target_node.slice, ast.Name
+            ) and RE_CANDIDATES.search(target_node.slice.id):
                 # looks for "d[candidate]: str = 'some_str'"
                 return _report(node.value)
 
@@ -154,15 +146,13 @@ def hardcoded_password_string(context):
         pos = dict_node.values.index(node)
         key_node = dict_node.keys[pos]
 
-        if (
-            isinstance(key_node, ast.Constant)
-            and RE_CANDIDATES.search(key_node.value)
+        if isinstance(key_node, ast.Constant) and RE_CANDIDATES.search(
+            key_node.value
         ):
             # looks for "{'candidate': 'some_string'}"
             return _report(node.value)
-        elif (
-            isinstance(key_node, ast.Name)
-            and RE_CANDIDATES.search(key_node.id)
+        elif isinstance(key_node, ast.Name) and RE_CANDIDATES.search(
+            key_node.id
         ):
             # looks for "{candidate: 'some_string'}"
             return _report(node.value)
@@ -172,16 +162,14 @@ def hardcoded_password_string(context):
         comp_node = node._bandit_parent
         operand_nodes = [comp_node.left] + comp_node.comparators
         for operand_node in operand_nodes:
-            if (
-                isinstance(operand_node, ast.Name)
-                and RE_CANDIDATES.search(operand_node.id)
+            if isinstance(operand_node, ast.Name) and RE_CANDIDATES.search(
+                operand_node.id
             ):
                 # looks for "password == 'this_string'"
                 return _report(node.value)
-            elif (
-                isinstance(operand_node, ast.Attribute)
-                and RE_CANDIDATES.search(operand_node.attr)
-            ):
+            elif isinstance(
+                operand_node, ast.Attribute
+            ) and RE_CANDIDATES.search(operand_node.attr):
                 # looks for "o.password == 'this_string'"
                 return _report(node.value)
             elif isinstance(operand_node, ast.Subscript):
@@ -192,10 +180,9 @@ def hardcoded_password_string(context):
                 ):
                     # looks for "d["candidate"] == 'this_str'"
                     return _report(node.value)
-                elif (
-                    isinstance(operand_node.slice, ast.Name)
-                    and RE_CANDIDATES.search(operand_node.slice.id)
-                ):
+                elif isinstance(
+                    operand_node.slice, ast.Name
+                ) and RE_CANDIDATES.search(operand_node.slice.id):
                     # looks for "d[candidate] == 'some_str'"
                     return _report(node.value)
 
