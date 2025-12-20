@@ -69,7 +69,7 @@ You can test any changes with tox:
 pip install tox
 tox run -e pep8
 tox run -e format
-tox run -e py39
+tox run -e py310
 tox run -e docs
 tox run -e cover
 ```
