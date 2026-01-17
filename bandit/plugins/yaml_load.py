@@ -66,6 +66,21 @@ def yaml_load(context):
             not context.get_call_arg_at_position(1) == "CSafeLoader",
         ]
     ):
+        if getattr(context.node.func, "attr", None) == "load":
+            context.node.func.attr = "safe_load"
+            for keyword in context.node.keywords:
+                if keyword.arg == "Loader":
+                    context.node.keywords.remove(keyword)
+                    break
+        elif getattr(context.node.func, "id", None) == "load":
+            # Suggesting a switch to safe_load won't work without the import.
+            # Therefore switch to a SafeLoader.
+            # TODO: fix this
+            for keyword in context.node.keywords:
+                if keyword.arg == "Loader":
+                    context.node.keywords.remove(keyword)
+                    break
+
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.HIGH,
@@ -73,4 +88,5 @@ def yaml_load(context):
             text="Use of unsafe yaml load. Allows instantiation of"
             " arbitrary objects. Consider yaml.safe_load().",
             lineno=context.node.lineno,
+            fix=context.unparse(context.node),
         )
