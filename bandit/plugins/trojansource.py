@@ -30,12 +30,12 @@ to reorder source code characters in a way that changes its logic.
 .. versionadded:: 1.7.10
 
 """  # noqa: E501
+
 from tokenize import detect_encoding
 
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
-
 
 BIDI_CHARACTERS = (
     "\u202a",

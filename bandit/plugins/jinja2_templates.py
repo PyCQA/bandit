@@ -63,6 +63,7 @@ false. A HIGH severity warning is generated in either of these scenarios.
     CWE information added
 
 """
+
 import ast
 
 import bandit

@@ -229,7 +229,7 @@ class UtilTests(testtools.TestCase):
         self.assertEqual("base1.base2.name", p)
 
     def test_namespace_path_split(self):
-        (head, tail) = b_utils.namespace_path_split("base1.base2.name")
+        head, tail = b_utils.namespace_path_split("base1.base2.name")
         self.assertEqual("base1.base2", head)
         self.assertEqual("name", tail)
 

@@ -59,6 +59,7 @@ Common unsafe patterns:
 .. versionadded:: 1.8.6
 
 """
+
 import string
 
 import bandit

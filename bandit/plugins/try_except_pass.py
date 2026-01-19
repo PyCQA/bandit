@@ -72,6 +72,7 @@ would not generate a warning if the configuration option
     CWE information added
 
 """
+
 import ast
 
 import bandit

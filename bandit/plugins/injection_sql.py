@@ -63,6 +63,7 @@ for false positives, since valid uses of str.replace can be common.
     Flag when str.replace is used in the string construction
 
 """  # noqa: E501
+
 import ast
 import re
 

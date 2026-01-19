@@ -68,6 +68,7 @@ These two options can be set in a shared configuration section
 .. versionadded:: 1.8.3
 
 """
+
 import ast
 
 import bandit

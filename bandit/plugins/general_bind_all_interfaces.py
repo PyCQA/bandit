@@ -35,6 +35,7 @@ binding to all network interfaces.
     CWE information added
 
 """
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test

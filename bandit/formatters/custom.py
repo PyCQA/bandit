@@ -25,6 +25,7 @@ Allowing use of file:/ or custom schemes is often unexpected.
     New field `CWE` added to output
 
 """
+
 import logging
 import os
 import re

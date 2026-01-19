@@ -146,6 +146,7 @@ This formatter outputs the issues as HTML.
     New field `CWE` added to output
 
 """
+
 import logging
 import sys
 from html import escape as html_escape

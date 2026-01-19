@@ -52,6 +52,7 @@ use assert statements in test cases.
     CWE information added
 
 """
+
 import fnmatch
 
 import bandit

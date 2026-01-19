@@ -35,6 +35,7 @@ verification is disabled, Bandit will return a HIGH severity error.
     CWE information added
 
 """
+
 import ast
 
 import bandit
