@@ -53,6 +53,7 @@ file is set world write or executable. Warnings are given with HIGH confidence.
     Added checks for S_IWGRP and S_IXOTH
 
 """  # noqa: E501
+
 import stat
 
 import bandit

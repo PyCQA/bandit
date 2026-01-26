@@ -84,7 +84,7 @@ class ScreenFormatterTests(testtools.TestCase):
         conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, "file")
 
-        (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
+        tmp_fd, self.tmp_fname = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
 
         get_issue_list.return_value = collections.OrderedDict()
@@ -103,7 +103,7 @@ class ScreenFormatterTests(testtools.TestCase):
         conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, "file")
 
-        (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
+        tmp_fd, self.tmp_fname = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
 
         self.manager.verbose = True
@@ -196,7 +196,7 @@ class ScreenFormatterTests(testtools.TestCase):
         conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, "file")
 
-        (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
+        tmp_fd, self.tmp_fname = tempfile.mkstemp()
         self.manager.out_file = self.tmp_fname
 
         issue_a = _get_issue_instance()

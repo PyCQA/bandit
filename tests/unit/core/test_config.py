@@ -77,12 +77,10 @@ class TestGetOption(testtools.TestCase):
         self.example_key = uuid.uuid4().hex
         self.example_subkey = uuid.uuid4().hex
         self.example_subvalue = uuid.uuid4().hex
-        sample_yaml = textwrap.dedent(
-            f"""
+        sample_yaml = textwrap.dedent(f"""
             {self.example_key}:
                 {self.example_subkey}: {self.example_subvalue}
-            """
-        )
+            """)
 
         f = self.useFixture(TempFile(sample_yaml))
 
@@ -118,8 +116,7 @@ class TestGetSetting(testtools.TestCase):
 
 
 class TestConfigCompat(testtools.TestCase):
-    sample = textwrap.dedent(
-        """
+    sample = textwrap.dedent("""
         profiles:
             test_1:
                 include:
@@ -163,8 +160,7 @@ class TestConfigCompat(testtools.TestCase):
                     imports: [telnetlib]
                     level: HIGH
                     message: "{module} is considered insecure."
-        """
-    )
+        """)
     suffix = ".yaml"
 
     def setUp(self):
@@ -280,8 +276,7 @@ class TestConfigCompat(testtools.TestCase):
 
 
 class TestTomlConfig(TestConfigCompat):
-    sample = textwrap.dedent(
-        """
+    sample = textwrap.dedent("""
         [tool.bandit.profiles.test_1]
         include = [
             "any_other_function_with_shell_equals_true",
@@ -314,6 +309,5 @@ class TestTomlConfig(TestConfigCompat):
             imports = ["telnetlib"]
             level = "HIGH"
             message = "{module} is considered insecure."
-        """
-    )
+        """)
     suffix = ".toml"

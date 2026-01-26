@@ -32,6 +32,7 @@ This formatter outputs the issues as color coded text to screen.
     New field `CWE` added to output
 
 """
+
 import datetime
 import logging
 import sys
