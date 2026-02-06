@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 """Bandit is a tool designed to find common security issues in Python code."""
+
 import argparse
 import importlib
 import logging

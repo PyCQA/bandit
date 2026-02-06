@@ -34,6 +34,7 @@ Python docs succinctly describe why the use of `exec` is risky.
     CWE information added
 
 """
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
