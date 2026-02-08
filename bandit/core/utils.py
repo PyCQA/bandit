@@ -389,6 +389,7 @@ def check_ast_node(name):
 
     raise TypeError(f"Error: {name} is not a valid node type in AST")
 
+
 def get_nosec(nosec_lines, context):
     # Check lines within the linerange first
     for lineno in context["linerange"]:
@@ -417,23 +418,31 @@ def get_nosec(nosec_lines, context):
             if "file_data" in context:
                 try:
                     fdata = context["file_data"]
-                    if hasattr(fdata, 'read'):
+                    if hasattr(fdata, "read"):
                         # It's a file object, seek to beginning and read
-                        if hasattr(fdata, 'seek'):
+                        if hasattr(fdata, "seek"):
                             fdata.seek(0)
                         content = fdata.read()
                         if isinstance(content, bytes):
-                            content = content.decode('utf-8', errors='replace')
+                            content = content.decode("utf-8", errors="replace")
                         lines = content.splitlines()
                     else:
                         # It's already a string
-                        lines = context["file_data"].splitlines() if isinstance(context["file_data"], str) else []
+                        lines = (
+                            context["file_data"].splitlines()
+                            if isinstance(context["file_data"], str)
+                            else []
+                        )
 
                     if issue_lineno <= len(lines):
-                        current_line = lines[issue_lineno - 1]  # -1 because lines are 0-indexed
+                        current_line = lines[
+                            issue_lineno - 1
+                        ]  # -1 because lines are 0-indexed
                         # Check if the current line ends with characters that suggest
                         # continuation to the next line
-                        if current_line.rstrip().endswith((',', '(', '[', '{')):
+                        if current_line.rstrip().endswith(
+                            (",", "(", "[", "{")
+                        ):
                             if next_lineno in nosec_lines:
                                 return nosec_lines[next_lineno]
                 except:
