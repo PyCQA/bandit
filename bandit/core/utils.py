@@ -390,11 +390,53 @@ def check_ast_node(name):
     raise TypeError(f"Error: {name} is not a valid node type in AST")
 
 def get_nosec(nosec_lines, context):
-    # Only check the specific line number from the context, not the entire
-    # linerange. This prevents nosec comments on one line from incorrectly
-    # applying to all lines in a multiline structure (like dictionaries).
-    lineno = context.get("lineno")
-    if lineno is not None:
-        return nosec_lines.get(lineno, None)
-    return None
+    # Check lines within the linerange first
+    for lineno in context["linerange"]:
+        nosec = nosec_lines.get(lineno, None)
+        if nosec is not None:
+            return nosec
 
+    # For multiline expressions, the nosec comment might be on a line
+    # immediately after the issue location, specifically on the closing line
+    # of a multiline expression (e.g., closing parenthesis, bracket, etc.)
+    if "lineno" in context:
+        issue_lineno = context["lineno"]
+        linerange = context.get("linerange", [])
+
+        # Only check the very next line (offset=1) for specific cases
+        if linerange and len(linerange) == 1 and linerange[0] == issue_lineno:
+            # Check if the next line is likely part of the same expression
+            # This is indicated by the next line starting with a closing delimiter
+            # (like ), ], }) or being immediately adjacent
+            next_lineno = issue_lineno + 1
+
+            # We need to check the actual source code to see if the next line
+            # is part of the same expression. For now, we'll use a heuristic:
+            # if the issue is on a line that ends with an operator or comma
+            # that's likely to continue to the next line
+            if "file_data" in context:
+                try:
+                    fdata = context["file_data"]
+                    if hasattr(fdata, 'read'):
+                        # It's a file object, seek to beginning and read
+                        if hasattr(fdata, 'seek'):
+                            fdata.seek(0)
+                        content = fdata.read()
+                        if isinstance(content, bytes):
+                            content = content.decode('utf-8', errors='replace')
+                        lines = content.splitlines()
+                    else:
+                        # It's already a string
+                        lines = context["file_data"].splitlines() if isinstance(context["file_data"], str) else []
+
+                    if issue_lineno <= len(lines):
+                        current_line = lines[issue_lineno - 1]  # -1 because lines are 0-indexed
+                        # Check if the current line ends with characters that suggest
+                        # continuation to the next line
+                        if current_line.rstrip().endswith((',', '(', '[', '{')):
+                            if next_lineno in nosec_lines:
+                                return nosec_lines[next_lineno]
+                except:
+                    pass
+
+    return None
