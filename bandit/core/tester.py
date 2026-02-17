@@ -103,12 +103,18 @@ class BanditTester:
                     val = constants.RANKING_VALUES[result.confidence]
                     scores["CONFIDENCE"][con] += val
                 else:
-                    nosec_tests_to_skip = self._get_nosecs_from_contexts(
-                        temp_context
+                    # Only warn about unused nosec if the comment is on this
+                    # specific line, not on a different line of the same
+                    # multiline statement (see #1352)
+                    line_nosec = self.nosec_lines.get(
+                        temp_context["lineno"], None
                     )
                     if (
-                        nosec_tests_to_skip
-                        and test._test_id in nosec_tests_to_skip
+                        line_nosec is not None
+                        and (
+                            not line_nosec
+                            or test._test_id in line_nosec
+                        )
                     ):
                         LOG.warning(
                             f"nosec encountered ({test._test_id}), but no "
