@@ -109,12 +109,8 @@ class BanditTester:
                     line_nosec = self.nosec_lines.get(
                         temp_context["lineno"], None
                     )
-                    if (
-                        line_nosec is not None
-                        and (
-                            not line_nosec
-                            or test._test_id in line_nosec
-                        )
+                    if line_nosec is not None and (
+                        not line_nosec or test._test_id in line_nosec
                     ):
                         LOG.warning(
                             f"nosec encountered ({test._test_id}), but no "
