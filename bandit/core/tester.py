@@ -22,6 +22,7 @@ class BanditTester:
         self.debug = debug
         self.nosec_lines = nosec_lines
         self.metrics = metrics
+        self.skipped_pairs = set()
 
     def run_tests(self, raw_context, checktype):
         """Runs all tests for a certain type of check, for example
@@ -69,9 +70,7 @@ class BanditTester:
                         result.linerange = temp_context["linerange"]
                     if result.col_offset == -1:
                         result.col_offset = temp_context["col_offset"]
-                    result.end_col_offset = temp_context.get(
-                        "end_col_offset", 0
-                    )
+                    result.end_col_offset = temp_context.get("end_col_offset", 0)
                     result.test = name
                     if result.test_id == "":
                         result.test_id = test._test_id
@@ -87,10 +86,11 @@ class BanditTester:
                             self.metrics.note_nosec()
                             continue
                         if result.test_id in nosec_tests_to_skip:
-                            LOG.debug(
-                                f"skipped, nosec for test {result.test_id}"
-                            )
+                            LOG.debug(f"skipped, nosec for test {result.test_id}")
                             self.metrics.note_skipped_test()
+                            if result.linerange:
+                                for ln in result.linerange:
+                                    self.skipped_pairs.add((result.test_id, ln))
                             continue
 
                     self.results.append(result)
@@ -103,12 +103,12 @@ class BanditTester:
                     val = constants.RANKING_VALUES[result.confidence]
                     scores["CONFIDENCE"][con] += val
                 else:
-                    nosec_tests_to_skip = self._get_nosecs_from_contexts(
-                        temp_context
-                    )
+                    nosec_tests_to_skip = self._get_nosecs_from_contexts(temp_context)
                     if (
                         nosec_tests_to_skip
                         and test._test_id in nosec_tests_to_skip
+                        and (test._test_id, temp_context["lineno"])
+                        not in self.skipped_pairs
                     ):
                         LOG.warning(
                             f"nosec encountered ({test._test_id}), but no "
@@ -130,9 +130,7 @@ class BanditTester:
         """
         nosec_tests_to_skip = set()
         base_tests = (
-            self.nosec_lines.get(test_result.lineno, None)
-            if test_result
-            else None
+            self.nosec_lines.get(test_result.lineno, None) if test_result else None
         )
         context_tests = utils.get_nosec(self.nosec_lines, context)
 
