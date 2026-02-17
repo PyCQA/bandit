@@ -22,6 +22,7 @@ class BanditTester:
         self.debug = debug
         self.nosec_lines = nosec_lines
         self.metrics = metrics
+        self.skipped_pairs = set()
 
     def run_tests(self, raw_context, checktype):
         """Runs all tests for a certain type of check, for example
@@ -91,6 +92,11 @@ class BanditTester:
                                 f"skipped, nosec for test {result.test_id}"
                             )
                             self.metrics.note_skipped_test()
+                            if result.linerange:
+                                for ln in result.linerange:
+                                    self.skipped_pairs.add(
+                                        (result.test_id, ln)
+                                    )
                             continue
 
                     self.results.append(result)
@@ -109,6 +115,8 @@ class BanditTester:
                     if (
                         nosec_tests_to_skip
                         and test._test_id in nosec_tests_to_skip
+                        and (test._test_id, temp_context["lineno"])
+                        not in self.skipped_pairs
                     ):
                         LOG.warning(
                             f"nosec encountered ({test._test_id}), but no "
