@@ -13,7 +13,7 @@ from bandit.core import utils as b_utils
 LOG = logging.getLogger(__name__)
 
 
-class BanditNodeVisitor:
+class BanditNodeVisitor(ast.NodeTransformer):
     def __init__(
         self, fname, fdata, metaast, testset, debug, nosec_lines, metrics
     ):

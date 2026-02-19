@@ -112,6 +112,10 @@ def _output_issue_str(
             [indent + line for line in issue.get_code(lines, True).split("\n")]
         )
 
+    if issue.fix:
+        bits.append(f"{indent}   Suggested Fix:")
+        bits.append(f"\t{issue.fix}")
+
     return "\n".join([bit for bit in bits])
 
 

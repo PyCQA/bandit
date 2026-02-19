@@ -270,8 +270,18 @@ pre {
     <b>Line number: </b>{line_number}<br>
     <b>More info: </b><a href="{url}" target="_blank">{url}</a><br>
 {code}
+    <b>Suggested Fix:</b><br>
+{fix}
 {candidates}
 </div>
+</div>
+"""
+
+    fix_block = """
+<div class="fix">
+<pre>
+{fix}
+</pre>
 </div>
 """
 
@@ -357,6 +367,9 @@ pre {
             candidates = candidate_block.format(candidate_list=candidates_str)
 
         url = docs_utils.get_url(issue.test_id)
+        fix = (
+            fix_block.format(fix=html_escape(issue.fix)) if issue.fix else None
+        )
         results_str += issue_block.format(
             issue_no=index,
             issue_class=f"issue-sev-{issue.severity.lower()}",
@@ -372,6 +385,7 @@ pre {
             candidates=candidates,
             url=url,
             line_number=issue.lineno,
+            fix=fix,
         )
 
     # build the metrics string to insert in the report
