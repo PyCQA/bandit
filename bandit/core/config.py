@@ -59,12 +59,17 @@ class BanditConfig:
                     LOG.error(err)
                     raise utils.ConfigError("Error parsing file.", config_file)
             else:
-                try:
-                    with f:
-                        self._config = yaml.safe_load(f)
-                except yaml.YAMLError as err:
-                    LOG.error(err)
-                    raise utils.ConfigError("Error parsing file.", config_file)
+                self._config = utils.parse_ini_file(config_file)
+                if not self._config:
+                    try:
+                        with f:
+                            self._config = yaml.safe_load(f)
+                    except yaml.YAMLError as err:
+                        LOG.error(err)
+                        raise utils.ConfigError(
+                            "Error parsing YAML file.",
+                            config_file
+                        )
 
             self.validate(config_file)
 
