@@ -370,9 +370,9 @@ def parse_ini_file(f_loc):
 def check_ast_node(name):
     "Check if the given name is that of a valid AST node."
     try:
-        # These ast Node types don't exist in Python 3.14, but plugins may
-        # still check on them.
-        if sys.version_info >= (3, 14) and name in (
+        # These ast Node types were deprecated in Python 3.12 and removed
+        # in Python 3.14, but plugins may still check on them.
+        if sys.version_info >= (3, 12) and name in (
             "Num",
             "Str",
             "Ellipsis",
