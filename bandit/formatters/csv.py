@@ -27,7 +27,6 @@ This formatter outputs the issues in a comma separated values format.
     New field `CWE` added to output
 
 """
-
 # Necessary for this formatter to work when imported on Python 2. Importing
 # the standard library's csv module conflicts with the name of this module.
 import csv
