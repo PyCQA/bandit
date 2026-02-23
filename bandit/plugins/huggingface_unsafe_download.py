@@ -59,6 +59,7 @@ Common unsafe patterns:
 .. versionadded:: 1.8.6
 
 """
+import ast
 import string
 
 import bandit
@@ -113,7 +114,19 @@ def huggingface_unsafe_download(context):
     if not any(module in qualname_parts for module in required_modules):
         return
 
-    # Check for revision parameter (the key security control)
+    # Check for revision parameter (the key security control).
+    # First, check the raw AST to see if a revision/commit_id keyword was
+    # passed as a non-literal expression (variable, attribute, subscript,
+    # function call, etc.).  In those cases we cannot statically determine
+    # the value, so we give the user the benefit of the doubt.
+    call_node = context._context.get("call")
+    if call_node is not None:
+        for kw in getattr(call_node, "keywords", []):
+            if kw.arg in ("revision", "commit_id") and not isinstance(
+                kw.value, ast.Constant
+            ):
+                return
+
     revision_value = context.get_call_arg_value("revision")
     commit_id_value = context.get_call_arg_value("commit_id")
 
