@@ -227,7 +227,6 @@ an encrypted protocol.
 +------+---------------------+------------------------------------+-----------+
 
 """
-
 from bandit.blacklists import utils
 from bandit.core import issue
 
