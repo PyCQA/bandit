@@ -147,3 +147,18 @@ safe_snapshot_commit = snapshot_download(
     repo_id="org/model_name",
     revision="5d0f2e8a7f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d"
 )
+
+
+# Example #24: Revision passed as a variable (can't be statically checked)
+MODEL_REVISION = "548fc3543a"
+safe_model_variable = AutoModel.from_pretrained(
+    "org/model_name",
+    revision=MODEL_REVISION
+)
+
+# Example #25: Revision from a dict/subscript access
+config = {"revision": "abc1234567"}
+safe_model_subscript = AutoModel.from_pretrained(
+    "org/model_name",
+    revision=config["revision"]
+)

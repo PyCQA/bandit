@@ -35,8 +35,10 @@ def blacklist(context, config):
         func = context.node.func
         if isinstance(func, ast.Name) and func.id == "__import__":
             if len(context.node.args):
-                if isinstance(context.node.args[0], ast.Str):
-                    name = context.node.args[0].s
+                if isinstance(
+                    context.node.args[0], ast.Constant
+                ) and isinstance(context.node.args[0].value, str):
+                    name = context.node.args[0].value
                 else:
                     # TODO(??): import through a variable, need symbol tab
                     name = "UNKNOWN"

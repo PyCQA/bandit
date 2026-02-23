@@ -68,7 +68,10 @@ def django_extra_used(context):
             if key in kwargs:
                 if isinstance(kwargs[key], ast.List):
                     for val in kwargs[key].elts:
-                        if not isinstance(val, ast.Str):
+                        if not (
+                            isinstance(val, ast.Constant)
+                            and isinstance(val.value, str)
+                        ):
                             insecure = True
                             break
                 else:
@@ -77,12 +80,18 @@ def django_extra_used(context):
         if not insecure and "select" in kwargs:
             if isinstance(kwargs["select"], ast.Dict):
                 for k in kwargs["select"].keys:
-                    if not isinstance(k, ast.Str):
+                    if not (
+                        isinstance(k, ast.Constant)
+                        and isinstance(k.value, str)
+                    ):
                         insecure = True
                         break
                 if not insecure:
                     for v in kwargs["select"].values:
-                        if not isinstance(v, ast.Str):
+                        if not (
+                            isinstance(v, ast.Constant)
+                            and isinstance(v.value, str)
+                        ):
                             insecure = True
                             break
             else:
@@ -135,7 +144,9 @@ def django_rawsql_used(context):
                 kwargs = keywords2dict(context.node.keywords)
                 sql = kwargs["sql"]
 
-            if not isinstance(sql, ast.Str):
+            if not (
+                isinstance(sql, ast.Constant) and isinstance(sql.value, str)
+            ):
                 return bandit.Issue(
                     severity=bandit.MEDIUM,
                     confidence=bandit.MEDIUM,

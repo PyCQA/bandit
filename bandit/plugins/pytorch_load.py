@@ -6,9 +6,10 @@ r"""
 B614: Test for unsafe PyTorch load
 ==================================
 
-This plugin checks for unsafe use of `torch.load`. Using `torch.load` with
-untrusted data can lead to arbitrary code execution. There are two safe
-alternatives:
+This plugin checks for unsafe use of `torch.load` and
+`torch.serialization.load`. Using `torch.load` or
+`torch.serialization.load` with untrusted data can lead to arbitrary
+code execution. There are two safe alternatives:
 
 1. Use `torch.load` with `weights_only=True` where only tensor data is
    extracted, and no arbitrary Python objects are deserialized
@@ -24,7 +25,7 @@ that only torch.Tensor objects are loaded.
 
         >> Issue: Use of unsafe PyTorch load
         Severity: Medium   Confidence: High
-        CWE: CWE-94 (https://cwe.mitre.org/data/definitions/94.html)
+        CWE: CWE-502 (https://cwe.mitre.org/data/definitions/502.html)
         Location: examples/pytorch_load_save.py:8
         7    loaded_model.load_state_dict(torch.load('model_weights.pth'))
         8    another_model.load_state_dict(torch.load('model_weights.pth',
@@ -34,7 +35,7 @@ that only torch.Tensor objects are loaded.
 
 .. seealso::
 
-     - https://cwe.mitre.org/data/definitions/94.html
+     - https://cwe.mitre.org/data/definitions/502.html
      - https://pytorch.org/docs/stable/generated/torch.load.html#torch.load
      - https://github.com/huggingface/safetensors
 
@@ -50,23 +51,18 @@ from bandit.core import test_properties as test
 @test.test_id("B614")
 def pytorch_load(context):
     """
-    This plugin checks for unsafe use of `torch.load`. Using `torch.load`
-    with untrusted data can lead to arbitrary code execution. The safe
-    alternative is to use `weights_only=True` or the safetensors library.
+    This plugin checks for unsafe use of `torch.load` and
+    `torch.serialization.load`. Using `torch.load` or
+    `torch.serialization.load` with untrusted data can lead to
+    arbitrary code execution. The safe alternative is to use
+    `weights_only=True` or the safetensors library.
     """
     imported = context.is_module_imported_exact("torch")
     qualname = context.call_function_name_qual
     if not imported and isinstance(qualname, str):
         return
 
-    qualname_list = qualname.split(".")
-    func = qualname_list[-1]
-    if all(
-        [
-            "torch" in qualname_list,
-            func == "load",
-        ]
-    ):
+    if qualname in {"torch.load", "torch.serialization.load"}:
         # For torch.load, check if weights_only=True is specified
         weights_only = context.get_call_arg_value("weights_only")
         if weights_only == "True" or weights_only is True:
