@@ -73,7 +73,6 @@ This formatter outputs the issues in JSON.
     New field `CWE` added to output
 
 """
-
 # Necessary so we can import the standard library json module while continuing
 # to name this file json.py. (Python 2 only)
 import datetime
