@@ -125,6 +125,7 @@ This formatter outputs the issues in SARIF formatted JSON.
 .. versionadded:: 1.7.8
 
 """  # noqa: E501
+
 import datetime
 import logging
 import pathlib
