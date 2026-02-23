@@ -94,10 +94,10 @@ def _log_option_source(default_val, arg_val, ini_val, option_name):
             return ini_val
         else:
             return None
-    # No value passed to commad line and default value is used
+    # No value passed to command line and default value is used
     elif default_val == arg_val:
         return ini_val if ini_val else arg_val
-    # Certainly a value is passed to commad line
+    # Certainly a value is passed to command line
     else:
         return arg_val
 

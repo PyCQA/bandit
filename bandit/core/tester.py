@@ -112,7 +112,9 @@ class BanditTester:
                     ):
                         LOG.warning(
                             f"nosec encountered ({test._test_id}), but no "
-                            f"failed test on line {temp_context['lineno']}"
+                            f"failed test on file "
+                            f"{temp_context['filename']}:"
+                            f"{temp_context['lineno']}"
                         )
 
             except Exception as e:
