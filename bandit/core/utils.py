@@ -391,7 +391,7 @@ def check_ast_node(name):
 
 
 def get_nosec(nosec_lines, context):
-# Only check the specific line number from the context, not the entire
+    # Only check the specific line number from the context, not the entire
     # linerange. This prevents nosec comments on one line from incorrectly
     # applying to all lines in a multiline structure (like dictionaries).
     lineno = context.get("lineno")
