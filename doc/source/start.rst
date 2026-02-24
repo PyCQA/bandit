@@ -6,17 +6,18 @@ Installation
 
 Bandit is distributed on PyPI. The best way to install it is with pip.
 
-Create a virtual environment (optional):
+Create a virtual environment and activate it using `virtualenv` (optional):
 
 .. code-block:: console
 
     virtualenv bandit-env
-    python3 -m venv bandit-env
+    source bandit-env/bin/activate
 
-And activate it:
+Alternatively, use `venv` instead of `virtualenv` (optional):
 
 .. code-block:: console
 
+    python3 -m venv bandit-env
     source bandit-env/bin/activate
 
 Install Bandit:
@@ -30,6 +31,20 @@ If you want to include TOML support, install it with the `toml` extras:
 .. code-block:: console
 
     pip install bandit[toml]
+
+If you want to use the bandit-baseline CLI, install it with the `baseline`
+extras:
+
+.. code-block:: console
+
+    pip install bandit[baseline]
+
+If you want to include SARIF output formatter support, install it with the
+`sarif` extras:
+
+.. code-block:: console
+
+    pip install bandit[sarif]
 
 Run Bandit:
 
@@ -59,8 +74,12 @@ Example usage across a code tree:
 
     bandit -r ~/your_repos/project
 
-Example usage across the ``examples/`` directory, showing three lines of
+Two examples of usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues:
+
+.. code-block:: console
+
+    bandit examples/*.py -n 3 --severity-level=high
 
 .. code-block:: console
 

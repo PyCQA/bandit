@@ -32,7 +32,7 @@ attacks.
 .. seealso::
 
  - https://www.makotemplates.org/
- - `OWASP XSS <https://owasp.org/www-community/attacks/xss/>`_
+ - `OWASP XSS <https://owasp.org/www-community/attacks/xss/>`__
  - https://security.openstack.org/guidelines/dg_cross-site-scripting-xss.html
  - https://cwe.mitre.org/data/definitions/80.html
 

@@ -62,7 +62,6 @@ def get_func_name(node):
 
 
 def get_qual_attr(node, aliases):
-    prefix = ""
     if isinstance(node, ast.Attribute):
         try:
             val = deepgetattr(node, "value.id")
@@ -73,7 +72,7 @@ def get_qual_attr(node, aliases):
         except Exception:
             # NOTE(tkelsey): degrade gracefully when we can't get the fully
             # qualified name for an attr, just return its base name.
-            pass
+            prefix = ""
 
         return f"{prefix}.{node.attr}"
     else:
@@ -140,8 +139,7 @@ def get_module_qualname_from_path(path):
     (head, tail) = os.path.split(path)
     if head == "" or tail == "":
         raise InvalidModulePath(
-            'Invalid python file path: "%s"'
-            " Missing path or file name" % (path)
+            f'Invalid python file path: "{path}" Missing path or file name'
         )
 
     qname = [os.path.splitext(tail)[0]]
@@ -220,7 +218,7 @@ def calc_linerange(node):
 
 def linerange(node):
     """Get line number range from a node."""
-    if sys.version_info >= (3, 8) and hasattr(node, "lineno"):
+    if hasattr(node, "lineno"):
         return list(range(node.lineno, node.end_lineno + 1))
     else:
         if hasattr(node, "_bandit_linerange_stripped"):
@@ -275,12 +273,12 @@ def linerange(node):
 def concat_string(node, stop=None):
     """Builds a string from a ast.BinOp chain.
 
-    This will build a string from a series of ast.Str nodes wrapped in
+    This will build a string from a series of ast.Constant nodes wrapped in
     ast.BinOp nodes. Something like "a" + "b" + "c" or "a %s" % val etc.
     The provided node can be any participant in the BinOp chain.
 
-    :param node: (ast.Str or ast.BinOp) The node to process
-    :param stop: (ast.Str or ast.BinOp) Optional base node to stop at
+    :param node: (ast.Constant or ast.BinOp) The node to process
+    :param stop: (ast.Constant or ast.BinOp) Optional base node to stop at
     :returns: (Tuple) the root node of the expression, the string value
     """
 
@@ -302,7 +300,16 @@ def concat_string(node, stop=None):
         node = node._bandit_parent
     if isinstance(node, ast.BinOp):
         _get(node, bits, stop)
-    return (node, " ".join([x.s for x in bits if isinstance(x, ast.Str)]))
+    return (
+        node,
+        " ".join(
+            [
+                x.value
+                for x in bits
+                if isinstance(x, ast.Constant) and isinstance(x.value, str)
+            ]
+        ),
+    )
 
 
 def get_called_name(node):
@@ -363,13 +370,24 @@ def parse_ini_file(f_loc):
 def check_ast_node(name):
     "Check if the given name is that of a valid AST node."
     try:
+        # These ast Node types were deprecated in Python 3.12 and removed
+        # in Python 3.14, but plugins may still check on them.
+        if sys.version_info >= (3, 12) and name in (
+            "Num",
+            "Str",
+            "Ellipsis",
+            "NameConstant",
+            "Bytes",
+        ):
+            return name
+
         node = getattr(ast, name)
         if issubclass(node, ast.AST):
             return name
     except AttributeError:  # nosec(tkelsey): catching expected exception
         pass
 
-    raise TypeError("Error: %s is not a valid node type in AST" % name)
+    raise TypeError(f"Error: {name} is not a valid node type in AST")
 
 
 def get_nosec(nosec_lines, context):

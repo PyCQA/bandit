@@ -133,6 +133,9 @@ or make sure defusedxml.defuse_stdlib() is called.
 B410: import_lxml
 -----------------
 
+This import blacklist has been removed. The information here has been
+left for historical purposes.
+
 Using various methods to parse untrusted XML data is known to be vulnerable to
 XML attacks. Replace vulnerable imports with the equivalent defusedxml package.
 
@@ -146,13 +149,13 @@ B411: import_xmlrpclib
 ----------------------
 
 XMLRPC is particularly dangerous as it is also concerned with communicating
-data over a network. Use defused.xmlrpc.monkey_patch() function to monkey-patch
-xmlrpclib and mitigate remote XML attacks.
+data over a network. Use defusedxml.xmlrpc.monkey_patch() function to
+monkey-patch xmlrpclib and mitigate remote XML attacks.
 
 +------+---------------------+------------------------------------+-----------+
 | ID   |  Name               |  Imports                           |  Severity |
 +======+=====================+====================================+===========+
-| B411 | import_xmlrpclib    | - xmlrpclib                        | high      |
+| B411 | import_xmlrpclib    | - xmlrpc                           | high      |
 +------+---------------------+------------------------------------+-----------+
 
 B412: import_httpoxy
@@ -297,11 +300,6 @@ def gen_blacklist():
         "defusedxml package, or make sure defusedxml.defuse_stdlib() "
         "is called."
     )
-    lxml_msg = (
-        "Using {name} to parse untrusted XML data is known to be "
-        "vulnerable to XML attacks. Replace {name} with the "
-        "equivalent defusedxml package."
-    )
 
     sets.append(
         utils.build_conf_dict(
@@ -358,25 +356,16 @@ def gen_blacklist():
         )
     )
 
-    sets.append(
-        utils.build_conf_dict(
-            "import_lxml",
-            "B410",
-            issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            ["lxml"],
-            lxml_msg,
-            "LOW",
-        )
-    )
+    # skipped B410 as the check for import_lxml has been removed
 
     sets.append(
         utils.build_conf_dict(
             "import_xmlrpclib",
             "B411",
             issue.Cwe.IMPROPER_INPUT_VALIDATION,
-            ["xmlrpclib"],
+            ["xmlrpc"],
             "Using {name} to parse untrusted XML data is known to be "
-            "vulnerable to XML attacks. Use defused.xmlrpc.monkey_patch() "
+            "vulnerable to XML attacks. Use defusedxml.xmlrpc.monkey_patch() "
             "function to monkey-patch xmlrpclib and mitigate XML "
             "vulnerabilities.",
             "HIGH",

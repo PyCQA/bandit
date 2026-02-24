@@ -1,3 +1,3 @@
-# These are supported funding model platforms
-open_collective: bandit-sast
+custom: ["https://psfmember.org/civicrm/contribute/transact/?reset=1&id=42"]
 github: [ericwb]
+tidelift: pypi/bandit

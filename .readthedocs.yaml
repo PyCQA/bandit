@@ -1,0 +1,18 @@
+version: 2
+
+build:
+  os: ubuntu-lts-latest
+  tools:
+    python: "3.10"
+
+sphinx:
+  configuration: doc/source/conf.py
+
+python:
+  install:
+    - requirements: requirements.txt
+    - requirements: doc/requirements.txt
+    - method: pip
+      path: .
+      extra_requirements:
+        - sarif

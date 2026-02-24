@@ -33,7 +33,6 @@ import sys
 
 from bandit.core import test_properties
 
-
 LOG = logging.getLogger(__name__)
 
 
@@ -59,7 +58,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
     """
 
     machine_output = {"results": [], "errors": []}
-    for (fname, reason) in manager.get_skipped():
+    for fname, reason in manager.get_skipped():
         machine_output["errors"].append({"filename": fname, "reason": reason})
 
     results = manager.get_issue_list(
@@ -141,10 +140,7 @@ def report(manager, fileobj, sev_level, conf_level, template=None):
             markers = ["", ":", "!"]
             msg_parsed_template_list.append(
                 ["{"]
-                + [
-                    "%s" % (m + p) if p else ""
-                    for m, p in zip(markers, params)
-                ]
+                + [f"{m + p}" if p else "" for m, p in zip(markers, params)]
                 + ["}"]
             )
 

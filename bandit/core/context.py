@@ -34,7 +34,7 @@ class Context:
 
         :return: A string representation of the object
         """
-        return "<Context %s>" % self._context
+        return f"<Context {self._context}>"
 
     @property
     def call_args(self):
@@ -178,11 +178,13 @@ class Context:
         :param literal: The AST literal to convert
         :return: The value of the AST literal
         """
-        if isinstance(literal, ast.Num):
-            literal_value = literal.n
-
-        elif isinstance(literal, ast.Str):
-            literal_value = literal.s
+        if isinstance(literal, ast.Constant):
+            if isinstance(literal.value, bool):
+                literal_value = str(literal.value)
+            elif literal.value is None:
+                literal_value = str(literal.value)
+            else:
+                literal_value = literal.value
 
         elif isinstance(literal, ast.List):
             return_list = list()
@@ -193,7 +195,7 @@ class Context:
         elif isinstance(literal, ast.Tuple):
             return_tuple = tuple()
             for ti in literal.elts:
-                return_tuple = return_tuple + (self._get_literal_value(ti),)
+                return_tuple += (self._get_literal_value(ti),)
             literal_value = return_tuple
 
         elif isinstance(literal, ast.Set):
@@ -205,18 +207,8 @@ class Context:
         elif isinstance(literal, ast.Dict):
             literal_value = dict(zip(literal.keys, literal.values))
 
-        elif isinstance(literal, ast.Ellipsis):
-            # what do we want to do with this?
-            literal_value = None
-
         elif isinstance(literal, ast.Name):
             literal_value = literal.id
-
-        elif isinstance(literal, ast.NameConstant):
-            literal_value = str(literal.value)
-
-        elif isinstance(literal, ast.Bytes):
-            literal_value = literal.s
 
         else:
             literal_value = None
@@ -318,3 +310,7 @@ class Context:
     @property
     def file_data(self):
         return self._context.get("file_data")
+
+    @property
+    def import_aliases(self):
+        return self._context.get("import_aliases")

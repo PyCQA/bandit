@@ -51,7 +51,7 @@ password = "blerg"
 
 # Possible hardcoded password: 'blerg'
 # Severity: Low   Confidence: Medium
-d["password"] = "blerg"
+password["password"] = "blerg"
 
 # Possible hardcoded password: 'secret'
 # Severity: Low   Confidence: Medium
@@ -68,3 +68,38 @@ my_secret_password_for_email = 'd6s$f9g!j8mg7hw?n&2'
 # Possible hardcoded password: '1234'
 # Severity: Low   Confidence: Medium
 passphrase='1234'
+
+# Possible hardcoded password: None
+# Severity: High   Confidence: High
+def __init__(self, auth_scheme, auth_token=None, auth_username=None, auth_password=None, auth_link=None, **kwargs):
+    self.auth_scheme = auth_scheme
+    self.auth_token = auth_token
+    self.auth_username = auth_username
+    self.auth_password = auth_password
+    self.auth_link = auth_link
+    self.kwargs = kwargs
+
+# Possible hardcoded password: None
+# Severity: High   Confidence: High
+from oslo_config import cfg
+cfg.StrOpt(
+    'metadata_proxy_shared_secret',
+    default='',
+    secret=True,
+)
+
+# Possible hardcoded password: 'pass'
+# Severity: Low   Confidence: Medium
+# https://github.com/PyCQA/bandit/issues/313
+log({"server": server, "password": 'pass', "user": user})
+
+# ... but not:
+log({"server": server, "password": password, "user": user})
+
+# Possible hardcoded password: '12345'
+# Severity: Low   Confidence: Medium
+# https://github.com/PyCQA/bandit/issues/1267
+info = {"password": "12345"}
+
+# ... but not:
+info = {"password": password}

@@ -93,10 +93,10 @@ def _log_option_source(default_val, arg_val, ini_val, option_name):
             return ini_val
         else:
             return None
-    # No value passed to commad line and default value is used
+    # No value passed to command line and default value is used
     elif default_val == arg_val:
         return ini_val if ini_val else arg_val
-    # Certainly a value is passed to commad line
+    # Certainly a value is passed to command line
     else:
         return arg_val
 
@@ -155,6 +155,10 @@ def main():
         description="Bandit - a Python source code security analyzer",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    if sys.version_info >= (3, 14):
+        parser.suggest_on_error = True
+        parser.color = False
+
     parser.add_argument(
         "targets",
         metavar="targets",
@@ -371,9 +375,8 @@ def main():
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {version}\n  python version = {python}".format(
-            version=bandit.__version__, python=python_ver
-        ),
+        version=f"%(prog)s {bandit.__version__}\n"
+        f"  python version = {python_ver}",
     )
 
     parser.set_defaults(debug=False)
@@ -387,7 +390,7 @@ def main():
     blacklist_info = []
     for a in extension_mgr.blacklist.items():
         for b in a[1]:
-            blacklist_info.append("{}\t{}".format(b["id"], b["name"]))
+            blacklist_info.append(f"{b['id']}\t{b['name']}")
 
     plugin_list = "\n\t".join(sorted(set(plugin_info + blacklist_info)))
     dedent_text = textwrap.dedent(
@@ -451,16 +454,17 @@ def main():
             args.confidence = 4
         # Other strings will be blocked by argparse
 
-    try:
-        b_conf = b_config.BanditConfig(config_file=args.config_file)
-    except utils.ConfigError as e:
-        LOG.error(e)
-        sys.exit(2)
-
     # Handle .bandit files in projects to pass cmdline args from file
     ini_options = _get_options_from_ini(args.ini_path, args.targets)
     if ini_options:
         # prefer command line, then ini file
+        args.config_file = _log_option_source(
+            parser.get_default("configfile"),
+            args.config_file,
+            ini_options.get("configfile"),
+            "config file",
+        )
+
         args.excluded_paths = _log_option_source(
             parser.get_default("excluded_paths"),
             args.excluded_paths,
@@ -592,6 +596,12 @@ def main():
             ini_options.get("baseline"),
             "path of a baseline report",
         )
+
+    try:
+        b_conf = b_config.BanditConfig(config_file=args.config_file)
+    except utils.ConfigError as e:
+        LOG.error(e)
+        sys.exit(2)
 
     if not args.targets:
         parser.print_usage()

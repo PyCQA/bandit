@@ -76,6 +76,9 @@ def parse_args():
         description=help_description,
         formatter_class=argparse.RawTextHelpFormatter,
     )
+    if sys.version_info >= (3, 14):
+        parser.suggest_on_error = True
+        parser.color = False
 
     parser.add_argument(
         "--show-defaults",
@@ -158,11 +161,11 @@ def main():
 
                 for skip in skips:
                     if not extension_loader.MANAGER.check_id(skip):
-                        raise RuntimeError("unknown ID in skips: %s" % skip)
+                        raise RuntimeError(f"unknown ID in skips: {skip}")
 
                 for test in tests:
                     if not extension_loader.MANAGER.check_id(test):
-                        raise RuntimeError("unknown ID in tests: %s" % test)
+                        raise RuntimeError(f"unknown ID in tests: {test}")
 
                 tpl = "# {0} : {1}"
                 test_list = [

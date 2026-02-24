@@ -42,9 +42,17 @@ OPTIONS
                         comma-separated list of test IDs to skip
   -l, --level           report only issues of a given severity level or higher
                         (-l for LOW, -ll for MEDIUM, -lll for HIGH)
+  -l, --severity-level={all,high,medium,low}
+                        report only issues of a given severity level or higher.
+                        "all" and "low" are likely to produce the same results, but it
+                        is possible for rules to be undefined which will not be listed in "low".
   -i, --confidence      report only issues of a given confidence level or
                         higher (-i for LOW, -ii for MEDIUM, -iii for HIGH)
-  -f {csv,custom,html,json,screen,txt,xml,yaml}, --format {csv,custom,html,json,screen,txt,xml,yaml}
+  -l, --confidence-level={all,high,medium,low}
+                        report only issues of a given confidence level or higher.
+                        "all" and "low" are likely to produce the same results, but it
+                        is possible for rules to be undefined which will not be listed in "low".
+  -f {csv,custom,html,json,sarif,screen,txt,xml,yaml}, --format {csv,custom,html,json,sarif,screen,txt,xml,yaml}
                         specify output format
   --msg-template MSG_TEMPLATE
                         specify output message template (only usable with
@@ -52,8 +60,7 @@ OPTIONS
                         of available values
   -o OUTPUT_FILE, --output OUTPUT_FILE
                         write report to filename
-  -v, --verbose         output extra information like excluded and included
-                        files
+  -v, --verbose         output extra information like excluded and included files
   -d, --debug           turn on debug mode
   -q, --quiet, --silent
                         only show output in the case of an error
@@ -67,8 +74,7 @@ OPTIONS
   -b BASELINE, --baseline BASELINE
                         path of a baseline report to compare against (only
                         JSON-formatted files are accepted)
-  --ini INI_PATH        path to a .bandit file that supplies command line
-                        arguments
+  --ini INI_PATH        path to a .bandit file that supplies command line arguments
   --exit-zero           exit with 0, even with results found
   --version             show program's version number and exit
 
@@ -115,7 +121,7 @@ Example usage across a code tree::
 Example usage across the ``examples/`` directory, showing three lines of
 context and only reporting on the high-severity issues::
 
-    bandit examples/*.py -n 3 -lll
+    bandit examples/*.py -n 3 --severity-level=high
 
 Bandit can be run with profiles.  To run Bandit against the examples directory
 using only the plugins listed in the ShellInjection profile::

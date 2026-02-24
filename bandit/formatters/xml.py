@@ -35,7 +35,7 @@ This formatter outputs the issues as XML.
 """
 import logging
 import sys
-from xml.etree import cElementTree as ET
+from xml.etree import ElementTree as ET  # nosec: B405
 
 from bandit.core import docs_utils
 
@@ -65,7 +65,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
             "Test ID: %s Severity: %s Confidence: %s\nCWE: %s\n%s\n"
             "Location %s:%s"
         )
-        text = text % (
+        text %= (
             issue.test_id,
             issue.severity,
             issue.confidence,

@@ -66,7 +66,7 @@ class JsonFormatterTests(testtools.TestCase):
         # mock up the metrics
         for key in ["_totals", "binding.py"]:
             self.manager.metrics.data[key] = {"loc": 4, "nosec": 2}
-            for (criteria, default) in constants.CRITERIA:
+            for criteria, default in constants.CRITERIA:
                 for rank in constants.RANKING:
                     self.manager.metrics.data[key][f"{criteria}.{rank}"] = 0
 

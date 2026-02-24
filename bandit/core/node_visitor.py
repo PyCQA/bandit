@@ -10,7 +10,6 @@ from bandit.core import constants
 from bandit.core import tester as b_tester
 from bandit.core import utils as b_utils
 
-
 LOG = logging.getLogger(__name__)
 
 
@@ -20,7 +19,6 @@ class BanditNodeVisitor:
     ):
         self.debug = debug
         self.nosec_lines = nosec_lines
-        self.seen = 0
         self.scores = {
             "SEVERITY": [0] * len(constants.RANKING),
             "CONFIDENCE": [0] * len(constants.RANKING),
@@ -170,7 +168,7 @@ class BanditNodeVisitor:
         :param node: The node that is being inspected
         :return: -
         """
-        self.context["str"] = node.s
+        self.context["str"] = node.value
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Str"))
@@ -183,7 +181,7 @@ class BanditNodeVisitor:
         :param node: The node that is being inspected
         :return: -
         """
-        self.context["bytes"] = node.s
+        self.context["bytes"] = node.value
         if not isinstance(node._bandit_parent, ast.Expr):  # docstring
             self.context["linerange"] = b_utils.linerange(node._bandit_parent)
             self.update_scores(self.tester.run_tests(self.context, "Bytes"))
@@ -210,7 +208,6 @@ class BanditNodeVisitor:
         self.context["filename"] = self.fname
         self.context["file_data"] = self.fdata
 
-        self.seen += 1
         LOG.debug(
             "entering: %s %s [%s]", hex(id(node)), type(node), self.depth
         )
@@ -287,4 +284,14 @@ class BanditNodeVisitor:
         """
         f_ast = ast.parse(data)
         self.generic_visit(f_ast)
+        # Run tests that do not require access to the AST,
+        # but only to the whole file source:
+        self.context = {
+            "file_data": self.fdata,
+            "filename": self.fname,
+            "lineno": 0,
+            "linerange": [0, 1],
+            "col_offset": 0,
+        }
+        self.update_scores(self.tester.run_tests(self.context, "File"))
         return self.scores

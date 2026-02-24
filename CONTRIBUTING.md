@@ -56,17 +56,22 @@ git clone https://github.com/<your username>/bandit.git
 
 Create you own branch to start writing code:
 ```shell script
-git checkout -b mybranch
+git switch -c mybranch
+<create local changes>
+git add <changed files>
+git commit -S
+<create a good commit message>
 git push origin mybranch
 ```
 You can test any changes with tox:
 
 ```shell script
 pip install tox
-tox -e pep8
-tox -e py37
-tox -e docs
-tox -e cover
+tox run -e pep8
+tox run -e format
+tox run -e py310
+tox run -e docs
+tox run -e cover
 ```
 If everything is done, proceed with [opening a new pull request](https://help.github.com/en/desktop/contributing-to-projects/creating-a-pull-request)
 
@@ -245,3 +250,29 @@ To register your plugin, you have two options:
             bson = bandit_bson:formatter
         bandit.plugins =
             mako = bandit_mako
+
+## Creating and Publishing a Release (Maintainers)
+
+### Create the GitHub Release
+
+1. Navigate to the [Releases](https://github.com/PyCQA/bandit/releases) page
+2. Click on `Draft a new release`
+3. Under `Choose a tag` enter a new release version (typically increment the patch number) and select `Create new tag: <version> on publish`
+4. Click on `Generate release notes`
+5. Click on `Publish release`
+
+### Publish the Release to Test PyPI
+
+1. Go to `Actions` tab
+2. Click on the `Publish to Test PyPI` action
+3. Click on `Run workflow`
+4. Select `Use workflow from`, then `Tags` tab, and select `<version>`
+5. Click on `Run workflow`
+
+### Publish the Release to PyPI
+
+1. Go to `Actions` tab
+2. Click on the `Publish to PyPI` action
+3. Click on `Run workflow`
+4. Select `Use workflow from`, then `Tags` tab, and select `<version>`
+5. Click on `Run workflow`

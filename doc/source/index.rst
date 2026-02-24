@@ -13,9 +13,11 @@ Using and Extending Bandit
 
    start
    config
+   integrations
    plugins/index
    blacklists/index
    formatters/index
+   ci-cd/index
    faq
 
 Contributing

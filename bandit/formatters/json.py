@@ -99,7 +99,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     """
 
     machine_output = {"results": [], "errors": []}
-    for (fname, reason) in manager.get_skipped():
+    for fname, reason in manager.get_skipped():
         machine_output["errors"].append({"filename": fname, "reason": reason})
 
     results = manager.get_issue_list(
@@ -139,7 +139,9 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     # timezone agnostic format
     TS_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
-    time_string = datetime.datetime.utcnow().strftime(TS_FORMAT)
+    time_string = datetime.datetime.now(datetime.timezone.utc).strftime(
+        TS_FORMAT
+    )
     machine_output["generated_at"] = time_string
 
     result = json.dumps(

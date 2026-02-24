@@ -114,7 +114,7 @@ class BanditCLIMainTests(testtools.TestCase):
         )
         bandit_files = [bandit_config_one, bandit_config_two]
         for bandit_file in bandit_files:
-            with open(bandit_file, "wt") as fd:
+            with open(bandit_file, "w") as fd:
                 fd.write(bandit_config_content)
         self.assertRaisesRegex(
             SystemExit,
@@ -199,7 +199,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that bandit handles cmdline args from a bandit.yaml file
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
         with mock.patch(
             "bandit.cli.main._get_options_from_ini"
@@ -215,32 +215,8 @@ class BanditCLIMainTests(testtools.TestCase):
                 self.assertRaisesRegex(SystemExit, "2", bandit.main)
                 self.assertEqual(
                     str(err_mock.call_args[0][0]),
-                    "Unknown test found in profile: some_test",
+                    "No tests would be run, please check the profile.",
                 )
-
-    @mock.patch(
-        "sys.argv", ["bandit", "-c", "bandit.yaml", "-t", "badID", "test"]
-    )
-    def test_main_unknown_tests(self):
-        # Test that bandit exits when an invalid test ID is provided
-        temp_directory = self.useFixture(fixtures.TempDir()).path
-        os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
-            fd.write(bandit_config_content)
-        # assert a SystemExit with code 2
-        self.assertRaisesRegex(SystemExit, "2", bandit.main)
-
-    @mock.patch(
-        "sys.argv", ["bandit", "-c", "bandit.yaml", "-s", "badID", "test"]
-    )
-    def test_main_unknown_skip_tests(self):
-        # Test that bandit exits when an invalid test ID is provided to skip
-        temp_directory = self.useFixture(fixtures.TempDir()).path
-        os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
-            fd.write(bandit_config_content)
-        # assert a SystemExit with code 2
-        self.assertRaisesRegex(SystemExit, "2", bandit.main)
 
     @mock.patch(
         "sys.argv", ["bandit", "-c", "bandit.yaml", "-p", "bad", "test"]
@@ -249,7 +225,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that bandit exits when an invalid profile name is provided
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
         # assert a SystemExit with code 2
         with mock.patch("bandit.cli.main.LOG.error") as err_mock:
@@ -267,9 +243,9 @@ class BanditCLIMainTests(testtools.TestCase):
         # baseline data
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
-        with open("base.json", "wt") as fd:
+        with open("base.json", "w") as fd:
             fd.write(bandit_baseline_content)
         with mock.patch(
             "bandit.core.manager.BanditManager.populate_baseline"
@@ -295,9 +271,9 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that bandit exits when an invalid output format is selected
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
-        with open("base.json", "wt") as fd:
+        with open("base.json", "w") as fd:
             fd.write(bandit_baseline_content)
         # assert a SystemExit with code 2
         self.assertRaisesRegex(SystemExit, "2", bandit.main)
@@ -309,7 +285,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that bandit exits when there are results
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
         with mock.patch(
             "bandit.core.manager.BanditManager.results_count"
@@ -325,7 +301,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that bandit exits when there are no results
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
         with mock.patch(
             "bandit.core.manager.BanditManager.results_count"
@@ -342,7 +318,7 @@ class BanditCLIMainTests(testtools.TestCase):
         # Test that bandit exits with 0 on results and zero flag
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
-        with open("bandit.yaml", "wt") as fd:
+        with open("bandit.yaml", "w") as fd:
             fd.write(bandit_config_content)
         with mock.patch(
             "bandit.core.manager.BanditManager.results_count"

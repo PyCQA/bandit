@@ -9,14 +9,15 @@ import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 
-
 # yuck, regex: starts with a windows drive letter (eg C:)
-# or one of our path delimeter characters (/, \, .)
+# or one of our path delimiter characters (/, \, .)
 full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")
 
 
 def _evaluate_shell_call(context):
-    no_formatting = isinstance(context.node.args[0], ast.Str)
+    no_formatting = isinstance(
+        context.node.args[0], ast.Constant
+    ) and isinstance(context.node.args[0].value, str)
 
     if no_formatting:
         return bandit.LOW
@@ -50,6 +51,8 @@ def gen_config(name):
                 "popen2.Popen4",
                 "commands.getoutput",
                 "commands.getstatusoutput",
+                "subprocess.getoutput",
+                "subprocess.getstatusoutput",
             ],
             # Start a process with a function that is not vulnerable to shell
             # injection.
@@ -82,15 +85,19 @@ def has_shell(context):
         for key in keywords:
             if key.arg == "shell":
                 val = key.value
-                if isinstance(val, ast.Num):
-                    result = bool(val.n)
+                if isinstance(val, ast.Constant) and (
+                    isinstance(val.value, int)
+                    or isinstance(val.value, float)
+                    or isinstance(val.value, complex)
+                ):
+                    result = bool(val.value)
                 elif isinstance(val, ast.List):
                     result = bool(val.elts)
                 elif isinstance(val, ast.Dict):
                     result = bool(val.keys)
                 elif isinstance(val, ast.Name) and val.id in ["False", "None"]:
                     result = False
-                elif isinstance(val, ast.NameConstant):
+                elif isinstance(val, ast.Constant):
                     result = val.value
                 else:
                     result = True
@@ -448,6 +455,8 @@ def start_process_with_a_shell(context, config):
                 - popen2.Popen4
                 - commands.getoutput
                 - commands.getstatusoutput
+                - subprocess.getoutput
+                - subprocess.getstatusoutput
 
     :Example:
 
@@ -678,14 +687,17 @@ def start_process_with_partial_path(context, config):
             or context.call_function_name_qual in config["shell"]
             or context.call_function_name_qual in config["no_shell"]
         ):
-
             node = context.node.args[0]
             # some calls take an arg list, check the first part
-            if isinstance(node, ast.List):
+            if isinstance(node, ast.List) and node.elts:
                 node = node.elts[0]
 
             # make sure the param is a string literal and not a var name
-            if isinstance(node, ast.Str) and not full_path_match.match(node.s):
+            if (
+                isinstance(node, ast.Constant)
+                and isinstance(node.value, str)
+                and not full_path_match.match(node.value)
+            ):
                 return bandit.Issue(
                     severity=bandit.LOW,
                     confidence=bandit.HIGH,

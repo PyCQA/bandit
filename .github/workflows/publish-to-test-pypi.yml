@@ -6,17 +6,26 @@ jobs:
   build-n-publish:
     name: Build and publish to Test PyPI
     runs-on: ubuntu-latest
+    permissions:
+      # IMPORTANT: this permission is mandatory for trusted publishing
+      id-token: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.7
+        python-version: "3.10"
 
     - name: Install dependencies
-      run: pip install wheel
+      run: pip install tox wheel
+
+    - name: Build man page if not present
+      run: |
+        if [ ! -f doc/build/man/bandit.1 ]; then
+          tox run -e manpage
+        fi
 
     - name: Build a binary wheel and a source tarball
       run: |
@@ -25,5 +34,4 @@ jobs:
     - name: Publish distribution to Test PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.TEST_PYPI_PASSWORD }}
-        repository_url: https://test.pypi.org/legacy/
+        repository-url: https://test.pypi.org/legacy/
