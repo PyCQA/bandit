@@ -31,10 +31,21 @@ This formatter outputs the issues as color coded text to screen.
 .. versionchanged:: 1.7.3
     New field `CWE` added to output
 
+.. versionchanged:: 1.8.6
+    Automatic colours configuration with optional override via
+    "BANDIT_LIGHT_BG" environment variable.
+
 """
 import datetime
 import logging
+import os
+import select
 import sys
+import termios
+import time
+import tty
+from typing import Dict
+from typing import Union
 
 from bandit.core import constants
 from bandit.core import docs_utils
@@ -57,13 +68,166 @@ if IS_WIN_PLATFORM:
 
 LOG = logging.getLogger(__name__)
 
-COLOR = {
-    "DEFAULT": "\033[0m",
-    "HEADER": "\033[95m",
-    "LOW": "\033[94m",
-    "MEDIUM": "\033[93m",
-    "HIGH": "\033[91m",
-}
+
+def term_detect_bg() -> Union[bool, None]:
+    """Detects if terminal is using dark BG.
+
+    Returns:
+        True - Light
+        False - Dark
+        None - Undetermined
+    """
+    colorfgbg = os.environ.get("COLORFGBG")
+    if colorfgbg and ";" in colorfgbg:
+        try:
+            parts = colorfgbg.split(";")
+            bg_color = int(parts[-1])
+            # Ref. https://github.com/rocky/shell-term-background
+            if bg_color in {0, 1, 2, 3, 4, 5, 6, 8}:
+                return False
+            elif bg_color in {7, 9, 10, 11, 12, 13, 14, 15}:
+                return True
+        except (ValueError, IndexError):
+            pass
+    if sys.stdin.isatty():
+        try:
+            result = term_get_osc()
+            if result is not None:
+                return result
+        except Exception:
+            pass
+    if os.environ.get("BANDIT_LIGHT_BG", "").lower() in (
+        "light",
+        "bright",
+        "white",
+        "1",
+        "true",
+        "yes",
+    ):
+        return True
+
+    return None
+
+
+def term_get_osc() -> Union[bool, None]:
+    """Query terminal BG colour using OSC11.
+
+    Returns:
+        True - Light
+        False - Dark
+        None - Undetermined
+    """
+    if not sys.stdin.isatty():
+        return None
+
+    old_settings = None
+
+    try:
+        old_settings = termios.tcgetattr(sys.stdin)
+
+        _ = tty.setraw(sys.stdin.fileno())
+        _ = sys.stdout.write("\x1b]11;?\x1b\\")  # ESC\
+        _ = sys.stdout.flush()
+
+        ready, _, _ = select.select([sys.stdin], [], [], 0.2)
+        if not ready:
+            return None  # Bail out, this term is cursed
+
+        response = ""
+        start_time = time.time()
+        while time.time() - start_time < 0.5:
+            ready, _, _ = select.select([sys.stdin], [], [], 0.01)
+            if not ready:
+                break
+            char = sys.stdin.read(1)
+            response += char
+            # Break on ESC\, BEL or sufficient data
+            if (
+                response.endswith("\x1b\\")
+                or response.endswith("\x07")
+                or len(response) > 50
+            ):
+                break
+            # Bail out if ESC isn't followed by ]
+            if (
+                len(response) >= 2
+                and response.startswith("\x1b")
+                and not response.startswith("\x1b]")
+            ):
+                return None
+
+        if response.startswith("\x1b]11;rgb:"):
+            try:
+                rgb_start = response.find("rgb:")
+                rgb_part = response[rgb_start + 4 :]
+                # Find terminator
+                for term in ["\x1b\\", "\x07"]:
+                    if term in rgb_part:
+                        rgb_part = rgb_part[: rgb_part.find(term)]
+                        break
+
+                r, g, b = rgb_part.split("/")[:3]
+
+                # HEX -> DEC
+                r_val = int(r[:4], 16) if len(r) >= 4 else int(r, 16)
+                g_val = int(g[:4], 16) if len(g) >= 4 else int(g, 16)
+                b_val = int(b[:4], 16) if len(b) >= 4 else int(b, 16)
+
+                # 16b -> 8b
+                if r_val > 255:
+                    r_val = r_val >> 8
+                if g_val > 255:
+                    g_val = g_val >> 8
+                if b_val > 255:
+                    b_val = b_val >> 8
+
+                # BT601
+                lum = 0.299 * r_val + 0.587 * g_val + 0.114 * b_val
+                return lum > 128  # Light if luma > 50% grey
+            except (ValueError, IndexError):
+                pass
+        else:
+            return None
+
+    except Exception:
+        pass
+    finally:
+        try:
+            if old_settings:
+                termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+        except Exception:
+            pass
+
+    return None
+
+
+def term_serve_colourscheme() -> dict[str, str]:
+    """Appropriate colour scheme based on the detected background.
+
+    Returns:
+        Dictionary with colour codes
+    """
+    light = term_detect_bg()
+
+    if light:
+        return {
+            "DEFAULT": "\033[0m",
+            "HEADER": "\033[1;34m",  # Dark blue
+            "LOW": "\033[1;32m",  # Dark green
+            "MEDIUM": "\033[1;35m",  # Dark magenta
+            "HIGH": "\033[1;31m",  # Dark red
+        }
+    else:
+        return {
+            "DEFAULT": "\033[0m",
+            "HEADER": "\033[1;96m",  # Bright cyan
+            "LOW": "\033[1;92m",  # Bright green
+            "MEDIUM": "\033[1;93m",  # Bright yellow
+            "HIGH": "\033[1;91m",  # Bright red
+        }
+
+
+COLOR = term_serve_colourscheme()
 
 
 def header(text, *args):
