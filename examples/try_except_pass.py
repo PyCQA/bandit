@@ -1,7 +1,7 @@
 # bad
 try:
     a = 1
-except:
+except Exception:
     pass
 
 
@@ -17,20 +17,20 @@ try:
     a = 1
 except ZeroDivisionError:
     pass
-except:
+except Exception:
     a = 2
 
 
 # good
 try:
     a = 1
-except:
+except Exception:
     a = 2
 
 
 # silly, but ok
 try:
     a = 1
-except:
+except Exception:
     pass
     a = 2

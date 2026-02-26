@@ -58,7 +58,7 @@ would not generate a warning if the configuration option
        CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
        Location: ./examples/try_except_pass.py:4
     3        a = 1
-    4    except:
+    4    except Exception:
     5        pass
 
 .. seealso::

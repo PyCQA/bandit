@@ -2,7 +2,7 @@
 for i in {0,1}:
     try:
         a = i
-    except:
+    except Exception:
         continue
 
 
@@ -20,7 +20,7 @@ for i in {0,2}:
         a = i
     except ZeroDivisionError:
         continue
-    except:
+    except Exception:
         a = 2
 
 
@@ -28,5 +28,5 @@ for i in {0,2}:
 while keep_trying:
     try:
         a = 1
-    except:
+    except Exception:
         a = 2

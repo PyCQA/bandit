@@ -60,7 +60,7 @@ following would not generate a warning if the configuration option
        CWE: CWE-703 (https://cwe.mitre.org/data/definitions/703.html)
        Location: ./examples/try_except_continue.py:5
     4            a = i
-    5        except:
+    5        except Exception:
     6            continue
 
 .. seealso::
