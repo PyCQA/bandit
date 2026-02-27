@@ -214,11 +214,7 @@ class BanditManager:
 
         # if there are command line provided exclusions add them to the list
         if excluded_paths:
-            for path in excluded_paths.split(","):
-                if os.path.isdir(path):
-                    path = os.path.join(path, "*")
-
-                excluded_path_globs.append(path)
+            excluded_path_globs.extend(excluded_paths.split(","))
 
         # build list of files we will analyze
         for fname in targets:
@@ -405,24 +401,15 @@ def _is_file_included(
     :param enforce_glob: Can set to false to bypass extension check
     :return: Boolean indicating whether a file should be included
     """
-    return_value = False
-
-    # if this is matches a glob of files we look at, and it isn't in an
-    # excluded path
-    if _matches_glob_list(path, included_globs) or not enforce_glob:
-        if not _matches_glob_list(path, excluded_path_strings) and not any(
-            x in path for x in excluded_path_strings
-        ):
-            return_value = True
-
-    return return_value
+    if enforce_glob and not _matches_glob_list(path, included_globs):
+        return False
+    if _matches_glob_list(path, excluded_path_strings):
+        return False
+    return not any(x in path for x in excluded_path_strings)
 
 
 def _matches_glob_list(filename, glob_list):
-    for glob in glob_list:
-        if fnmatch.fnmatch(filename, glob):
-            return True
-    return False
+    return any(fnmatch.fnmatch(filename, glob) for glob in glob_list)
 
 
 def _compare_baseline_results(baseline, results):
