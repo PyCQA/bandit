@@ -127,6 +127,29 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual({"/a/c.ww"}, exc)
         self.assertEqual({"/a/a.py", "/a/b.py"}, inc)
 
+    @mock.patch("os.walk")
+    def test_get_files_from_dir_excludes_dot_prefixed_paths(self, os_walk):
+        """Test that exclusions work when os.walk yields ./-prefixed paths.
+
+        When scanning with files_dir=".", os.walk produces paths like
+        "./venv/file.py". Exclude patterns like "venv/*" must still match
+        these paths after normalization. See GitHub issue #975.
+        """
+        os_walk.return_value = [
+            (".", ("venv", "src"), ()),
+            ("./venv", (), ("bad.py",)),
+            ("./src", (), ("good.py",)),
+        ]
+
+        inc, exc = manager._get_files_from_dir(
+            files_dir=".",
+            included_globs=["*.py"],
+            excluded_path_strings=["venv/*"],
+        )
+
+        self.assertEqual({"src/good.py"}, inc)
+        self.assertEqual({"venv/bad.py"}, exc)
+
     def test_populate_baseline_success(self):
         # Test populate_baseline with valid JSON
         baseline_data = """{
@@ -271,6 +294,15 @@ class ManagerTests(testtools.TestCase):
         self.manager.discover_files(["./x/y/z.py"], True, "y")
         self.assertEqual([], self.manager.files_list)
         self.assertEqual(["./x/y/z.py"], self.manager.excluded_files)
+
+        # Test bare dir name when directory exists (GitHub issue #975).
+        # When the exclude path is a real directory, discover_files appends
+        # "/*" to it. After normpath, "venv" stays "venv" -> "venv/*",
+        # which correctly matches normalized walked paths like "venv/bad.py".
+        isdir.side_effect = [True, False]
+        self.manager.discover_files(["./venv/bad.py"], True, "venv")
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(["./venv/bad.py"], self.manager.excluded_files)
 
     @mock.patch("os.path.isdir")
     def test_discover_files_exclude_cmdline(self, isdir):
