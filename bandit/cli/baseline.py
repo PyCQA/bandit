@@ -10,6 +10,7 @@
 # reports on any new findings.
 # #############################################################################
 """Bandit is a tool designed to find common security issues in Python code."""
+
 import argparse
 import contextlib
 import logging

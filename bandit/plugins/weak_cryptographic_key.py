@@ -39,6 +39,7 @@ medium severity error for those lower than the higher threshold.
     CWE information added
 
 """
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
