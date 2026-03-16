@@ -5,7 +5,6 @@ import os
 
 import setuptools
 
-
 data_files = []
 man_path = "doc/build/man/bandit.1"
 if os.path.isfile(man_path):
