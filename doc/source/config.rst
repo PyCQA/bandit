@@ -8,29 +8,34 @@ Bandit Settings
 Projects may include an INI file named `.bandit`, which specifies
 command line arguments that should be supplied for that project.
 In addition or alternatively, you can use a YAML or TOML file, which
-however needs to be explicitly specified using the `-c` option.
+however needs to be explicitly specified using the `-c` option, or the
+``configfile`` argument in the INI file.
 The currently supported arguments are:
 
-``targets``
+``targets`` -- *INI only*
   comma separated list of target dirs/files to run bandit on
+``recursive`` -- *INI only*
+  boolean, to run bandit on subdirectories recursively
+``configfile``
+  specify a YAML or TOML configuration file -- *INI only*
 ``exclude``
-  comma separated list of excluded paths -- *INI only*
+  comma separated list of excluded paths -- *INI only; use a leading slash from the project root*
 ``exclude_dirs``
-  comma separated list of excluded paths (directories or files) -- *YAML and TOML only*
+  comma separated list of excluded paths (directories or files) -- *YAML and TOML only; no leading slash required*
 ``skips``
   comma separated list of tests to skip
 ``tests``
   comma separated list of tests to run
 
 To use this, put an INI file named `.bandit` in your project's directory.
-Command line arguments must be in `[bandit]` section.
+Command line arguments must be in a `[bandit]` section.
 For example:
 
 .. code-block:: ini
 
   # FILE: .bandit
   [bandit]
-  exclude = tests,path/to/file
+  exclude = /tests,/path/to/file
   tests = B201,B301
   skips = B101,B601
 
