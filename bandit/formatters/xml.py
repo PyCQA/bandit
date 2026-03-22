@@ -33,6 +33,7 @@ This formatter outputs the issues as XML.
     New field `CWE` added to output
 
 """
+
 import logging
 import sys
 from xml.etree import ElementTree as ET  # nosec: B405

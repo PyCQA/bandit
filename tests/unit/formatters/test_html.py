@@ -22,7 +22,7 @@ class HtmlFormatterTests(testtools.TestCase):
         conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, "file")
 
-        (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
+        tmp_fd, self.tmp_fname = tempfile.mkstemp()
 
         self.manager.out_file = self.tmp_fname
 
