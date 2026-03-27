@@ -75,21 +75,11 @@ using RST::
 Installation
 ------------
 
-Bandit is available on PyPI. To install the latest stable version:
+Bandit is available on PyPI and requires Python 3.10+:
 
 .. code-block:: console
 
     pip install bandit
-
-To install with specific extras (e.g., to include all formatters):
-
-.. code-block:: console
-
-    pip install bandit[all]
-
-**Python Version**: Bandit supports Python 3.9 and newer. Install under the same
-Python version your target code uses to ensure accurate AST parsing—Python's
-AST module only parses syntax valid in the interpreter's version.
 
 For detailed setup instructions, see the `Installation Guide`_.
 
