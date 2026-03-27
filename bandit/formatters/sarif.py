@@ -287,8 +287,12 @@ def add_region_and_context_region(
 ):
     if code:
         first_line_number, snippet_lines = parse_code(code)
-        snippet_line = snippet_lines[line_range[0] - first_line_number]
-        snippet = om.ArtifactContent(text=snippet_line)
+        idx = line_range[0] - first_line_number
+        if 0 <= idx < len(snippet_lines):
+            snippet_line = snippet_lines[idx]
+            snippet = om.ArtifactContent(text=snippet_line)
+        else:
+            snippet = None
     else:
         snippet = None
 
