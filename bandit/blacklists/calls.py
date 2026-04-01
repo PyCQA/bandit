@@ -545,9 +545,10 @@ def gen_blacklist():
 
     xml_msg = (
         "Using {name} to parse untrusted XML data is known to be "
-        "vulnerable to XML attacks. Replace {name} with its "
-        "defusedxml equivalent function or make sure "
-        "defusedxml.defuse_stdlib() is called"
+        "vulnerable to XML attacks on Python < 3.11. Python 3.11+ "
+        "includes expat 2.7.1 which addresses these concerns. "
+        "Check your project's minimum Python version before suppressing "
+        "this warning."
     )
 
     sets.append(
