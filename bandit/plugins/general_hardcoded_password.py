@@ -84,7 +84,11 @@ def hardcoded_password_string(context):
         # looks for "candidate='some_string'"
         for targ in node._bandit_parent.targets:
             if isinstance(targ, ast.Name):
-                normalized = re.sub(r'(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', '_', targ.id).lower()
+                normalized = re.sub(
+                    r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])",
+                    "_",
+                    targ.id,
+                ).lower()
             if isinstance(targ, ast.Name) and RE_CANDIDATES.search(normalized):
                 return _report(node.value)
             elif isinstance(targ, ast.Attribute) and RE_CANDIDATES.search(
