@@ -8,7 +8,6 @@ Flags calls to logging.*, print(), pprint.*, and f-string output where
 the arguments contain variable names associated with secrets:
 password, secret, token, api_key, private_key, credential, auth_token, etc.
 """
-
 import ast
 import re
 
@@ -27,8 +26,30 @@ RE_SENSITIVE = re.compile(
 
 # Logging modules and functions to check
 LOGGING_MODULES = {"logging", "logger"}
-PRINT_FUNCTIONS = {"print", "pprint", "pprint.pprint", "debug", "info", "warning", "warn", "error", "critical", "exception", "log"}
-LOGGING_METHODS = {"debug", "info", "warning", "warn", "error", "critical", "exception", "log", "fatal"}
+PRINT_FUNCTIONS = {
+    "print",
+    "pprint",
+    "pprint.pprint",
+    "debug",
+    "info",
+    "warning",
+    "warn",
+    "error",
+    "critical",
+    "exception",
+    "log",
+}
+LOGGING_METHODS = {
+    "debug",
+    "info",
+    "warning",
+    "warn",
+    "error",
+    "critical",
+    "exception",
+    "log",
+    "fatal",
+}
 
 
 def _is_sensitive_name(name: str) -> bool:
@@ -56,7 +77,11 @@ def _check_node_for_sensitive(node) -> list:
     elif isinstance(node, ast.Call):
         # Check keyring.get_password() and similar
         if isinstance(node.func, ast.Attribute):
-            if node.func.attr in ("get_password", "get_credential", "get_secret"):
+            if node.func.attr in (
+                "get_password",
+                "get_credential",
+                "get_secret",
+            ):
                 found.append(node.func.attr)
     elif isinstance(node, ast.BinOp):
         # f-string style: "Password: " + password
