@@ -215,6 +215,7 @@ class BanditManager:
         # if there are command line provided exclusions add them to the list
         if excluded_paths:
             for path in excluded_paths.split(","):
+                path = os.path.normpath(path)
                 if os.path.isdir(path):
                     path = os.path.join(path, "*")
 
@@ -380,7 +381,7 @@ def _get_files_from_dir(
 
     for root, _, files in os.walk(files_dir):
         for filename in files:
-            path = os.path.join(root, filename)
+            path = os.path.normpath(os.path.join(root, filename))
             if _is_file_included(path, included_globs, excluded_path_strings):
                 files_list.add(path)
             else:
@@ -405,6 +406,10 @@ def _is_file_included(
     :param enforce_glob: Can set to false to bypass extension check
     :return: Boolean indicating whether a file should be included
     """
+    # Normalize the path to remove redundant separators and "./" prefixes,
+    # ensuring consistent matching against exclusion patterns (see #975).
+    path = os.path.normpath(path)
+
     return_value = False
 
     # if this is matches a glob of files we look at, and it isn't in an
