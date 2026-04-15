@@ -269,8 +269,8 @@ class FunctionalTests(testtools.TestCase):
     def test_os_chmod(self):
         """Test setting file permissions."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 8},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 11},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 5, "HIGH": 9},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 13},
         }
         self.check_example("os-chmod.py", expect)
 

@@ -53,6 +53,7 @@ file is set world write or executable. Warnings are given with HIGH confidence.
     Added checks for S_IWGRP and S_IXOTH
 
 """  # noqa: E501
+import ast
 import stat
 
 import bandit
@@ -69,12 +70,34 @@ def _stat_is_dangerous(mode):
     )
 
 
+def _resolve_mode_from_ast(node):
+    if isinstance(node, ast.Constant) and isinstance(node.value, int):
+        return node.value
+    elif isinstance(node, getattr(ast, "Num", type(None))):
+        return getattr(node, "n", None)
+    elif isinstance(node, ast.Attribute):
+        if hasattr(stat, node.attr):
+            val = getattr(stat, node.attr)
+            if isinstance(val, int):
+                return val
+    elif isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+        left = _resolve_mode_from_ast(node.left)
+        right = _resolve_mode_from_ast(node.right)
+        if left is not None and right is not None:
+            return left | right
+    return None
+
+
 @test.checks("Call")
 @test.test_id("B103")
 def set_bad_file_permissions(context):
     if "chmod" in context.call_function_name:
         if context.call_args_count == 2:
             mode = context.get_call_arg_at_position(1)
+
+            if mode is None:
+                arg_node = context.node.args[1]
+                mode = _resolve_mode_from_ast(arg_node)
 
             if (
                 mode is not None
