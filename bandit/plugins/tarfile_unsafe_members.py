@@ -6,7 +6,8 @@ r"""
 B202: Test for tarfile.extractall
 =================================
 
-This plugin will look for usage of ``tarfile.extractall()``
+This plugin will look for usage of ``tarfile.extractall()`` and
+``tarfile.extract()``
 
 Severity are set as follows:
 
@@ -107,7 +108,7 @@ def tarfile_unsafe_members(context):
     if all(
         [
             context.is_module_imported_exact("tarfile"),
-            "extractall" in context.call_function_name,
+            context.call_function_name in ["extract", "extractall"],
         ]
     ):
         if "filter" in context.call_keywords and is_filter_data(context):

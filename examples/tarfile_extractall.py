@@ -39,6 +39,13 @@ def provided_members_archive_handler(filename):
     tar.close()
 
 
+def unsafe_member_by_member_archive_handler(filename):
+    tar = tarfile.open(filename)
+    for member in tar.getmembers():
+        tar.extract(member, path=tempfile.mkdtemp())
+    tar.close()
+
+
 def members_filter(tarfile):
     result = []
     for member in tarfile.getmembers():
@@ -59,3 +66,4 @@ if __name__ == "__main__":
         managed_members_archive_handler(filename)
         filter_data_archive_handler(filename)
         filter_fully_trusted_archive_handler(filename)
+        unsafe_member_by_member_archive_handler(filename)
