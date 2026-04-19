@@ -44,10 +44,13 @@ def snmp_insecure_version_check(context):
     """  # noqa: E501
 
     if context.call_function_name_qual == "pysnmp.hlapi.CommunityData":
-        # We called community data. Lets check our args
-        if context.check_call_arg_value(
-            "mpModel", 0
-        ) or context.check_call_arg_value("mpModel", 1):
+        mp_model = context.get_call_arg_value("mpModel")
+        if mp_model is None:
+            mp_model = context.get_call_arg_at_position(1)
+        if mp_model is None:
+            mp_model = 1
+
+        if mp_model in (0, 1):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
@@ -99,7 +102,11 @@ def snmp_crypto_check(context):
     """  # noqa: E501
 
     if context.call_function_name_qual == "pysnmp.hlapi.UsmUserData":
-        if context.call_args_count < 3:
+        priv_key = context.get_call_arg_value("privKey")
+        if priv_key is None:
+            priv_key = context.get_call_arg_at_position(2)
+
+        if priv_key in (None, "None"):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
