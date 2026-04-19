@@ -9,8 +9,8 @@ B104: Test for binding to all interfaces
 
 Binding to all network interfaces can potentially open up a service to traffic
 on unintended interfaces, that may not be properly documented or secured. This
-plugin test looks for a string pattern "0.0.0.0" that may indicate a hardcoded
-binding to all network interfaces.
+plugin test looks for string patterns that may indicate a hardcoded binding to
+all network interfaces.
 
 :Example:
 
@@ -43,7 +43,7 @@ from bandit.core import test_properties as test
 @test.checks("Str")
 @test.test_id("B104")
 def hardcoded_bind_all_interfaces(context):
-    if context.string_val == "0.0.0.0":  # nosec: B104
+    if context.string_val in ("0.0.0.0", ""):  # nosec: B104
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
