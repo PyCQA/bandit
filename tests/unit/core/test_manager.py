@@ -255,19 +255,25 @@ class ManagerTests(testtools.TestCase):
         self.assertEqual(["./x/y.py"], self.manager.excluded_files)
 
         # Test exclude dir without wildcard
-        isdir.side_effect = [True, False]
+        isdir.side_effect = [False]
         self.manager.discover_files(["./x/y.py"], True, "./x/")
         self.assertEqual([], self.manager.files_list)
         self.assertEqual(["./x/y.py"], self.manager.excluded_files)
 
         # Test exclude dir without wildcard or trailing slash
-        isdir.side_effect = [True, False]
+        isdir.side_effect = [False]
         self.manager.discover_files(["./x/y.py"], True, "./x")
         self.assertEqual([], self.manager.files_list)
         self.assertEqual(["./x/y.py"], self.manager.excluded_files)
 
-        # Test exclude dir without prefix or suffix
-        isdir.side_effect = [False, False]
+        # Test exclude top-level dir without prefix or suffix
+        isdir.side_effect = [False]
+        self.manager.discover_files(["./x/y/z.py"], True, "x")
+        self.assertEqual([], self.manager.files_list)
+        self.assertEqual(["./x/y/z.py"], self.manager.excluded_files)
+
+        # Test exclude lower-level dir without prefix or suffix
+        isdir.side_effect = [False]
         self.manager.discover_files(["./x/y/z.py"], True, "y")
         self.assertEqual([], self.manager.files_list)
         self.assertEqual(["./x/y/z.py"], self.manager.excluded_files)
