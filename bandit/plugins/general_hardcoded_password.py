@@ -15,12 +15,13 @@ RE_CANDIDATES = re.compile(
 )
 
 
-def _report(value):
+def _report(value, lineno=None):
     return bandit.Issue(
         severity=bandit.LOW,
         confidence=bandit.MEDIUM,
         cwe=issue.Cwe.HARD_CODED_PASSWORD,
         text=f"Possible hardcoded password: '{value}'",
+        lineno=lineno,
     )
 
 
@@ -201,7 +202,7 @@ def hardcoded_password_funcarg(context):
             and isinstance(kw.value.value, str)
             and RE_CANDIDATES.search(kw.arg)
         ):
-            return _report(kw.value.value)
+            return _report(kw.value.value, lineno=kw.value.lineno)
 
 
 @test.checks("FunctionDef")
