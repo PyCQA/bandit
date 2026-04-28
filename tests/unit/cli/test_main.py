@@ -314,9 +314,8 @@ class BanditCLIMainTests(testtools.TestCase):
         "sys.argv",
         ["bandit", "-c", "bandit.yaml", ".", "-o", "output", "--exit-zero"],
     )
-
     def test_main_exit_with_results_and_with_exit_zero_flag(self):
-        #Test that bandit exits with 0 on results and zero flag
+        # Test that bandit exits with 0 on results and zero flag
         temp_directory = self.useFixture(fixtures.TempDir()).path
         os.chdir(temp_directory)
         with open("bandit.yaml", "w") as fd:
@@ -329,7 +328,8 @@ class BanditCLIMainTests(testtools.TestCase):
             self.assertRaisesRegex(SystemExit, "0", bandit.main)
 
     @mock.patch(
-        "sys.argv", ["bandit", "-c", "bandit.yaml", "nonexistent_dir", "-o", "output"]
+        "sys.argv",
+        ["bandit", "-c", "bandit.yaml", "nonexistent_dir", "-o", "output"],
     )
     def test_main_exit_with_invalid_target(self):
         temp_directory = self.useFixture(fixtures.TempDir()).path
@@ -338,5 +338,3 @@ class BanditCLIMainTests(testtools.TestCase):
             fd.write(bandit_config_content)
 
         self.assertRaisesRegex(SystemExit, "1", bandit.main)
-
-        
