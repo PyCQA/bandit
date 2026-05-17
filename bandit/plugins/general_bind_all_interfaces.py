@@ -57,11 +57,7 @@ def hardcoded_bind_all_interfaces(context):
         return None
 
     bind_arg = context.call_args[0]
-    if (
-        isinstance(bind_arg, tuple)
-        and len(bind_arg) > 0
-        and bind_arg[0] == ""
-    ):
+    if isinstance(bind_arg, tuple) and len(bind_arg) > 0 and bind_arg[0] == "":
         return bandit.Issue(
             severity=bandit.MEDIUM,
             confidence=bandit.MEDIUM,
