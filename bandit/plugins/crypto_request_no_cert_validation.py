@@ -107,9 +107,7 @@ def _assigned_client_module(context, name):
                 if item.optional_vars is not None and _target_contains_name(
                     item.optional_vars, name
                 ):
-                    module = _client_factory_module(
-                        context, item.context_expr
-                    )
+                    module = _client_factory_module(context, item.context_expr)
                     if module is not None:
                         return module
         parent = getattr(parent, "_bandit_parent", None)
