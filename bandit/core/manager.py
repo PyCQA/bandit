@@ -271,7 +271,9 @@ class BanditManager:
             len(self.files_list) > PROGRESS_THRESHOLD
             and LOG.getEffectiveLevel() <= logging.INFO
         ):
-            files = progress.track(self.files_list, console=Console(stderr=True))
+            files = progress.track(
+                self.files_list, console=Console(stderr=True)
+            )
         else:
             files = self.files_list
 
