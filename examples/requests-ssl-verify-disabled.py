@@ -55,3 +55,11 @@ client = httpx.Client(timeout=30)
 client.get('https://gmail.com', timeout=30, verify=True)
 client.get('https://gmail.com', timeout=30, verify=False)
 client.post('https://gmail.com', timeout=30, verify=False)
+
+
+def accepts_session_like(session):
+    def build_session():
+        session = requests.Session()
+        return session
+
+    session.get('https://gmail.com', timeout=30, verify=False)

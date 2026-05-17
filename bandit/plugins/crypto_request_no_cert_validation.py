@@ -97,6 +97,19 @@ def _target_contains_name(target, name):
     return False
 
 
+def _iter_same_scope_assignments(node):
+    if isinstance(
+        node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Lambda)
+    ):
+        return
+
+    if isinstance(node, (ast.Assign, ast.AnnAssign)):
+        yield node
+
+    for child in ast.iter_child_nodes(node):
+        yield from _iter_same_scope_assignments(child)
+
+
 def _assigned_client_module(context, name):
     parent = context.node._bandit_parent
     while parent is not None and not isinstance(
@@ -120,7 +133,7 @@ def _assigned_client_module(context, name):
         if getattr(statement, "lineno", 0) >= context.node.lineno:
             break
 
-        for node in ast.walk(statement):
+        for node in _iter_same_scope_assignments(statement):
             if getattr(node, "lineno", 0) >= context.node.lineno:
                 continue
 
