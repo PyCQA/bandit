@@ -79,6 +79,14 @@ class Context:
         return self._context.get("qualname")
 
     @property
+    def local_classes(self):
+        """Get locally defined class names mapped to their base classes.
+
+        :return: Dictionary mapping class names to their base class names
+        """
+        return self._context.get("local_classes", {})
+
+    @property
     def call_keywords(self):
         """Get a dictionary of keyword parameters
 

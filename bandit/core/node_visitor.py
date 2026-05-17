@@ -30,6 +30,7 @@ class BanditNodeVisitor:
         self.testset = testset
         self.imports = set()
         self.import_aliases = {}
+        self.local_classes = {}
         self.tester = b_tester.BanditTester(
             self.testset, self.debug, nosec_lines, metrics
         )
@@ -52,8 +53,29 @@ class BanditNodeVisitor:
         :param node: Node being inspected
         :return: -
         """
+        bases = []
+        for base in node.bases:
+            name = self._get_qualified_name(base)
+            if name:
+                bases.append(name)
+
+        if bases:
+            self.local_classes[node.name] = bases
+            self.local_classes[
+                b_utils.namespace_path_join(self.namespace, node.name)
+            ] = bases
+
         # For all child nodes, add this class name to current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, node.name)
+
+    def _get_qualified_name(self, node):
+        if isinstance(node, ast.Name):
+            return self.import_aliases.get(node.id, node.id)
+        if isinstance(node, ast.Attribute):
+            return b_utils._get_attr_qual_name(node, self.import_aliases)
+        if isinstance(node, ast.Subscript):
+            return self._get_qualified_name(node.value)
+        return ""
 
     def visit_FunctionDef(self, node):
         """Visitor for AST FunctionDef nodes
@@ -190,6 +212,7 @@ class BanditNodeVisitor:
         self.context = {}
         self.context["imports"] = self.imports
         self.context["import_aliases"] = self.import_aliases
+        self.context["local_classes"] = self.local_classes
 
         if self.debug:
             LOG.debug(ast.dump(node))

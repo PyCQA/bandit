@@ -896,8 +896,8 @@ class FunctionalTests(testtools.TestCase):
 
     def test_markupsafe_markup_xss(self):
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 5, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 5},
         }
         self.check_example("markupsafe_markup_xss.py", expect)
 

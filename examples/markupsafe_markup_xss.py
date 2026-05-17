@@ -1,9 +1,15 @@
 import flask
 from markupsafe import Markup, escape
 
+
+class literal(Markup):
+    pass
+
+
 content = "<script>alert('Hello, world!')</script>"
 Markup(f"unsafe {content}")  # B704
 flask.Markup("unsafe {}".format(content))  # B704
+literal(content)  # B704
 Markup("safe {}").format(content)
 flask.Markup(b"safe {}", encoding='utf-8').format(content)
 escape(content)

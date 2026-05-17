@@ -18,8 +18,9 @@ which will perform escaping, or use ``markupsafe.escape``.
 
 This plugin allows you to specify additional callable that should be treated
 like ``markupsafe.Markup``. By default we recognize ``flask.Markup`` as
-an alias, but there are other subclasses or similar classes in the wild
-that you may wish to treat the same.
+an alias, and locally-defined subclasses of configured Markup names. There
+are other subclasses or similar classes in the wild that you may wish to
+treat the same.
 
 Additionally there is a whitelist for callable names, whose result may
 be safely passed into ``markupsafe.Markup``. This is useful for escape
@@ -76,6 +77,9 @@ from bandit.core import test_properties as test
 from bandit.core.utils import get_call_name
 
 
+MARKUP_NAMES = {"markupsafe.Markup", "flask.Markup"}
+
+
 def gen_config(name):
     if name == "markupsafe_xss":
         return {
@@ -84,16 +88,35 @@ def gen_config(name):
         }
 
 
+def _is_markup_name(qualname, markup_names, local_classes, seen=None):
+    if qualname in markup_names:
+        return True
+
+    if seen is None:
+        seen = set()
+    elif qualname in seen:
+        return False
+
+    seen.add(qualname)
+
+    for base in local_classes.get(qualname, []):
+        if _is_markup_name(base, markup_names, local_classes, seen):
+            return True
+
+    return False
+
+
 @test.takes_config("markupsafe_xss")
 @test.checks("Call")
 @test.test_id("B704")
 def markupsafe_markup_xss(context, config):
 
     qualname = context.call_function_name_qual
-    if qualname not in ("markupsafe.Markup", "flask.Markup"):
-        if qualname not in config.get("extend_markup_names", []):
-            # not a Markup call
-            return None
+    markup_names = MARKUP_NAMES | set(config.get("extend_markup_names", []))
+
+    if not _is_markup_name(qualname, markup_names, context.local_classes):
+        # not a Markup call
+        return None
 
     args = context.node.args
     if not args or isinstance(args[0], ast.Constant):
