@@ -2,6 +2,7 @@
 # Copyright 2015 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
+import logging
 import os
 from unittest import mock
 
@@ -219,6 +220,22 @@ class ManagerTests(testtools.TestCase):
                 lines, sev_level, conf_level, tmp_file, output_format
             )
         self.assertTrue(os.path.isfile(output_filename))
+
+    @mock.patch.object(
+        manager.progress, "track", side_effect=lambda files, **kwargs: files
+    )
+    def test_run_tests_progress_uses_stderr(self, mock_track):
+        self.manager.files_list = [
+            f"missing_{index}.py"
+            for index in range(manager.PROGRESS_THRESHOLD + 1)
+        ]
+
+        with mock.patch.object(
+            manager.LOG, "getEffectiveLevel", return_value=logging.INFO
+        ):
+            self.manager.run_tests()
+
+        self.assertTrue(mock_track.call_args.kwargs["console"].stderr)
 
     @mock.patch("os.path.isdir")
     def test_discover_files_recurse_skip(self, isdir):
