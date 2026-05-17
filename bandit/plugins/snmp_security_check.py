@@ -7,6 +7,32 @@ from bandit.core import issue
 from bandit.core import test_properties as test
 
 
+_MISSING = object()
+_UNKNOWN = object()
+
+
+def _call_arg_value(context, name, position, default=_MISSING):
+    keywords = context.call_keywords or {}
+    if name in keywords:
+        value = context.get_call_arg_value(name)
+        return _UNKNOWN if value is None else value
+
+    if context.call_args_count and context.call_args_count > position:
+        value = context.get_call_arg_at_position(position)
+        return _UNKNOWN if value is None else value
+
+    return default
+
+
+def _line_for_call(context, argument_name=None):
+    if argument_name is not None:
+        return (
+            context.get_lineno_for_call_arg(argument_name)
+            or context.node.lineno
+        )
+    return context.node.lineno
+
+
 @test.checks("Call")
 @test.test_id("B508")
 def snmp_insecure_version_check(context):
@@ -44,17 +70,15 @@ def snmp_insecure_version_check(context):
     """  # noqa: E501
 
     if context.call_function_name_qual == "pysnmp.hlapi.CommunityData":
-        # We called community data. Lets check our args
-        if context.check_call_arg_value(
-            "mpModel", 0
-        ) or context.check_call_arg_value("mpModel", 1):
+        mp_model = _call_arg_value(context, "mpModel", 1, default=1)
+        if mp_model in (0, 1):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
                 cwe=issue.Cwe.CLEARTEXT_TRANSMISSION,
                 text="The use of SNMPv1 and SNMPv2 is insecure. "
                 "You should use SNMPv3 if able.",
-                lineno=context.get_lineno_for_call_arg("CommunityData"),
+                lineno=_line_for_call(context, "mpModel"),
             )
 
 
@@ -99,12 +123,13 @@ def snmp_crypto_check(context):
     """  # noqa: E501
 
     if context.call_function_name_qual == "pysnmp.hlapi.UsmUserData":
-        if context.call_args_count < 3:
+        priv_key = _call_arg_value(context, "privKey", 2)
+        if priv_key in (_MISSING, "None"):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
                 cwe=issue.Cwe.CLEARTEXT_TRANSMISSION,
                 text="You should not use SNMPv3 without encryption. "
                 "noAuthNoPriv & authNoPriv is insecure",
-                lineno=context.get_lineno_for_call_arg("UsmUserData"),
+                lineno=_line_for_call(context, "privKey"),
             )
