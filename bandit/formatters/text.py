@@ -161,35 +161,41 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
     bits = []
 
     if not manager.quiet or manager.results_count(sev_level, conf_level):
-        bits.append(
-            f"Run started:{datetime.datetime.now(datetime.timezone.utc)}"
-        )
-
-        if manager.verbose:
-            bits.append(get_verbose_details(manager))
-
-        bits.append("\nTest results:")
-        bits.append(get_results(manager, sev_level, conf_level, lines))
-        bits.append("\nCode scanned:")
-        bits.append(
-            "\tTotal lines of code: %i"
-            % (manager.metrics.data["_totals"]["loc"])
-        )
-
-        bits.append(
-            "\tTotal lines skipped (#nosec): %i"
-            % (manager.metrics.data["_totals"]["nosec"])
-        )
-        bits.append(
-            "\tTotal potential issues skipped due to specifically being "
-            "disabled (e.g., #nosec BXXX): %i"
-            % (manager.metrics.data["_totals"]["skipped_tests"])
-        )
-
         skipped = manager.get_skipped()
-        bits.append(get_metrics(manager))
-        bits.append(f"Files skipped ({len(skipped)}):")
-        bits.extend(["\t%s (%s)" % skip for skip in skipped])
+
+        if skipped and not manager.files_list:
+            bits.append(f"Files skipped ({len(skipped)}):")
+            bits.extend(["\t%s (%s)" % skip for skip in skipped])
+        else:
+            bits.append(
+                f"Run started:{datetime.datetime.now(datetime.timezone.utc)}"
+            )
+
+            if manager.verbose:
+                bits.append(get_verbose_details(manager))
+
+            bits.append("\nTest results:")
+            bits.append(get_results(manager, sev_level, conf_level, lines))
+            bits.append("\nCode scanned:")
+            bits.append(
+                "\tTotal lines of code: %i"
+                % (manager.metrics.data["_totals"]["loc"])
+            )
+
+            bits.append(
+                "\tTotal lines skipped (#nosec): %i"
+                % (manager.metrics.data["_totals"]["nosec"])
+            )
+            bits.append(
+                "\tTotal potential issues skipped due to specifically being "
+                "disabled (e.g., #nosec BXXX): %i"
+                % (manager.metrics.data["_totals"]["skipped_tests"])
+            )
+
+            bits.append(get_metrics(manager))
+            bits.append(f"Files skipped ({len(skipped)}):")
+            bits.extend(["\t%s (%s)" % skip for skip in skipped])
+
         result = "\n".join([bit for bit in bits]) + "\n"
 
         with fileobj:
