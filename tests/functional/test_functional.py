@@ -859,10 +859,26 @@ class FunctionalTests(testtools.TestCase):
     def test_snmp_security_check(self):
         """Test insecure and weak crypto usage of SNMP."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 8, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 8},
         }
         self.check_example("snmp.py", expect)
+        self.assertEqual(
+            [
+                ("B508", 4),
+                ("B508", 6),
+                ("B508", 8),
+                ("B508", 10),
+                ("B508", 12),
+                ("B509", 19),
+                ("B509", 21),
+                ("B509", 23),
+            ],
+            [
+                (item.test_id, item.lineno)
+                for item in self.b_mgr.get_issue_list()
+            ],
+        )
 
     def test_tarfile_unsafe_members(self):
         """Test insecure usage of tarfile."""
