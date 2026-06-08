@@ -2,9 +2,33 @@
 # Copyright (c) 2018 SolarWinds, Inc.
 #
 # SPDX-License-Identifier: Apache-2.0
+import ast
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
+
+
+def _get_call_argument(context, name, position):
+    keywords = context.call_keywords or {}
+    if name in keywords:
+        node = next(
+            keyword.value
+            for keyword in context.node.keywords
+            if keyword.arg == name
+        )
+        return True, keywords[name], node
+    if context.call_args_count and context.call_args_count > position:
+        return (
+            True,
+            context.get_call_arg_at_position(position),
+            context.node.args[position],
+        )
+    return False, None, None
+
+
+def _is_none_literal(node):
+    return isinstance(node, ast.Constant) and node.value is None
 
 
 @test.checks("Call")
@@ -44,10 +68,10 @@ def snmp_insecure_version_check(context):
     """  # noqa: E501
 
     if context.call_function_name_qual == "pysnmp.hlapi.CommunityData":
-        # We called community data. Lets check our args
-        if context.check_call_arg_value(
-            "mpModel", 0
-        ) or context.check_call_arg_value("mpModel", 1):
+        provided, mp_model, node = _get_call_argument(context, "mpModel", 2)
+        if not provided or _is_none_literal(node):
+            mp_model = 1
+        if mp_model in (0, 1):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
@@ -99,7 +123,8 @@ def snmp_crypto_check(context):
     """  # noqa: E501
 
     if context.call_function_name_qual == "pysnmp.hlapi.UsmUserData":
-        if context.call_args_count < 3:
+        provided, _, node = _get_call_argument(context, "privKey", 2)
+        if not provided or _is_none_literal(node):
             return bandit.Issue(
                 severity=bandit.MEDIUM,
                 confidence=bandit.HIGH,
