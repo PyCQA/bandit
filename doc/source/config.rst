@@ -8,7 +8,9 @@ Bandit Settings
 Projects may include an INI file named `.bandit`, which specifies
 command line arguments that should be supplied for that project.
 In addition or alternatively, you can use a YAML or TOML file, which
-however needs to be explicitly specified using the `-c` option.
+needs to be explicitly specified using the `-c` option. These formats
+are not interchangeable: `.bandit` and `--ini` files use INI syntax,
+while `-c` files use YAML syntax or the `[tool.bandit]` TOML table.
 The currently supported arguments are:
 
 ``targets``
@@ -33,6 +35,12 @@ For example:
   exclude = tests,path/to/file
   tests = B201,B301
   skips = B101,B601
+
+Bandit finds this file automatically when recursively scanning:
+
+.. code-block:: console
+
+  bandit -r .
 
 Alternatively, put a YAML or TOML file anywhere, and use the `-c` option.
 For example:
@@ -62,13 +70,14 @@ Then run bandit like this:
 
   bandit -c pyproject.toml -r .
 
-Note that Bandit will look for `.bandit` file only if it is invoked with `-r` option.
-If you do not use `-r` or the INI file's name is not `.bandit`, you can specify
-the file's path explicitly with `--ini` option, e.g.
+Do not pass an INI file to `-c`; use `--ini` instead. Bandit will look for
+`.bandit` only if it is invoked with the `-r` option. If you do not use `-r`,
+or the INI file's name is not `.bandit`, you can specify the file's path
+explicitly with the `--ini` option, e.g.
 
 .. code-block:: console
 
-  bandit --ini tox.ini
+  bandit --ini tox.ini -r .
 
 If Bandit is used via `pre-commit`_ and a config file, you have to specify the config file
 and optional additional dependencies in the `pre-commit`_ configuration:
@@ -277,15 +286,17 @@ a complete list of all test IDs for reference when editing).
 Configuring Test Plugins
 ------------------------
 
-Bandit's configuration file is written in `YAML`_ and options
-for each plugin test are provided under a section named to match the test
-method. For example, given a test plugin called 'try_except_pass' its
-configuration section might look like the following:
+Bandit's YAML configuration files provide options for each plugin test under a
+section named to match the test method. For example, given a test plugin called
+'try_except_pass' its configuration section might look like the following:
 
 .. code-block:: yaml
 
     try_except_pass:
       check_typed_exception: True
+
+For TOML configuration files, use the equivalent `[tool.bandit.<plugin_name>]`
+table.
 
 The specific content of the configuration block is determined by the plugin
 test itself. See the `plugin test list`_ for complete information on
