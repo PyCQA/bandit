@@ -110,10 +110,10 @@ class FunctionalTests(testtools.TestCase):
                     self.assertEqual(expected, m["_totals"][label])
 
     def test_binding(self):
-        """Test the bind-to-0.0.0.0 example."""
+        """Test bind-to-all-interfaces examples."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
         }
         self.check_example("binding.py", expect)
 
