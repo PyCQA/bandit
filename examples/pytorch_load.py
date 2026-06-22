@@ -28,3 +28,25 @@ safe_cpu_model.load_state_dict(torch.load('model_weights.pth', map_location='cpu
 # Example of a torch.*.load call that should NOT trigger B614
 # Only pickle deserializers should trigger B614
 torch.utils.cpp_extension.load(name="example_ext", sources=[])
+
+# torch.jit.load uses TorchScript serialization, not pickle.
+# It has no weights_only parameter and should NOT trigger B614.
+jit_model = torch.jit.load('script_model.pt')
+
+# torch.jit.load with map_location is still TorchScript; should NOT
+# trigger B614.
+jit_model_cpu = torch.jit.load('script_model.pt', map_location='cpu')
+
+# weights_only passed as a non-literal expression. B614 cannot resolve
+# the value statically, so these are reported at MEDIUM confidence
+# instead of HIGH. They should still trigger B614.
+flag_from_config = bool(models)
+
+
+def load_checkpoint(path, weights_only=True):
+    return torch.load(path, weights_only=weights_only)
+
+
+unresolved_model = models.resnet18()
+unresolved_model.load_state_dict(
+    torch.load('model_weights.pth', weights_only=flag_from_config))

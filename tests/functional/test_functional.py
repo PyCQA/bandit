@@ -875,8 +875,8 @@ class FunctionalTests(testtools.TestCase):
     def test_pytorch_load(self):
         """Test insecure usage of torch.load."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 5, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 3},
         }
         self.check_example("pytorch_load.py", expect)
 
