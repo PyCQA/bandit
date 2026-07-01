@@ -11,3 +11,16 @@ Markup(content)  # B704
 flask.Markup("unsafe %s" % content)  # B704
 Markup(object="safe")
 Markup(object="unsafe {}".format(content))  # Not currently detected
+
+
+class CustomMarkup(Markup):
+    pass
+
+
+class NestedMarkup(CustomMarkup):
+    pass
+
+
+CustomMarkup(f"unsafe {content}")  # B704
+NestedMarkup(f"unsafe {content}")  # B704
+CustomMarkup("safe")

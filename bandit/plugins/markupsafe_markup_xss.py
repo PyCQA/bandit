@@ -21,6 +21,13 @@ like ``markupsafe.Markup``. By default we recognize ``flask.Markup`` as
 an alias, but there are other subclasses or similar classes in the wild
 that you may wish to treat the same.
 
+Besides the names listed above, calls to a class defined in the same
+module that subclasses a recognized Markup class, either directly or
+through a chain of subclasses, are flagged as well. This covers the common
+case where a project wraps ``markupsafe.Markup`` in its own subclass, the
+pattern behind CVE-2025-54384, without having to add every such subclass
+to ``extend_markup_names``.
+
 Additionally there is a whitelist for callable names, whose result may
 be safely passed into ``markupsafe.Markup``. This is useful for escape
 functions like e.g. ``bleach.clean`` which don't themselves return
@@ -67,6 +74,9 @@ These two options can be set in a shared configuration section
 
 .. versionadded:: 1.8.3
 
+.. versionchanged:: 1.9.5
+    Calls to a local subclass of a Markup class are now detected.
+
 """
 import ast
 
@@ -84,16 +94,46 @@ def gen_config(name):
         }
 
 
+def _is_markup_subclass(qualname, markup_names, classes):
+    """Check whether a call targets a locally defined Markup subclass.
+
+    ``classes`` maps every class defined in the scanned module to the list
+    of qualified names of its base classes. Walking that inheritance graph
+    lets us treat a user defined subclass of ``markupsafe.Markup`` (directly
+    or through a chain of subclasses) the same way we treat ``Markup``
+    itself. That pattern is the source of the false negative reported in
+    CVE-2025-54384.
+    """
+    if not classes:
+        return False
+
+    seen = set()
+    stack = [qualname]
+    while stack:
+        name = stack.pop()
+        if name in seen:
+            continue
+        seen.add(name)
+        for base in classes.get(name, ()):
+            if base in markup_names:
+                return True
+            stack.append(base)
+    return False
+
+
 @test.takes_config("markupsafe_xss")
 @test.checks("Call")
 @test.test_id("B704")
 def markupsafe_markup_xss(context, config):
 
     qualname = context.call_function_name_qual
-    if qualname not in ("markupsafe.Markup", "flask.Markup"):
-        if qualname not in config.get("extend_markup_names", []):
-            # not a Markup call
-            return None
+    markup_names = ["markupsafe.Markup", "flask.Markup"]
+    markup_names += config.get("extend_markup_names", [])
+    if qualname not in markup_names and not _is_markup_subclass(
+        qualname, markup_names, context.classes
+    ):
+        # neither a Markup call nor a call to a subclass of Markup
+        return None
 
     args = context.node.args
     if not args or isinstance(args[0], ast.Constant):
