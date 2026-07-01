@@ -88,7 +88,17 @@ def get_members_value(context):
         if keyword.arg == "members":
             arg = keyword.value
             if isinstance(arg, ast.Call):
-                return {"Function": arg.func.id}
+                # arg.func may be an ast.Name (`fn()`), ast.Attribute
+                # (`mod.fn()`), ast.Lambda, ast.Subscript, etc.; only ast.Name
+                # has `.id`. Read the callable name defensively so a non-Name
+                # callable does not raise AttributeError and abort the scan.
+                func = arg.func
+                name = (
+                    getattr(func, "id", None)
+                    or getattr(func, "attr", None)
+                    or "<callable>"
+                )
+                return {"Function": name}
             else:
                 value = arg.id if isinstance(arg, ast.Name) else arg
                 return {"Other": value}

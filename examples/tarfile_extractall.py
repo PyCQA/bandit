@@ -39,6 +39,21 @@ def provided_members_archive_handler(filename):
     tar.close()
 
 
+def attribute_call_members_archive_handler(filename):
+    tar = tarfile.open(filename)
+    # members= is a call whose func is an ast.Attribute (no .id) -- B202
+    # previously crashed on this instead of reporting it.
+    tar.extractall(path=tempfile.mkdtemp(), members=tar.getmembers())
+    tar.close()
+
+
+def lambda_call_members_archive_handler(filename):
+    tar = tarfile.open(filename)
+    # members= is a call whose func is an ast.Lambda (no .id).
+    tar.extractall(path=tempfile.mkdtemp(), members=(lambda t: t)(tar))
+    tar.close()
+
+
 def members_filter(tarfile):
     result = []
     for member in tarfile.getmembers():
