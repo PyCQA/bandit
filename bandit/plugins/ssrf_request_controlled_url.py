@@ -39,14 +39,28 @@ from bandit.core import test_properties as test
 
 # Sinks: outbound HTTP call methods
 _SINK_METHODS = {
-    "get", "post", "put", "delete", "patch", "head", "options",
-    "request", "fetch",
+    "get",
+    "post",
+    "put",
+    "delete",
+    "patch",
+    "head",
+    "options",
+    "request",
+    "fetch",
 }
 
 # Source: common request accessor patterns
 _REQUEST_ACCESSORS = {
-    "args", "form", "values", "json", "data", "cookies",
-    "query_params", "body", "get_json",
+    "args",
+    "form",
+    "values",
+    "json",
+    "data",
+    "cookies",
+    "query_params",
+    "body",
+    "get_json",
 }
 
 
@@ -65,8 +79,7 @@ def ssrf_user_controlled_url(context):
     is_http_call = False
     if func in _SINK_METHODS:
         if any(
-            lib in module
-            for lib in ("requests", "httpx", "aiohttp", "urllib")
+            lib in module for lib in ("requests", "httpx", "aiohttp", "urllib")
         ):
             is_http_call = True
 
