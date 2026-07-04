@@ -49,6 +49,65 @@ false. A HIGH severity warning is generated in either of these scenarios.
     19              loader=templateLoader)
 
 
+
+@test.checks("Call")
+@test.test_id("B701")
+def jinja2_dynamic_template_source(context):
+    """Check for dynamic template source execution in Jinja2.
+    
+    This check flags non-literal template source passed to:
+    - jinja2.Template(...)
+    - jinja2.Environment.from_string(...)
+    
+    It does NOT flag SandboxedEnvironment().from_string(...) since
+    that is a common fix pattern for SSTI vulnerabilities.
+    """
+    if not isinstance(context.call_function_name_qual, str):
+        return
+    
+    qualname_list = context.call_function_name_qual.split(".")
+    func = qualname_list[-1]
+    
+    # Check for jinja2.Template(...) with non-literal source
+    if "jinja2" in qualname_list and func == "Template":
+        # Check if first argument is a string literal
+        if context.node.args:
+            first_arg = context.node.args[0]
+            # If it's not a string literal, it's potentially dangerous
+            if not isinstance(first_arg, ast.Constant) or not isinstance(first_arg.value, str):
+                return bandit.Issue(
+                    severity=bandit.HIGH,
+                    confidence=bandit.MEDIUM,
+                    cwe=issue.Cwe.CODE_INJECTION,
+                    text="Using jinja2.Template() with a non-literal template "
+                    "source can lead to Server-Side Template Injection "
+                    "(SSTI). Ensure the template source is trusted or use "
+                    "SandboxedEnvironment.",
+                )
+    
+    # Check for jinja2.Environment.from_string(...) with non-literal source
+    if func == "from_string" and "jinja2" in qualname_list:
+        # Check if this is called on a SandboxedEnvironment
+        # by checking if 'sandbox' is in the qualname
+        if "sandbox" in qualname_list:
+            return  # SandboxedEnvironment is safe
+        
+        # Check if first argument is a string literal
+        if context.node.args:
+            first_arg = context.node.args[0]
+            # If it's not a string literal, it's potentially dangerous
+            if not isinstance(first_arg, ast.Constant) or not isinstance(first_arg.value, str):
+                return bandit.Issue(
+                    severity=bandit.HIGH,
+                    confidence=bandit.MEDIUM,
+                    cwe=issue.Cwe.CODE_INJECTION,
+                    text="Using jinja2.Environment.from_string() with a "
+                    "non-literal template source can lead to Server-Side "
+                    "Template Injection (SSTI). Ensure the template source "
+                    "is trusted or use SandboxedEnvironment.",
+                )
+
+
 .. seealso::
 
  - `OWASP XSS <https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)>`__

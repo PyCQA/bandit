@@ -27,3 +27,27 @@ Environment(loader=templateLoader,
 def fake_func():
     return 'foobar'
 Environment(loader=templateLoader, autoescape=fake_func())
+
+
+# Test cases for dynamic template source (B701)
+from jinja2 import Template
+from jinja2 import Environment
+from jinja2.sandbox import SandboxedEnvironment
+
+def dangerous_template_source(user_input):
+    # Should trigger B701 - non-literal template source
+    return Template(user_input).render()
+
+def dangerous_from_string(user_input):
+    # Should trigger B701 - non-literal template source
+    env = Environment()
+    return env.from_string(user_input).render()
+
+def safe_sandboxed_from_string(user_input):
+    # Should NOT trigger - SandboxedEnvironment is safe
+    env = SandboxedEnvironment()
+    return env.from_string(user_input).render()
+
+def safe_literal_template():
+    # Should NOT trigger - literal template source
+    return Template("Hello {{ name }}").render(name="World")
