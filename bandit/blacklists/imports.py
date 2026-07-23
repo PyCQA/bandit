@@ -49,6 +49,7 @@ Consider possible security implications associated with these modules.
 |      |                     | - cPickle                          |           |
 |      |                     | - dill                             |           |
 |      |                     | - shelve                           |           |
+|      |                     | - cloudpickle                      |           |
 +------+---------------------+------------------------------------+-----------+
 
 B404: import_subprocess
@@ -272,7 +273,7 @@ def gen_blacklist():
             "import_pickle",
             "B403",
             issue.Cwe.DESERIALIZATION_OF_UNTRUSTED_DATA,
-            ["pickle", "cPickle", "dill", "shelve"],
+            ["pickle", "cPickle", "dill", "shelve", "cloudpickle"],
             "Consider possible security implications associated with "
             "{name} module.",
             "LOW",
