@@ -9,6 +9,3 @@ file_obj = io.BytesIO()
 cloudpickle.dump([1, 2, '3'], file_obj)
 file_obj.seek(0)
 print(cloudpickle.load(file_obj))
-
-file_obj.seek(0)
-print(cloudpickle.Unpickler(file_obj).load())

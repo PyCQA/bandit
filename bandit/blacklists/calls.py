@@ -35,7 +35,6 @@ deserialize untrusted data, possible security issue.
 |      |                     | - pandas.read_pickle               |           |
 |      |                     | - cloudpickle.loads                |           |
 |      |                     | - cloudpickle.load                 |           |
-|      |                     | - cloudpickle.Unpickler            |           |
 +------+---------------------+------------------------------------+-----------+
 
 B302: marshal
@@ -378,7 +377,6 @@ def gen_blacklist():
                 "pandas.read_pickle",
                 "cloudpickle.loads",
                 "cloudpickle.load",
-                "cloudpickle.Unpickler",
             ],
             "Pickle and modules that wrap it can be unsafe when used to "
             "deserialize untrusted data, possible security issue.",
