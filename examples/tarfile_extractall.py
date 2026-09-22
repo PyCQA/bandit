@@ -9,6 +9,13 @@ def unsafe_archive_handler(filename):
     tar.close()
 
 
+def unsafe_member_archive_handler(filename):
+    tar = tarfile.open(filename)
+    for member in tar.getmembers():
+        tar.extract(member, path=tempfile.mkdtemp())
+    tar.close()
+
+
 def managed_members_archive_handler(filename):
     tar = tarfile.open(filename)
     tar.extractall(path=tempfile.mkdtemp(), members=members_filter(tar))
@@ -56,6 +63,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         filename = sys.argv[1]
         unsafe_archive_handler(filename)
+        unsafe_member_archive_handler(filename)
         managed_members_archive_handler(filename)
         filter_data_archive_handler(filename)
         filter_fully_trusted_archive_handler(filename)
