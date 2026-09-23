@@ -428,7 +428,7 @@ class FunctionalTests(testtools.TestCase):
         example_file = "sql_multiline_statements.py"
         confidence_low_tests = 13
         severity_medium_tests = 26
-        nosec_tests = 7
+        nosec_tests = 15
         skipped_tests = 8
         expect = {
             "SEVERITY": {

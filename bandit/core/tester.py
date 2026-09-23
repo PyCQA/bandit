@@ -81,7 +81,8 @@ class BanditTester:
                         # If the set is empty then it means that nosec was
                         # used without test number -> update nosecs counter.
                         # If the test id is in the set of tests to skip,
-                        # log and increment the skip by test count.
+                        # log and increment both the nosec and
+                        # skipped_tests counters.
                         if not nosec_tests_to_skip:
                             LOG.debug("skipped, nosec without test number")
                             self.metrics.note_nosec()
@@ -90,6 +91,7 @@ class BanditTester:
                             LOG.debug(
                                 f"skipped, nosec for test {result.test_id}"
                             )
+                            self.metrics.note_nosec()
                             self.metrics.note_skipped_test()
                             continue
 
