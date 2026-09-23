@@ -13,6 +13,7 @@ import sys
 import tokenize
 import traceback
 
+import ignorelib
 from rich import progress
 
 from bandit.core import constants as b_constants
@@ -226,10 +227,11 @@ class BanditManager:
             if os.path.isdir(fname):
                 if recursive:
                     new_files, newly_excluded = _get_files_from_dir(
-                        fname,
+                        _build_gitignore_mgr(fname),
                         included_globs=included_globs,
                         excluded_path_strings=excluded_path_globs,
                     )
+
                     files_list.update(new_files)
                     excluded_files.update(newly_excluded)
                 else:
@@ -238,7 +240,6 @@ class BanditManager:
                         "scan contents",
                         fname,
                     )
-
             else:
                 # if the user explicitly mentions a file on command line,
                 # we'll scan it, regardless of whether it's in the included
@@ -367,8 +368,17 @@ class BanditManager:
         return score
 
 
+def _build_gitignore_mgr(path):
+    return ignorelib.IgnoreFilterManager.build(
+        path,
+        global_ignore_file_paths=[],
+        global_patterns=[],
+        ignore_file_name=".gitignore",
+    )
+
+
 def _get_files_from_dir(
-    files_dir, included_globs=None, excluded_path_strings=None
+    ignore_mgr, included_globs=None, excluded_path_strings=None
 ):
     if not included_globs:
         included_globs = ["*.py"]
@@ -378,7 +388,7 @@ def _get_files_from_dir(
     files_list = set()
     excluded_files = set()
 
-    for root, _, files in os.walk(files_dir):
+    for root, _, files in ignore_mgr.walk():
         for filename in files:
             path = os.path.join(root, filename)
             if _is_file_included(path, included_globs, excluded_path_strings):
