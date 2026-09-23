@@ -2,11 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 r"""
-=================================
-B202: Test for tarfile.extractall
-=================================
+============================================
+B202: Test for unsafe tarfile extraction
+============================================
 
-This plugin will look for usage of ``tarfile.extractall()``
+This plugin will look for usage of ``tarfile.extractall()`` and
+``tarfile.extract()``
 
 Severity are set as follows:
 
@@ -78,7 +79,7 @@ def exec_issue(level, members=""):
             severity=bandit.HIGH,
             confidence=bandit.HIGH,
             cwe=issue.Cwe.PATH_TRAVERSAL,
-            text="tarfile.extractall used without any validation. "
+            text="Unsafe tarfile extraction used without any validation. "
             "Please check and discard dangerous members.",
         )
 
@@ -107,12 +108,15 @@ def tarfile_unsafe_members(context):
     if all(
         [
             context.is_module_imported_exact("tarfile"),
-            "extractall" in context.call_function_name,
+            context.call_function_name in ("extract", "extractall"),
         ]
     ):
         if "filter" in context.call_keywords and is_filter_data(context):
             return None
-        if "members" in context.call_keywords:
+        if (
+            context.call_function_name == "extractall"
+            and "members" in context.call_keywords
+        ):
             members = get_members_value(context)
             if "Function" in members:
                 return exec_issue(bandit.LOW, members)
