@@ -21,21 +21,28 @@ file is set world write or executable. Warnings are given with HIGH confidence.
 
 .. code-block:: none
 
-    >> Issue: Probable insecure usage of temp file/directory.
-       Severity: Medium   Confidence: Medium
+    >> Issue: Chmod setting a permissive mask 0o664 on file (/etc/passwd).
+       Severity: Medium   Confidence: High
        CWE: CWE-732 (https://cwe.mitre.org/data/definitions/732.html)
-       Location: ./examples/os-chmod.py:15
-    14  os.chmod('/etc/hosts', 0o777)
-    15  os.chmod('/tmp/oh_hai', 0x1ff)
-    16  os.chmod('/etc/passwd', stat.S_IRWXU)
+       Location: ./examples/os-chmod.py:8
+    7  os.chmod('/etc/passwd', 0o7)
+    8  os.chmod('/etc/passwd', 0o664)
+    9  os.chmod('/etc/passwd', 0o777)
 
-    >> Issue: Chmod setting a permissive mask 0777 on file (key_file).
+    >> Issue: Chmod setting a permissive mask 0777 on file (keyfile).
        Severity: High   Confidence: High
        CWE: CWE-732 (https://cwe.mitre.org/data/definitions/732.html)
        Location: ./examples/os-chmod.py:17
     16  os.chmod('/etc/passwd', stat.S_IRWXU)
-    17  os.chmod(key_file, 0o777)
-    18
+    17  os.chmod(keyfile, 0o777)
+    18  os.chmod('~/hidden_exec', stat.S_IXGRP)
+
+    >> Issue: Chmod setting a permissive mask 0o666 on file (NOT PARSED).
+       Severity: High   Confidence: High
+       CWE: CWE-732 (https://cwe.mitre.org/data/definitions/732.html)
+       Location: ./examples/pathlib-chmod.py:5
+    4  p1 = pathlib.Path(filename)
+    5  p1.chmod(0o666)
 
 .. seealso::
 
@@ -51,6 +58,9 @@ file is set world write or executable. Warnings are given with HIGH confidence.
 
 .. versionchanged:: 1.7.5
     Added checks for S_IWGRP and S_IXOTH
+
+.. versionchanged:: 1.7.6
+    Added check for pathlib chmod
 
 """  # noqa: E501
 import stat
@@ -73,27 +83,38 @@ def _stat_is_dangerous(mode):
 @test.test_id("B103")
 def set_bad_file_permissions(context):
     if "chmod" in context.call_function_name:
-        if context.call_args_count == 2:
+        if (
+            context.call_function_name_qual.startswith("os.")
+            and context.call_args_count == 2
+        ):  # os chmod
+            filename = context.get_call_arg_at_position(0)
             mode = context.get_call_arg_at_position(1)
+        elif (
+            context.is_module_imported_like("pathlib")
+            and context.call_args_count == 1  # pathlib chmod
+        ):
+            filename = None
+            mode = context.get_call_arg_at_position(0)
+        else:
+            return
 
-            if (
-                mode is not None
-                and isinstance(mode, int)
-                and _stat_is_dangerous(mode)
-            ):
-                # world writable is an HIGH, group executable is a MEDIUM
-                if mode & stat.S_IWOTH:
-                    sev_level = bandit.HIGH
-                else:
-                    sev_level = bandit.MEDIUM
+        if (
+            mode is not None
+            and isinstance(mode, int)
+            and _stat_is_dangerous(mode)
+        ):
+            # world writable is an HIGH, group executable is a MEDIUM
+            if mode & stat.S_IWOTH:
+                sev_level = bandit.HIGH
+            else:
+                sev_level = bandit.MEDIUM
 
-                filename = context.get_call_arg_at_position(0)
-                if filename is None:
-                    filename = "NOT PARSED"
-                return bandit.Issue(
-                    severity=sev_level,
-                    confidence=bandit.HIGH,
-                    cwe=issue.Cwe.INCORRECT_PERMISSION_ASSIGNMENT,
-                    text="Chmod setting a permissive mask %s on file (%s)."
-                    % (oct(mode), filename),
-                )
+            if filename is None:
+                filename = "NOT PARSED"
+            return bandit.Issue(
+                severity=sev_level,
+                confidence=bandit.HIGH,
+                cwe=issue.Cwe.INCORRECT_PERMISSION_ASSIGNMENT,
+                text="Chmod setting a permissive mask %s on file (%s)."
+                % (oct(mode), filename),
+            )
