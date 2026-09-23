@@ -9,9 +9,9 @@ import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 
-RE_WORDS = "(pas+wo?r?d|pass(phrase)?|pwd|token|secrete?)"
+RE_WORDS = "(pas+wo?r?d|pass(phrase)?|pwd|token|secrete?|key)"
 RE_CANDIDATES = re.compile(
-    "(^{0}$|_{0}_|^{0}_|_{0}$)".format(RE_WORDS), re.IGNORECASE
+    "(^{0}$|_{0}_|^{0}_|_{0}$|{0})".format(RE_WORDS), re.IGNORECASE
 )
 
 
@@ -83,7 +83,13 @@ def hardcoded_password_string(context):
     if isinstance(node._bandit_parent, ast.Assign):
         # looks for "candidate='some_string'"
         for targ in node._bandit_parent.targets:
-            if isinstance(targ, ast.Name) and RE_CANDIDATES.search(targ.id):
+            if isinstance(targ, ast.Name):
+                normalized = re.sub(
+                    r"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])",
+                    "_",
+                    targ.id,
+                ).lower()
+            if isinstance(targ, ast.Name) and RE_CANDIDATES.search(normalized):
                 return _report(node.value)
             elif isinstance(targ, ast.Attribute) and RE_CANDIDATES.search(
                 targ.attr
@@ -143,6 +149,14 @@ def hardcoded_password_string(context):
                     comp.comparators[0], ast.Constant
                 ) and isinstance(comp.comparators[0].value, str):
                     return _report(comp.comparators[0].value)
+        elif isinstance(comp.left, ast.Subscript):
+            slc = comp.left.slice
+            if isinstance(slc, ast.Constant) and isinstance(slc.value, str):
+                if RE_CANDIDATES.search(slc.value):
+                    if isinstance(
+                        comp.comparators[0], ast.Constant
+                    ) and isinstance(comp.comparators[0].value, str):
+                        return _report(comp.comparators[0].value)
 
 
 @test.checks("Call")
