@@ -112,8 +112,8 @@ class FunctionalTests(testtools.TestCase):
     def test_binding(self):
         """Test the bind-to-0.0.0.0 example."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
         }
         self.check_example("binding.py", expect)
 
@@ -136,7 +136,7 @@ class FunctionalTests(testtools.TestCase):
     def test_cipher_modes(self):
         """Test for insecure cipher modes."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         self.check_example("cipher-modes.py", expect)
@@ -152,7 +152,7 @@ class FunctionalTests(testtools.TestCase):
     def test_mark_safe(self):
         """Test the `mark_safe` example."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         self.check_example("mark_safe.py", expect)
@@ -160,7 +160,7 @@ class FunctionalTests(testtools.TestCase):
     def test_exec(self):
         """Test the `exec` example."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         self.check_example("exec.py", expect)
@@ -349,7 +349,7 @@ class FunctionalTests(testtools.TestCase):
     def test_pandas_read_pickle(self):
         """Test for the `pandas.read_pickle` module."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
         }
         self.check_example("pandas_read_pickle.py", expect)
@@ -592,7 +592,7 @@ class FunctionalTests(testtools.TestCase):
         self.check_example("xml_etree_elementtree.py", expect)
 
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
         }
         self.check_example("xml_expatreader.py", expect)
@@ -651,8 +651,8 @@ class FunctionalTests(testtools.TestCase):
     def test_paramiko_injection(self):
         """Test paramiko command execution."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
         }
         self.check_example("paramiko_injection.py", expect)
 
@@ -767,7 +767,7 @@ class FunctionalTests(testtools.TestCase):
     def test_flask_debug_true(self):
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
         }
         self.check_example("flask_debug.py", expect)
 
@@ -816,7 +816,7 @@ class FunctionalTests(testtools.TestCase):
     def test_unverified_context(self):
         """Test for `ssl._create_unverified_context`."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         self.check_example("unverified_context.py", expect)
@@ -883,7 +883,7 @@ class FunctionalTests(testtools.TestCase):
     def test_trojansource(self):
         expect = {
             "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
         }
         self.check_example("trojansource.py", expect)
 
@@ -917,7 +917,7 @@ class FunctionalTests(testtools.TestCase):
 
     def test_markupsafe_markup_xss_allowed_calls(self):
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 1, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
             "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
         }
         b_conf = b_config.BanditConfig()
