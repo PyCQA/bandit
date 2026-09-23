@@ -20,6 +20,14 @@ BASE_CONFIG = "bandit.yaml"
 LOG = logging.getLogger()
 
 
+def _ranking_level(count):
+    """Return a ranking label for a CLI severity/confidence count."""
+    if count is None:
+        count = 1
+    index = min(max(count, 1), len(constants.RANKING)) - 1
+    return constants.RANKING[index]
+
+
 def _init_logger(log_level=logging.INFO, log_format=None):
     """Initialize the logger.
 
@@ -677,8 +685,8 @@ def main():
     LOG.debug(b_mgr.metrics)
 
     # trigger output of results by Bandit Manager
-    sev_level = constants.RANKING[args.severity - 1]
-    conf_level = constants.RANKING[args.confidence - 1]
+    sev_level = _ranking_level(args.severity)
+    conf_level = _ranking_level(args.confidence)
     b_mgr.output_results(
         args.context_lines,
         sev_level,
