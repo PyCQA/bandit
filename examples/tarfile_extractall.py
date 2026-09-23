@@ -9,6 +9,14 @@ def unsafe_archive_handler(filename):
     tar.close()
 
 
+def unsafe_extract_handler(filename):
+    target_dir = tempfile.mkdtemp()
+    tar = tarfile.open(filename)
+    for member in tar.getmembers():
+        tar.extract(member, path=target_dir)
+    tar.close()
+
+
 def managed_members_archive_handler(filename):
     tar = tarfile.open(filename)
     tar.extractall(path=tempfile.mkdtemp(), members=members_filter(tar))
@@ -24,6 +32,14 @@ def filter_data_archive_handler(filename):
 def filter_fully_trusted_archive_handler(filename):
     tar = tarfile.open(filename)
     tar.extractall(path=tempfile.mkdtemp(), filter="fully_trusted")
+    tar.close()
+
+
+def filter_data_extract_handler(filename):
+    target_dir = tempfile.mkdtemp()
+    tar = tarfile.open(filename)
+    for member in tar.getmembers():
+        tar.extract(member, path=target_dir, filter="data")
     tar.close()
 
 

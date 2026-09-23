@@ -6,13 +6,15 @@ r"""
 B202: Test for tarfile.extractall
 =================================
 
-This plugin will look for usage of ``tarfile.extractall()``
+This plugin will look for usage of ``tarfile.extractall()`` and
+``tarfile.extract()``
 
 Severity are set as follows:
 
 * ``tarfile.extractall(members=function(tarfile))`` - LOW
 * ``tarfile.extractall(members=?)`` - member is not a function - MEDIUM
 * ``tarfile.extractall()`` - members from the archive is trusted - HIGH
+* ``tarfile.extract()`` - no member validation - HIGH
 
 Use ``tarfile.extractall(members=function_name)`` and define a function
 that will inspect each member. Discard files that contain a directory
@@ -38,6 +40,7 @@ unless you explicitly need them.
 .. seealso::
 
  - https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall
+ - https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extract
  - https://docs.python.org/3/library/tarfile.html#tarfile.TarInfo
 
 .. versionadded:: 1.7.5
@@ -53,7 +56,7 @@ from bandit.core import issue
 from bandit.core import test_properties as test
 
 
-def exec_issue(level, members=""):
+def exec_issue_extractall(level, members=""):
     if level == bandit.LOW:
         return bandit.Issue(
             severity=bandit.LOW,
@@ -83,6 +86,17 @@ def exec_issue(level, members=""):
         )
 
 
+def exec_issue_extract():
+    return bandit.Issue(
+        severity=bandit.HIGH,
+        confidence=bandit.HIGH,
+        cwe=issue.Cwe.PATH_TRAVERSAL,
+        text="tarfile.extract used without member validation. "
+        "Untarred members should be inspected for directory traversal "
+        "sequences such as '../' and dangerous file types.",
+    )
+
+
 def get_members_value(context):
     for keyword in context.node.keywords:
         if keyword.arg == "members":
@@ -104,18 +118,23 @@ def is_filter_data(context):
 @test.test_id("B202")
 @test.checks("Call")
 def tarfile_unsafe_members(context):
-    if all(
-        [
-            context.is_module_imported_exact("tarfile"),
-            "extractall" in context.call_function_name,
-        ]
-    ):
+    if not context.is_module_imported_exact("tarfile"):
+        return None
+
+    if "extractall" in context.call_function_name:
         if "filter" in context.call_keywords and is_filter_data(context):
             return None
         if "members" in context.call_keywords:
             members = get_members_value(context)
             if "Function" in members:
-                return exec_issue(bandit.LOW, members)
+                return exec_issue_extractall(bandit.LOW, members)
             else:
-                return exec_issue(bandit.MEDIUM, members)
-        return exec_issue(bandit.HIGH)
+                return exec_issue_extractall(bandit.MEDIUM, members)
+        return exec_issue_extractall(bandit.HIGH)
+
+    if "extract" in context.call_function_name:
+        if "filter" in context.call_keywords and is_filter_data(context):
+            return None
+        return exec_issue_extract()
+
+    return None
