@@ -85,6 +85,8 @@ def jinja2_autoescape_false(context):
                         getattr(node.value, "id", None) == "False"
                         or getattr(node.value, "value", None) is False
                     ):
+                        node.value.value = True
+
                         return bandit.Issue(
                             severity=bandit.HIGH,
                             confidence=bandit.HIGH,
@@ -94,6 +96,7 @@ def jinja2_autoescape_false(context):
                             "Use autoescape=True or use the "
                             "select_autoescape function to mitigate XSS "
                             "vulnerabilities.",
+                            fix=context.unparse(context.node),
                         )
                     # found autoescape
                     if getattr(node, "arg", None) == "autoescape":
@@ -112,6 +115,8 @@ def jinja2_autoescape_false(context):
                         ):
                             return
                         else:
+                            node.value = ast.Constant(value=True, kind=None)
+
                             return bandit.Issue(
                                 severity=bandit.HIGH,
                                 confidence=bandit.MEDIUM,
@@ -121,9 +126,15 @@ def jinja2_autoescape_false(context):
                                 "Ensure autoescape=True or use the "
                                 "select_autoescape function to mitigate "
                                 "XSS vulnerabilities.",
+                                fix=context.unparse(context.node),
                             )
             # We haven't found a keyword named autoescape, indicating default
             # behavior
+            keyword = ast.keyword(
+                "autoescape", ast.Constant(value=True, kind=None)
+            )
+            context.node.keywords.append(keyword)
+
             return bandit.Issue(
                 severity=bandit.HIGH,
                 confidence=bandit.HIGH,
@@ -131,4 +142,5 @@ def jinja2_autoescape_false(context):
                 text="By default, jinja2 sets autoescape to False. Consider "
                 "using autoescape=True or use the select_autoescape "
                 "function to mitigate XSS vulnerabilities.",
+                fix=context.unparse(context.node),
             )

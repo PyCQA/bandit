@@ -45,12 +45,26 @@ hash variants.
     Added check for the crypt module weak hashes
 
 """  # noqa: E501
+import ast
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
 
 WEAK_HASHES = ("md4", "md5", "sha", "sha1")
 WEAK_CRYPT_HASHES = ("METHOD_CRYPT", "METHOD_MD5", "METHOD_BLOWFISH")
+
+
+def transform(node):
+    found = False
+    for keyword in node.keywords:
+        if keyword.arg == "usedforsecurity":
+            keyword.value.value = False
+            found = True
+    if not found:
+        keyword = ast.keyword("usedforsecurity", ast.Constant(False))
+        node.keywords.append(keyword)
+    return node
 
 
 def _hashlib_func(context, func):
@@ -65,6 +79,7 @@ def _hashlib_func(context, func):
                 text=f"Use of weak {func.upper()} hash for security. "
                 "Consider usedforsecurity=False",
                 lineno=context.node.lineno,
+                fix=context.unparse(context.node),
             )
     elif func == "new":
         args = context.call_args
@@ -78,6 +93,7 @@ def _hashlib_func(context, func):
                     text=f"Use of weak {name.upper()} hash for "
                     "security. Consider usedforsecurity=False",
                     lineno=context.node.lineno,
+                    fix=context.unparse(context.node),
                 )
 
 
