@@ -19,6 +19,7 @@ Using and Extending Bandit
    formatters/index
    ci-cd/index
    faq
+   playground
 
 Contributing
 ============

@@ -14,6 +14,7 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.viewcode",
     "sphinx_copybutton",
+    "sphinx_pyscript_temp",  # FIXME: replace with sphinx_pyscript
 ]
 
 # autodoc generation is a bit aggressive and a nuisance when doing heavy
@@ -63,8 +64,20 @@ man_pages = [
 # Sphinx are currently 'default' and 'sphinxdoc'.
 # html_theme_path = ["."]
 html_theme = "sphinx_rtd_theme"
-# html_static_path = ['static']
+# These folders are copied to the documentation's HTML output
+html_static_path = ["_static"]
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    "css/custom.css",
+    # FIXME: setting priority here overrides the outdated pyscript css
+    ("https://pyscript.net/releases/2024.9.2/core.css", {"priority": 500}),
+]
 html_theme_options = {}
+html_js_files = [
+    # FIXME: setting priority here overrides the outdated pyscript js
+    ("https://pyscript.net/releases/2024.9.2/core.js", {"type": "module", "priority": 500}),
+]
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = f"{project}doc"

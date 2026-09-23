@@ -4,3 +4,7 @@
 sphinx>=4.0.0 # BSD
 sphinx-rtd-theme>=0.3.0
 sphinx-copybutton
+
+# FIXME: remove index url once offical sphinx-pyscript 0.2.0
+--extra-index-url https://test.pypi.org/simple/
+sphinx-pyscript-temp == 0.2.0
