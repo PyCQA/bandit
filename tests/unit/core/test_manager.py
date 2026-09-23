@@ -2,6 +2,7 @@
 # Copyright 2015 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
+import io
 import os
 from unittest import mock
 
@@ -219,6 +220,64 @@ class ManagerTests(testtools.TestCase):
                 lines, sev_level, conf_level, tmp_file, output_format
             )
         self.assertTrue(os.path.isfile(output_filename))
+
+    def test_safe_text_writer_escapes_unencodable_chars(self):
+        # _safe_text_writer() must re-wrap a narrow-encoding stream so that
+        # characters outside that encoding (e.g. emoji on a GBK terminal) are
+        # rendered as backslash-escape sequences instead of raising
+        # UnicodeEncodeError (issue #1251).
+        buf = io.BytesIO()
+        gbk_stream = io.TextIOWrapper(
+            buf, encoding="gbk", errors="strict", write_through=True
+        )
+
+        safe = manager._safe_text_writer(gbk_stream)
+
+        emoji = "\U0001f31f"
+        # Must not raise even though the emoji is outside GBK's range.
+        safe.write(emoji)
+        safe.flush()
+        buf.seek(0)
+        written = buf.read().decode("gbk", errors="replace")
+        # The emoji must have been replaced by its \\UXXXXXXXX escape sequence.
+        self.assertIn("\\U0001f31f", written)
+        self.assertNotIn(emoji, written)
+
+    def test_safe_text_writer_passthrough_for_utf8(self):
+        # _safe_text_writer() must return the original object unchanged when
+        # the stream already uses a UTF-8 encoding (no wrapping needed).
+        buf = io.BytesIO()
+        utf8_stream = io.TextIOWrapper(
+            buf, encoding="utf-8", errors="strict", write_through=True
+        )
+
+        result = manager._safe_text_writer(utf8_stream)
+        self.assertIs(result, utf8_stream)
+
+    def test_output_results_no_crash_on_narrow_encoding(self):
+        # output_results() must NOT raise when the output file stream uses a
+        # narrow encoding (e.g. GBK) and the report would contain characters
+        # outside that encoding (issue #1251).
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        output_filename = os.path.join(temp_directory, "_temp_unicode.txt")
+        lines = 5
+        sev_level = constants.LOW
+        conf_level = constants.LOW
+        output_format = "txt"
+
+        with open(
+            output_filename, "w", encoding="gbk", errors="strict"
+        ) as tmp_file:
+            # Must not raise a UnicodeEncodeError or RuntimeError.
+            try:
+                self.manager.output_results(
+                    lines, sev_level, conf_level, tmp_file, output_format
+                )
+            except RuntimeError:
+                self.fail(
+                    "output_results() raised RuntimeError for a GBK stream; "
+                    "_safe_text_writer should have prevented this (issue #1251)"
+                )
 
     @mock.patch("os.path.isdir")
     def test_discover_files_recurse_skip(self, isdir):
