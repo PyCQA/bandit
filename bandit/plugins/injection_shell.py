@@ -15,9 +15,21 @@ full_path_match = re.compile(r"^(?:[A-Za-z](?=\:)|[\\\/\.])")
 
 
 def _evaluate_shell_call(context):
-    no_formatting = isinstance(
-        context.node.args[0], ast.Constant
-    ) and isinstance(context.node.args[0].value, str)
+    command_node = None
+    if context.node.args:
+        command_node = context.node.args[0]
+    else:
+        for keyword in context.node.keywords:
+            if keyword.arg in ["args", "cmd", "command"]:
+                command_node = keyword.value
+                break
+
+    if command_node is None:
+        return bandit.HIGH
+
+    no_formatting = isinstance(command_node, ast.Constant) and isinstance(
+        command_node.value, str
+    )
 
     if no_formatting:
         return bandit.LOW
