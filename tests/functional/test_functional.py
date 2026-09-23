@@ -896,15 +896,15 @@ class FunctionalTests(testtools.TestCase):
 
     def test_markupsafe_markup_xss(self):
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 4, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 4},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 6, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 6},
         }
         self.check_example("markupsafe_markup_xss.py", expect)
 
     def test_markupsafe_markup_xss_extend_markup_names(self):
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 2, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 2},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 3, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
         }
         b_conf = b_config.BanditConfig()
         b_conf.config["markupsafe_xss"] = {
