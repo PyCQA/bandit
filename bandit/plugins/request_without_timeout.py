@@ -56,10 +56,11 @@ from bandit.core import test_properties as test
 @test.test_id("B113")
 def request_without_timeout(context):
     HTTP_VERBS = {"get", "options", "head", "post", "put", "patch", "delete"}
+    REQUESTS_ATTRS = {"request"} | HTTP_VERBS
     HTTPX_ATTRS = {"request", "stream", "Client", "AsyncClient"} | HTTP_VERBS
     qualname = context.call_function_name_qual.split(".")[0]
 
-    if qualname == "requests" and context.call_function_name in HTTP_VERBS:
+    if qualname == "requests" and context.call_function_name in REQUESTS_ATTRS:
         # check for missing timeout
         if context.check_call_arg_value("timeout") is None:
             return bandit.Issue(
@@ -70,7 +71,7 @@ def request_without_timeout(context):
             )
     if (
         qualname == "requests"
-        and context.call_function_name in HTTP_VERBS
+        and context.call_function_name in REQUESTS_ATTRS
         or qualname == "httpx"
         and context.call_function_name in HTTPX_ATTRS
     ):

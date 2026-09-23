@@ -381,8 +381,8 @@ class FunctionalTests(testtools.TestCase):
     def test_requests_without_timeout(self):
         """Test for the `requests` library missing timeouts."""
         expect = {
-            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 25, "HIGH": 0},
-            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 25, "MEDIUM": 0, "HIGH": 0},
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 27, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 27, "MEDIUM": 0, "HIGH": 0},
         }
         self.check_example("requests-missing-timeout.py", expect)
 
