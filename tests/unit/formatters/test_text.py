@@ -83,6 +83,26 @@ class TextFormatterTests(testtools.TestCase):
             data = f.read()
             self.assertIn("No issues identified.", data)
 
+    def test_report_with_only_skipped_files(self):
+        conf = config.BanditConfig()
+        self.manager = manager.BanditManager(conf, "file")
+        self.manager.skipped = [("missing.py", "No such file or directory")]
+
+        (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
+        self.manager.out_file = self.tmp_fname
+
+        with open(self.tmp_fname, "w") as tmp_file:
+            b_text.report(
+                self.manager, tmp_file, bandit.LOW, bandit.LOW, lines=5
+            )
+
+        with open(self.tmp_fname) as f:
+            data = f.read()
+            self.assertIn("Files skipped (1):", data)
+            self.assertIn("missing.py (No such file or directory)", data)
+            self.assertNotIn("No issues identified.", data)
+            self.assertNotIn("Code scanned:", data)
+
     @mock.patch("bandit.core.manager.BanditManager.get_issue_list")
     def test_report_nobaseline(self, get_issue_list):
         conf = config.BanditConfig()
