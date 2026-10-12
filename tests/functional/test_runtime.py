@@ -26,7 +26,7 @@ class RuntimeTests(testtools.TestCase):
         return self._test_runtime(cmdlist)
 
     def test_no_arguments(self):
-        (retcode, output) = self._test_runtime(
+        retcode, output = self._test_runtime(
             [
                 "bandit",
             ]
@@ -36,7 +36,7 @@ class RuntimeTests(testtools.TestCase):
 
     def test_piped_input(self):
         with open("examples/imports.py") as infile:
-            (retcode, output) = self._test_runtime(["bandit", "-"], infile)
+            retcode, output = self._test_runtime(["bandit", "-"], infile)
             self.assertEqual(1, retcode)
             self.assertIn("Total lines of code: 4", output)
             self.assertIn("Low: 2", output)
@@ -47,14 +47,14 @@ class RuntimeTests(testtools.TestCase):
             self.assertIn("<stdin>:4", output)
 
     def test_nonexistent_config(self):
-        (retcode, output) = self._test_runtime(
+        retcode, output = self._test_runtime(
             ["bandit", "-c", "nonexistent.yml", "xx.py"]
         )
         self.assertEqual(2, retcode)
         self.assertIn("nonexistent.yml : Could not read config file.", output)
 
     def test_help_arg(self):
-        (retcode, output) = self._test_runtime(["bandit", "-h"])
+        retcode, output = self._test_runtime(["bandit", "-h"])
         self.assertEqual(0, retcode)
         self.assertIn(
             "Bandit - a Python source code security analyzer", output
@@ -65,7 +65,7 @@ class RuntimeTests(testtools.TestCase):
 
     # test examples (use _test_example() to wrap in config location argument
     def test_example_nonexistent(self):
-        (retcode, output) = self._test_example(
+        retcode, output = self._test_example(
             [
                 "bandit",
             ],
@@ -78,7 +78,7 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("nonexistent.py (No such file or directory", output)
 
     def test_example_okay(self):
-        (retcode, output) = self._test_example(
+        retcode, output = self._test_example(
             [
                 "bandit",
             ],
@@ -92,7 +92,7 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("No issues identified.", output)
 
     def test_example_nonsense(self):
-        (retcode, output) = self._test_example(
+        retcode, output = self._test_example(
             [
                 "bandit",
             ],
@@ -105,7 +105,7 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("nonsense.py (syntax error while parsing AST", output)
 
     def test_example_nonsense2(self):
-        (retcode, output) = self._test_example(
+        retcode, output = self._test_example(
             [
                 "bandit",
             ],
@@ -118,7 +118,7 @@ class RuntimeTests(testtools.TestCase):
         self.assertIn("nonsense2.py (syntax error while parsing AST", output)
 
     def test_example_imports(self):
-        (retcode, output) = self._test_example(
+        retcode, output = self._test_example(
             [
                 "bandit",
             ],

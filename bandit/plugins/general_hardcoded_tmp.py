@@ -51,6 +51,7 @@ issue.
     CWE information added
 
 """  # noqa: E501
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test

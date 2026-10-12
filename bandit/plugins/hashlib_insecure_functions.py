@@ -45,6 +45,7 @@ hash variants.
     Added check for the crypt module weak hashes
 
 """  # noqa: E501
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
