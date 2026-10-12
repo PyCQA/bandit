@@ -99,6 +99,7 @@ methods are fully qualified and de-aliased prior to checking.
     CWE information added
 
 """
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test

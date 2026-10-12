@@ -20,7 +20,7 @@ class SarifFormatterTests(testtools.TestCase):
         super().setUp()
         conf = config.BanditConfig()
         self.manager = manager.BanditManager(conf, "file")
-        (tmp_fd, self.tmp_fname) = tempfile.mkstemp()
+        tmp_fd, self.tmp_fname = tempfile.mkstemp()
         self.context = {
             "filename": self.tmp_fname,
             "lineno": 4,
