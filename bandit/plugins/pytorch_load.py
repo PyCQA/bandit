@@ -42,6 +42,7 @@ that only torch.Tensor objects are loaded.
 .. versionadded:: 1.7.10
 
 """
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test

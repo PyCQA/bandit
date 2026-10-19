@@ -148,9 +148,7 @@ class ManagerTests(testtools.TestCase):
                 }
             ]
         }
-        """ % (
-            "https://cwe.mitre.org/data/definitions/605.html"
-        )
+        """ % ("https://cwe.mitre.org/data/definitions/605.html")
         issue_dictionary = {
             "code": "test code",
             "filename": "example_file.py",

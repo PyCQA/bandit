@@ -47,6 +47,7 @@ Bandit will return a MEDIUM severity error.
     Added check for httpx module
 
 """  # noqa: E501
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test

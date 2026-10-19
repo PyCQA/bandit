@@ -40,6 +40,7 @@ method advising the user to check inputs are correctly sanitized.
     CWE information added
 
 """
+
 import bandit
 from bandit.core import issue
 from bandit.core import test_properties as test
