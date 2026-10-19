@@ -125,6 +125,7 @@ This formatter outputs the issues in SARIF formatted JSON.
 .. versionadded:: 1.7.8
 
 """  # noqa: E501
+
 import datetime
 import logging
 import pathlib
@@ -206,7 +207,7 @@ def add_skipped_file_notifications(skips, invocation):
         invocation.tool_configuration_notifications = []
 
     for skip in skips:
-        (file_name, reason) = skip
+        file_name, reason = skip
 
         notification = om.Notification(
             level="error",

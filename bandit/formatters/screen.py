@@ -32,6 +32,7 @@ This formatter outputs the issues as color coded text to screen.
     New field `CWE` added to output
 
 """
+
 import datetime
 import logging
 import sys
@@ -146,7 +147,7 @@ def _output_issue_str(
             [indent + line for line in issue.get_code(lines, True).split("\n")]
         )
 
-    return "\n".join([bit for bit in bits])
+    return "\n".join([*bits])
 
 
 def get_results(manager, sev_level, conf_level, lines):
@@ -179,12 +180,12 @@ def get_results(manager, sev_level, conf_level, lines):
                 bits.append("\n")
         bits.append("-" * 50)
 
-    return "\n".join([bit for bit in bits])
+    return "\n".join([*bits])
 
 
 def do_print(bits):
     # needed so we can mock this stuff
-    print("\n".join([bit for bit in bits]))
+    print("\n".join([*bits]))
 
 
 @test_properties.accepts_baseline

@@ -32,6 +32,7 @@ This formatter outputs the issues as plain text.
     New field `CWE` added to output
 
 """
+
 import datetime
 import logging
 import sys
@@ -56,7 +57,7 @@ def get_verbose_details(manager):
     )
     bits.append(f"Files excluded ({len(manager.excluded_files)}):")
     bits.extend([f"\t{fname}" for fname in manager.excluded_files])
-    return "\n".join([bit for bit in bits])
+    return "\n".join([*bits])
 
 
 def get_metrics(manager):
@@ -72,7 +73,7 @@ def get_metrics(manager):
                     manager.metrics.data["_totals"][f"{criteria}.{rank}"],
                 )
             )
-    return "\n".join([bit for bit in bits])
+    return "\n".join([*bits])
 
 
 def _output_issue_str(
@@ -112,7 +113,7 @@ def _output_issue_str(
             [indent + line for line in issue.get_code(lines, True).split("\n")]
         )
 
-    return "\n".join([bit for bit in bits])
+    return "\n".join([*bits])
 
 
 def get_results(manager, sev_level, conf_level, lines):
@@ -144,7 +145,7 @@ def get_results(manager, sev_level, conf_level, lines):
                 )
                 bits.append("\n")
         bits.append("-" * 50)
-    return "\n".join([bit for bit in bits])
+    return "\n".join([*bits])
 
 
 @test_properties.accepts_baseline
@@ -190,7 +191,7 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
         bits.append(get_metrics(manager))
         bits.append(f"Files skipped ({len(skipped)}):")
         bits.extend(["\t%s (%s)" % skip for skip in skipped])
-        result = "\n".join([bit for bit in bits]) + "\n"
+        result = "\n".join([*bits]) + "\n"
 
         with fileobj:
             wrapped_file = utils.wrap_file_object(fileobj)
