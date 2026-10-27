@@ -56,20 +56,55 @@ from bandit.core import test_properties as test
 def request_with_no_cert_validation(context):
     HTTP_VERBS = {"get", "options", "head", "post", "put", "patch", "delete"}
     HTTPX_ATTRS = {"request", "stream", "Client", "AsyncClient"} | HTTP_VERBS
-    qualname = context.call_function_name_qual.split(".")[0]
+    qualname = context.call_function_name_qual
+    qualname_parts = qualname.split(".")
 
+    # Check if verify=False is present
+    if not context.check_call_arg_value("verify", "False"):
+        return None
+
+    # Module-level calls: requests.get(), httpx.get()
     if (
-        qualname == "requests"
+        len(qualname_parts) >= 2
+        and qualname_parts[0] == "requests"
         and context.call_function_name in HTTP_VERBS
-        or qualname == "httpx"
+    ) or (
+        len(qualname_parts) >= 2
+        and qualname_parts[0] == "httpx"
         and context.call_function_name in HTTPX_ATTRS
     ):
-        if context.check_call_arg_value("verify", "False"):
-            return bandit.Issue(
-                severity=bandit.HIGH,
-                confidence=bandit.HIGH,
-                cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
-                text=f"Call to {qualname} with verify=False disabling SSL "
-                "certificate checks, security issue.",
-                lineno=context.get_lineno_for_call_arg("verify"),
-            )
+        return bandit.Issue(
+            severity=bandit.HIGH,
+            confidence=bandit.HIGH,
+            cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
+            text=f"Call to {qualname_parts[0]} with verify=False disabling SSL "
+            "certificate checks, security issue.",
+            lineno=context.get_lineno_for_call_arg("verify"),
+        )
+
+    # Instance method calls on Session/Client
+    # Match: <any>.Session.get(), <any>.Client.get(), <any>.AsyncClient.get()
+    if len(qualname_parts) >= 3 and (
+        qualname_parts[-2] in {"Session", "Client", "AsyncClient"}
+        and context.call_function_name in HTTP_VERBS
+    ):
+        return bandit.Issue(
+            severity=bandit.HIGH,
+            confidence=bandit.HIGH,
+            cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
+            text="Call to requests/httpx Session/Client with verify=False disabling SSL "
+            "certificate checks, security issue.",
+            lineno=context.get_lineno_for_call_arg("verify"),
+        )
+
+    # Catch-all for any HTTP verb method with verify=False
+    # This catches session.get() where session is a variable
+    if context.call_function_name in HTTP_VERBS:
+        return bandit.Issue(
+            severity=bandit.HIGH,
+            confidence=bandit.MEDIUM,  # Lower confidence since we can't confirm it's requests/httpx
+            cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
+            text="Call to HTTP method with verify=False disabling SSL "
+            "certificate checks, security issue.",
+            lineno=context.get_lineno_for_call_arg("verify"),
+        )
