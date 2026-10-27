@@ -134,12 +134,13 @@ def _log_info(args, profile):
 def main():
     """Bandit CLI."""
     # bring our logging stuff up as early as possible
-    debug = (
-        logging.DEBUG
-        if "-d" in sys.argv or "--debug" in sys.argv
-        else logging.INFO
-    )
-    _init_logger(debug)
+    if "-d" in sys.argv or "--debug" in sys.argv:
+        log_level = logging.DEBUG
+    elif "-q" in sys.argv or "--quiet" in sys.argv or "--silent" in sys.argv:
+        log_level = logging.WARN
+    else:
+        log_level = logging.INFO
+    _init_logger(log_level)
     extension_mgr = _init_extensions()
 
     baseline_formatters = [
