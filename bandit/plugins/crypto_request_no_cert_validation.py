@@ -45,6 +45,9 @@ off Bandit will return a HIGH severity error.
 .. versionchanged:: 1.7.5
     Added check for httpx module
 
+.. versionchanged:: 1.9.5
+    Added check for requests.Session and httpx.Client instance method calls
+
 """
 import bandit
 from bandit.core import issue
@@ -58,6 +61,7 @@ def request_with_no_cert_validation(context):
     HTTPX_ATTRS = {"request", "stream", "Client", "AsyncClient"} | HTTP_VERBS
     qualname = context.call_function_name_qual.split(".")[0]
 
+    # Check module-level calls: requests.get, httpx.get, etc.
     if (
         qualname == "requests"
         and context.call_function_name in HTTP_VERBS
@@ -71,5 +75,26 @@ def request_with_no_cert_validation(context):
                 cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
                 text=f"Call to {qualname} with verify=False disabling SSL "
                 "certificate checks, security issue.",
+                lineno=context.get_lineno_for_call_arg("verify"),
+            )
+
+    # Check instance method calls: session.get, client.get, etc.
+    # When requests/httpx is imported and an HTTP verb is called with
+    # verify=False on any object, it's likely a Session/Client method.
+    if (
+        context.call_function_name in HTTP_VERBS
+        and context.check_call_arg_value("verify", "False")
+    ):
+        if context.is_module_imported_exact(
+            "requests"
+        ) or context.is_module_imported_exact("httpx"):
+            return bandit.Issue(
+                severity=bandit.HIGH,
+                confidence=bandit.MEDIUM,
+                cwe=issue.Cwe.IMPROPER_CERT_VALIDATION,
+                text="Call to {func} with verify=False disabling SSL "
+                "certificate checks, security issue.".format(
+                    func=context.call_function_name_qual
+                ),
                 lineno=context.get_lineno_for_call_arg("verify"),
             )
