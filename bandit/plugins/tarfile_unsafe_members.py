@@ -10,14 +10,19 @@ This plugin will look for usage of ``tarfile.extractall()``
 
 Severity are set as follows:
 
+* ``tarfile.extractall(filter='data')`` - No issue
+* ``tarfile.extractall(filter=tarfile.data_filter)`` - No issue
+* ``tarfile.extractall(filter=custom_filter)`` - LOW
 * ``tarfile.extractall(members=function(tarfile))`` - LOW
 * ``tarfile.extractall(members=?)`` - member is not a function - MEDIUM
 * ``tarfile.extractall()`` - members from the archive is trusted - HIGH
 
-Use ``tarfile.extractall(members=function_name)`` and define a function
-that will inspect each member. Discard files that contain a directory
-traversal sequences such as ``../`` or ``\..`` along with all special filetypes
-unless you explicitly need them.
+On Python 3.12 and later, prefer passing ``filter="data"`` (or
+``tarfile.data_filter``) which rejects absolute paths, directory
+traversal, and special file types. Alternatively, pass an iterable of
+validated members via ``members`` and discard files that contain
+directory traversal sequences such as ``../`` or ``\..`` along with all
+special filetypes unless you explicitly need them.
 
 :Example:
 
@@ -38,12 +43,18 @@ unless you explicitly need them.
 .. seealso::
 
  - https://docs.python.org/3/library/tarfile.html#tarfile.TarFile.extractall
+ - https://docs.python.org/3/library/tarfile.html#tarfile-extraction-filter
  - https://docs.python.org/3/library/tarfile.html#tarfile.TarInfo
 
 .. versionadded:: 1.7.5
 
 .. versionchanged:: 1.7.8
     Added check for filter parameter
+
+.. versionchanged:: 1.9.5
+    Recognize ``tarfile.data_filter`` and callable filters, handle
+    method calls passed as ``members``, and only match calls actually
+    named ``extractall``
 
 """
 import ast
@@ -53,15 +64,15 @@ from bandit.core import issue
 from bandit.core import test_properties as test
 
 
-def exec_issue(level, members=""):
+def exec_issue(level, args=""):
     if level == bandit.LOW:
         return bandit.Issue(
             severity=bandit.LOW,
             confidence=bandit.LOW,
             cwe=issue.Cwe.PATH_TRAVERSAL,
-            text="Usage of tarfile.extractall(members=function(tarfile)). "
+            text="Usage of tarfile.extractall with member validation. "
             "Make sure your function properly discards dangerous members "
-            "{members}).".format(members=members),
+            "({args}).".format(args=args),
         )
     elif level == bandit.MEDIUM:
         return bandit.Issue(
@@ -71,7 +82,7 @@ def exec_issue(level, members=""):
             text="Found tarfile.extractall(members=?) but couldn't "
             "identify the type of members. "
             "Check if the members were properly validated "
-            "{members}).".format(members=members),
+            "({args}).".format(args=args),
         )
     else:
         return bandit.Issue(
@@ -88,17 +99,32 @@ def get_members_value(context):
         if keyword.arg == "members":
             arg = keyword.value
             if isinstance(arg, ast.Call):
-                return {"Function": arg.func.id}
+                func = arg.func
+                if isinstance(func, ast.Attribute):
+                    return {"Function": func.attr}
+                elif isinstance(func, ast.Name):
+                    return {"Function": func.id}
+                return {"Function": "?"}
             else:
                 value = arg.id if isinstance(arg, ast.Name) else arg
                 return {"Other": value}
 
 
-def is_filter_data(context):
+def get_filter_value(context):
     for keyword in context.node.keywords:
         if keyword.arg == "filter":
-            arg = keyword.value
-            return isinstance(arg, ast.Constant) and arg.value == "data"
+            return keyword.value
+    return None
+
+
+def is_data_filter(filter_arg):
+    if isinstance(filter_arg, ast.Constant):
+        return filter_arg.value == "data"
+    if isinstance(filter_arg, ast.Attribute):
+        return filter_arg.attr == "data_filter"
+    if isinstance(filter_arg, ast.Name):
+        return filter_arg.id == "data_filter"
+    return False
 
 
 @test.test_id("B202")
@@ -107,11 +133,15 @@ def tarfile_unsafe_members(context):
     if all(
         [
             context.is_module_imported_exact("tarfile"),
-            "extractall" in context.call_function_name,
+            context.call_function_name == "extractall",
         ]
     ):
-        if "filter" in context.call_keywords and is_filter_data(context):
-            return None
+        filter_arg = get_filter_value(context)
+        if filter_arg is not None:
+            if is_data_filter(filter_arg):
+                return None
+            if isinstance(filter_arg, (ast.Name, ast.Attribute, ast.Lambda)):
+                return exec_issue(bandit.LOW, {"Filter": "custom"})
         if "members" in context.call_keywords:
             members = get_members_value(context)
             if "Function" in members:

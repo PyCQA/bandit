@@ -39,6 +39,32 @@ def provided_members_archive_handler(filename):
     tar.close()
 
 
+def filter_data_callable_archive_handler(filename):
+    tar = tarfile.open(filename)
+    tar.extractall(path=tempfile.mkdtemp(), filter=tarfile.data_filter)
+    tar.close()
+
+
+def filter_custom_callable_archive_handler(filename, custom_filter):
+    tar = tarfile.open(filename)
+    tar.extractall(path=tempfile.mkdtemp(), filter=custom_filter)
+    tar.close()
+
+
+def method_members_archive_handler(filename, validator):
+    tar = tarfile.open(filename)
+    tar.extractall(path=tempfile.mkdtemp(), members=validator.filter_members(tar))
+    tar.close()
+
+
+def my_extractall(filename):
+    pass
+
+
+def not_tarfile_extractall_handler(filename):
+    my_extractall(filename)
+
+
 def members_filter(tarfile):
     result = []
     for member in tarfile.getmembers():
