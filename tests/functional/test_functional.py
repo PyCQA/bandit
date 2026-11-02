@@ -330,6 +330,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("dill.py", expect)
 
+    def test_cloudpickle(self):
+        """Test for the `cloudpickle` module."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 0},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 3},
+        }
+        self.check_example("cloudpickle.py", expect)
+
     def test_shelve(self):
         """Test for the `shelve` module."""
         expect = {
