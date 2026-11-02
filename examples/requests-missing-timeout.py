@@ -17,6 +17,8 @@ requests.options('https://gmail.com')
 requests.options('https://gmail.com', timeout=None)
 requests.head('https://gmail.com')
 requests.head('https://gmail.com', timeout=None)
+requests.request('GET', 'https://gmail.com')
+requests.request('GET', 'https://gmail.com', timeout=None)
 httpx.get('https://gmail.com')
 httpx.get('https://gmail.com', timeout=None)
 httpx.post('https://gmail.com')
@@ -46,6 +48,7 @@ async with httpx.AsyncClient(timeout=None) as client:
 
 # Okay
 not_requests.get('https://gmail.com')
+requests.request('GET', 'https://gmail.com', timeout=5)
 requests.get('https://gmail.com', timeout=5)
 requests.post('https://gmail.com', timeout=5)
 requests.put('https://gmail.com', timeout=5)
