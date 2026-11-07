@@ -872,6 +872,14 @@ class FunctionalTests(testtools.TestCase):
         }
         self.check_example("tarfile_extractall.py", expect)
 
+    def test_tarfile_unsafe_members_from_import(self):
+        """B202 fires on extractall when tarfile is from-imported (#1171)."""
+        expect = {
+            "SEVERITY": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+            "CONFIDENCE": {"UNDEFINED": 0, "LOW": 0, "MEDIUM": 0, "HIGH": 1},
+        }
+        self.check_example("tarfile_extractall_from_import.py", expect)
+
     def test_pytorch_load(self):
         """Test insecure usage of torch.load."""
         expect = {
