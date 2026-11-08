@@ -205,32 +205,39 @@ def report(manager, fileobj, sev_level, conf_level, lines=-1):
 
     bits = []
     if not manager.quiet or manager.results_count(sev_level, conf_level):
-        bits.append(
-            header(
-                "Run started:%s", datetime.datetime.now(datetime.timezone.utc)
-            )
-        )
-
-        if manager.verbose:
-            bits.append(get_verbose_details(manager))
-
-        bits.append(header("\nTest results:"))
-        bits.append(get_results(manager, sev_level, conf_level, lines))
-        bits.append(header("\nCode scanned:"))
-        bits.append(
-            "\tTotal lines of code: %i"
-            % (manager.metrics.data["_totals"]["loc"])
-        )
-
-        bits.append(
-            "\tTotal lines skipped (#nosec): %i"
-            % (manager.metrics.data["_totals"]["nosec"])
-        )
-
-        bits.append(get_metrics(manager))
         skipped = manager.get_skipped()
-        bits.append(header("Files skipped (%i):", len(skipped)))
-        bits.extend(["\t%s (%s)" % skip for skip in skipped])
+
+        if skipped and not manager.files_list:
+            bits.append(header("Files skipped (%i):", len(skipped)))
+            bits.extend(["\t%s (%s)" % skip for skip in skipped])
+        else:
+            bits.append(
+                header(
+                    "Run started:%s",
+                    datetime.datetime.now(datetime.timezone.utc),
+                )
+            )
+
+            if manager.verbose:
+                bits.append(get_verbose_details(manager))
+
+            bits.append(header("\nTest results:"))
+            bits.append(get_results(manager, sev_level, conf_level, lines))
+            bits.append(header("\nCode scanned:"))
+            bits.append(
+                "\tTotal lines of code: %i"
+                % (manager.metrics.data["_totals"]["loc"])
+            )
+
+            bits.append(
+                "\tTotal lines skipped (#nosec): %i"
+                % (manager.metrics.data["_totals"]["nosec"])
+            )
+
+            bits.append(get_metrics(manager))
+            bits.append(header("Files skipped (%i):", len(skipped)))
+            bits.extend(["\t%s (%s)" % skip for skip in skipped])
+
         do_print(bits)
 
     if fileobj.name != sys.stdout.name:

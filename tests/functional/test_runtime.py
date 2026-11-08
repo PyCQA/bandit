@@ -74,6 +74,9 @@ class RuntimeTests(testtools.TestCase):
             ],
         )
         self.assertEqual(0, retcode)
+        self.assertNotIn("No issues identified.", output)
+        self.assertNotIn("Code scanned:", output)
+        self.assertNotIn("Run metrics:", output)
         self.assertIn("Files skipped (1):", output)
         self.assertIn("nonexistent.py (No such file or directory", output)
 
