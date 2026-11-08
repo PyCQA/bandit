@@ -95,7 +95,8 @@ This formatter outputs the issues as HTML.
                 Metrics:<br>
             </div>
             Total lines of code: <span id="loc">9</span><br>
-            Total lines skipped (#nosec): <span id="nosec">0</span>
+            Total lines skipped (#nosec): <span id="nosec">0</span><br>
+            Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): <span id="skipped_tests">0</span>
         </div>
     </div>
 
@@ -316,7 +317,8 @@ pre {
             Metrics:<br>
         </div>
         Total lines of code: <span id="loc">{loc}</span><br>
-        Total lines skipped (#nosec): <span id="nosec">{nosec}</span>
+        Total lines skipped (#nosec): <span id="nosec">{nosec}</span><br>
+        Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): <span id="skipped_tests">{skipped_tests}</span>
     </div>
 </div>
 
@@ -378,6 +380,7 @@ pre {
     metrics_summary = metrics_block.format(
         loc=manager.metrics.data["_totals"]["loc"],
         nosec=manager.metrics.data["_totals"]["nosec"],
+        skipped_tests=manager.metrics.data["_totals"]["skipped_tests"],
     )
 
     # build the report and output it

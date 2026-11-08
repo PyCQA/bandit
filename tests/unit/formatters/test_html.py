@@ -43,7 +43,11 @@ class HtmlFormatterTests(testtools.TestCase):
     @mock.patch("bandit.core.issue.Issue.get_code")
     @mock.patch("bandit.core.manager.BanditManager.get_issue_list")
     def test_report_contents(self, get_issue_list, get_code):
-        self.manager.metrics.data["_totals"] = {"loc": 1000, "nosec": 50}
+        self.manager.metrics.data["_totals"] = {
+            "loc": 1000,
+            "nosec": 50,
+            "skipped_tests": 0,
+        }
 
         issue_a = _get_issue_instance(severity=bandit.LOW)
         issue_a.fname = "abc.py"
@@ -132,7 +136,11 @@ class HtmlFormatterTests(testtools.TestCase):
     @mock.patch("bandit.core.issue.Issue.get_code")
     @mock.patch("bandit.core.manager.BanditManager.get_issue_list")
     def test_escaping(self, get_issue_list, get_code):
-        self.manager.metrics.data["_totals"] = {"loc": 1000, "nosec": 50}
+        self.manager.metrics.data["_totals"] = {
+            "loc": 1000,
+            "nosec": 50,
+            "skipped_tests": 0,
+        }
         marker = "<tag in code>"
 
         issue_a = _get_issue_instance()

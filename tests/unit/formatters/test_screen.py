@@ -121,7 +121,11 @@ class ScreenFormatterTests(testtools.TestCase):
 
         get_issue_list.return_value = [issue_a, issue_b]
 
-        self.manager.metrics.data["_totals"] = {"loc": 1000, "nosec": 50}
+        self.manager.metrics.data["_totals"] = {
+            "loc": 1000,
+            "nosec": 50,
+            "skipped_tests": 0,
+        }
         for category in ["SEVERITY", "CONFIDENCE"]:
             for level in ["UNDEFINED", "LOW", "MEDIUM", "HIGH"]:
                 self.manager.metrics.data["_totals"][f"{category}.{level}"] = 1
