@@ -73,6 +73,41 @@ class BanditCLIMainLoggerTests(testtools.TestCase):
         bandit._init_logger(logging.DEBUG)
         self.assertEqual(logging.DEBUG, self.logger.level)
 
+    def _assert_main_inits_logger_at(self, argv, expected_level):
+        # main() must call _init_logger() with the right level as its very
+        # first action, before any option/ini merging happens. Force an
+        # immediate SystemExit from the mock so nothing past that first
+        # call can run.
+        with mock.patch("sys.argv", argv):
+            with mock.patch(
+                "bandit.cli.main._init_logger"
+            ) as mock_init_logger:
+                mock_init_logger.side_effect = SystemExit(2)
+                self.assertRaises(SystemExit, bandit.main)
+        self.assertEqual(
+            mock.call(expected_level), mock_init_logger.call_args_list[0]
+        )
+
+    def test_main_quiet_flag_inits_logger_at_warn(self):
+        self._assert_main_inits_logger_at(
+            ["bandit", "-q", "test"], logging.WARN
+        )
+
+    def test_main_quiet_long_flag_inits_logger_at_warn(self):
+        self._assert_main_inits_logger_at(
+            ["bandit", "--quiet", "test"], logging.WARN
+        )
+
+    def test_main_silent_flag_inits_logger_at_warn(self):
+        self._assert_main_inits_logger_at(
+            ["bandit", "--silent", "test"], logging.WARN
+        )
+
+    def test_main_debug_takes_precedence_over_quiet(self):
+        self._assert_main_inits_logger_at(
+            ["bandit", "-d", "-q", "test"], logging.DEBUG
+        )
+
 
 class BanditCLIMainTests(testtools.TestCase):
     def setUp(self):
