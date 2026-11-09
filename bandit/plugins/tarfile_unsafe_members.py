@@ -2,14 +2,16 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 r"""
-=================================
-B202: Test for tarfile.extractall
-=================================
+=============================================
+B202: Test for tarfile.extract and extractall
+=============================================
 
-This plugin will look for usage of ``tarfile.extractall()``
+This plugin will look for usage of ``tarfile.extract()`` and
+``tarfile.extractall()``
 
 Severity are set as follows:
 
+* ``tarfile.extract()`` - member from the archive is trusted - HIGH
 * ``tarfile.extractall(members=function(tarfile))`` - LOW
 * ``tarfile.extractall(members=?)`` - member is not a function - MEDIUM
 * ``tarfile.extractall()`` - members from the archive is trusted - HIGH
@@ -53,7 +55,7 @@ from bandit.core import issue
 from bandit.core import test_properties as test
 
 
-def exec_issue(level, members=""):
+def exec_issue(level, members="", function_name="tarfile.extractall"):
     if level == bandit.LOW:
         return bandit.Issue(
             severity=bandit.LOW,
@@ -78,7 +80,7 @@ def exec_issue(level, members=""):
             severity=bandit.HIGH,
             confidence=bandit.HIGH,
             cwe=issue.Cwe.PATH_TRAVERSAL,
-            text="tarfile.extractall used without any validation. "
+            text=f"{function_name} used without any validation. "
             "Please check and discard dangerous members.",
         )
 
@@ -101,21 +103,34 @@ def is_filter_data(context):
             return isinstance(arg, ast.Constant) and arg.value == "data"
 
 
+def is_extract_call(context):
+    return context.call_function_name.split(".")[-1] in {
+        "extract",
+        "extractall",
+    }
+
+
 @test.test_id("B202")
 @test.checks("Call")
 def tarfile_unsafe_members(context):
+    function_name = context.call_function_name.split(".")[-1]
     if all(
         [
             context.is_module_imported_exact("tarfile"),
-            "extractall" in context.call_function_name,
+            is_extract_call(context),
         ]
     ):
         if "filter" in context.call_keywords and is_filter_data(context):
             return None
-        if "members" in context.call_keywords:
+        if (
+            function_name == "extractall"
+            and "members" in context.call_keywords
+        ):
             members = get_members_value(context)
             if "Function" in members:
                 return exec_issue(bandit.LOW, members)
             else:
                 return exec_issue(bandit.MEDIUM, members)
-        return exec_issue(bandit.HIGH)
+        return exec_issue(
+            bandit.HIGH, function_name=f"tarfile.{function_name}"
+        )
