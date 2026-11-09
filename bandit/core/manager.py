@@ -2,6 +2,7 @@
 # Copyright 2014 Hewlett-Packard Development Company, L.P.
 #
 # SPDX-License-Identifier: Apache-2.0
+import codecs
 import collections
 import fnmatch
 import io
@@ -174,6 +175,11 @@ class BanditManager:
 
             formatter = formatters_mgr[output_format]
             report_func = formatter.plugin
+            # Wrap the output file so that unencodable characters (e.g. emoji
+            # in source files on systems with a narrow encoding like GBK) are
+            # escaped rather than causing a UnicodeEncodeError.  This fixes
+            # pre-commit hook failures on non-UTF-8 terminals (issue #1251).
+            output_file = _safe_text_writer(output_file)
             if output_format == "custom":
                 report_func(
                     self,
@@ -365,6 +371,64 @@ class BanditManager:
         score = res.process(data)
         self.results.extend(res.tester.results)
         return score
+
+
+def _safe_text_writer(fileobj):
+    """Wrap a text file object so that unencodable characters are escaped.
+
+    On systems where the terminal or output stream uses a narrow encoding
+    (e.g. GBK on Windows), writing Unicode characters that are outside that
+    encoding raises a ``UnicodeEncodeError``.  This helper re-wraps the stream
+    with ``errors='backslashreplace'`` so that unencodable code-points are
+    rendered as ``\\uXXXX`` / ``\\UXXXXXXXX`` escape sequences instead of
+    crashing.  This fixes pre-commit hook failures for source files that
+    contain emoji or other non-ASCII characters (issue #1251).
+
+    If *fileobj* already supports arbitrary Unicode (e.g. an ``io.StringIO``
+    or a UTF-8 stream), this function returns it unchanged.
+
+    :param fileobj: a writable text file object
+    :return: a writable text file object that will not raise
+             ``UnicodeEncodeError``
+    """
+    encoding = getattr(fileobj, "encoding", None)
+    if encoding is None:
+        # Not a text stream we can introspect — return as-is.
+        return fileobj
+
+    # If the stream's codec cannot represent every Unicode code-point, wrap it.
+    try:
+        codec_info = codecs.lookup(encoding)
+    except LookupError:
+        return fileobj
+
+    # UTF-8 / UTF-16 / UTF-32 cover the full Unicode range — no wrapping needed.
+    if codec_info.name in {
+        "utf-8",
+        "utf-16",
+        "utf-32",
+        "utf-16-le",
+        "utf-16-be",
+        "utf-32-le",
+        "utf-32-be",
+    }:
+        return fileobj
+
+    # Re-wrap only if there is an underlying binary buffer to attach to.
+    if not hasattr(fileobj, "buffer"):
+        return fileobj
+
+    return io.TextIOWrapper(
+        fileobj.buffer,
+        encoding=encoding,
+        errors="backslashreplace",
+        line_buffering=(
+            fileobj.line_buffering
+            if hasattr(fileobj, "line_buffering")
+            else False
+        ),
+        write_through=True,
+    )
 
 
 def _get_files_from_dir(
