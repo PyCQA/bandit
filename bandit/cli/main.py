@@ -677,7 +677,9 @@ def main():
     LOG.debug(b_mgr.metrics)
 
     # trigger output of results by Bandit Manager
-    sev_level = constants.RANKING[args.severity - 1]
+    sev_level = constants.RANKING[
+        min(args.severity, len(constants.RANKING)) - 1
+    ]
     conf_level = constants.RANKING[args.confidence - 1]
     b_mgr.output_results(
         args.context_lines,
