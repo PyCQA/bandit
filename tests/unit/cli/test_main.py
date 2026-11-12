@@ -175,6 +175,31 @@ class BanditCLIMainTests(testtools.TestCase):
             bandit._log_option_source(None, None, None, option_name)
         )
 
+    def test_ranking_level_clamps_excess_counts(self):
+        self.assertEqual("HIGH", bandit._ranking_level(4))
+        self.assertEqual("HIGH", bandit._ranking_level(5))
+        self.assertEqual("HIGH", bandit._ranking_level(100))
+
+    def test_ranking_level_handles_none(self):
+        self.assertEqual("UNDEFINED", bandit._ranking_level(None))
+
+    @mock.patch(
+        "sys.argv",
+        ["bandit", "-c", "bandit.yaml", "-ii", "-ll", "-ii", "-ll", "test.py"],
+    )
+    def test_main_repeated_severity_confidence_flags(self):
+        temp_directory = self.useFixture(fixtures.TempDir()).path
+        os.chdir(temp_directory)
+        with open("bandit.yaml", "w") as fd:
+            fd.write(bandit_config_content)
+        with open("test.py", "w") as fd:
+            fd.write("")
+        with mock.patch(
+            "bandit.core.manager.BanditManager.results_count"
+        ) as mock_mgr_results_ct:
+            mock_mgr_results_ct.return_value = 0
+            self.assertRaisesRegex(SystemExit, "0", bandit.main)
+
     @mock.patch("sys.argv", ["bandit", "-c", "bandit.yaml", "test"])
     def test_main_config_unopenable(self):
         # Test that bandit exits when a config file cannot be opened
