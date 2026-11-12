@@ -30,6 +30,7 @@ class BanditNodeVisitor:
         self.testset = testset
         self.imports = set()
         self.import_aliases = {}
+        self.classes = {}
         self.tester = b_tester.BanditTester(
             self.testset, self.debug, nosec_lines, metrics
         )
@@ -52,6 +53,15 @@ class BanditNodeVisitor:
         :param node: Node being inspected
         :return: -
         """
+        # Record the resolved base classes of every class definition so that
+        # tests can reason about local subclasses, for example a subclass of
+        # ``markupsafe.Markup``. Base classes are resolved through the current
+        # import aliases just like call names are.
+        self.classes[node.name] = [
+            b_utils._get_attr_qual_name(base, self.import_aliases)
+            for base in node.bases
+        ]
+
         # For all child nodes, add this class name to current namespace
         self.namespace = b_utils.namespace_path_join(self.namespace, node.name)
 
@@ -190,6 +200,7 @@ class BanditNodeVisitor:
         self.context = {}
         self.context["imports"] = self.imports
         self.context["import_aliases"] = self.import_aliases
+        self.context["classes"] = self.classes
 
         if self.debug:
             LOG.debug(ast.dump(node))

@@ -314,3 +314,12 @@ class Context:
     @property
     def import_aliases(self):
         return self._context.get("import_aliases")
+
+    @property
+    def classes(self):
+        """Get the class definitions collected while walking the module.
+
+        :return: a mapping of every class name defined in the module to the
+            list of qualified names of its base classes
+        """
+        return self._context.get("classes")
