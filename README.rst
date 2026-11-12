@@ -39,6 +39,29 @@ A security linter from PyCQA
 * Bugs: https://github.com/PyCQA/bandit/issues
 * Contributing: https://github.com/PyCQA/bandit/blob/main/CONTRIBUTING.md
 
+Installation
+------------
+
+Bandit is published on PyPI and can be run directly with tools such as
+``pipx`` or ``uvx``:
+
+.. code-block:: console
+
+    pipx run bandit -r path/to/code
+
+.. code-block:: console
+
+    uvx bandit -r path/to/code
+
+To install Bandit into an environment instead:
+
+.. code-block:: console
+
+    python -m pip install bandit
+
+See the `Getting Started documentation`_ for virtual environment setup and
+optional extras such as TOML, baseline, and SARIF support.
+
 Overview
 --------
 
@@ -143,3 +166,5 @@ The development of Bandit is made possible by the following sponsors:
           :width: 88
 
 If you also ❤️ Bandit, please consider sponsoring.
+
+.. _Getting Started documentation: https://bandit.readthedocs.io/en/latest/start.html
