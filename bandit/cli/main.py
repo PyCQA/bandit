@@ -688,7 +688,21 @@ def main():
         args.msg_template,
     )
 
-    if (
+    skipped = getattr(b_mgr, "skipped", None)
+    if not isinstance(skipped, list):
+        skipped = []
+
+    has_scan_error = any(
+        isinstance(item, tuple)
+        and len(item) >= 2
+        and isinstance(item[1], str)
+        and "No such file or directory" in item[1]
+        for item in skipped
+    )
+
+    if has_scan_error:
+        sys.exit(1)
+    elif (
         b_mgr.results_count(sev_filter=sev_level, conf_filter=conf_level) > 0
         and not args.exit_zero
     ):

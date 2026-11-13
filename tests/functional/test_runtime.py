@@ -73,7 +73,7 @@ class RuntimeTests(testtools.TestCase):
                 "nonexistent.py",
             ],
         )
-        self.assertEqual(0, retcode)
+        self.assertEqual(1, retcode)
         self.assertIn("Files skipped (1):", output)
         self.assertIn("nonexistent.py (No such file or directory", output)
 
